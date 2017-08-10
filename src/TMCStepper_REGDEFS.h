@@ -382,7 +382,7 @@
 #define SEUP_bm				0x60UL
 #define SEMAX_bm			0xF00UL
 #define SEDN_bm				0x6000UL
-#define SEIMIN_bm			0x80000UL
+#define SEIMIN_bm			0x8000UL
 #define SGT_bm				0x7F0000UL
 #define SFILT_bm			0x1000000UL
 // DCCTRL
