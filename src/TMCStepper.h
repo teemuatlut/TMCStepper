@@ -1,5 +1,4 @@
-#ifndef TMC2310Stepper_h
-#define TMC2310Stepper_h
+#pragma once
 
 //#define TMCDEBUG
 
