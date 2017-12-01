@@ -36,8 +36,8 @@ void TMCStepper::begin() {
 	//set pins
 	pinMode(_pinEN, OUTPUT);
 	pinMode(_pinCS, OUTPUT);
-	//deactivate driver (LOW active)
-	digitalWrite(_pinEN, HIGH);
+	//activate driver (LOW active)
+	digitalWrite(_pinEN, LOW);
 	//digitalWrite(_pinCS, HIGH);
 	switchCSpin(HIGH);
 /*
@@ -64,7 +64,10 @@ void TMCStepper::begin() {
 
 void TMC5130Stepper::begin() {
 	TMCStepper::begin();
-	XACTUAL(XACTUAL_sr);
+
+	XTARGET(0);
+	XACTUAL(0);
+	while (( RAMP_STAT() & VZERO_bm) != VZERO_bm) {}
 }
 
 void TMCStepper::setSPISpeed(uint32_t speed) {
