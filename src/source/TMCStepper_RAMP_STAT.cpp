@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 uint32_t TMCStepper::RAMP_STAT() { READ_REG_R(RAMP_STAT); }
 

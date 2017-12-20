@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // COOLCONF
 uint32_t TMCStepper::COOLCONF() { return COOLCONF_sr; }

@@ -6,13 +6,16 @@
 	#include <Arduino.h>
 #endif
 
+#include "source/Definitions_library.h"
+#include "source/TMCStepper_MACROS.h"
+
 const uint32_t TMCStepper_version = 0x10100; // v1.1.0
 
 class TMCStepper {
 	public:
 		//TMCStepper(uint8_t pinEN, uint8_t pinCS);
 		virtual void abstractClass() = 0;
-		void begin();
+		regdefs *cfg;
 		void setSPISpeed(uint32_t speed);
 		void switchCSpin(bool state);
 		void checkStatus();
@@ -282,6 +285,51 @@ class TMCStepper {
 		bool latch_x_act();
 		bool enc_sel_decimal();
 
+		// W: OUTPUT
+		uint8_t TMC_OUTPUT();
+		void TMC_OUTPUT(uint8_t input);
+		// W: X_COMPARE
+		uint32_t X_COMPARE();
+		void X_COMPARE(uint32_t input);
+		// RW: RAMPMODE
+		uint8_t RAMPMODE();
+		void RAMPMODE(uint8_t input);
+		// RW: XACTUAL
+		int32_t XACTUAL();
+		void XACTUAL(int32_t input);
+		// R: VACTUAL
+		int32_t VACTUAL();
+		// W: VSTART
+		uint32_t VSTART();
+		void VSTART(uint32_t input);
+		// W: A1
+		uint16_t A1();
+		void A1(uint16_t input);
+		// W: V1
+		uint32_t V1();
+		void V1(uint32_t input);
+		// W: AMAX
+		uint16_t AMAX();
+		void AMAX(uint16_t input);
+		// W: VMAX
+		uint32_t VMAX();
+		void VMAX(uint32_t input);
+		// W: DMAX
+		uint16_t DMAX();
+		void DMAX(uint16_t input);
+		// W: D1
+		uint16_t D1();
+		void D1(uint16_t input);
+		// W: VSTOP
+		uint32_t VSTOP();
+		void VSTOP(uint32_t input);
+		// W: TZEROWAIT
+		uint16_t TZEROWAIT();
+		void TZEROWAIT(uint16_t input);
+		// RW: XTARGET
+		int32_t XTARGET();
+		void XTARGET(int32_t input);
+
 		// Helper functions
 		void microsteps(uint16_t ms);
 		uint16_t microsteps();
@@ -463,67 +511,6 @@ class TMCStepper {
 							MSLUTSTART_sr = 0x00000000UL,
 							SLAVECONF_sr	= 0x00000000UL;
 
-		void write(uint8_t addressByte, uint32_t config);
-		void write(uint8_t addressByte, int32_t config);
-		void read(uint8_t addressByte, uint32_t *config);
-		void read(uint8_t addressByte, int32_t *config);
-
-		uint16_t val_mA           = 0;
-		uint32_t spi_speed = 16000000/8; // Default 2MHz
-};
-
-class TMC5130Stepper : public TMCStepper {
-	public:
-		void abstractClass() override {};
-		TMC5130Stepper(uint8_t pinEN, uint8_t pinCS);
-		void begin();
-		// W: OUTPUT
-		uint8_t TMC_OUTPUT();
-		void TMC_OUTPUT(uint8_t input);
-		// W: X_COMPARE
-		uint32_t X_COMPARE();
-		void X_COMPARE(uint32_t input);
-		// RW: RAMPMODE
-		uint8_t RAMPMODE();
-		void RAMPMODE(uint8_t input);
-		// RW: XACTUAL
-		int32_t XACTUAL();
-		void XACTUAL(int32_t input);
-		// R: VACTUAL
-		int32_t VACTUAL();
-		// W: VSTART
-		uint32_t VSTART();
-		void VSTART(uint32_t input);
-		// W: A1
-		uint16_t A1();
-		void A1(uint16_t input);
-		// W: V1
-		uint32_t V1();
-		void V1(uint32_t input);
-		// W: AMAX
-		uint16_t AMAX();
-		void AMAX(uint16_t input);
-		// W: VMAX
-		uint32_t VMAX();
-		void VMAX(uint32_t input);
-		// W: DMAX
-		uint16_t DMAX();
-		void DMAX(uint16_t input);
-		// W: D1
-		uint16_t D1();
-		void D1(uint16_t input);
-		// W: VSTOP
-		uint32_t VSTOP();
-		void VSTOP(uint32_t input);
-		// W: TZEROWAIT
-		uint16_t TZEROWAIT();
-		void TZEROWAIT(uint16_t input);
-		// RW: XTARGET
-		int32_t XTARGET();
-		void XTARGET(int32_t input);
-		float Rsense = 0.15;
-
-	private:
 		// Shadow registers
 		uint32_t 	OUTPUT_sr			= 0x00000000UL,
 							X_COMPARE_sr	= 0x00000000UL,
@@ -540,6 +527,23 @@ class TMC5130Stepper : public TMCStepper {
 
 		int32_t XTARGET_sr = 0x00000000UL,
 						XACTUAL_sr		= 0x00000000UL;
+
+		void write(uint8_t addressByte, uint32_t config);
+		void write(uint8_t addressByte, int32_t config);
+		void read(uint8_t addressByte, uint32_t *config);
+		void read(uint8_t addressByte, int32_t *config);
+
+		uint16_t val_mA           = 0;
+		uint32_t spi_speed = 16000000/8; // Default 2MHz
 };
 
-#endif
+class TMC5130Stepper : public TMCStepper {
+	public:
+		regdefs cfg;
+		void abstractClass() override {};
+		TMC5130Stepper(uint8_t pinCS);
+		float Rsense = 0.15;
+
+	private:
+
+};

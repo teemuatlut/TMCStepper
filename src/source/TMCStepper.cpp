@@ -11,11 +11,13 @@ TMCStepper::TMCStepper(uint8_t pinEN, uint8_t pinCS) {
 	//begin();
 }
 */
-TMC5130Stepper::TMC5130Stepper(uint8_t pinEN, uint8_t pinCS) {
+TMC5130Stepper::TMC5130Stepper(uint8_t pinCS) {
 	_started = false;
 
-	this->_pinEN = pinEN;
 	this->_pinCS = pinCS;
+
+	#include "TMC5130_REGDEFS.h"
+	TMCStepper::cfg = &cfg;
 
 	//begin();
 }
@@ -24,7 +26,7 @@ inline void TMCStepper::switchCSpin(bool state) {
 	// Allows for overriding in child class to make use of fast io
 	digitalWrite(_pinCS, state);
 }
-
+/*
 void TMCStepper::begin() {
 #ifdef TMCDEBUG
 	Serial.println("TMC Stepper driver library");
@@ -40,6 +42,7 @@ void TMCStepper::begin() {
 	digitalWrite(_pinEN, LOW);
 	//digitalWrite(_pinCS, HIGH);
 	switchCSpin(HIGH);
+*/
 /*
 	pinMode(MOSI, OUTPUT);
 	pinMode(MISO, INPUT);
@@ -50,6 +53,7 @@ void TMCStepper::begin() {
 
 	SPI.begin();
 */
+/*
 	GCONF(GCONF_sr);
 	CHOPCONF(CHOPCONF_sr);
 	COOLCONF(COOLCONF_sr);
@@ -61,7 +65,8 @@ void TMCStepper::begin() {
 
 	_started = true;
 }
-
+*/
+/*
 void TMC5130Stepper::begin() {
 	TMCStepper::begin();
 
@@ -69,6 +74,7 @@ void TMC5130Stepper::begin() {
 	XACTUAL(0);
 	while (( RAMP_STAT() & VZERO_bm) != VZERO_bm) {}
 }
+*/
 
 void TMCStepper::setSPISpeed(uint32_t speed) {
 	spi_speed = speed;
@@ -238,7 +244,7 @@ void TMCStepper::read(uint8_t addressByte, int32_t *config) {
 
 bool TMCStepper::checkOT() {
 	uint32_t response = DRV_STATUS();
-	if (response & OTPW_bm) {
+	if (response & cfg->OTPW_bm) {
 		flag_otpw = 1;
 		return true; // bit 26 for overtemperature warning flag
 	}
@@ -285,15 +291,15 @@ bool 		TMCStepper::swcomp_in()		{ GET_BYTE_R(IOIN, SWCOMP_IN);			}
 uint8_t 	TMCStepper::version() 		{ GET_BYTE_R(IOIN, VERSION);			}
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: OUTPUT
-uint8_t TMC5130Stepper::TMC_OUTPUT() { return OUTPUT_sr; }
-void TMC5130Stepper::TMC_OUTPUT(uint8_t input) {
+uint8_t TMCStepper::TMC_OUTPUT() { return OUTPUT_sr; }
+void TMCStepper::TMC_OUTPUT(uint8_t input) {
 	OUTPUT_sr = input;
 	WRITE_REG(OUTPUT);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: X_COMPARE
-uint32_t TMC5130Stepper::X_COMPARE() { return X_COMPARE_sr; }
-void TMC5130Stepper::X_COMPARE(uint32_t input) {
+uint32_t TMCStepper::X_COMPARE() { return X_COMPARE_sr; }
+void TMCStepper::X_COMPARE(uint32_t input) {
 	X_COMPARE_sr = input;
 	WRITE_REG(X_COMPARE);
 }
@@ -330,89 +336,89 @@ void TMCStepper::THIGH(uint32_t input) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: RAMPMODE
-uint8_t TMC5130Stepper::RAMPMODE() { READ_REG(RAMPMODE); }
-void TMC5130Stepper::RAMPMODE(uint8_t input) {
+uint8_t TMCStepper::RAMPMODE() { READ_REG(RAMPMODE); }
+void TMCStepper::RAMPMODE(uint8_t input) {
 	RAMPMODE_sr = input;
 	WRITE_REG(RAMPMODE);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: XACTUAL
-int32_t TMC5130Stepper::XACTUAL() { READ_REG(XACTUAL); }
-void TMC5130Stepper::XACTUAL(int32_t input) {
+int32_t TMCStepper::XACTUAL() { READ_REG(XACTUAL); }
+void TMCStepper::XACTUAL(int32_t input) {
 	XACTUAL_sr = input;
 	WRITE_REG(XACTUAL);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: VACTUAL
-int32_t TMC5130Stepper::VACTUAL() { READ_REG_R(VACTUAL); }
+int32_t TMCStepper::VACTUAL() { READ_REG_R(VACTUAL); }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VSTART
-uint32_t TMC5130Stepper::VSTART() { return VSTART_sr; }
-void TMC5130Stepper::VSTART(uint32_t input) {
+uint32_t TMCStepper::VSTART() { return VSTART_sr; }
+void TMCStepper::VSTART(uint32_t input) {
 	VSTART_sr = input;
 	WRITE_REG(VSTART);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: A1
-uint16_t TMC5130Stepper::A1() { return A1_sr; }
-void TMC5130Stepper::A1(uint16_t input) {
+uint16_t TMCStepper::A1() { return A1_sr; }
+void TMCStepper::A1(uint16_t input) {
 	A1_sr = input;
 	WRITE_REG(A1);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: V1
-uint32_t TMC5130Stepper::V1() { return V1_sr; }
-void TMC5130Stepper::V1(uint32_t input) {
+uint32_t TMCStepper::V1() { return V1_sr; }
+void TMCStepper::V1(uint32_t input) {
 	V1_sr = input;
 	WRITE_REG(V1);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: AMAX
-uint16_t TMC5130Stepper::AMAX() { return AMAX_sr; }
-void TMC5130Stepper::AMAX(uint16_t input) {
+uint16_t TMCStepper::AMAX() { return AMAX_sr; }
+void TMCStepper::AMAX(uint16_t input) {
 	AMAX_sr = input;
 	WRITE_REG(AMAX);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VMAX
-uint32_t TMC5130Stepper::VMAX() { return VMAX_sr; }
-void TMC5130Stepper::VMAX(uint32_t input) {
+uint32_t TMCStepper::VMAX() { return VMAX_sr; }
+void TMCStepper::VMAX(uint32_t input) {
 	VMAX_sr = input;
 	WRITE_REG(VMAX);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: DMAX
-uint16_t TMC5130Stepper::DMAX() { return DMAX_sr; }
-void TMC5130Stepper::DMAX(uint16_t input) {
+uint16_t TMCStepper::DMAX() { return DMAX_sr; }
+void TMCStepper::DMAX(uint16_t input) {
 	DMAX_sr = input;
 	WRITE_REG(DMAX);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: D1
-uint16_t TMC5130Stepper::D1() { return D1_sr; }
-void TMC5130Stepper::D1(uint16_t input) {
+uint16_t TMCStepper::D1() { return D1_sr; }
+void TMCStepper::D1(uint16_t input) {
 	D1_sr = input;
 	WRITE_REG(D1);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VSTOP
-uint32_t TMC5130Stepper::VSTOP() { return VSTOP_sr; }
-void TMC5130Stepper::VSTOP(uint32_t input) {
+uint32_t TMCStepper::VSTOP() { return VSTOP_sr; }
+void TMCStepper::VSTOP(uint32_t input) {
 	if (input == 0 && RAMPMODE() == 0) return;
 	VSTOP_sr = input;
 	WRITE_REG(VSTOP);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: TZEROWAIT
-uint16_t TMC5130Stepper::TZEROWAIT() { return TZEROWAIT_sr; }
-void TMC5130Stepper::TZEROWAIT(uint16_t input) {
+uint16_t TMCStepper::TZEROWAIT() { return TZEROWAIT_sr; }
+void TMCStepper::TZEROWAIT(uint16_t input) {
 	TZEROWAIT_sr = input;
 	WRITE_REG(TZEROWAIT);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: XTARGET
-int32_t TMC5130Stepper::XTARGET() { READ_REG(XTARGET); }
-void TMC5130Stepper::XTARGET(int32_t input) {
+int32_t TMCStepper::XTARGET() { READ_REG(XTARGET); }
+void TMCStepper::XTARGET(int32_t input) {
 	XTARGET_sr = input;
 	WRITE_REG(XTARGET);
 }

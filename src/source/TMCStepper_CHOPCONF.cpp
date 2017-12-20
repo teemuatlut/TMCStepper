@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // CHOPCONF
 uint32_t TMCStepper::CHOPCONF() { READ_REG(CHOPCONF); }

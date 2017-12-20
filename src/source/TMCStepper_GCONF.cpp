@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // GCONF
 uint32_t TMCStepper::GCONF() { READ_REG(GCONF); }

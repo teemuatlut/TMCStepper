@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // IHOLD_IRUN
 void TMCStepper::IHOLD_IRUN(uint32_t input) {

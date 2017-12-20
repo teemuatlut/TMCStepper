@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 uint32_t TMCStepper::DRV_STATUS() { READ_REG_R(DRV_STATUS); }
 

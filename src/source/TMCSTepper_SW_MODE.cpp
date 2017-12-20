@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // SW_MODE
 uint32_t TMCStepper::SW_MODE() { READ_REG(SW_MODE); }

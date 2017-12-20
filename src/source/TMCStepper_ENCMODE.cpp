@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
 
 // ENCMODE
 uint32_t TMCStepper::ENCMODE() { READ_REG(ENCMODE); }

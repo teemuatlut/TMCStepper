@@ -1,6 +1,4 @@
 #include "TMCStepper.h"
-#include "TMCStepper_MACROS.h"
-
 
 // PWMCONF
 uint32_t TMCStepper::PWMCONF() { return PWMCONF_sr; }
