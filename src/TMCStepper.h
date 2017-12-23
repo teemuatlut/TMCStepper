@@ -6,28 +6,93 @@
 	#include <Arduino.h>
 #endif
 
+#include <SPI.h>
 #include "source/Definitions_library.h"
-#include "source/TMCStepper_MACROS.h"
+#include "source/TMC5130_MACROS.h"
 
 const uint32_t TMCStepper_version = 0x10100; // v1.1.0
 
+#define DEBUG_PRINT(CFG, VAL) Serial.print(CFG); Serial.print('('); Serial.print(VAL, HEX); Serial.println(')')
+
 class TMCStepper {
+  public:
+    virtual void abstractClass() = 0;
+    regdefs *cfg;
+    virtual void write(uint32_t);
+    uint32_t setBits(uint32_t reg, uint32_t bitmask, uint8_t bitpos, uint8_t B);
+    uint32_t getBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos);
+    void setSPISpeed(uint32_t speed);
+    void switchCSpin(bool state);
+    uint8_t _pinEN;
+    uint8_t _pinCS;
+    float Rsense;
+    bool _started;
+    uint8_t status_response;
+    bool flag_otpw = false;
+
+//  protected:
+    //const uint8_t WRITE     = 0b10000000;
+    //const uint8_t READ      = 0b00000000;
+    //const int MOSI_PIN    = 12;
+    //const int MISO_PIN    = 11;
+    //const int SCK_PIN     = 13;
+
+    // Shadow registers
+    uint32_t  GCONF_sr      = 0x00000000UL,
+              IHOLD_IRUN_sr = 0x00000000UL,
+              TSTEP_sr      = 0x00000000UL,
+              TPWMTHRS_sr   = 0x00000000UL,
+              TCOOLTHRS_sr  = 0x00000000UL,
+              THIGH_sr      = 0x00000000UL,
+              XDIRECT_sr    = 0x00000000UL,
+              VDCMIN_sr     = 0x00000000UL,
+              MSLUT0_sr     = 0x00000000UL,
+              MSLUT1_sr     = 0x00000000UL,
+              MSLUT2_sr     = 0x00000000UL,
+              MSLUT3_sr     = 0x00000000UL,
+              MSLUT4_sr     = 0x00000000UL,
+              MSLUT5_sr     = 0x00000000UL,
+              MSLUT6_sr     = 0x00000000UL,
+              MSLUT7_sr     = 0x00000000UL,
+              MSLUTSEL_sr   = 0x00000000UL,
+              CHOPCONF_sr   = 0x00000000UL,
+              COOLCONF_sr   = 0x00000000UL,
+              DCCTRL_sr     = 0x00000000UL,
+              PWMCONF_sr    = 0x00050480UL,
+              tmp_sr        = 0x00000000UL,
+              TPOWERDOWN_sr = 0x00000000UL,
+              ENCM_CTRL_sr  = 0x00000000UL,
+              GSTAT_sr      = 0x00000000UL,
+              SW_MODE_sr    = 0x00000000UL,
+              ENCMODE_sr    = 0x00000000UL,
+              MSLUTSTART_sr = 0x00000000UL,
+              SLAVECONF_sr  = 0x00000000UL,
+              SPI_response	= 0x00000000UL;
+
+    void write(uint8_t addressByte, uint32_t config);
+    void write(uint8_t addressByte, int32_t config);
+    void read(uint8_t addressByte, uint32_t *config);
+    void read(uint8_t addressByte, int32_t *config);
+
+    uint16_t val_mA           = 0;
+    uint32_t spi_speed = 16000000/8; // Default 2MHz
+};
+
+class TMC5130Stepper : public TMCStepper {
 	public:
-		//TMCStepper(uint8_t pinEN, uint8_t pinCS);
-		virtual void abstractClass() = 0;
-		regdefs *cfg;
-		void setSPISpeed(uint32_t speed);
-		void switchCSpin(bool state);
+    regdefs cfg;
+    void abstractClass() override {};
+		TMC5130Stepper(uint8_t pinCS);
 		void checkStatus();
-		void rms_current(uint16_t mA, float multiplier=0.5, float RS=0.11);
+		void rms_current(uint16_t mA, float multiplier=0.5, float RS=0.15);
 		uint16_t rms_current();
 		void SilentStepStick(uint16_t mA);
 		void setCurrent(uint16_t mA, float Rsense, float multiplier);
 		uint16_t getCurrent();
-		bool checkOT();
-		bool getOTPW();
-		void clear_otpw();
-		bool isEnabled();
+    bool checkOT();
+    bool getOTPW();
+    void clear_otpw();
+    bool isEnabled();
 		// GCONF
 		uint32_t GCONF();
 		void GCONF(								uint32_t value);
@@ -465,85 +530,121 @@ class TMCStepper {
 		// R: DRV_STATUS
 		inline uint32_t DRVSTATUS()												__attribute__((always_inline)) { return DRV_STATUS(); 							}
 
+  private:
+    // Shadow registers
+    uint32_t  OUTPUT_sr     = 0x00000000UL,
+              X_COMPARE_sr  = 0x00000000UL,
+              RAMPMODE_sr   = 0x00000000UL,
+              VSTART_sr     = 0x00000000UL,
+              A1_sr         = 0x00000000UL,
+              V1_sr         = 0x00000000UL,
+              AMAX_sr       = 0x00000000UL,
+              VMAX_sr       = 0x00000000UL,
+              DMAX_sr       = 0x00000000UL,
+              D1_sr         = 0x00000000UL,
+              VSTOP_sr      = 0x00000000UL,
+              TZEROWAIT_sr  = 0x00000000UL;
 
-		uint8_t _pinEN = 16;
-		uint8_t _pinCS = 17;
-		float Rsense;
-		bool _started;
-		uint8_t status_response;
-		bool flag_otpw = false;
-
-	protected:
-		//const uint8_t WRITE     = 0b10000000;
-		//const uint8_t READ      = 0b00000000;
-		//const int MOSI_PIN    = 12;
-		//const int MISO_PIN    = 11;
-		//const int SCK_PIN     = 13;
-
-		// Shadow registers
-		uint32_t 	GCONF_sr 			= 0x00000000UL,
-							IHOLD_IRUN_sr = 0x00000000UL,
-							TSTEP_sr 			= 0x00000000UL,
-							TPWMTHRS_sr 	= 0x00000000UL,
-							TCOOLTHRS_sr 	= 0x00000000UL,
-							THIGH_sr 			= 0x00000000UL,
-							XDIRECT_sr 		= 0x00000000UL,
-							VDCMIN_sr 		= 0x00000000UL,
-							MSLUT0_sr 		= 0x00000000UL,
-							MSLUT1_sr 		= 0x00000000UL,
-							MSLUT2_sr 		= 0x00000000UL,
-							MSLUT3_sr 		= 0x00000000UL,
-							MSLUT4_sr 		= 0x00000000UL,
-							MSLUT5_sr 		= 0x00000000UL,
-							MSLUT6_sr 		= 0x00000000UL,
-							MSLUT7_sr 		= 0x00000000UL,
-							MSLUTSEL_sr 	= 0x00000000UL,
-							CHOPCONF_sr 	= 0x00000000UL,
-							COOLCONF_sr 	= 0x00000000UL,
-							DCCTRL_sr 		= 0x00000000UL,
-							PWMCONF_sr 		= 0x00050480UL,
-							tmp_sr 				= 0x00000000UL,
-							TPOWERDOWN_sr = 0x00000000UL,
-							ENCM_CTRL_sr 	= 0x00000000UL,
-							GSTAT_sr			= 0x00000000UL,
-							SW_MODE_sr		= 0x00000000UL,
-							ENCMODE_sr		= 0x00000000UL,
-							MSLUTSTART_sr = 0x00000000UL,
-							SLAVECONF_sr	= 0x00000000UL;
-
-		// Shadow registers
-		uint32_t 	OUTPUT_sr			= 0x00000000UL,
-							X_COMPARE_sr	= 0x00000000UL,
-							RAMPMODE_sr		= 0x00000000UL,
-							VSTART_sr			= 0x00000000UL,
-							A1_sr					= 0x00000000UL,
-							V1_sr					= 0x00000000UL,
-							AMAX_sr				= 0x00000000UL,
-							VMAX_sr				= 0x00000000UL,
-							DMAX_sr				= 0x00000000UL,
-							D1_sr					= 0x00000000UL,
-							VSTOP_sr			= 0x00000000UL,
-							TZEROWAIT_sr	= 0x00000000UL;
-
-		int32_t XTARGET_sr = 0x00000000UL,
-						XACTUAL_sr		= 0x00000000UL;
-
-		void write(uint8_t addressByte, uint32_t config);
-		void write(uint8_t addressByte, int32_t config);
-		void read(uint8_t addressByte, uint32_t *config);
-		void read(uint8_t addressByte, int32_t *config);
-
-		uint16_t val_mA           = 0;
-		uint32_t spi_speed = 16000000/8; // Default 2MHz
+    int32_t XTARGET_sr = 0x00000000UL,
+            XACTUAL_sr    = 0x00000000UL;
 };
 
-class TMC5130Stepper : public TMCStepper {
-	public:
-		regdefs cfg;
-		void abstractClass() override {};
-		TMC5130Stepper(uint8_t pinCS);
-		float Rsense = 0.15;
+#define SET_ALIAS(TYPE, NEW, ARG, OLD) TYPE (TMC2660Stepper::*NEW)(ARG) = &TMC2660Stepper::OLD
 
-	private:
+class TMC2660Stepper : public TMCStepper {
+  public:
+    regdefs cfg;
+    void abstractClass() override {};
+    TMC2660Stepper(uint8_t pinCS);
+    bool isEnabled() {};
 
+    void DRVCTRL(uint32_t);
+    uint32_t DRVCTRL();
+    // DRVCTRL (SPI)
+    void pha(bool);
+    void ca(uint8_t);
+    void phb(bool);
+    void cb(uint8_t);
+    // DRVCTRL (STEP/DIR)
+    void intpol(bool);
+    void dedge(bool);
+    void mres(uint8_t);
+    // CHOPCONF
+    uint32_t CHOPCONF();
+    void CHOPCONF(uint32_t);
+    void tbl(uint8_t);
+    void chm(bool);
+    void rndtf(bool);
+    void hdec(uint8_t);
+    void hend(uint8_t);
+    void hstrt(uint8_t);
+    void toff(uint8_t);
+    // SMARTEN
+    uint32_t SMARTEN();
+    void SMARTEN(uint32_t);
+    void seimin(bool);
+    void sedn(uint8_t);
+    void semax(uint8_t);
+    void seup(uint8_t);
+    void semin(uint8_t);
+    // SGCSCONF
+    uint32_t SGCSCONF();
+    void SGCSCONF(uint32_t);
+    void sfilt(bool);
+    void sgt(uint8_t);
+    void cs(uint8_t);
+    // DRVCONF
+    void DRVCONF(uint32_t);
+    uint32_t DRVCONF();
+    void tst(bool);
+    void slph(uint8_t);
+    void slpl(uint8_t);
+    void diss2g(bool);
+    void ts2g(uint8_t);
+    void sdoff(bool);
+    void vsense(bool);
+    void rdsel(uint8_t);
+    bool tst();
+    uint8_t slph();
+    uint8_t slpl();
+    bool diss2g();
+    uint8_t ts2g();
+    bool sdoff();
+    bool vsense();
+    uint8_t rdsel();
+    // DRVSTATUS
+    uint32_t DRVSTATUS() {};
+    uint16_t mstep() {};
+    uint16_t sg_result() {};
+    uint8_t se() {};
+    bool stst() {};
+    bool olb() {};
+    bool ola() {};
+    bool s2gb() {};
+    bool s2ga() {};
+    bool otpw() {};
+    bool ot() {};
+    bool sg() {};
+    // Alias
+    SET_ALIAS(void, polarity_A, bool, pha);
+    SET_ALIAS(void, current_A, uint8_t, ca);
+    SET_ALIAS(void, polarity_B, bool, phb);
+    SET_ALIAS(void, current_b, uint8_t, cb);
+    SET_ALIAS(void, interpolate, bool, intpol);
+    SET_ALIAS(void, double_edge_step, bool, dedge);
+    SET_ALIAS(void, microsteps, uint8_t, mres);
+    SET_ALIAS(void, blank_time, uint8_t, tbl);
+    SET_ALIAS(void, chopper_mode, bool, chm);
+    SET_ALIAS(void, random_off_time, bool, rndtf);
+    SET_ALIAS(void, hysterisis_decrement, uint8_t, hdec);
+    SET_ALIAS(void, hysterisis_low, uint8_t, hend);
+    SET_ALIAS(void, hysterisis_start, uint8_t, hstrt);
+    SET_ALIAS(void, off_time, uint8_t, toff);
+  //private:
+    // TMC2660: Shadow registers
+    uint32_t DRVCTRL_sr     = 0x0UL,
+             CHOPCONF_sr    = 0x0UL,
+             SMARTEN_sr     = 0x0UL,
+             SGCSCONF_sr    = 0x0UL,
+             DRVCONF_sr     = 0x0UL;
 };

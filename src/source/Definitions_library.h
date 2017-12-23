@@ -59,6 +59,11 @@ struct regdefs {
 	uint8_t REG_PWM_SCALE;
 	uint8_t REG_ENCM_CTRL;
 	uint8_t REG_LOST_STEPS;
+	// TMC2660
+	uint8_t REG_DRVCTRL;
+	uint8_t REG_SMARTEN;
+	uint8_t REG_SGCSCONF;
+	uint8_t REG_DRVCONF;
 	// SPI_STATUS
 	uint8_t RESET_FLAG_bp;
 	uint8_t DRIVER_ERROR_bp;
@@ -349,6 +354,7 @@ struct regdefs {
 	uint8_t INTPOL_bp;
 	uint8_t DEDGE_bp;
 	uint8_t DISS2G_bp;
+	uint8_t HDEC_bp;
 	uint32_t CHOPCONF_bm;
 	uint32_t TOFF_bm;
 	uint32_t HSTRT_bm;
@@ -366,6 +372,7 @@ struct regdefs {
 	uint32_t INTPOL_bm;
 	uint32_t DEDGE_bm;
 	uint32_t DISS2G_bm;
+	uint32_t HDEC_bm;
 	// COOLCONF
 	uint8_t SEMIN_bp;
 	uint8_t SEUP_bp;
@@ -436,4 +443,40 @@ struct regdefs {
 	// LOST_STEPS
 	uint8_t LOST_STEPS_bp;
 	uint32_t LOST_STEPS_bm;
+	// TMC2660: DRVCTRL
+	uint8_t PHA_bp;
+	uint8_t CA_bp;
+	uint8_t PHB_bp;
+	uint8_t CB_bp;
+	uint32_t PHA_bm;
+	uint32_t CA_bm;
+	uint32_t PHB_bm;
+	uint32_t CB_bm;
+	// TMC2660: SGCSCONF
+	uint8_t CS_bp;
+	uint32_t CS_bm;
+	// TMC2660: DRVCONF
+	uint8_t TST_bp;
+	uint8_t SLPH_bp;
+	uint8_t SLPL_bp;
+	uint8_t TS2G_bp;
+	uint8_t SDOFF_bp;
+	uint8_t RDSEL_bp;
+	uint32_t TST_bm;
+	uint32_t SLPH_bm;
+	uint32_t SLPL_bm;
+	uint32_t TS2G_bm;
+	uint32_t SDOFF_bm;
+	uint32_t RDSEL_bm;
+	// TMC2660: DRVSTATUS
+	uint8_t SG_RESULT_10b_bp;
+	uint8_t SG_RESULT_5b_bp;
+	uint8_t MSTEP_bp;
+	uint8_t SE_bp;
+	uint8_t SG_bp;
+	uint32_t SG_RESULT_10b_bm;
+	uint32_t SG_RESULT_5b_bm;
+	uint32_t MSTEP_bm;
+	uint32_t SE_bm;
+	uint32_t SG_bm;
 };
