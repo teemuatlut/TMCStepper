@@ -20,19 +20,6 @@ void setup() {
 	pinMode(DIR_PIN, OUTPUT);
 	driver.toff(4);
 	driver.cs(10);
-	
-	/*
-	SPI.begin();
-	SPI.beginTransaction(SPISettings(16000000/8, MSBFIRST, SPI_MODE3));
-	digitalWrite(CS_PIN, LOW);
-	SPI.transfer(0xD);
-	SPI.transfer(0x00);
-	SPI.transfer(0x0A);
-	digitalWrite(CS_PIN, HIGH);
-	SPI.endTransaction();
-	*/
-
-
 	//driver.begin(); 			// Initiate pins and registeries
 	//driver.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
 	//driver.stealthChop(1); 	// Enable extremely quiet stepping

@@ -53,3 +53,11 @@ void TMC2660Stepper::hdec(uint8_t B) 	{ CHOPCONF(setBits(CHOPCONF_sr, cfg.HDEC_b
 void TMC2660Stepper::hend(uint8_t B) 	{ CHOPCONF(setBits(CHOPCONF_sr, cfg.HEND_bm,	cfg.HEND_bp,	B)); }
 void TMC2660Stepper::hstrt(uint8_t B) 	{ CHOPCONF(setBits(CHOPCONF_sr, cfg.HSTRT_bm,	cfg.HSTRT_bp,	B)); }
 void TMC2660Stepper::toff(uint8_t B) 	{ CHOPCONF(setBits(CHOPCONF_sr, cfg.TOFF_bm,	cfg.TOFF_bp,	B)); }
+
+uint8_t TMC2660Stepper::tbl() 	{ return getBits(CHOPCONF(), cfg.TBL_bm,	cfg.TBL_bp); }
+bool TMC2660Stepper::chm() 		{ return getBits(CHOPCONF(), cfg.CHM_bm,	cfg.CHM_bp); }
+bool TMC2660Stepper::rndtf() 	{ return getBits(CHOPCONF(), cfg.RNDTF_bm,	cfg.RNDTF_bp); }
+uint8_t TMC2660Stepper::hdec() 	{ return getBits(CHOPCONF(), cfg.HDEC_bm,	cfg.HDEC_bp); }
+uint8_t TMC2660Stepper::hend() 	{ return getBits(CHOPCONF(), cfg.HEND_bm,	cfg.HEND_bp); }
+uint8_t TMC2660Stepper::hstrt() { return getBits(CHOPCONF(), cfg.HSTRT_bm,	cfg.HSTRT_bp); }
+uint8_t TMC2660Stepper::toff() 	{ return getBits(CHOPCONF(), cfg.TOFF_bm,	cfg.TOFF_bp); }

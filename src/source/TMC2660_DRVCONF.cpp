@@ -15,11 +15,11 @@ void TMC2660Stepper::sdoff(bool b)    { DRVCONF(setBits(DRVCONF_sr, cfg.SDOFF_bm
 void TMC2660Stepper::vsense(bool b)   { DRVCONF(setBits(DRVCONF_sr, cfg.VSENSE_bm,  cfg.VSENSE_bp,  b)); }
 void TMC2660Stepper::rdsel(uint8_t B) { DRVCONF(setBits(DRVCONF_sr, cfg.RDSEL_bm,   cfg.RDSEL_bp,   B)); }
 
-bool TMC2660Stepper::tst()		{ getBits(DRVCONF(), cfg.TST_bm,     cfg.TST_bp);	}
-uint8_t TMC2660Stepper::slph()	{ getBits(DRVCONF(), cfg.SLPH_bm,    cfg.SLPH_bp);	}
-uint8_t TMC2660Stepper::slpl()	{ getBits(DRVCONF(), cfg.SLPL_bm,    cfg.SLPL_bp);	}
-bool TMC2660Stepper::diss2g()	{ getBits(DRVCONF(), cfg.DISS2G_bm,  cfg.DISS2G_bp);}
-uint8_t TMC2660Stepper::ts2g()	{ getBits(DRVCONF(), cfg.TS2G_bm,    cfg.TS2G_bp);	}
-bool TMC2660Stepper::sdoff()	{ getBits(DRVCONF(), cfg.SDOFF_bm,   cfg.SDOFF_bp);	}
-bool TMC2660Stepper::vsense()	{ getBits(DRVCONF(), cfg.VSENSE_bm,  cfg.VSENSE_bp);}
-uint8_t TMC2660Stepper::rdsel()	{ getBits(DRVCONF(), cfg.RDSEL_bm,   cfg.RDSEL_bp);	}
+bool TMC2660Stepper::tst()		{ return getBits(DRVCONF(), cfg.TST_bm,     cfg.TST_bp);	}
+uint8_t TMC2660Stepper::slph()	{ return getBits(DRVCONF(), cfg.SLPH_bm,    cfg.SLPH_bp);	}
+uint8_t TMC2660Stepper::slpl()	{ return getBits(DRVCONF(), cfg.SLPL_bm,    cfg.SLPL_bp);	}
+bool TMC2660Stepper::diss2g()	{ return getBits(DRVCONF(), cfg.DISS2G_bm,  cfg.DISS2G_bp); }
+uint8_t TMC2660Stepper::ts2g()	{ return getBits(DRVCONF(), cfg.TS2G_bm,    cfg.TS2G_bp);	}
+bool TMC2660Stepper::sdoff()	{ return getBits(DRVCONF(), cfg.SDOFF_bm,   cfg.SDOFF_bp);	}
+bool TMC2660Stepper::vsense()	{ return getBits(DRVCONF(), cfg.VSENSE_bm,  cfg.VSENSE_bp); }
+uint8_t TMC2660Stepper::rdsel()	{ return getBits(DRVCONF(), cfg.RDSEL_bm,   cfg.RDSEL_bp);	}

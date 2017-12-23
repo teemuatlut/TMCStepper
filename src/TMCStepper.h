@@ -80,8 +80,8 @@ class TMCStepper {
 
 class TMC5130Stepper : public TMCStepper {
 	public:
-    regdefs cfg;
-    void abstractClass() override {};
+		regdefs cfg;
+		void abstractClass() override {};
 		TMC5130Stepper(uint8_t pinCS);
 		void checkStatus();
 		void rms_current(uint16_t mA, float multiplier=0.5, float RS=0.15);
@@ -89,10 +89,10 @@ class TMC5130Stepper : public TMCStepper {
 		void SilentStepStick(uint16_t mA);
 		void setCurrent(uint16_t mA, float Rsense, float multiplier);
 		uint16_t getCurrent();
-    bool checkOT();
-    bool getOTPW();
-    void clear_otpw();
-    bool isEnabled();
+		bool checkOT();
+		bool getOTPW();
+		void clear_otpw();
+		bool isEnabled();
 		// GCONF
 		uint32_t GCONF();
 		void GCONF(								uint32_t value);
@@ -556,7 +556,9 @@ class TMC2660Stepper : public TMCStepper {
     regdefs cfg;
     void abstractClass() override {};
     TMC2660Stepper(uint8_t pinCS);
-    bool isEnabled() {};
+    void write(uint32_t);
+    uint32_t read();
+    bool isEnabled();
 
     void DRVCTRL(uint32_t);
     uint32_t DRVCTRL();
@@ -565,10 +567,17 @@ class TMC2660Stepper : public TMCStepper {
     void ca(uint8_t);
     void phb(bool);
     void cb(uint8_t);
+    bool pha();
+    uint8_t ca();
+    bool phb();
+    uint8_t cb();
     // DRVCTRL (STEP/DIR)
     void intpol(bool);
     void dedge(bool);
     void mres(uint8_t);
+    bool intpol();
+    bool dedge();
+    uint8_t mres();
     // CHOPCONF
     uint32_t CHOPCONF();
     void CHOPCONF(uint32_t);
@@ -579,6 +588,13 @@ class TMC2660Stepper : public TMCStepper {
     void hend(uint8_t);
     void hstrt(uint8_t);
     void toff(uint8_t);
+    uint8_t tbl();
+    bool chm();
+    bool rndtf();
+    uint8_t hdec();
+    uint8_t hend();
+    uint8_t hstrt();
+    uint8_t toff();
     // SMARTEN
     uint32_t SMARTEN();
     void SMARTEN(uint32_t);
@@ -587,12 +603,20 @@ class TMC2660Stepper : public TMCStepper {
     void semax(uint8_t);
     void seup(uint8_t);
     void semin(uint8_t);
+    bool seimin();
+    uint8_t sedn();
+    uint8_t semax();
+    uint8_t seup();
+    uint8_t semin();
     // SGCSCONF
     uint32_t SGCSCONF();
     void SGCSCONF(uint32_t);
     void sfilt(bool);
     void sgt(uint8_t);
     void cs(uint8_t);
+    bool sfilt();
+    uint8_t sgt();
+    uint8_t cs();
     // DRVCONF
     void DRVCONF(uint32_t);
     uint32_t DRVCONF();
@@ -613,18 +637,29 @@ class TMC2660Stepper : public TMCStepper {
     bool vsense();
     uint8_t rdsel();
     // DRVSTATUS
-    uint32_t DRVSTATUS() {};
-    uint16_t mstep() {};
-    uint16_t sg_result() {};
-    uint8_t se() {};
-    bool stst() {};
-    bool olb() {};
-    bool ola() {};
-    bool s2gb() {};
-    bool s2ga() {};
-    bool otpw() {};
-    bool ot() {};
-    bool sg() {};
+    uint32_t DRVSTATUS();
+    uint16_t mstep();
+    uint16_t sg_result();
+    uint8_t se();
+    bool stst();
+    bool olb();
+    bool ola();
+    bool s2gb();
+    bool s2ga();
+    bool otpw();
+    bool ot();
+    bool sg();
+    uint16_t mstep(uint32_t);
+    uint16_t sg_result(uint32_t);
+    uint8_t se(uint32_t);
+    bool stst(uint32_t);
+    bool olb(uint32_t);
+    bool ola(uint32_t);
+    bool s2gb(uint32_t);
+    bool s2ga(uint32_t);
+    bool otpw(uint32_t);
+    bool ot(uint32_t);
+    bool sg(uint32_t);
     // Alias
     SET_ALIAS(void, polarity_A, bool, pha);
     SET_ALIAS(void, current_A, uint8_t, ca);
