@@ -136,6 +136,10 @@ void TMC2130Stepper::rms_current(uint16_t mA) {
   ihold(CS*holdMultiplier);
   val_mA = mA;
 }
+void TMC2130Stepper::rms_current(uint16_t mA, float mult) {
+  holdMultiplier = mult;
+  rms_current(mA);
+}
 
 uint16_t TMC2130Stepper::rms_current() {
   return (float)(irun()+1)/32.0 * (vsense()?0.180:0.325)/(Rsense+0.02) / 1.41421 * 1000;

@@ -26,7 +26,10 @@ class TMC2130Stepper {
 	void switchCSpin(bool state);
 	void checkStatus();
 	virtual void rms_current(uint16_t mA);
+	virtual void rms_current(uint16_t mA, float mult);
 	virtual uint16_t rms_current();
+	void hold_multiplier(float val) { holdMultiplier = val; }
+	float hold_multiplier() { return holdMultiplier; }
 	bool checkOT();
 	bool getOTPW();
 	void clear_otpw();
