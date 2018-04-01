@@ -1,6 +1,5 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
-#include "TMCStepper_UTILITY.h"
 
 TMC2130Stepper::TMC2130Stepper(uint8_t pinCS, float RS) {
   this->_pinCS = pinCS;
@@ -69,8 +68,8 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 }
 
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
-  Serial.print("\naddressByte="); Serial.print(addressByte, HEX);
-  Serial.print(" - config="); print_HEX(config);
+  //Serial.print("\naddressByte="); Serial.print(addressByte, HEX);
+  //Serial.print(" - config="); print_HEX(config);
   switchCSpin(LOW);
   if (uses_sw_spi) {
     status_response = TMC_SW_SPI.transfer(addressByte & 0xFF);
