@@ -3,6 +3,7 @@
  * Initializes the library and turns the motor in alternating directions.
 */
 
+//#include <TMC2130Stepper.h>
 #include <TMCStepper.h>
 
 #define EN_PIN    38  // Nano v3:	16 Mega:	38	//enable (CFG6)
@@ -11,43 +12,43 @@
 #define CS_PIN    38  //			17			64	//chip select
 
 bool dir = true;
-TMC2660Stepper driver = TMC2660Stepper(CS_PIN);
+//TMC2660Stepper driver2660 = TMC2660Stepper(CS_PIN);
+//TMC5130Stepper driver5130 = TMC5130Stepper(CS_PIN);
+TMC2130Stepper driver2130 = TMC2130Stepper(CS_PIN);
 
 void setup() {
 	Serial.begin(9600);
 	pinMode(CS_PIN, OUTPUT);
 	pinMode(STEP_PIN, OUTPUT);
 	pinMode(DIR_PIN, OUTPUT);
-	driver.toff(4);
-	driver.cs(10);
-	//driver.begin(); 			// Initiate pins and registeries
-	//driver.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
-	//driver.stealthChop(1); 	// Enable extremely quiet stepping
-	//driver.cs(10);
-	//driver.toff(10);
 
+	//driver2660.toff(2);
+	//driver5130.toff(2);
+	driver2130.pwm_ampl(255);
+	driver2130.pwm_grad(15);
+	driver2130.pwm_freq(0b10);
+
+/*
+	driver2660.toff(4);
+	driver2660.cs(10);
+
+	driver5130.begin(); 			// Initiate pins and registeries
+	driver5130.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
+	driver5130.en_pwm_mode(true); 	// Enable extremely quiet stepping
+	driver5130.irun(10);
+	driver5130.toff(10);
+*/	/*
 	Serial.print("SPI_response=0b");
-	Serial.println(driver.SPI_response, BIN);
+	Serial.println(driver2660.SPI_response, BIN);
 	Serial.print("_pinCS=");
-	Serial.println(driver._pinCS);
+	Serial.println(driver2660._pinCS);
+	*/
+/*
+	Serial.print("SPI_response=0b");
+	Serial.println(driver5130.status_response, BIN);
+	Serial.print("_pinCS=");
+	Serial.println(driver5130._pinCS);
+	*/
 }
 
-void loop() {
-	digitalWrite(STEP_PIN, HIGH);
-	delayMicroseconds(10);
-	digitalWrite(STEP_PIN, LOW);
-	delayMicroseconds(10);
-	uint32_t ms = millis();
-	static uint32_t last_time = 0;
-	if ((ms - last_time) > 2000) {
-		if (dir) {
-			Serial.println("Dir -> 0");
-			//driver.shaft(0);
-		} else {
-			Serial.println("Dir -> 1");
-			//driver.shaft(1);
-		}
-		dir = !dir;
-		last_time = ms;
-	}
-}
+void loop() {}

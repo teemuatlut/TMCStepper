@@ -1,5 +1,17 @@
 #pragma once
+#if 0
+#define DEBUG_PRINT(CFG, VAL) Serial.print(CFG); Serial.print('('); Serial.print(VAL, HEX); Serial.println(')')
+#define BMBP(SETTING) cfg->SETTING##_bm, cfg->SETTING##_bp
+#define WRITE_REG(R) write(cfg->TMC_WRITE|cfg->REG_##R, R##_sr)
+#define READ_REG(R) read(cfg->TMC_READ|cfg->REG_##R)
+#else
+#define DEBUG_PRINT(CFG, VAL) Serial.print(CFG); Serial.print('('); Serial.print(VAL, HEX); Serial.println(')')
+//#define BMBP(SETTING) SETTING##_bm[driverType], SETTING##_bp[driverType]
+#define WRITE_REG(R) write(R##_register.address, R##_register.cfg.sr)
+#define READ_REG(R) read(R##_register.address)
+#endif
 
+/*
 #include "TMCStepper.h"
 
 #define WRITE_REG(R) 	write(cfg.TMC_WRITE|cfg.REG_##R, R##_sr);
@@ -17,3 +29,4 @@
 #define GET_BYTE_R(REG, SETTING) return (REG()&cfg.SETTING##_bm) >> cfg.SETTING##_bp;
 
 #define GET_BIT(REG, SETTING) 	return (bool)((REG()&cfg.SETTING##_bm) >> cfg.SETTING##_bp);
+*/

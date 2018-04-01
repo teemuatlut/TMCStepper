@@ -1,6 +1,6 @@
 #pragma once
-
-struct regdefs {
+/*
+//struct regdefs {
 	uint8_t TMC_READ;
 	uint8_t TMC_WRITE;
 	// Register memory positions
@@ -64,6 +64,10 @@ struct regdefs {
 	uint8_t REG_SMARTEN;
 	uint8_t REG_SGCSCONF;
 	uint8_t REG_DRVCONF;
+	uint32_t SGCSCONF_bm;
+	uint8_t SGCSCONF_bp;
+	uint32_t SMARTEN_bm;
+	uint8_t SMARTEN_bp;
 	// SPI_STATUS
 	uint8_t RESET_FLAG_bp;
 	uint8_t DRIVER_ERROR_bp;
@@ -479,4 +483,5 @@ struct regdefs {
 	uint32_t MSTEP_bm;
 	uint32_t SE_bm;
 	uint32_t SG_bm;
-};
+//};
+*/
