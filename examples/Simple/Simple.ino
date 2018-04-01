@@ -14,7 +14,8 @@
 bool dir = true;
 //TMC2660Stepper driver2660 = TMC2660Stepper(CS_PIN);
 //TMC5130Stepper driver5130 = TMC5130Stepper(CS_PIN);
-TMC2130Stepper driver2130 = TMC2130Stepper(CS_PIN);
+TMC2130Stepper driver2130 = TMC2130Stepper(CS_PIN, 66, 44, 64);
+TMC2660Stepper driver2660 = TMC2660Stepper(CS_PIN, 66, 44, 64);
 
 void setup() {
 	Serial.begin(9600);

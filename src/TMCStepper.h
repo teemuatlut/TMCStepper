@@ -7,6 +7,7 @@
 #endif
 
 #include <SPI.h>
+#include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC5130_bitfields.h"
 #include "source/TMC2660_bitfields.h"
@@ -19,6 +20,7 @@ const uint32_t TMCStepper_version = 0x10100; // v1.1.0
 class TMC2130Stepper {
 	public:
 	TMC2130Stepper(uint8_t pinCS);
+	TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 	void begin();
 	void setSPISpeed(uint32_t speed);
 	void switchCSpin(bool state);
@@ -275,6 +277,7 @@ class TMC2130Stepper {
 	uint16_t val_mA           = 0;
 	float holdMultiplier = 0.5;
 	uint32_t spi_speed = 16000000/8; // Default 2MHz
+	bool uses_sw_spi = false;
 };
 
 class TMC5130Stepper : public TMC2130Stepper {
@@ -469,6 +472,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 class TMC2660Stepper {
 	public:
 	TMC2660Stepper(uint8_t pinCS);
+	TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 	void write(uint8_t addressByte, uint32_t config);
 	uint32_t read();
 	void switchCSpin(bool state);
@@ -613,4 +617,5 @@ class TMC2660Stepper {
 	uint16_t val_mA           = 0;
 	float holdMultiplier = 0.5;
 	uint32_t spi_speed = 16000000/8; // Default 2MHz
+	bool uses_sw_spi = false;
 };
