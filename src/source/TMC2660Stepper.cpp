@@ -74,15 +74,31 @@ void TMC2660Stepper::begin() {
 
 bool TMC2660Stepper::isEnabled() { return toff() > 0; }
 
+/*
+  Requested current = mA = I_rms/1000
+  Equation for current:
+  I_rms = (CS+1)/32 * V_fs/R_sense * 1/sqrt(2)
+  Solve for CS ->
+  CS = 32*sqrt(2)*I_rms*R_sense/V_fs - 1
+
+  Example:
+  vsense = 0b0 -> V_fs = 0.310V //Typical
+  mA = 1650mA = I_rms/1000 = 1.65A
+  R_sense = 0.100 Ohm
+  ->
+  CS = 32*sqrt(2)*1.65*0.100/0.310 - 1 = 24,09
+  CS = 24
+*/
+
 uint16_t TMC2660Stepper::rms_current() {
-  return (float)(cs()+1)/32.0 * (vsense()?0.165:0.305)/(Rsense+0.02) / 1.41421 * 1000;
+  return (float)(cs()+1)/32.0 * (vsense()?0.165:0.310)/Rsense / 1.41421 * 1000;
 }
 void TMC2660Stepper::rms_current(uint16_t mA) {
-  uint8_t CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.305 - 1;
+  uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.305 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
     vsense(true);
-    CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.180 - 1;
+    CS = 32.0*1.41421*mA/1000.0*Rsense/0.180 - 1;
   } else { // If CS >= 16, turn off high_sense_r
     vsense(false);
   }
