@@ -94,11 +94,11 @@ uint16_t TMC2660Stepper::rms_current() {
   return (float)(cs()+1)/32.0 * (vsense()?0.165:0.310)/Rsense / 1.41421 * 1000;
 }
 void TMC2660Stepper::rms_current(uint16_t mA) {
-  uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.305 - 1;
+  uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.310 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
     vsense(true);
-    CS = 32.0*1.41421*mA/1000.0*Rsense/0.180 - 1;
+    CS = 32.0*1.41421*mA/1000.0*Rsense/0.165 - 1;
   } else { // If CS >= 16, turn off high_sense_r
     vsense(false);
   }
