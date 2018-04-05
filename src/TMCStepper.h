@@ -554,6 +554,7 @@ class TMC2660Stepper {
 	uint8_t toff();
 
 	// R: DRVSTATUS
+	uint32_t DRV_STATUS() { return DRVSTATUS(); }
 	uint32_t DRVSTATUS();
 	uint16_t mstep();
 	uint8_t se();
