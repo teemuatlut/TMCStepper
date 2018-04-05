@@ -491,6 +491,10 @@ class TMC2660Stepper {
 	uint16_t microsteps();
 	void blank_time(uint8_t value);
 	uint8_t blank_time();
+	void hysteresis_end(int8_t value);
+	int8_t hysteresis_end();
+	void hysteresis_start(uint8_t value);
+	uint8_t hysteresis_start();
 
 	// W: DRVCONF
 	void DRVCONF(uint32_t);

@@ -114,6 +114,12 @@ void TMC2660Stepper::push() {
   DRVCONF(DRVCONF_register.cfg.sr);
 }
 
+void TMC2660Stepper::hysteresis_end(int8_t value) { hend(value+3); }
+int8_t TMC2660Stepper::hysteresis_end() { return hend()-3; };
+
+void TMC2660Stepper::hysteresis_start(uint8_t value) { hstrt(value-1); }
+uint8_t TMC2660Stepper::hysteresis_start() { return hstrt()+1; }
+
 void TMC2660Stepper::microsteps(uint16_t ms) {
   switch(ms) {
     case 256: mres(0); break;
