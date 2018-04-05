@@ -485,6 +485,7 @@ class TMC2660Stepper {
 	void rms_current(uint16_t mA);
 	uint16_t getMilliAmps() {return val_mA;}
 	void push();
+	uint8_t savedToff() { return _savedToff; }
 
 	// Helper functions
 	void microsteps(uint16_t ms);
@@ -625,4 +626,5 @@ class TMC2660Stepper {
 	float holdMultiplier = 0.5;
 	uint32_t spi_speed = 16000000/8; // Default 2MHz
 	bool uses_sw_spi = false;
+	uint8_t _savedToff = 0;
 };

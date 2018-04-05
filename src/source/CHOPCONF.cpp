@@ -56,7 +56,10 @@ void TMC2660Stepper::CHOPCONF(uint32_t data) {
   WRITE_REG(SMARTEN);
 }
 
-void TMC2660Stepper::toff(uint8_t B) 	{ SET_REG(toff);	}
+void TMC2660Stepper::toff(uint8_t B) 	{
+	SET_REG(toff);
+	if (B>0) _savedToff = B;
+}
 void TMC2660Stepper::hstrt(uint8_t B) 	{ SET_REG(hstrt); 	}
 void TMC2660Stepper::hend(uint8_t B) 	{ SET_REG(hend);	}
 void TMC2660Stepper::hdec(uint8_t B) 	{ SET_REG(hdec);	}
