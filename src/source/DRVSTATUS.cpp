@@ -6,10 +6,10 @@
 #define GET_REG10(SETTING) DRVSTATUS(); return READ_RDSEL10_register.cfg.opt.SETTING
 
 uint32_t TMC2660Stepper::DRVSTATUS() {
-	uint32_t response = read();
-	READ_RDSEL00_register.cfg.sr |= response & 0xFF;
-	READ_RDSEL01_register.cfg.sr |= response & 0xFF;
-	READ_RDSEL10_register.cfg.sr |= response & 0xFF;
+	uint32_t response = read()&0xFFCFF;
+	READ_RDSEL00_register.cfg.sr = response & 0xFF;
+	READ_RDSEL01_register.cfg.sr = response & 0xFF;
+	READ_RDSEL10_register.cfg.sr = response & 0xFF;
 	switch(rdsel()) {
 		case 0b00: READ_RDSEL00_register.cfg.sr |= response & 0xFFC00; break;
 		case 0b01: READ_RDSEL01_register.cfg.sr |= response & 0xFFC00; break;
