@@ -11,7 +11,7 @@ TMCStepper::TMCStepper(uint8_t pinEN, uint8_t pinCS) {
   //begin();
 }
 */
-TMC5130Stepper::TMC5130Stepper(uint8_t pinCS) : TMC2130Stepper(pinCS, 0.15) {}
+TMC5130Stepper::TMC5130Stepper(uint16_t pinCS) : TMC2130Stepper(pinCS, 0.15) {}
 
 /*
 uint32_t TMC5130Stepper::setBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos, uint8_t B) {

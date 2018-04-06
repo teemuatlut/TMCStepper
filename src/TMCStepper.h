@@ -19,7 +19,7 @@ const uint32_t TMCStepper_version = 0x10100; // v1.1.0
 
 class TMC2130Stepper {
 	public:
-	TMC2130Stepper(uint8_t pinCS, float RS);
+	TMC2130Stepper(uint16_t pinCS, float RS);
 	TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 	void begin();
 	void setSPISpeed(uint32_t speed);
@@ -272,7 +272,7 @@ class TMC2130Stepper {
 	INIT_REGISTER(ENCM_CTRL){0x72, {0,0}};
 	INIT_REGISTER(LOST_STEPS){0x73};
 
-	uint8_t _pinCS;
+	uint16_t _pinCS;
 	float Rsense;
 	bool _started;
 	uint8_t status_response;
@@ -285,7 +285,7 @@ class TMC2130Stepper {
 
 class TMC5130Stepper : public TMC2130Stepper {
 	public:
-	TMC5130Stepper(uint8_t pinCS);
+	TMC5130Stepper(uint16_t pinCS);
 	//uint32_t setBits(uint32_t reg, uint32_t bitmask, uint8_t bitpos, uint8_t B);
 	//uint32_t getBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos);
 	void begin();
@@ -474,7 +474,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 
 class TMC2660Stepper {
 	public:
-	TMC2660Stepper(uint8_t pinCS, float RS);
+	TMC2660Stepper(uint16_t pinCS, float RS);
 	TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 	void write(uint8_t addressByte, uint32_t config);
 	uint32_t read();
@@ -618,7 +618,7 @@ class TMC2660Stepper {
 	INIT_REGISTER(READ_RDSEL01){{0,0,0,0,0,0,0,0,0}};
 	INIT_REGISTER(READ_RDSEL10){{0,0,0,0,0,0,0,0,0,0}};
 
-	uint8_t _pinCS;
+	uint16_t _pinCS;
 	float Rsense;
 	bool _started;
 	uint8_t status_response;

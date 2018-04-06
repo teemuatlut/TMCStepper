@@ -1,7 +1,7 @@
 #include "TMCStepper.h"
 #include "SW_SPI.h"
 
-TMC2660Stepper::TMC2660Stepper(uint8_t pinCS, float RS) {
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) {
   this->_pinCS = pinCS;
   Rsense = RS;
 }
