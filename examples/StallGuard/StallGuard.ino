@@ -1,7 +1,7 @@
 /**
  * Author Teemu Mäntykallio
  * 
- * Plot TMC2130 motor load using the stallGuard value.
+ * Plot TMC2130 or TMC2660 motor load using the stallGuard value.
  * You can finetune the reading by changing the STALL_VALUE.
  * This will let you control at which load the value will read 0
  * and the stall flag will be triggered. This will also set pin DIAG1 high.
@@ -14,40 +14,64 @@
  * + Speed up
  * - Slow down
  */
+#include <TMCStepper.h>
+
 #define MAX_SPEED  40 // In timer value
 #define MIN_SPEED  1000
 
-#define STALL_VALUE 0 // [-64..63]
+#define STALL_VALUE 15 // [-64..63]
 
 // Note: You also have to connect GND, 5V and VM.
 //       A connection diagram can be found in the schematics.
-#define EN_PIN    38  // Nano v3:  16 Mega:  38  //enable (CFG6)
-#define DIR_PIN   55  //           19        55  //direction
-#define STEP_PIN  54  //           18        54  //step
-#define CS_PIN    40  //           17        64  //chip select
+#define EN_PIN        38    // Enable
+#define DIR_PIN       55    // Direction
+#define STEP_PIN      54    // Step
+#define STEP_PORT     PORTF // Match with STEP_PIN
+#define STEP_BIT_POS  0     // Match with STEP_PIN
+#define CS_PIN        38    // Chip select
+#define SW_MOSI       66    // Software Master Out Slave In (MOSI)
+#define SW_MISO       44    // Software Master In Slave Out (MISO)
+#define SW_SCK        64    // Software Slave Clock (SCK)
 
-#include <SPI.h>
-#include <TMC2130Stepper.h>
-TMC2130Stepper TMC2130 = TMC2130Stepper(EN_PIN, DIR_PIN, STEP_PIN, CS_PIN);
+#define R_SENSE 0.11 // Match to your driver
+                     // SilentStepStick series use 0.11
+                     // UltiMachine Einsy and Archim2 boards use 0.2
+                     // Panucatt BSD2660 uses 0.1
+
+// Select your stepper driver type
+//#define USING_TMC2660 // Uncomment if you are using TMC2660 driver
+//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE); // Hardware SPI
+//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
+//TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE); // Hardware SPI
+//TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
 
 void setup() {
-  //init serial port
-  {
-	  Serial.begin(250000); //init serial port and set baudrate
-	  while(!Serial); //wait for serial port to connect (needed for Leonardo only)
-	  Serial.println("\nStart...");
-    TMC2130.begin();
-	}
+  Serial.begin(250000);         // Init serial port and set baudrate
+  while(!Serial);               // Wait for serial port to connect
+  Serial.println("\nStart...");
 
-  //set TMC2130 config
-  {
-		TMC2130.rms_current(600); // mA
-		TMC2130.microsteps(16);
-		TMC2130.diag1_stall(1);
-		TMC2130.diag1_active_high(1);
-		TMC2130.coolstep_min_speed(0xFFFFF); // 20bit max
-		TMC2130.sg_stall_value(STALL_VALUE);
-  }
+  pinMode(EN_PIN, OUTPUT);
+  pinMode(STEP_PIN, OUTPUT);
+  pinMode(CS_PIN, OUTPUT);
+  pinMode(DIR_PIN, OUTPUT);
+  digitalWrite(EN_PIN, LOW);
+
+  driver.begin();
+  driver.toff(4);
+  driver.blank_time(24);
+  driver.rms_current(400); // mA
+  driver.microsteps(16);
+  driver.sfilt(true); // Improves TMC2660 SG readout
+  #ifdef USING_TMC2660
+    driver.rdsel(0b01);
+  #else
+    driver.TCOOLTHRS(0xFFFFF); // 20bit max
+    driver.THIGH(0);
+  #endif
+  driver.semin(5);
+  driver.semax(2);
+  driver.sedn(0b01);
+  driver.sgt(STALL_VALUE);
 
   // Set stepper interrupt
   {
@@ -64,14 +88,11 @@ void setup() {
     TIMSK1 |= (1 << OCIE1A);
     sei();//allow interrupts
   }
-
-  //TMC2130 outputs on (LOW active)
-  digitalWrite(EN_PIN, LOW);
 }
 
 ISR(TIMER1_COMPA_vect){
-  PORTF |= 1 << 0;
-  PORTF &= ~(1 << 0);
+  STEP_PORT |= 1 << STEP_BIT_POS;
+  STEP_PORT &= ~(1 << STEP_BIT_POS);
 }
 
 void loop()
@@ -80,18 +101,23 @@ void loop()
   uint32_t ms = millis();
 
   while(Serial.available() > 0) {
-  	int8_t read_byte = Serial.read();
-  	if (read_byte == '0') 		 { TIMSK1 &= ~(1 << OCIE1A); digitalWrite( EN_PIN, HIGH ); }
-  	else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); digitalWrite( EN_PIN,  LOW ); }
-    else if (read_byte == '+') if (OCR1A > MAX_SPEED) OCR1A -= 20;
-    else if (read_byte == '-') if (OCR1A < MIN_SPEED) OCR1A += 20;
+    int8_t read_byte = Serial.read();
+    #ifdef USING_TMC2660
+      if (read_byte == '0')      { TIMSK1 &= ~(1 << OCIE1A); driver.toff(0); }
+      else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); driver.toff(driver.savedToff()); }
+    #else
+      if (read_byte == '0')      { TIMSK1 &= ~(1 << OCIE1A); digitalWrite( EN_PIN, HIGH ); }
+      else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); digitalWrite( EN_PIN,  LOW ); }
+    #endif
+    else if (read_byte == '+') { if (OCR1A > MAX_SPEED) OCR1A -= 20; }
+    else if (read_byte == '-') { if (OCR1A < MIN_SPEED) OCR1A += 20; }
   }
     
   if((ms-last_time) > 100) //run every 0.1s
   {
     last_time = ms;   
     Serial.print("0 ");
-    Serial.println(TMC2130.sg_result(), DEC);
+    Serial.println(driver.sg_result(), DEC);
   }
 }
 
