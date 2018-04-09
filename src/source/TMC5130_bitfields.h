@@ -51,10 +51,12 @@ struct reg_RAMPMODE {
 
 struct reg_XACTUAL {
   uint8_t address;
+  uint32_t sr;
 };
 
 struct reg_VACTUAL {
   uint8_t address;
+
 };
 
 struct reg_VSTART {
@@ -256,22 +258,6 @@ struct reg_MSLUTSTART {
               start_sin90 : 8;
     } opt;
     uint32_t sr : 24;
-  } cfg;
-};
-
-struct reg_MSCNT {
-  uint8_t address;
-};
-
-struct reg_MSCURACT {
-  uint8_t address;
-  union {
-    struct {
-      uint16_t  cur_a : 9,
-                      : 7,
-                cur_b : 9;
-    } opt;
-    uint32_t sr : 25;
   } cfg;
 };
 

@@ -10,6 +10,7 @@
 #include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC5130_bitfields.h"
+#include "source/TMC2208_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
 #define INIT_REGISTER(REG) reg_##REG REG##_register = reg_##REG
@@ -17,25 +18,17 @@
 
 const uint32_t TMCStepper_version = 0x10100; // v1.1.0
 
-class TMC2130Stepper {
+class TMCStepper {
 	public:
-	TMC2130Stepper(uint16_t pinCS, float RS);
-	TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
-	void begin();
-	void setSPISpeed(uint32_t speed);
-	void switchCSpin(bool state);
-	void checkStatus();
 	virtual void rms_current(uint16_t mA);
 	virtual void rms_current(uint16_t mA, float mult);
 	virtual uint16_t rms_current();
 	void hold_multiplier(float val) { holdMultiplier = val; }
 	float hold_multiplier() { return holdMultiplier; }
 	bool checkOT();
-	bool getOTPW();
-	void clear_otpw();
-	bool isEnabled();
-	uint16_t getMilliAmps() {return val_mA;}
-	void push();
+	bool getOTPW() { return flag_otpw; }
+	void clear_otpw() { flag_otpw = 0; }
+	uint16_t getMilliAmps() { return val_mA; }
 	uint8_t test_connection();
 
 	// Helper functions
@@ -47,6 +40,78 @@ class TMC2130Stepper {
 	int8_t hysteresis_end();
 	void hysteresis_start(uint8_t value);
 	uint8_t hysteresis_start();
+
+	// R+WC: GSTAT
+	void 	GSTAT(							uint8_t input);
+	uint8_t GSTAT();
+	bool 	reset();
+	bool 	drv_err();
+	bool 	uv_cp();
+
+	// W: IHOLD_IRUN
+	void IHOLD_IRUN(					uint32_t input);
+	uint32_t IHOLD_IRUN();
+	void 	ihold(							uint8_t B);
+	void 	irun(								uint8_t B);
+	void 	iholddelay(					uint8_t B);
+	uint8_t ihold();
+	uint8_t irun();
+	uint8_t iholddelay();
+
+	// TPOWERDOWN
+	uint8_t TPOWERDOWN();
+	void TPOWERDOWN(					uint8_t input);
+
+	// TSTEP
+	uint32_t TSTEP();
+
+	// TPWMTHRS
+	uint32_t TPWMTHRS();
+	void TPWMTHRS(						uint32_t input);
+
+	protected:
+		INIT_REGISTER(GSTAT){0x01, {0,0,0}};
+		INIT_REGISTER(IHOLD_IRUN){0x10, {0,0,0}};
+		INIT_REGISTER(TPOWERDOWN){0x11, 0};
+		INIT_REGISTER(TSTEP){0x12};
+		INIT_REGISTER(TPWMTHRS){0x13, 0};
+
+		static constexpr uint8_t TMC_READ = 0x00,
+														TMC_WRITE = 0x80;
+		virtual void write(uint8_t, uint32_t) = 0;
+		virtual uint32_t read(uint8_t) = 0;
+		virtual void vsense(bool) = 0;
+		virtual bool vsense(void) = 0;
+		virtual bool otpw(void) = 0;
+		virtual uint32_t DRV_STATUS() = 0;
+		virtual void hend(uint8_t) = 0;
+		virtual uint8_t hend() = 0;
+		virtual void hstrt(uint8_t) = 0;
+		virtual uint8_t hstrt() = 0;
+		virtual void mres(uint8_t) = 0;
+		virtual uint8_t mres() = 0;
+		virtual void tbl(uint8_t) = 0;
+		virtual uint8_t tbl() = 0;
+
+		float Rsense;
+		bool _started = 0;
+		bool flag_otpw = false;
+		uint16_t val_mA = 0;
+		float holdMultiplier = 0.5;
+};
+
+class TMC2130Stepper : public TMCStepper {
+	public:
+	TMC2130Stepper(uint16_t pinCS, float RS);
+	TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+	void begin();
+	void setSPISpeed(uint32_t speed);
+	void switchCSpin(bool state);
+	//void checkStatus();
+	bool isEnabled();
+	void push();
+
+	// Helper functions
 	void sg_current_decrease(uint8_t value);
 	uint8_t sg_current_decrease();
 
@@ -88,13 +153,6 @@ class TMC2130Stepper {
 	bool stop_enable();
 	bool direct_mode();
 
-	// GSTAT
-	void 	GSTAT(							uint8_t input);
-	uint8_t GSTAT();
-	bool 	reset();
-	bool 	drv_err();
-	bool 	uv_cp();
-
 	// IOIN
 	uint32_t IOIN();
 	bool step();
@@ -104,27 +162,6 @@ class TMC2130Stepper {
 	bool drv_enn_cfg6();
 	bool dco();
 	uint8_t version();
-
-	// IHOLD_IRUN
-	void IHOLD_IRUN(					uint32_t input);
-	uint32_t IHOLD_IRUN();
-	void 	ihold(							uint8_t B);
-	void 	irun(								uint8_t B);
-	void 	iholddelay(					uint8_t B);
-	uint8_t ihold();
-	uint8_t irun();
-	uint8_t iholddelay();
-
-	// TPOWERDOWN
-	uint8_t TPOWERDOWN();
-	void TPOWERDOWN(					uint8_t input);
-
-	// TSTEP
-	uint32_t TSTEP();
-
-	// TPWMTHRS
-	uint32_t TPWMTHRS();
-	void TPWMTHRS(						uint32_t input);
 
 	// TCOOLTHRS
 	uint32_t TCOOLTHRS();
@@ -151,7 +188,7 @@ class TMC2130Stepper {
 	void CHOPCONF(						uint32_t value);
 	void toff(								uint8_t B);
 	void hstrt(								uint8_t B);
-	void hend(								int8_t  B);
+	void hend(								uint8_t B);
 	//void fd(									uint8_t B);
 	void disfdcc(							bool 		B);
 	void rndtf(								bool 		B);
@@ -167,7 +204,7 @@ class TMC2130Stepper {
 	void diss2g(							bool 		B);
 	uint8_t toff();
 	uint8_t hstrt();
-	int8_t  hend();
+	uint8_t hend();
 	//uint8_t fd();
 	bool 	disfdcc();
 	bool 	rndtf();
@@ -247,19 +284,11 @@ class TMC2130Stepper {
 	// Function aliases
 
 	//protected:
-
-	static constexpr uint8_t TMC_READ = 0x00,
-													TMC_WRITE = 0x80;
-	virtual void write(uint8_t addressByte, uint32_t config);
-	virtual uint32_t read(uint8_t addressByte);
+	void write(uint8_t addressByte, uint32_t config);
+	uint32_t read(uint8_t addressByte);
 
 	INIT_REGISTER(GCONF){0x00, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-	INIT_REGISTER(IHOLD_IRUN){0x10, {0,0,0}};
-	INIT_REGISTER(GSTAT){0x01, {0,0,0}};
 	INIT_REGISTER(IOIN){0x04, {0,0,0,0,0,0,0}};
-	INIT_REGISTER(TPOWERDOWN){0x11, 0};
-	INIT_REGISTER(TSTEP){0x12};
-	INIT_REGISTER(TPWMTHRS){0x13, 0};
 	INIT_REGISTER(TCOOLTHRS){0x14, 0};
 	INIT_REGISTER(THIGH){0x15, 0};
 	INIT_REGISTER(XDIRECT){0x2D, {0,0}};
@@ -273,12 +302,7 @@ class TMC2130Stepper {
 	INIT_REGISTER(LOST_STEPS){0x73};
 
 	uint16_t _pinCS;
-	float Rsense;
-	bool _started;
 	uint8_t status_response;
-	bool flag_otpw = false;
-	uint16_t val_mA           = 0;
-	float holdMultiplier = 0.5;
 	uint32_t spi_speed = 16000000/8; // Default 2MHz
 	bool uses_sw_spi = false;
 };
@@ -371,7 +395,6 @@ class TMC5130Stepper : public TMC2130Stepper {
 	void clr_enc_x(bool B);
 	void latch_x_act(bool B);
 	void enc_sel_decimal(bool B);
-
 	bool pol_a();
 	bool pol_b();
 	bool pol_n();
@@ -435,7 +458,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 	INIT_REGISTER(OUTPUT){0x04, 0};
 	INIT_REGISTER(X_COMPARE){0x05, 0};
 	INIT_REGISTER(RAMPMODE){0x20, 0};
-	INIT_REGISTER(XACTUAL){0x21};
+	INIT_REGISTER(XACTUAL){0x21, 0};
 	INIT_REGISTER(VACTUAL){0x22};
 	INIT_REGISTER(VSTART){0x23, 0};
 	INIT_REGISTER(A1){0x24, 0};
@@ -470,6 +493,210 @@ class TMC5130Stepper : public TMC2130Stepper {
 	INIT_REGISTER(MSCURACT){0x6B, {0,0}};
 	INIT_REGISTER(DCCTRL){0x6E, {0,0}};
 	*/
+};
+
+class TMC2208Stepper : public TMCStepper {
+	public:
+		//TMC2208Stepper(HardwareSerial& serial);
+		TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx=true);
+		TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+		void push();
+		void beginSerial(uint32_t baudrate);
+		bool isEnabled();
+
+		// RW: GCONF
+		void GCONF(uint32_t input);
+		void I_scale_analog(bool B);
+		void internal_Rsense(bool B);
+		void en_spreadCycle(bool B);
+		void shaft(bool B);
+		void index_otpw(bool B);
+		void index_step(bool B);
+		void pdn_disable(bool B);
+		void mstep_reg_select(bool B);
+		void multistep_filt(bool B);
+		uint32_t GCONF();
+		bool I_scale_analog();
+		bool internal_Rsense();
+		bool en_spreadCycle();
+		bool shaft();
+		bool index_otpw();
+		bool index_step();
+		bool pdn_disable();
+		bool mstep_reg_select();
+		bool multistep_filt();
+
+		// R: IFCNT
+		uint8_t IFCNT();
+
+		// W: SLAVECONF
+		void SLAVECONF(uint16_t input);
+		uint16_t SLAVECONF();
+		void senddelay(uint8_t B);
+		uint8_t senddelay();
+
+		// W: OTP_PROG
+		void OTP_PROG(uint16_t input);
+
+		// R: OTP_READ
+		uint32_t OTP_READ();
+
+		// R: IOIN
+		uint32_t IOIN();
+		bool enn();
+		bool ms1();
+		bool ms2();
+		bool diag();
+		bool pdn_uart();
+		bool step();
+		bool sel_a();
+		bool dir();
+		uint8_t version();
+
+		// RW: FACTORY_CONF
+		void FACTORY_CONF(uint16_t input);
+		uint16_t FACTORY_CONF();
+		void fclktrim(uint8_t B);
+		void ottrim(uint8_t B);
+		uint8_t fclktrim();
+		uint8_t ottrim();
+
+		// W: VACTUAL
+		void VACTUAL(uint32_t input);
+		uint32_t VACTUAL();
+
+		// R: MSCNT
+		uint16_t MSCNT();
+
+		// R: MSCURACT
+		uint32_t MSCURACT();
+		int16_t cur_a();
+		int16_t cur_b();
+
+		// RW: CHOPCONF
+		void CHOPCONF(uint32_t input);
+		void toff(uint8_t B);
+		void hstrt(uint8_t B);
+		void hend(uint8_t B);
+		void tbl(uint8_t B);
+		void vsense(bool B);
+		void mres(uint8_t B);
+		void intpol(bool B);
+		void dedge(bool B);
+		void diss2g(bool B);
+		void diss2vs(bool B);
+		uint32_t CHOPCONF();
+		uint8_t toff();
+		uint8_t hstrt();
+		uint8_t hend();
+		uint8_t tbl();
+		bool vsense();
+		uint8_t mres();
+		bool intpol();
+		bool dedge();
+		bool diss2g();
+		bool diss2vs();
+
+		// R: DRV_STATUS
+		uint32_t DRV_STATUS();
+		bool otpw();
+		bool ot();
+		bool s2ga();
+		bool s2gb();
+		bool s2vsa();
+		bool s2vsb();
+		bool ola();
+		bool olb();
+		bool t120();
+		bool t143();
+		bool t150();
+		bool t157();
+		uint16_t cs_actual();
+		bool stealth();
+		bool stst();
+
+		// RW: PWMCONF
+		void PWMCONF(uint32_t input);
+		void pwm_ofs(uint8_t B);
+		void pwm_grad(uint8_t B);
+		void pwm_freq(uint8_t B);
+		void pwm_autoscale(bool B);
+		void pwm_autograd(bool B);
+		void freewheel(uint8_t B);
+		void pwm_reg(uint8_t B);
+		void pwm_lim(uint8_t B);
+		uint32_t PWMCONF();
+		uint8_t pwm_ofs();
+		uint8_t pwm_grad();
+		uint8_t pwm_freq();
+		bool pwm_autoscale();
+		bool pwm_autograd();
+		uint8_t freewheel();
+		uint8_t pwm_reg();
+		uint8_t pwm_lim();
+
+		// R: PWM_SCALE
+		uint32_t PWM_SCALE();
+		uint8_t pwm_scale_sum();
+		int16_t pwm_scale_auto();
+
+		bool isWriteOnly() {return write_only;}
+
+		uint16_t bytesWritten = 0;
+		float Rsense = 0.11;
+		uint16_t replyDelay = 10;
+		bool flag_otpw = false;
+		bool CRCerror = false;
+	protected:
+		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
+		reg_GCONF_2208 GCONF_register = reg_GCONF_2208{0x06, {.sr=0}};
+		INIT_REGISTER(IFCNT)					{0x02};
+		INIT_REGISTER(SLAVECONF)			{0x03, {.sr=0}};
+		INIT_REGISTER(OTP_PROG)				{0x04};
+		INIT_REGISTER(OTP_READ)				{0x05};
+		//INIT_REGISTER(IOIN_2208)			{0x06, {.sr=0}};
+		reg_IOIN_2208 IOIN_register = reg_IOIN_2208{0x06, {.sr=0}};
+		INIT_REGISTER(FACTORY_CONF)		{0x07, {.sr=0}};
+		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
+		reg_VACTUAL_2208 VACTUAL_register = reg_VACTUAL_2208{0x22, 0};
+		INIT_REGISTER(MSCNT)					{0x6A};
+		INIT_REGISTER(MSCURACT)				{0x6B, {.sr=0}};
+		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
+		reg_CHOPCONF_2208 CHOPCONF_register = reg_CHOPCONF_2208{0x6C, {.sr=0}};
+		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};
+		reg_DRV_STATUS_2208 DRV_STATUS_register = reg_DRV_STATUS_2208{0x6F, {.sr=0}};
+		//INIT_REGISTER(PWMCONF_2208)		{0x70, {.sr=0}};
+		reg_PWMCONF_2208 PWMCONF_register = reg_PWMCONF_2208{0x70, {.sr=0}};
+		//INIT_REGISTER(PWM_SCALE_2208)	{0x71, {.sr=0}};
+		reg_PWM_SCALE_2208 PWM_SCALE_register = reg_PWM_SCALE_2208{0x71, {.sr=0}};
+		INIT_REGISTER(PWM_AUTO)				{0x72, {0,0}};
+
+		void * SerialObject;
+		void write(uint8_t, uint32_t);
+		uint32_t read(uint8_t);
+		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
+		static constexpr uint8_t  TMC2208_SYNC = 0x05,
+															TMC2208_SLAVE_ADDR = 0x00;
+		bool write_only;
+		bool uses_sw_serial;
+		uint16_t mA_val = 0;
+};
+
+class TMC2224Stepper : public TMC2208Stepper {
+	public:
+		uint32_t IOIN();
+		bool enn();
+		bool ms1();
+		bool ms2();
+		bool pdn_uart();
+		bool spread();
+		bool step();
+		bool sel_a();
+		bool dir();
+		uint8_t version();
+	protected:
+		reg_IOIN_2224 IOIN_register = reg_IOIN_2224{0x06, {.sr=0}};
+
 };
 
 class TMC2660Stepper {
