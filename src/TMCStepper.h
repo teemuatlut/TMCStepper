@@ -6,6 +6,7 @@
 	#include <Arduino.h>
 #endif
 
+#include <Stream.h>
 #include <SPI.h>
 #include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"

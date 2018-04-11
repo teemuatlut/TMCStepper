@@ -1,5 +1,6 @@
 #include <Stream.h>
 #include "TMCStepper.h"
+#include <HardwareSerial.h>
 #include <SoftwareSerial.h>
 #include "TMC_MACROS.h"
 
