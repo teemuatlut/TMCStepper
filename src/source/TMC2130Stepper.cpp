@@ -24,8 +24,8 @@ void TMC2130Stepper::switchCSpin(bool state) {
 
 uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   uint32_t out = 0UL;
-  switchCSpin(LOW);
   if (uses_sw_spi) {
+    switchCSpin(LOW);
     TMC_SW_SPI.transfer(addressByte & 0xFF);
     TMC_SW_SPI.transfer16(0x0000); // Clear SPI
     TMC_SW_SPI.transfer16(0x0000);
@@ -45,6 +45,7 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   } else {
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
+    switchCSpin(LOW);
     SPI.transfer(addressByte & 0xFF);
     SPI.transfer16(0x0000); // Clear SPI
     SPI.transfer16(0x0000);
@@ -70,14 +71,15 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   //Serial.print("\naddressByte="); Serial.print(addressByte, HEX);
   //Serial.print(" - config="); print_HEX(config);
-  switchCSpin(LOW);
   if (uses_sw_spi) {
+    switchCSpin(LOW);
     status_response = TMC_SW_SPI.transfer(addressByte & 0xFF);
     TMC_SW_SPI.transfer16((config>>16) & 0xFFFF);
     TMC_SW_SPI.transfer16(config & 0xFFFF);
   } else {
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
+    switchCSpin(LOW);
     status_response = SPI.transfer(addressByte & 0xFF);
     SPI.transfer16((config>>16) & 0xFFFF);
     SPI.transfer16(config & 0xFFFF);
