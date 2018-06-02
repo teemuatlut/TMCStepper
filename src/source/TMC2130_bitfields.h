@@ -206,11 +206,7 @@ struct reg_PWMCONF {
     };
   };
 };
-/*
-struct reg_PWM_SCALE {
-  uint8_t address;
-};
-*/
+
 struct reg_ENCM_CTRL {
   uint8_t address;
   union {

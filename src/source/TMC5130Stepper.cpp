@@ -1,48 +1,8 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-/*
-TMCStepper::TMCStepper(uint8_t pinEN, uint8_t pinCS) {
-  _started = false;
-
-  this->_pinEN = pinEN;
-  this->_pinCS = pinCS;
-
-  //begin();
-}
-*/
 TMC5130Stepper::TMC5130Stepper(uint16_t pinCS) : TMC2130Stepper(pinCS, 0.15) {}
 
-/*
-uint32_t TMC5130Stepper::setBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos, uint8_t B) {
-  
-  Serial.print("setBits(0b");
-  Serial.print(sr, BIN);
-  Serial.print(", 0x");
-  Serial.print(bitmask, HEX);
-  Serial.print(", ");
-  Serial.print(bitpos);
-  Serial.print(", 0b");
-  Serial.print(B, BIN);
-  Serial.println(')');
-  ^
-  sr &= ~bitmask; // Clear config area
-  
-  Serial.print("sr=");
-  Serial.println(sr);
-  
-  sr |= ((uint32_t)B<<bitpos)&bitmask; // Set bits
-  
-  Serial.print("sr=");
-  Serial.println(sr);
-  
-  return sr;
-}
-
-uint32_t TMC5130Stepper::getBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos) {
-  return (sr&bitmask) >> bitpos;
-}
-*/
 void TMC5130Stepper::begin() {
   //set pins
   pinMode(_pinCS, OUTPUT);
