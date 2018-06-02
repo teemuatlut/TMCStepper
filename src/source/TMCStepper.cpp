@@ -116,8 +116,7 @@ uint8_t TMCStepper::GSTAT()  {
   GSTAT_register.cfg.sr = READ_REG(GSTAT);
   return GSTAT_register.cfg.sr;
 }
-void  TMCStepper::GSTAT(uint8_t input){
-  (void)(input);
+void  TMCStepper::GSTAT(uint8_t){
   write(GSTAT_register.address, 0b111);
 }
 bool  TMCStepper::reset()    { GSTAT(); return GSTAT_register.cfg.opt.reset; }
