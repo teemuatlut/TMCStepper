@@ -1,12 +1,12 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) SHORT_CONF_register.cfg.opt.SETTING = B; WRITE_REG(SHORT_CONF);
-#define GET_REG(SETTING) return SHORT_CONF_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) SHORT_CONF_register.SETTING = B; WRITE_REG(SHORT_CONF);
+#define GET_REG(SETTING) return SHORT_CONF_register.SETTING;
 
-uint32_t TMC5160Stepper::SHORT_CONF() { return SHORT_CONF_register.cfg.sr; }
+uint32_t TMC5160Stepper::SHORT_CONF() { return SHORT_CONF_register.sr; }
 void TMC5160Stepper::SHORT_CONF(uint32_t input) {
-	SHORT_CONF_register.cfg.sr = input;
+	SHORT_CONF_register.sr = input;
 	WRITE_REG(SHORT_CONF);
 }
 

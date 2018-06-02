@@ -113,15 +113,15 @@ uint8_t TMCStepper::blank_time() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // R+C: GSTAT
 uint8_t TMCStepper::GSTAT()  {
-  GSTAT_register.cfg.sr = READ_REG(GSTAT);
-  return GSTAT_register.cfg.sr;
+  GSTAT_register.sr = READ_REG(GSTAT);
+  return GSTAT_register.sr;
 }
 void  TMCStepper::GSTAT(uint8_t){
   write(GSTAT_register.address, 0b111);
 }
-bool  TMCStepper::reset()    { GSTAT(); return GSTAT_register.cfg.opt.reset; }
-bool  TMCStepper::drv_err()  { GSTAT(); return GSTAT_register.cfg.opt.drv_err; }
-bool  TMCStepper::uv_cp()    { GSTAT(); return GSTAT_register.cfg.opt.uv_cp; }
+bool  TMCStepper::reset()    { GSTAT(); return GSTAT_register.reset; }
+bool  TMCStepper::drv_err()  { GSTAT(); return GSTAT_register.drv_err; }
+bool  TMCStepper::uv_cp()    { GSTAT(); return GSTAT_register.uv_cp; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: TPOWERDOWN
 uint8_t TMCStepper::TPOWERDOWN() { return TPOWERDOWN_register.sr; }

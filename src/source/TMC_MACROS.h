@@ -7,7 +7,7 @@
 #else
 #define DEBUG_PRINT(CFG, VAL) Serial.print(CFG); Serial.print('('); Serial.print(VAL, HEX); Serial.println(')')
 //#define BMBP(SETTING) SETTING##_bm[driverType], SETTING##_bp[driverType]
-#define WRITE_REG(R) write(R##_register.address, R##_register.cfg.sr)
+#define WRITE_REG(R) write(R##_register.address, R##_register.sr)
 #define READ_REG(R) read(R##_register.address)
 #endif
 

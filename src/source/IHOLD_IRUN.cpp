@@ -1,13 +1,13 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) IHOLD_IRUN_register.cfg.opt.SETTING = B; WRITE_REG(IHOLD_IRUN);
-#define GET_REG(SETTING) return IHOLD_IRUN_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) IHOLD_IRUN_register.SETTING = B; WRITE_REG(IHOLD_IRUN);
+#define GET_REG(SETTING) return IHOLD_IRUN_register.SETTING;
 
 // IHOLD_IRUN
-uint32_t TMCStepper::IHOLD_IRUN() { return IHOLD_IRUN_register.cfg.sr; }
+uint32_t TMCStepper::IHOLD_IRUN() { return IHOLD_IRUN_register.sr; }
 void TMCStepper::IHOLD_IRUN(uint32_t input) {
-	IHOLD_IRUN_register.cfg.sr = input;
+	IHOLD_IRUN_register.sr = input;
 	WRITE_REG(IHOLD_IRUN);
 }
 

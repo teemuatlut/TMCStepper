@@ -1,13 +1,13 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) COOLCONF_register.cfg.opt.SETTING = B; WRITE_REG(COOLCONF);
-#define GET_REG(SETTING) COOLCONF(); return COOLCONF_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) COOLCONF_register.SETTING = B; WRITE_REG(COOLCONF);
+#define GET_REG(SETTING) COOLCONF(); return COOLCONF_register.SETTING;
 
 // COOLCONF
-uint32_t TMC2130Stepper::COOLCONF() { return COOLCONF_register.cfg.sr; }
+uint32_t TMC2130Stepper::COOLCONF() { return COOLCONF_register.sr; }
 void TMC2130Stepper::COOLCONF(uint32_t input) {
-	COOLCONF_register.cfg.sr = input;
+	COOLCONF_register.sr = input;
 	WRITE_REG(COOLCONF);
 }
 
@@ -28,6 +28,6 @@ bool 	TMC2130Stepper::sfilt()	{ GET_REG(sfilt);	}
 
 int8_t TMC2130Stepper::sgt() {
 	// Two's complement in a 7bit value
-	int8_t val = COOLCONF_register.cfg.opt.sgt;
+	int8_t val = COOLCONF_register.sgt;
 	return val <= 63 ? val : val - 128;
 }

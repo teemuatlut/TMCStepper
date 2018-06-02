@@ -7,17 +7,18 @@ struct reg_IFCNT {
 struct reg_SLAVECONF {
   uint8_t address;
   union {
+    uint16_t sr : 12;
     struct {
       uint8_t slaveaddr : 8;
       uint8_t senddelay : 4;
-    } opt;
-    uint16_t sr : 12;
-  } cfg;
+    };
+  };
 };
 
 struct reg_IOIN_5130 {
   uint8_t address;
   union {
+    uint32_t sr;
     struct {
       bool  refl_step : 1,
             refr_dir : 1,
@@ -29,9 +30,8 @@ struct reg_IOIN_5130 {
             swcomp_in : 1;
       uint16_t : 16;
       uint8_t version : 8;
-    } opt;
-    uint32_t sr;
-  } cfg;
+    };
+  };
 };
 
 struct reg_OUTPUT {
@@ -111,6 +111,7 @@ struct reg_XTARGET {
 struct reg_SW_MODE {
   uint8_t address;
   union {
+    uint16_t sr : 12;
     struct {
       bool  stop_l_enable : 1,
             stop_r_enable : 1,
@@ -124,14 +125,14 @@ struct reg_SW_MODE {
             en_latch_encoder : 1,
             sg_stop : 1,
             en_softstop : 1;
-    } opt;
-    uint16_t sr : 12;
-  } cfg;
+    };
+  };
 };
 
 struct reg_RAMP_STAT {
   uint8_t address;
   union {
+    uint16_t sr : 14;
     struct {
       bool  status_stop_l : 1,
             status_stop_r : 1,
@@ -147,9 +148,8 @@ struct reg_RAMP_STAT {
             t_zerowait_active : 1,
             second_move : 1,
             status_sg : 1;
-    } opt;
-    uint16_t sr : 14;
-  } cfg;
+    };
+  };
 };
 
 struct reg_XLATCH {
@@ -159,6 +159,7 @@ struct reg_XLATCH {
 struct reg_ENCMODE {
   uint8_t address;
   union {
+    uint16_t sr : 11;
     struct {
       bool  pol_a : 1,
             pol_b : 1,
@@ -171,9 +172,8 @@ struct reg_ENCMODE {
             clr_enc_x : 1,
             latch_x_act : 1,
             enc_sel_decimal : 1;
-    } opt;
-    uint16_t sr : 11;
-  } cfg;
+    };
+  };
 };
 
 struct reg_X_ENC {
@@ -236,6 +236,7 @@ struct reg_MSLUT7 {
 struct reg_MSLUTSEL {
   uint8_t address;
   union {
+    uint32_t sr;
     struct {
       uint8_t w0 : 2,
               w1 : 2,
@@ -244,31 +245,30 @@ struct reg_MSLUTSEL {
               x1 : 8,
               x2 : 8,
               x3 : 8;
-    } opt;
-    uint32_t sr;
-  } cfg;
+    };
+  };
 };
 
 struct reg_MSLUTSTART {
   uint8_t address;
   union {
+    uint32_t sr : 24;
     struct {
       uint8_t start_sin : 8,
                         : 8,
               start_sin90 : 8;
-    } opt;
-    uint32_t sr : 24;
-  } cfg;
+    };
+  };
 };
 
 struct reg_DCCTRL {
   uint8_t address;
   union {
+    uint32_t sr : 24;
     struct {
       uint16_t dc_time : 10,
                        : 5;
       uint8_t dc_sg : 8;
-    } opt;
-    uint32_t sr : 24;
-  } cfg;
+    };
+  };
 };

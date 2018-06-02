@@ -1,12 +1,12 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) DRVCONF_register.cfg.opt.SETTING = B; WRITE_REG(DRVCONF);
-#define GET_REG(SETTING) return DRVCONF_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) DRVCONF_register.SETTING = B; WRITE_REG(DRVCONF);
+#define GET_REG(SETTING) return DRVCONF_register.SETTING;
 
-uint32_t TMC2660Stepper::DRVCONF() { return DRVCONF_register.cfg.sr; }
+uint32_t TMC2660Stepper::DRVCONF() { return DRVCONF_register.sr; }
 void TMC2660Stepper::DRVCONF(uint32_t data) {
-  DRVCONF_register.cfg.sr = data;
+  DRVCONF_register.sr = data;
   WRITE_REG(DRVCONF);
 }
 

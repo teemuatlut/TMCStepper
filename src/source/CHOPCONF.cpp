@@ -1,16 +1,16 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) CHOPCONF_register.cfg.opt.SETTING = B; WRITE_REG(CHOPCONF);
-#define GET_REG(SETTING) CHOPCONF(); return CHOPCONF_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) CHOPCONF_register.SETTING = B; WRITE_REG(CHOPCONF);
+#define GET_REG(SETTING) CHOPCONF(); return CHOPCONF_register.SETTING;
 
 // CHOPCONF
 uint32_t TMC2130Stepper::CHOPCONF() {
-	CHOPCONF_register.cfg.sr = READ_REG(CHOPCONF);
-	return CHOPCONF_register.cfg.sr;
+	CHOPCONF_register.sr = READ_REG(CHOPCONF);
+	return CHOPCONF_register.sr;
 }
 void TMC2130Stepper::CHOPCONF(uint32_t input) {
-	CHOPCONF_register.cfg.sr = input;
+	CHOPCONF_register.sr = input;
 	WRITE_REG(CHOPCONF);
 }
 
@@ -49,13 +49,13 @@ bool 	TMC2130Stepper::dedge()		{ GET_REG(dedge);	}
 bool 	TMC2130Stepper::diss2g()	{ GET_REG(diss2g);	}
 
 void TMC2208Stepper::CHOPCONF(uint32_t input) {
-	CHOPCONF_register.cfg.sr = input;
+	CHOPCONF_register.sr = input;
 	WRITE_REG(CHOPCONF);
 }
 uint32_t TMC2208Stepper::CHOPCONF() {
-	if (write_only) return CHOPCONF_register.cfg.sr;
-	CHOPCONF_register.cfg.sr = READ_REG(CHOPCONF);
-	return CHOPCONF_register.cfg.sr;
+	if (write_only) return CHOPCONF_register.sr;
+	CHOPCONF_register.sr = READ_REG(CHOPCONF);
+	return CHOPCONF_register.sr;
 }
 void TMC2208Stepper::toff	( uint8_t  B )	{ SET_REG(toff); 	}
 void TMC2208Stepper::hstrt	( uint8_t  B )	{ SET_REG(hstrt); 	}
@@ -79,11 +79,11 @@ bool 	TMC2208Stepper::dedge()		{ GET_REG(dedge); 	}
 bool 	TMC2208Stepper::diss2g()	{ GET_REG(diss2g); 	}
 bool 	TMC2208Stepper::diss2vs()	{ GET_REG(diss2vs); }
 
-#define GET_REG_2660(SETTING) return CHOPCONF_register.cfg.opt.SETTING;
+#define GET_REG_2660(SETTING) return CHOPCONF_register.SETTING;
 
-uint32_t TMC2660Stepper::CHOPCONF() { return CHOPCONF_register.cfg.sr; }
+uint32_t TMC2660Stepper::CHOPCONF() { return CHOPCONF_register.sr; }
 void TMC2660Stepper::CHOPCONF(uint32_t data) {
-  SMARTEN_register.cfg.sr = data;
+  SMARTEN_register.sr = data;
   WRITE_REG(SMARTEN);
 }
 

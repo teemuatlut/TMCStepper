@@ -1,11 +1,11 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define GET_REG(SETTING) DRV_STATUS(); return DRV_STATUS_register.cfg.opt.SETTING;
+#define GET_REG(SETTING) DRV_STATUS(); return DRV_STATUS_register.SETTING;
 
 uint32_t TMC2130Stepper::DRV_STATUS() {
-	DRV_STATUS_register.cfg.sr = READ_REG(DRV_STATUS);
-	return DRV_STATUS_register.cfg.sr;
+	DRV_STATUS_register.sr = READ_REG(DRV_STATUS);
+	return DRV_STATUS_register.sr;
 }
 
 uint16_t TMC2130Stepper::sg_result(){ GET_REG(sg_result); 	}
@@ -22,8 +22,8 @@ bool TMC2130Stepper::stst()			{ GET_REG(stst); 		}
 
 uint32_t TMC2208Stepper::DRV_STATUS() {
 	if (write_only) return 0;
-	DRV_STATUS_register.cfg.sr = READ_REG(DRV_STATUS);
-	return DRV_STATUS_register.cfg.sr;
+	DRV_STATUS_register.sr = READ_REG(DRV_STATUS);
+	return DRV_STATUS_register.sr;
 }
 
 bool 		TMC2208Stepper::otpw()		{ GET_REG(otpw); 		}

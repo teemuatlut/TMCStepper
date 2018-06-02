@@ -1,12 +1,12 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) SMARTEN_register.cfg.opt.SETTING = B; WRITE_REG(SMARTEN);
-#define GET_REG(SETTING) return SMARTEN_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) SMARTEN_register.SETTING = B; WRITE_REG(SMARTEN);
+#define GET_REG(SETTING) return SMARTEN_register.SETTING;
 
-uint32_t TMC2660Stepper::SMARTEN() { return SMARTEN_register.cfg.sr; }
+uint32_t TMC2660Stepper::SMARTEN() { return SMARTEN_register.sr; }
 void TMC2660Stepper::SMARTEN(uint32_t data) {
-  SMARTEN_register.cfg.sr = data;
+  SMARTEN_register.sr = data;
   WRITE_REG(SMARTEN);
 }
 

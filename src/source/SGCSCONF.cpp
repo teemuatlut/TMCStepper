@@ -1,12 +1,12 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) SGCSCONF_register.cfg.opt.SETTING = B; WRITE_REG(SGCSCONF);
-#define GET_REG(SETTING) return SGCSCONF_register.cfg.opt.SETTING;
+#define SET_REG(SETTING) SGCSCONF_register.SETTING = B; WRITE_REG(SGCSCONF);
+#define GET_REG(SETTING) return SGCSCONF_register.SETTING;
 
-uint32_t TMC2660Stepper::SGCSCONF() { return SGCSCONF_register.cfg.sr; }
+uint32_t TMC2660Stepper::SGCSCONF() { return SGCSCONF_register.sr; }
 void TMC2660Stepper::SGCSCONF(uint32_t data) {
-  SGCSCONF_register.cfg.sr = data;
+  SGCSCONF_register.sr = data;
   WRITE_REG(SGCSCONF);
 }
 

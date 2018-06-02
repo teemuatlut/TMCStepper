@@ -73,16 +73,16 @@ void TMC5160Stepper::ENC_DEVIATION(uint32_t input) {
 
 // R: PWM_SCALE
 uint32_t TMC5160Stepper::PWM_SCALE() {
-	PWM_SCALE_register.cfg.sr = READ_REG(PWM_SCALE);
-	return PWM_SCALE_register.cfg.sr;
+	PWM_SCALE_register.sr = READ_REG(PWM_SCALE);
+	return PWM_SCALE_register.sr;
 }
-uint8_t TMC5160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.cfg.opt.pwm_scale_sum; }
-uint16_t TMC5160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_register.cfg.opt.pwm_scale_auto; }
+uint8_t TMC5160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
+uint16_t TMC5160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_auto; }
 
 // R: PWM_AUTO
 uint32_t TMC5160Stepper::PWM_AUTO() {
-	PWM_AUTO_register.cfg.sr = READ_REG(PWM_AUTO);
-	return PWM_AUTO_register.cfg.sr;
+	PWM_AUTO_register.sr = READ_REG(PWM_AUTO);
+	return PWM_AUTO_register.sr;
 }
-uint8_t TMC5160Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.cfg.opt.pwm_ofs_auto; }
-uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.cfg.opt.pwm_grad_auto; }
+uint8_t TMC5160Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }
+uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_grad_auto; }

@@ -3,21 +3,13 @@
 struct reg_GCONF {
   uint8_t address;
   union {
+    uint32_t sr : 18;
     struct {
-      union {
-        bool  i_scale_analog : 1, // 2130, 5130
-              recalibrate : 1;    // 5160
-      };
-      union {
-        bool  internal_rsense : 1, // 2130, 5130
-              faststandstill : 1;  // 5160
-      };
-      bool  en_pwm_mode : 1;
-      union {
-        bool  enc_commutation : 1, // 2130, 5130
-              multistep_filt : 1;  // 5160
-      };
-      bool  shaft : 1,
+      bool  i_scale_analog : 1, // 2130, 5130
+            internal_rsense : 1, // 2130, 5130
+            en_pwm_mode : 1,
+            enc_commutation : 1, // 2130, 5130
+            shaft : 1,
             diag0_error : 1,
             diag0_otpw : 1,
             diag0_stall : 1,
@@ -32,40 +24,46 @@ struct reg_GCONF {
             small_hysterisis : 1,
             stop_enable : 1,
             direct_mode : 1;
-    } opt;
-    uint32_t sr : 18;
-  } cfg;
+    };
+    struct { // TMC5160
+      bool recalibrate : 1,
+           faststandstill : 1,
+                          : 1,
+           multistep_filt : 1;
+    };
+  };
 };
 
 struct reg_IHOLD_IRUN {
   uint8_t address;
   union {
+    uint32_t sr : 20;
     struct {
       uint8_t ihold : 5,
                     : 3,
               irun : 5,
                    : 3,
               iholddelay : 4; 
-    } opt;
-    uint32_t sr : 20;
-  } cfg;
+    };
+  };
 };
 
 struct reg_GSTAT {
   uint8_t address;
   union {
+    uint8_t sr : 3;
     struct {
       bool  reset : 1,
             drv_err : 1,
             uv_cp : 1;
-    } opt;
-    uint8_t sr : 3;
-  } cfg;
+    };
+  };
 };
 
 struct reg_IOIN {
   uint8_t address;
   union {
+    uint32_t sr;
     struct {
       bool  step,
             dir,
@@ -76,9 +74,8 @@ struct reg_IOIN {
       uint16_t : 16;
       uint8_t : 1;
       uint8_t version : 8;
-    } opt;
-    uint32_t sr;
-  } cfg;
+    };
+  };
 };
 
 struct reg_TPOWERDOWN {
@@ -108,13 +105,13 @@ struct reg_THIGH {
 struct reg_XDIRECT {
   uint8_t address;
   union {
+    uint32_t sr : 25;
     struct {
       int16_t coil_A : 9;
       int8_t         : 7;
       int16_t coil_B : 9;
-    } opt;
-    uint32_t sr : 25;
-  } cfg;
+    };
+  };
 };
 
 struct reg_VDCMIN {
@@ -125,6 +122,7 @@ struct reg_VDCMIN {
 struct reg_CHOPCONF {
   uint8_t address;
   union {
+    uint32_t sr : 32;
     struct {
       uint8_t toff : 4,
               hstrt : 3;
@@ -137,23 +135,25 @@ struct reg_CHOPCONF {
       bool    vsense : 1,
               vhighfs : 1,
               vhighchm : 1;
-      union {
-        uint8_t sync : 4, // 2130, 5130
-                tpfd : 4; // 5160
-      };
-      uint8_t mres : 4;
+      uint8_t sync : 4, // 2130, 5130
+              mres : 4;
       bool    intpol : 1,
               dedge : 1,
-              diss2g : 1,
-              diss2vs : 1; // TMC5160 only
-    } opt;
-    uint32_t sr : 32;
-  } cfg;
+              diss2g : 1;
+    };
+    struct { // TMC5160
+      uint32_t : 20;
+      uint8_t tpfd : 4, // 5160
+                   : 10;
+      bool diss2vs : 1; // TMC5160 only
+    };
+  };
 };
 
 struct reg_COOLCONF {
   uint8_t address;
   union {
+    uint32_t sr : 25;
     struct {
       uint8_t semin : 4,
                     : 1,
@@ -166,14 +166,14 @@ struct reg_COOLCONF {
       int8_t  sgt : 7,
                   : 1;
       bool    sfilt : 1;
-    } opt;
-    uint32_t sr : 25;
-  } cfg;
+    };
+  };
 };
 
 struct reg_DRV_STATUS {
   uint8_t address;
   union {
+    uint32_t sr;
     struct {
       uint16_t sg_result : 10;
       uint8_t            : 5;
@@ -188,14 +188,14 @@ struct reg_DRV_STATUS {
             ola : 1,
             olb : 1,
             stst : 1;
-    } opt;
-    uint32_t sr;
-  } cfg;
+    };
+  };
 };
 
 struct reg_PWMCONF {
   uint8_t address;
   union {
+    uint32_t sr : 22;
     struct {
       uint8_t pwm_ampl : 8,
               pwm_grad : 8,
@@ -203,9 +203,8 @@ struct reg_PWMCONF {
       bool pwm_autoscale : 1,
            pwm_symmetric : 1;
       uint8_t freewheel : 2;
-    } opt;
-    uint32_t sr : 22;
-  } cfg;
+    };
+  };
 };
 /*
 struct reg_PWM_SCALE {
@@ -215,12 +214,12 @@ struct reg_PWM_SCALE {
 struct reg_ENCM_CTRL {
   uint8_t address;
   union {
+    uint8_t sr : 2;
     struct {
       bool  inv : 1,
             maxspeed : 1;
-    } opt;
-    uint8_t sr : 2;
-  } cfg;
+    };
+  };
 };
 
 struct reg_LOST_STEPS {

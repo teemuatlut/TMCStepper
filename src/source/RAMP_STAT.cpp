@@ -1,11 +1,11 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define GET_REG(SETTING) RAMP_STAT(); return RAMP_STAT_register.cfg.opt.SETTING;
+#define GET_REG(SETTING) RAMP_STAT(); return RAMP_STAT_register.SETTING;
 
 uint32_t TMC5130Stepper::RAMP_STAT() {
-	RAMP_STAT_register.cfg.sr = READ_REG(RAMP_STAT);
-	return RAMP_STAT_register.cfg.sr;
+	RAMP_STAT_register.sr = READ_REG(RAMP_STAT);
+	return RAMP_STAT_register.sr;
 }
 
 bool TMC5130Stepper::status_stop_l()		{ GET_REG(status_stop_l);		}

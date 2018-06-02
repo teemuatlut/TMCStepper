@@ -48,11 +48,11 @@ void TMC5130Stepper::begin() {
   pinMode(_pinCS, OUTPUT);
   switchCSpin(HIGH);
 
-  GCONF(GCONF_register.cfg.sr);
-  CHOPCONF(CHOPCONF_register.cfg.sr);
-  COOLCONF(COOLCONF_register.cfg.sr);
-  PWMCONF(PWMCONF_register.cfg.sr);
-  IHOLD_IRUN(IHOLD_IRUN_register.cfg.sr);
+  GCONF(GCONF_register.sr);
+  CHOPCONF(CHOPCONF_register.sr);
+  COOLCONF(COOLCONF_register.sr);
+  PWMCONF(PWMCONF_register.sr);
+  IHOLD_IRUN(IHOLD_IRUN_register.sr);
 
   toff(8); //off_time(8);
   tbl(1); //blank_time(24);
@@ -69,26 +69,26 @@ void TMC5130Stepper::begin() {
 uint8_t TMC5130Stepper::IFCNT() { return READ_REG(IFCNT); }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: SLAVECONF
-uint16_t TMC5130Stepper::SLAVECONF() { return SLAVECONF_register.cfg.sr; }
+uint16_t TMC5130Stepper::SLAVECONF() { return SLAVECONF_register.sr; }
 void TMC5130Stepper::SLAVECONF(uint16_t input) {
-  SLAVECONF_register.cfg.sr = input;
+  SLAVECONF_register.sr = input;
   WRITE_REG(SLAVECONF);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN
 uint32_t  TMC5130Stepper::IOIN() {
-  IOIN_register.cfg.sr = READ_REG(IOIN);
-  return IOIN_register.cfg.sr;
+  IOIN_register.sr = READ_REG(IOIN);
+  return IOIN_register.sr;
 }
-bool    TMC5130Stepper::refl_step()      { IOIN(); return IOIN_register.cfg.opt.refl_step; }
-bool    TMC5130Stepper::refr_dir()       { IOIN(); return IOIN_register.cfg.opt.refr_dir; }
-bool    TMC5130Stepper::encb_dcen_cfg4() { IOIN(); return IOIN_register.cfg.opt.encb_dcen_cfg4; }
-bool    TMC5130Stepper::enca_dcin_cfg5() { IOIN(); return IOIN_register.cfg.opt.enca_dcin_cfg5; }
-bool    TMC5130Stepper::drv_enn_cfg6()   { IOIN(); return IOIN_register.cfg.opt.drv_enn_cfg6; }
-bool    TMC5130Stepper::enc_n_dco()      { IOIN(); return IOIN_register.cfg.opt.enc_n_dco; }
-bool    TMC5130Stepper::sd_mode()        { IOIN(); return IOIN_register.cfg.opt.sd_mode; }
-bool    TMC5130Stepper::swcomp_in()      { IOIN(); return IOIN_register.cfg.opt.swcomp_in; }
-uint8_t   TMC5130Stepper::version()      { IOIN(); return IOIN_register.cfg.opt.version; }
+bool    TMC5130Stepper::refl_step()      { IOIN(); return IOIN_register.refl_step; }
+bool    TMC5130Stepper::refr_dir()       { IOIN(); return IOIN_register.refr_dir; }
+bool    TMC5130Stepper::encb_dcen_cfg4() { IOIN(); return IOIN_register.encb_dcen_cfg4; }
+bool    TMC5130Stepper::enca_dcin_cfg5() { IOIN(); return IOIN_register.enca_dcin_cfg5; }
+bool    TMC5130Stepper::drv_enn_cfg6()   { IOIN(); return IOIN_register.drv_enn_cfg6; }
+bool    TMC5130Stepper::enc_n_dco()      { IOIN(); return IOIN_register.enc_n_dco; }
+bool    TMC5130Stepper::sd_mode()        { IOIN(); return IOIN_register.sd_mode; }
+bool    TMC5130Stepper::swcomp_in()      { IOIN(); return IOIN_register.swcomp_in; }
+uint8_t   TMC5130Stepper::version()      { IOIN(); return IOIN_register.version; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: OUTPUT
 bool TMC5130Stepper::TMC_OUTPUT() { return OUTPUT_register.sr; }

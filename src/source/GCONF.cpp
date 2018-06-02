@@ -1,16 +1,16 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) GCONF_register.cfg.opt.SETTING = B; WRITE_REG(GCONF)
-#define GET_REG(SETTING) GCONF(); return GCONF_register.cfg.opt.SETTING
+#define SET_REG(SETTING) GCONF_register.SETTING = B; WRITE_REG(GCONF)
+#define GET_REG(SETTING) GCONF(); return GCONF_register.SETTING
 
 // GCONF
 uint32_t TMC2130Stepper::GCONF() {
-	GCONF_register.cfg.sr = READ_REG(GCONF);
-	return GCONF_register.cfg.sr;
+	GCONF_register.sr = READ_REG(GCONF);
+	return GCONF_register.sr;
 }
 void TMC2130Stepper::GCONF(uint32_t input) {
-	GCONF_register.cfg.sr = input;
+	GCONF_register.sr = input;
 	WRITE_REG(GCONF);
 }
 
@@ -67,12 +67,12 @@ bool TMC5160Stepper::faststandstill()				{ GET_REG(faststandstill);			}
 bool TMC5160Stepper::multistep_filt()				{ GET_REG(multistep_filt);			}
 
 uint32_t TMC2208Stepper::GCONF() {
-	if (write_only) return GCONF_register.cfg.sr;
-	GCONF_register.cfg.sr = READ_REG(GCONF);
-	return GCONF_register.cfg.sr;
+	if (write_only) return GCONF_register.sr;
+	GCONF_register.sr = READ_REG(GCONF);
+	return GCONF_register.sr;
 }
 void TMC2208Stepper::GCONF(uint32_t input) {
-	GCONF_register.cfg.sr = input;
+	GCONF_register.sr = input;
 	WRITE_REG(GCONF);
 }
 
