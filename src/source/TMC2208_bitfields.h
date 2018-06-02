@@ -177,7 +177,7 @@ struct reg_PWM_SCALE_2208 {
     uint32_t sr;
   } cfg;
 };
-
+/*
 struct reg_PWM_AUTO {
   uint8_t address;
   struct {
@@ -186,6 +186,7 @@ struct reg_PWM_AUTO {
               : 8,
               pwm_grad_auto : 8;
     } opt;
-    uint32_t sr;
+    uint32_t sr : 24;
   } cfg;
 };
+*/

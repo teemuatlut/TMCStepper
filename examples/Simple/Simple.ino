@@ -8,7 +8,7 @@
 #define EN_PIN    38  // Enable
 #define DIR_PIN   55  // Direction
 #define STEP_PIN  54  // Step
-#define CS_PIN    38  // Chip select
+#define CS_PIN    42  // Chip select
 #define SW_MOSI   66  // Software Master Out Slave In (MOSI)
 #define SW_MISO   44  // Software Master In Slave Out (MISO)
 #define SW_SCK    64  // Software Slave Clock (SCK)
@@ -27,6 +27,7 @@
 //TMC2208Stepper driver = TMC2208Stepper(SW_RX, SW_TX, R_SENSE); // Software serial
 //TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE); // Hardware SPI
 //TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
+//TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE);
 
 void setup() {
   pinMode(EN_PIN, OUTPUT);
@@ -44,7 +45,7 @@ void setup() {
 
 void loop() {
   digitalWrite(STEP_PIN, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(160);
   digitalWrite(STEP_PIN, LOW);
-  delayMicroseconds(10);
+  delayMicroseconds(160);
 }

@@ -59,6 +59,13 @@ Enable analog test output on pin DCO. IHOLD[1..0] selects the function of DCO:
 Not for user, set to 0 for normal operation! 
 */
 
+void TMC5160Stepper::recalibrate(bool B)			{ SET_REG(recalibrate); 			}
+void TMC5160Stepper::faststandstill(bool B)			{ SET_REG(faststandstill); 			}
+void TMC5160Stepper::multistep_filt(bool B)			{ SET_REG(multistep_filt); 			}
+bool TMC5160Stepper::recalibrate()					{ GET_REG(recalibrate);				}
+bool TMC5160Stepper::faststandstill()				{ GET_REG(faststandstill);			}
+bool TMC5160Stepper::multistep_filt()				{ GET_REG(multistep_filt);			}
+
 uint32_t TMC2208Stepper::GCONF() {
 	if (write_only) return GCONF_register.cfg.sr;
 	GCONF_register.cfg.sr = READ_REG(GCONF);

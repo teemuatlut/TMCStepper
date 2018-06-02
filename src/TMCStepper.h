@@ -11,6 +11,7 @@
 #include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC5130_bitfields.h"
+#include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
@@ -494,6 +495,116 @@ class TMC5130Stepper : public TMC2130Stepper {
 	INIT_REGISTER(MSCURACT){0x6B, {0,0}};
 	INIT_REGISTER(DCCTRL){0x6E, {0,0}};
 	*/
+};
+
+class TMC5160Stepper : public TMC5130Stepper {
+	public:
+	TMC5160Stepper(uint16_t pinCS, float RS);
+
+	void rms_current(uint16_t mA);
+	void rms_current(uint16_t mA, float mult);
+	uint16_t rms_current();
+
+	// RW: GCONF
+	void recalibrate(bool);
+	void faststandstill(bool);
+	void multistep_filt(bool);
+	bool recalibrate();
+	bool faststandstill();
+	bool multistep_filt();
+
+	// R: IOIN
+	bool drv_enn() { return drv_enn_cfg6(); }
+	bool enc_n_dco_cfg6() { return enc_n_dco(); }
+
+	// W: OTP_PROG
+	// R: OTP_READ
+	// RW: FACTORY_CONF
+
+	// W: SHORT_CONF
+	void SHORT_CONF(uint32_t);
+	void s2vs_level(uint8_t);
+	void s2g_level(uint8_t);
+	void shortfilter(uint8_t);
+	void shortdelay(bool);
+	uint32_t SHORT_CONF();
+	uint8_t s2vs_level();
+	uint8_t s2g_level();
+	uint8_t shortfilter();
+	bool shortdelay();
+
+	// W: DRV_CONF
+	void DRV_CONF(uint32_t);
+	void bbmtime(uint8_t);
+	void bbmclks(uint8_t);
+	void otselect(uint8_t);
+	void drvstrength(uint8_t);
+	void filt_isense(uint8_t);
+	uint32_t DRV_CONF();
+	uint8_t bbmtime();
+	uint8_t bbmclks();
+	uint8_t otselect();
+	uint8_t drvstrength();
+	uint8_t filt_isense();
+
+	// W: GLOBAL_SCALER
+	void GLOBAL_SCALER(uint8_t);
+	uint8_t GLOBAL_SCALER();
+
+	// R: OFFSET_READ
+	uint16_t OFFSET_READ();
+
+	// R+WC: ENC_STATUS
+	void ENC_STATUS(uint8_t);
+	uint8_t ENC_STATUS();
+
+	// W: ENC_DEVIATION
+	void ENC_DEVIATION(uint32_t);
+	uint32_t ENC_DEVIATION();
+
+	// R: PWM_SCALE
+	uint32_t PWM_SCALE();
+	uint8_t pwm_scale_sum();
+	uint16_t pwm_scale_auto();
+
+	// R: PWM_AUTO
+	uint32_t PWM_AUTO();
+	uint8_t pwm_ofs_auto();
+	uint8_t pwm_grad_auto();
+
+	// RW: CHOPCONF
+	void diss2vs(bool);
+	void tpfd(uint8_t);
+	bool diss2vs();
+	uint8_t tpfd();
+
+	// W: PWM_CONF
+	void PWM_CONF(uint32_t);
+	void pwm_lim(uint8_t);
+	void pwm_reg(uint8_t);
+	void pwm_autograd(bool);
+	uint32_t PWM_CONF();
+	uint8_t pwm_lim();
+	uint8_t pwm_reg();
+	bool pwm_autograd();
+
+	private:
+		using TMC5130Stepper::I_scale_analog;
+		using TMC5130Stepper::internal_Rsense;
+		using TMC5130Stepper::enc_commutation;
+		using TMC5130Stepper::drv_enn_cfg6;
+		using TMC5130Stepper::enc_n_dco;
+		using TMC5130Stepper::ENCM_CTRL;
+		using TMC5130Stepper::vsense;
+		using TMC5130Stepper::rndtf;
+
+		INIT_REGISTER(DRV_CONF){0x0A, {.sr=0}};
+		INIT_REGISTER(SHORT_CONF){0x09, {.sr=0}};
+		INIT_REGISTER(GLOBAL_SCALER){0x0B, .sr=0};
+		INIT_REGISTER(OFFSET_READ){0x0C, .sr=0};
+		INIT_REGISTER(ENC_DEVIATION){0x3D, .sr=0};
+		//INIT_REGISTER(PWM_SCALE){0x0C, .sr=0};
+		INIT_REGISTER(PWM_AUTO){0x72, {.sr=0}};
 };
 
 class TMC2208Stepper : public TMCStepper {

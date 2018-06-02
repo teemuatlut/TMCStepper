@@ -4,11 +4,20 @@ struct reg_GCONF {
   uint8_t address;
   union {
     struct {
-      bool  i_scale_analog : 1,
-            internal_rsense : 1,
-            en_pwm_mode : 1,
-            enc_commutation : 1,
-            shaft : 1,
+      union {
+        bool  i_scale_analog : 1, // 2130, 5130
+              recalibrate : 1;    // 5160
+      };
+      union {
+        bool  internal_rsense : 1, // 2130, 5130
+              faststandstill : 1;  // 5160
+      };
+      bool  en_pwm_mode : 1;
+      union {
+        bool  enc_commutation : 1, // 2130, 5130
+              multistep_filt : 1;  // 5160
+      };
+      bool  shaft : 1,
             diag0_error : 1,
             diag0_otpw : 1,
             diag0_stall : 1,
@@ -128,13 +137,17 @@ struct reg_CHOPCONF {
       bool    vsense : 1,
               vhighfs : 1,
               vhighchm : 1;
-      uint8_t sync : 4,
-              mres : 4;
+      union {
+        uint8_t sync : 4, // 2130, 5130
+                tpfd : 4; // 5160
+      };
+      uint8_t mres : 4;
       bool    intpol : 1,
               dedge : 1,
-              diss2g : 1;
+              diss2g : 1,
+              diss2vs : 1; // TMC5160 only
     } opt;
-    uint32_t sr : 31;
+    uint32_t sr : 32;
   } cfg;
 };
 
@@ -194,11 +207,11 @@ struct reg_PWMCONF {
     uint32_t sr : 22;
   } cfg;
 };
-
+/*
 struct reg_PWM_SCALE {
   uint8_t address;
 };
-
+*/
 struct reg_ENCM_CTRL {
   uint8_t address;
   union {
