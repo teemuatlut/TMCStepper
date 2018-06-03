@@ -18,7 +18,7 @@
 #define INIT_REGISTER(REG) reg_##REG REG##_register = reg_##REG
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
-const uint32_t TMCStepper_version = 0x10100; // v1.1.0
+#define TMCSTEPPER_VERSION 0x000001 // v0.0.1
 
 class TMCStepper {
 	public:
