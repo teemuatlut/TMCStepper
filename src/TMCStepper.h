@@ -30,7 +30,7 @@ class TMCStepper {
 	bool checkOT();
 	bool getOTPW() { return flag_otpw; }
 	void clear_otpw() { flag_otpw = 0; }
-	uint16_t getMilliAmps() { return val_mA; }
+	uint16_t getMilliamps() { return val_mA; }
 	uint8_t test_connection();
 
 	// Helper functions
