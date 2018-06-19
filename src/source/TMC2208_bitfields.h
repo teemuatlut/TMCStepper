@@ -1,6 +1,6 @@
 #pragma once
 
-struct reg_GCONF_2208 {
+struct GCONF_2208_t {
   uint8_t address;
   union {
     uint16_t sr : 10;
@@ -19,15 +19,15 @@ struct reg_GCONF_2208 {
   };
 };
 
-struct reg_OTP_PROG {
+struct OTP_PROG_t {
 	uint8_t address;
 };
 
-struct reg_OTP_READ {
+struct OTP_READ_t {
 	uint8_t address;
 };
 
-struct reg_IOIN_2208 {
+struct IOIN_2208_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -48,7 +48,7 @@ struct reg_IOIN_2208 {
   };
 };
 
-struct reg_IOIN_2224 {
+struct IOIN_2224_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -68,7 +68,7 @@ struct reg_IOIN_2224 {
   };
 };
 
-struct reg_FACTORY_CONF {
+struct FACTORY_CONF_t {
   uint8_t address;
   union {
     uint16_t sr;
@@ -80,16 +80,16 @@ struct reg_FACTORY_CONF {
   };
 };
 
-struct reg_VACTUAL_2208 {
+struct VACTUAL_2208_t {
     uint8_t address;
     uint32_t sr;
 };
 
-struct reg_MSCNT {
+struct MSCNT_t {
   uint8_t address;
 };
 
-struct reg_MSCURACT {
+struct MSCURACT_t {
   uint8_t address;
   union {
     uint32_t sr : 25;
@@ -101,7 +101,7 @@ struct reg_MSCURACT {
   };
 };
 
-struct reg_CHOPCONF_2208 {
+struct CHOPCONF_2208_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -122,7 +122,7 @@ struct reg_CHOPCONF_2208 {
   };
 };
 
-struct reg_PWMCONF_2208 {
+struct PWMCONF_2208_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -140,7 +140,7 @@ struct reg_PWMCONF_2208 {
   };
 };
 
-struct reg_DRV_STATUS_2208 {
+struct DRV_STATUS_2208_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -166,7 +166,7 @@ struct reg_DRV_STATUS_2208 {
   };
 };
 
-struct reg_PWM_SCALE_2208 {
+struct PWM_SCALE_2208_t {
   uint8_t address;
   union {
     uint32_t sr;

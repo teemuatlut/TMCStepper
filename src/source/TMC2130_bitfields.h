@@ -1,6 +1,6 @@
 #pragma once
 
-struct reg_GCONF {
+struct GCONF_t {
   uint8_t address;
   union {
     uint32_t sr : 18;
@@ -34,7 +34,7 @@ struct reg_GCONF {
   };
 };
 
-struct reg_IHOLD_IRUN {
+struct IHOLD_IRUN_t {
   uint8_t address;
   union {
     uint32_t sr : 20;
@@ -48,7 +48,7 @@ struct reg_IHOLD_IRUN {
   };
 };
 
-struct reg_GSTAT {
+struct GSTAT_t {
   uint8_t address;
   union {
     uint8_t sr : 3;
@@ -60,7 +60,7 @@ struct reg_GSTAT {
   };
 };
 
-struct reg_IOIN {
+struct IOIN_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -78,31 +78,31 @@ struct reg_IOIN {
   };
 };
 
-struct reg_TPOWERDOWN {
+struct TPOWERDOWN_t {
   uint8_t address;
   uint8_t sr : 8;
 };
 
-struct reg_TSTEP {
+struct TSTEP_t {
   uint8_t address;
 };
 
-struct reg_TPWMTHRS {
-  uint8_t address;
-  uint32_t sr : 20;
-};
-
-struct reg_TCOOLTHRS {
+struct TPWMTHRS_t {
   uint8_t address;
   uint32_t sr : 20;
 };
 
-struct reg_THIGH {
+struct TCOOLTHRS_t {
   uint8_t address;
   uint32_t sr : 20;
 };
 
-struct reg_XDIRECT {
+struct THIGH_t {
+  uint8_t address;
+  uint32_t sr : 20;
+};
+
+struct XDIRECT_t {
   uint8_t address;
   union {
     uint32_t sr : 25;
@@ -114,12 +114,12 @@ struct reg_XDIRECT {
   };
 };
 
-struct reg_VDCMIN {
+struct VDCMIN_t {
   uint8_t address;
   uint32_t sr : 23;
 };
 
-struct reg_CHOPCONF {
+struct CHOPCONF_t {
   uint8_t address;
   union {
     uint32_t sr : 32;
@@ -143,14 +143,14 @@ struct reg_CHOPCONF {
     };
     struct { // TMC5160
       uint32_t : 20;
-      uint8_t tpfd : 4, // 5160
-                   : 10;
+      uint8_t tpfd : 4; // 5160
+      uint16_t     : 10;
       bool diss2vs : 1; // TMC5160 only
     };
   };
 };
 
-struct reg_COOLCONF {
+struct COOLCONF_t {
   uint8_t address;
   union {
     uint32_t sr : 25;
@@ -170,7 +170,7 @@ struct reg_COOLCONF {
   };
 };
 
-struct reg_DRV_STATUS {
+struct DRV_STATUS_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -192,7 +192,7 @@ struct reg_DRV_STATUS {
   };
 };
 
-struct reg_PWMCONF {
+struct PWMCONF_t {
   uint8_t address;
   union {
     uint32_t sr : 22;
@@ -207,7 +207,7 @@ struct reg_PWMCONF {
   };
 };
 
-struct reg_ENCM_CTRL {
+struct ENCM_CTRL_t {
   uint8_t address;
   union {
     uint8_t sr : 2;
@@ -218,6 +218,6 @@ struct reg_ENCM_CTRL {
   };
 };
 
-struct reg_LOST_STEPS {
+struct LOST_STEPS_t {
   uint8_t address;
 };

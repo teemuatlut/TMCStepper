@@ -1,10 +1,10 @@
 #pragma once
 
-struct reg_IFCNT {
+struct IFCNT_t {
   uint8_t address;
 };
 
-struct reg_SLAVECONF {
+struct SLAVECONF_t {
   uint8_t address;
   union {
     uint16_t sr : 12;
@@ -15,7 +15,7 @@ struct reg_SLAVECONF {
   };
 };
 
-struct reg_IOIN_5130 {
+struct IOIN_5130_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -34,81 +34,81 @@ struct reg_IOIN_5130 {
   };
 };
 
-struct reg_OUTPUT {
+struct OUTPUT_t {
   uint8_t address;
   bool sr : 1;
 };
 
-struct reg_X_COMPARE {
+struct X_COMPARE_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_RAMPMODE {
+struct RAMPMODE_t {
   uint8_t address;
   uint8_t sr : 2;
 };
 
-struct reg_XACTUAL {
+struct XACTUAL_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_VACTUAL {
+struct VACTUAL_t {
   uint8_t address;
 
 };
 
-struct reg_VSTART {
+struct VSTART_t {
   uint8_t address;
   uint32_t sr : 18;
 };
 
-struct reg_A1 {
+struct A1_t {
   uint8_t address;
   uint16_t sr : 16;
 };
 
-struct reg_V1 {
+struct V1_t {
   uint8_t address;
   uint32_t sr : 20;
 };
 
-struct reg_AMAX {
+struct AMAX_t {
   uint8_t address;
   uint16_t sr : 16;
 };
 
-struct reg_VMAX {
+struct VMAX_t {
   uint8_t address;
   uint32_t sr : 23;
 };
 
-struct reg_DMAX {
+struct DMAX_t {
   uint8_t address;
   uint16_t sr : 16;
 };
 
-struct reg_D1 {
+struct D1_t {
   uint8_t address;
   uint16_t sr : 16;
 };
 
-struct reg_VSTOP {
+struct VSTOP_t {
   uint8_t address;
   uint32_t sr : 18;
 };
 
-struct reg_TZEROWAIT {
+struct TZEROWAIT_t {
   uint8_t address;
   uint16_t sr : 16;
 };
 
-struct reg_XTARGET {
+struct XTARGET_t {
   uint8_t address;
 };
 
-struct reg_SW_MODE {
+struct SW_MODE_t {
   uint8_t address;
   union {
     uint16_t sr : 12;
@@ -129,7 +129,7 @@ struct reg_SW_MODE {
   };
 };
 
-struct reg_RAMP_STAT {
+struct RAMP_STAT_t {
   uint8_t address;
   union {
     uint16_t sr : 14;
@@ -152,11 +152,11 @@ struct reg_RAMP_STAT {
   };
 };
 
-struct reg_XLATCH {
+struct XLATCH_t {
   uint8_t address;
 };
 
-struct reg_ENCMODE {
+struct ENCMODE_t {
   uint8_t address;
   union {
     uint16_t sr : 11;
@@ -176,64 +176,64 @@ struct reg_ENCMODE {
   };
 };
 
-struct reg_X_ENC {
+struct X_ENC_t {
   uint8_t address;
 };
 
-struct reg_ENC_CONST {
+struct ENC_CONST_t {
   uint8_t address;
   int32_t sr;
 };
 
-struct reg_ENC_STATUS {
+struct ENC_STATUS_t {
   uint8_t address;
 };
 
-struct reg_ENC_LATCH {
+struct ENC_LATCH_t {
   uint8_t address;
 };
 
-struct reg_MSLUT0 {
-  uint8_t address;
-  uint32_t sr;
-};
-
-struct reg_MSLUT1 {
+struct MSLUT0_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT2 {
+struct MSLUT1_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT3 {
+struct MSLUT2_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT4 {
+struct MSLUT3_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT5 {
+struct MSLUT4_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT6 {
+struct MSLUT5_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUT7 {
+struct MSLUT6_t {
   uint8_t address;
   uint32_t sr;
 };
 
-struct reg_MSLUTSEL {
+struct MSLUT7_t {
+  uint8_t address;
+  uint32_t sr;
+};
+
+struct MSLUTSEL_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -249,7 +249,7 @@ struct reg_MSLUTSEL {
   };
 };
 
-struct reg_MSLUTSTART {
+struct MSLUTSTART_t {
   uint8_t address;
   union {
     uint32_t sr : 24;
@@ -261,7 +261,7 @@ struct reg_MSLUTSTART {
   };
 };
 
-struct reg_DCCTRL {
+struct DCCTRL_t {
   uint8_t address;
   union {
     uint32_t sr : 24;

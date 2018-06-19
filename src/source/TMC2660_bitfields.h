@@ -1,6 +1,6 @@
 #pragma once
 
-struct reg_DRVCTRL_1 {
+struct DRVCTRL_1_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -13,7 +13,7 @@ struct reg_DRVCTRL_1 {
   };
 };
 
-struct reg_DRVCTRL_0 {
+struct DRVCTRL_0_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -26,7 +26,7 @@ struct reg_DRVCTRL_0 {
   };
 };
 
-struct reg_TMC2660CHOPCONF {
+struct TMC2660CHOPCONF_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -42,7 +42,7 @@ struct reg_TMC2660CHOPCONF {
   };
 };
 
-struct reg_SMARTEN {
+struct SMARTEN_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -59,7 +59,7 @@ struct reg_SMARTEN {
   };
 };
 
-struct reg_SGCSCONF {
+struct SGCSCONF_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -73,7 +73,7 @@ struct reg_SGCSCONF {
   };
 };
 
-struct reg_DRVCONF {
+struct DRVCONF_t {
   uint8_t address;
   union {
     uint32_t sr;
@@ -92,7 +92,7 @@ struct reg_DRVCONF {
   };
 };
 
-struct reg_READ_RDSEL00 {
+struct READ_RDSEL00_t {
   union {
     uint32_t sr;
     struct {
@@ -110,7 +110,7 @@ struct reg_READ_RDSEL00 {
   };
 };
 
-struct reg_READ_RDSEL01 {
+struct READ_RDSEL01_t {
   union {
     uint32_t sr;
     struct {
@@ -128,7 +128,7 @@ struct reg_READ_RDSEL01 {
   };
 };
 
-struct reg_READ_RDSEL10 {
+struct READ_RDSEL10_t {
   union {
     uint32_t sr;
     struct {

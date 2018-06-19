@@ -15,7 +15,7 @@
 #include "source/TMC2208_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
-#define INIT_REGISTER(REG) reg_##REG REG##_register = reg_##REG
+#define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
 #define TMCSTEPPER_VERSION 0x000001 // v0.0.1
@@ -71,6 +71,8 @@ class TMCStepper {
 	uint32_t TPWMTHRS();
 	void TPWMTHRS(						uint32_t input);
 
+	bool flag_otpw = false;
+
 	protected:
 		INIT_REGISTER(GSTAT){0x01, {.sr=0}};
 		INIT_REGISTER(IHOLD_IRUN){0x10, {.sr=0}};
@@ -97,7 +99,6 @@ class TMCStepper {
 
 		float Rsense;
 		bool _started = 0;
-		bool flag_otpw = false;
 		uint16_t val_mA = 0;
 		float holdMultiplier = 0.5;
 };
@@ -312,8 +313,6 @@ class TMC2130Stepper : public TMCStepper {
 class TMC5130Stepper : public TMC2130Stepper {
 	public:
 	TMC5130Stepper(uint16_t pinCS);
-	//uint32_t setBits(uint32_t reg, uint32_t bitmask, uint8_t bitpos, uint8_t B);
-	//uint32_t getBits(uint32_t sr, uint32_t bitmask, uint8_t bitpos);
 	void begin();
 
 	// R: IFCNT
@@ -456,7 +455,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 
 	INIT_REGISTER(IFCNT){0x02};
 	INIT_REGISTER(SLAVECONF){0x03, {.sr=0}};
-	reg_IOIN_5130 IOIN_register = reg_IOIN_5130{0x04, {.sr=0}};
+	IOIN_5130_t IOIN_register = IOIN_5130_t{0x04, {.sr=0}};
 	INIT_REGISTER(OUTPUT){0x04, .sr=0};
 	INIT_REGISTER(X_COMPARE){0x05, .sr=0};
 	INIT_REGISTER(RAMPMODE){0x20, .sr=0};
@@ -761,26 +760,26 @@ class TMC2208Stepper : public TMCStepper {
 		bool CRCerror = false;
 	protected:
 		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
-		reg_GCONF_2208 GCONF_register = reg_GCONF_2208{0x06, {.sr=0}};
+		GCONF_2208_t GCONF_register = GCONF_2208_t{0x06, {.sr=0}};
 		INIT_REGISTER(IFCNT)					{0x02};
 		INIT_REGISTER(SLAVECONF)			{0x03, {.sr=0}};
 		INIT_REGISTER(OTP_PROG)				{0x04};
 		INIT_REGISTER(OTP_READ)				{0x05};
 		//INIT_REGISTER(IOIN_2208)			{0x06, {.sr=0}};
-		reg_IOIN_2208 IOIN_register = reg_IOIN_2208{0x06, {.sr=0}};
+		IOIN_2208_t IOIN_register = IOIN_2208_t{0x06, {.sr=0}};
 		INIT_REGISTER(FACTORY_CONF)		{0x07, {.sr=0}};
 		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
-		reg_VACTUAL_2208 VACTUAL_register = reg_VACTUAL_2208{0x22, 0};
+		VACTUAL_2208_t VACTUAL_register = VACTUAL_2208_t{0x22, 0};
 		INIT_REGISTER(MSCNT)					{0x6A};
 		INIT_REGISTER(MSCURACT)				{0x6B, {.sr=0}};
 		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
-		reg_CHOPCONF_2208 CHOPCONF_register = reg_CHOPCONF_2208{0x6C, {.sr=0}};
+		CHOPCONF_2208_t CHOPCONF_register = CHOPCONF_2208_t{0x6C, {.sr=0}};
 		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};
-		reg_DRV_STATUS_2208 DRV_STATUS_register = reg_DRV_STATUS_2208{0x6F, {.sr=0}};
+		DRV_STATUS_2208_t DRV_STATUS_register = DRV_STATUS_2208_t{0x6F, {.sr=0}};
 		//INIT_REGISTER(PWMCONF_2208)		{0x70, {.sr=0}};
-		reg_PWMCONF_2208 PWMCONF_register = reg_PWMCONF_2208{0x70, {.sr=0}};
+		PWMCONF_2208_t PWMCONF_register = PWMCONF_2208_t{0x70, {.sr=0}};
 		//INIT_REGISTER(PWM_SCALE_2208)	{0x71, {.sr=0}};
-		reg_PWM_SCALE_2208 PWM_SCALE_register = reg_PWM_SCALE_2208{0x71, {.sr=0}};
+		PWM_SCALE_2208_t PWM_SCALE_register = PWM_SCALE_2208_t{0x71, {.sr=0}};
 		INIT_REGISTER(PWM_AUTO)				{0x72, {.sr=0}};
 
 		void * SerialObject;
@@ -807,7 +806,7 @@ class TMC2224Stepper : public TMC2208Stepper {
 		bool dir();
 		uint8_t version();
 	protected:
-		reg_IOIN_2224 IOIN_register = reg_IOIN_2224{0x06, {.sr=0}};
+		IOIN_2224_t IOIN_register = IOIN_2224_t{0x06, {.sr=0}};
 
 };
 
@@ -822,7 +821,7 @@ class TMC2660Stepper {
 	bool isEnabled();
 	uint16_t rms_current();
 	void rms_current(uint16_t mA);
-	uint16_t getMilliAmps() {return val_mA;}
+	uint16_t getMilliamps() {return val_mA;}
 	void push();
 	uint8_t savedToff() { return _savedToff; }
 
@@ -949,7 +948,7 @@ class TMC2660Stepper {
 	*/
 	INIT_REGISTER(DRVCTRL_1){0b00, {.sr=0}};
 	INIT_REGISTER(DRVCTRL_0){0b00, {.sr=0}};
-	reg_TMC2660CHOPCONF CHOPCONF_register = reg_TMC2660CHOPCONF{0b100, {.sr=0}};
+	TMC2660CHOPCONF_t CHOPCONF_register = TMC2660CHOPCONF_t{0b100, {.sr=0}};
 	INIT_REGISTER(SMARTEN){0b101, {.sr=0}};
 	INIT_REGISTER(SGCSCONF){0b110, {.sr=0}};
 	INIT_REGISTER(DRVCONF){0b111, {.sr=0}};
