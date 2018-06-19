@@ -12,8 +12,8 @@
 #define SW_MOSI   66  // Software Master Out Slave In (MOSI)
 #define SW_MISO   44  // Software Master In Slave Out (MISO)
 #define SW_SCK    64  // Software Slave Clock (SCK)
-#define SW_RX     63  // TMC2208 SoftwareSerial receive pin
-#define SW_TX     40  // TMC2208 SoftwareSerial transmit pin
+#define SW_RX     63  // TMC2208/TMC2224 SoftwareSerial receive pin
+#define SW_TX     40  // TMC2208/TMC2224 SoftwareSerial transmit pin
 
 #define R_SENSE 0.11 // Match to your driver
                      // SilentStepStick series use 0.11
