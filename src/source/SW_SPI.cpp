@@ -33,7 +33,7 @@ void SW_SPIClass::setPins(uint16_t sw_mosi_pin, uint16_t sw_miso_pin, uint16_t s
 void SW_SPIClass::init() {
   pinMode(mosi_pin, OUTPUT);
   pinMode(sck_pin, OUTPUT);
-  pinMode(miso_pin, INPUT);
+  pinMode(miso_pin, INPUT_PULLUP);
   #ifndef TARGET_LPC1768
     mosi_bm = digitalPinToBitMask(mosi_pin);
     miso_bm = digitalPinToBitMask(miso_pin);

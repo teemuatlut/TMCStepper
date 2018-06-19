@@ -46,6 +46,7 @@
 //TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
 
 void setup() {
+  SPI.begin();
   Serial.begin(250000);         // Init serial port and set baudrate
   while(!Serial);               // Wait for serial port to connect
   Serial.println("\nStart...");
@@ -54,6 +55,7 @@ void setup() {
   pinMode(STEP_PIN, OUTPUT);
   pinMode(CS_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
+  pinMode(MISO, INPUT_PULLUP);
   digitalWrite(EN_PIN, LOW);
 
   driver.begin();

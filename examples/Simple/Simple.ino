@@ -30,6 +30,7 @@
 //TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE);
 
 void setup() {
+  SPI.begin();
   pinMode(EN_PIN, OUTPUT);
   pinMode(CS_PIN, OUTPUT);
   pinMode(STEP_PIN, OUTPUT);
