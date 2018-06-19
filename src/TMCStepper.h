@@ -71,6 +71,14 @@ class TMCStepper {
 		uint32_t TPWMTHRS();
 		void TPWMTHRS(						uint32_t input);
 
+		// MSCNT
+		uint16_t MSCNT();
+
+		// R: MSCURACT
+		uint32_t MSCURACT();
+		int16_t cur_a();
+		int16_t cur_b();
+
 		bool flag_otpw = false;
 
 	protected:
@@ -79,6 +87,8 @@ class TMCStepper {
 		INIT_REGISTER(TPOWERDOWN){0x11, .sr=0};
 		INIT_REGISTER(TSTEP){0x12};
 		INIT_REGISTER(TPWMTHRS){0x13, .sr=0};
+		INIT_REGISTER(MSCNT){0x6A};
+		INIT_REGISTER(MSCURACT){0x6B, {.sr=0}};
 
 		static constexpr uint8_t TMC_READ = 0x00,
 														TMC_WRITE = 0x80;
@@ -676,14 +686,6 @@ class TMC2208Stepper : public TMCStepper {
 		void VACTUAL(uint32_t input);
 		uint32_t VACTUAL();
 
-		// R: MSCNT
-		uint16_t MSCNT();
-
-		// R: MSCURACT
-		uint32_t MSCURACT();
-		int16_t cur_a();
-		int16_t cur_b();
-
 		// RW: CHOPCONF
 		void CHOPCONF(uint32_t input);
 		void toff(uint8_t B);
@@ -770,8 +772,6 @@ class TMC2208Stepper : public TMCStepper {
 		INIT_REGISTER(FACTORY_CONF)		{0x07, {.sr=0}};
 		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
 		VACTUAL_2208_t VACTUAL_register = VACTUAL_2208_t{0x22, 0};
-		INIT_REGISTER(MSCNT)					{0x6A};
-		INIT_REGISTER(MSCURACT)				{0x6B, {.sr=0}};
 		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
 		CHOPCONF_2208_t CHOPCONF_register = CHOPCONF_2208_t{0x6C, {.sr=0}};
 		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};

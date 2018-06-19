@@ -187,17 +187,6 @@ uint32_t TMC2208Stepper::VACTUAL() {
 	return VACTUAL_register.sr;
 }
 
-uint16_t TMC2208Stepper::MSCNT() {
-	return READ_REG(MSCNT);
-}
-
-uint32_t TMC2208Stepper::MSCURACT() {
-	MSCURACT_register.sr = READ_REG(MSCURACT);
-	return MSCURACT_register.sr;
-}
-int16_t TMC2208Stepper::cur_a() { MSCURACT(); return MSCURACT_register.cur_a; }
-int16_t TMC2208Stepper::cur_b() { MSCURACT(); return MSCURACT_register.cur_b; }
-
 uint32_t TMC2208Stepper::PWM_SCALE() {
 	PWM_SCALE_register.sr = READ_REG(PWM_SCALE);
 	return PWM_SCALE_register.sr;

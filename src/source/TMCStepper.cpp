@@ -139,3 +139,24 @@ void TMCStepper::TPWMTHRS(uint32_t input) {
   TPWMTHRS_register.sr = input;
   write(TPWMTHRS_register.address, TPWMTHRS_register.sr);
 }
+
+uint16_t TMCStepper::MSCNT() {
+  return READ_REG(MSCNT);
+}
+
+uint32_t TMCStepper::MSCURACT() {
+  MSCURACT_register.sr = READ_REG(MSCURACT);
+  return MSCURACT_register.sr;
+}
+int16_t TMCStepper::cur_a() {
+  MSCURACT();
+  int16_t value = MSCURACT_register.cur_a;
+  if (value > 255) value -= 512;
+  return value;
+}
+int16_t TMCStepper::cur_b() {
+  MSCURACT();
+  int16_t value = MSCURACT_register.cur_b;
+  if (value > 255) value -= 512;
+  return value;
+}
