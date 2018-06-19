@@ -28,7 +28,7 @@ void TMC2130Stepper::diag1_onstate(bool B) 			{ SET_REG(diag1_onstate);			}
 void TMC2130Stepper::diag1_steps_skipped(bool B) 	{ SET_REG(diag1_steps_skipped);		}
 void TMC2130Stepper::diag0_int_pushpull(bool B) 	{ SET_REG(diag0_int_pushpull);		}
 void TMC2130Stepper::diag1_pushpull(bool B) 		{ SET_REG(diag1_poscomp_pushpull);	}
-void TMC2130Stepper::small_hysterisis(bool B) 		{ SET_REG(small_hysterisis);		}
+void TMC2130Stepper::small_hysteresis(bool B) 		{ SET_REG(small_hysterisis);		}
 void TMC2130Stepper::stop_enable(bool B) 			{ SET_REG(stop_enable);				}
 void TMC2130Stepper::direct_mode(bool B) 			{ SET_REG(direct_mode);				}
 
@@ -46,7 +46,7 @@ bool TMC2130Stepper::diag1_onstate() 				{ GET_REG(diag1_onstate);			}
 bool TMC2130Stepper::diag1_steps_skipped() 			{ GET_REG(diag1_steps_skipped);		}
 bool TMC2130Stepper::diag0_int_pushpull() 			{ GET_REG(diag0_int_pushpull);		}
 bool TMC2130Stepper::diag1_pushpull()		 		{ GET_REG(diag1_poscomp_pushpull);	}
-bool TMC2130Stepper::small_hysterisis() 			{ GET_REG(small_hysterisis);		}
+bool TMC2130Stepper::small_hysteresis() 			{ GET_REG(small_hysterisis);		}
 bool TMC2130Stepper::stop_enable() 					{ GET_REG(stop_enable);				}
 bool TMC2130Stepper::direct_mode() 					{ GET_REG(direct_mode);				}
 

@@ -145,7 +145,7 @@ class TMC2130Stepper : public TMCStepper {
 		void diag1_steps_skipped(	bool B);
 		void diag0_int_pushpull(	bool B);
 		void diag1_pushpull(			bool B);
-		void small_hysterisis(		bool B);
+		void small_hysteresis(		bool B);
 		void stop_enable(					bool B);
 		void direct_mode(					bool B);
 		bool I_scale_analog();
@@ -162,7 +162,7 @@ class TMC2130Stepper : public TMCStepper {
 		bool diag1_steps_skipped();
 		bool diag0_int_pushpull();
 		bool diag1_pushpull();
-		bool small_hysterisis();
+		bool small_hysteresis();
 		bool stop_enable();
 		bool direct_mode();
 
