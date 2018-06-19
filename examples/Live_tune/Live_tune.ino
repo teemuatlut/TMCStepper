@@ -2,50 +2,89 @@
 #define DIR_PIN   55  //			19			55	//direction
 #define STEP_PIN  54  //			18			54	//step
 #define CS_PIN    40  //			17			40	//chip select
+#define STEP_PORT  PORTF
+#define STEP_BIT   0
+#define R_SENSE    0.11 // Match to your driver
 
 int speed = 10;
 bool running = false;
 float Rsense = 0.11;
 float hold_x = 0.5;
 boolean toggle1 = 0;
+uint8_t stall_value = 9;
+volatile uint32_t step_counter = 0;
+const uint32_t steps_per_mm = 80 * 16; // @ 256 microsteps
+const uint16_t fsteps_per_rotation = 200;
+const uint32_t MHz = 16000000>>8; // Scaled by 256
+const uint16_t acceleration = 2000;
 
-#include <TMC2130Stepper.h>
-TMC2130Stepper myStepper = TMC2130Stepper(EN_PIN, DIR_PIN, STEP_PIN, CS_PIN);
+#include <TMCStepper.h>
+TMC2130Stepper myStepper = TMC2130Stepper(CS_PIN, R_SENSE);
 
-ISR(TIMER1_COMPA_vect){//timer1 interrupt 1Hz toggles pin 13 (LED)
-//generates pulse wave of frequency 1Hz/2 = 0.5kHz (takes two cycles for full wave- toggle high then toggle low)
-  if (toggle1){
-    digitalWrite(STEP_PIN, HIGH);
-    toggle1 = 0;
-  }
-  else{
-    digitalWrite(STEP_PIN, LOW);
-    toggle1 = 1;
-  }
+ISR(TIMER1_COMPA_vect){
+	STEP_PORT |= 1 << STEP_BIT;
+	STEP_PORT &= ~(1 << STEP_BIT);
+	step_counter++;
 }
 
 void initTimer() {
 	cli();//stop interrupts
-	//set timer1 interrupt at 1Hz
-	TCCR1A = 0;// set entire TCCR1A register to 0
-	TCCR1B = 0;// same for TCCR1B
-	TCNT1  = 0;//initialize counter value to 0
-	// set compare match register for 1hz increments
-	OCR1A = 256;// = (16*10^6) / (1*1024) - 1 (must be <65536)
+	//set timer1 interrupt at 10kHz => 10000 steps/s => ~ 20 fullsteps/s
+	TCCR1A = 0; // set entire TCCR1A register to 0
+	TCCR1B = 0; // same for TCCR1B
+	TCNT1  = 0; //initialize counter value to 0
+	// set compare match register for 2kHz increments
+	OCR1A = 61;// = (16*10^6) / (8*2000) - 1 (must be <65536)
 	// turn on CTC mode
 	TCCR1B |= (1 << WGM12);
-	// Set CS12 and CS10 bits for 1024 prescaler
-	TCCR1B |= (1 << CS11);// | (1 << CS10);  
-	// enable timer compare interrupt
-	TIMSK1 |= (1 << OCIE1A);
+	// Set CS01 bit for no prescaler
+	TCCR1B |= (1 << CS10);
+	// enable/disable timer compare interrupt on start
+	//TIMSK1 |= (1 << OCIE1A);
+	TIMSK1 &= ~(1 << OCIE1A);
 	sei();//allow interrupts
 }
 
-void setTimer(int t) {
+uint16_t calculateMMSTimer(uint8_t mms) {
+	uint32_t steps_per_second = mms * steps_per_mm;
+	steps_per_second >>= 8;
+	uint32_t tmr = MHz / steps_per_second - 1;
+	return tmr;
+}
+uint16_t calculateFSPSTimer(uint16_t fsps) {
+	return MHz / fsps - 1;
+}
+uint16_t calculateRPSTimer(uint8_t rps) {
+	return MHz / (rps * fsteps_per_rotation) - 1;
+}
+
+void accelerationRamp(uint16_t maxMMS = 100) {
+	TIMSK1 &= ~(1 << OCIE1A);
+	while (myStepper.cur_a() != 0) { // Use cur_b if measuring from B coil
+		digitalWrite(STEP_PIN, HIGH);
+		digitalWrite(STEP_PIN, LOW);
+		delay(1);
+	}
+	delay(100);
+	digitalWrite(EN_PIN, HIGH);
+	uint16_t mms = 2;
+	uint16_t maxOCR1A = calculateMMSTimer(maxMMS);
+	uint16_t _OCR1A = calculateMMSTimer(mms);
+	digitalWrite(EN_PIN, LOW);
+	OCR1A = _OCR1A;
+	TIMSK1 |= 1 << OCIE1A;
+	for (; mms <= maxMMS; mms += acceleration) {
+		delay(1);
+		OCR1A = calculateMMSTimer(mms);
+	}
 	cli();
-	TCNT1 = 0;
-	OCR1A = t;
+	step_counter = 0;
 	sei();
+	while (step_counter <= 100*steps_per_mm);
+	for (; mms >= 2; mms -= acceleration) {
+		delay(1);
+		OCR1A = calculateMMSTimer(mms);
+	}
 }
 
 void serialTuple(String cmd, int arg) {
@@ -56,14 +95,51 @@ void serialTuple(String cmd, int arg) {
 	Serial.println(")");
 }
 
-
 void setup() {
 	initTimer();
-	Serial.begin(9600);
-	myStepper.begin();
-	myStepper.SilentStepStick2130(1000);
+	Serial.begin(500000);
+
+	pinMode(EN_PIN, OUTPUT);
+	pinMode(DIR_PIN, OUTPUT);
+	pinMode(STEP_PIN, OUTPUT);
+	pinMode(CS_PIN, OUTPUT);
+	digitalWrite(EN_PIN, HIGH); //deactivate driver (LOW active)
+	digitalWrite(DIR_PIN, LOW); //LOW or HIGH
+	digitalWrite(STEP_PIN, LOW);
+	digitalWrite(CS_PIN, HIGH);
+    SPI.begin();
+    pinMode(MISO, INPUT_PULLUP);
+
+	myStepper.push();
+    myStepper.tbl(1); //blank_time(24);
+    myStepper.TPOWERDOWN(255);
+	myStepper.toff(4);
+
+	// Effective hysteresis = 0
+	myStepper.hstrt(0);
+	myStepper.hend(2);
+
+	myStepper.en_pwm_mode(true);
+	myStepper.pwm_freq(1);
+	myStepper.pwm_autoscale(true);
+	myStepper.pwm_ampl(180);
+	myStepper.pwm_grad(1);
+
+    myStepper.rms_current(600); // mA
+    myStepper.microsteps(256);
+    myStepper.diag1_stall(1);
+    myStepper.diag1_pushpull(1);
 	digitalWrite(EN_PIN, LOW);
-	Serial.println("Setup ready");
+
+	while (myStepper.cur_a() < 240) { // Use cur_b if measuring from B coil
+		digitalWrite(STEP_PIN, HIGH);
+		digitalWrite(STEP_PIN, LOW);
+		delay(3);
+	}
+	Serial.print("cur_a = ");
+	Serial.println(myStepper.cur_a(), DEC);
+	Serial.print("cur_b = ");
+	Serial.println(myStepper.cur_b(), DEC);
 }
 
 void loop() {
@@ -76,16 +152,51 @@ void loop() {
 		if (cmd == "run") {
 			serialTuple("run", arg);
 			running = arg;
-			arg ? digitalWrite(EN_PIN, LOW) : digitalWrite(EN_PIN, HIGH);
+			arg ? TIMSK1 |= 1 << OCIE1A : TIMSK1 &= ~(1 << OCIE1A);
+			//arg ? digitalWrite(EN_PIN, LOW) : digitalWrite(EN_PIN, HIGH);
 		}
-		else if (cmd == "speed") {
-			serialTuple("speed", arg);
-			//speed = arg;
-			setTimer(arg);
+
+		else if (cmd == "mms") {
+			serialTuple("mms", arg);
+			cli();
+			TCNT1 = 0;
+			OCR1A = calculateMMSTimer(arg);
+			Serial.print("Set OCR1A to ");
+			Serial.println(OCR1A);
+			sei();
 		}
-		else if (cmd == "setCurrent") {
-			serialTuple("setCurrent", arg);
-			myStepper.setCurrent(arg, Rsense, hold_x);
+		else if (cmd == "fsps") {
+			serialTuple("fsps", arg);
+			cli();
+			OCR1A = calculateFSPSTimer(arg);
+			Serial.print("Set OCR1A to ");
+			Serial.println(OCR1A);
+			sei();
+		}
+		else if (cmd == "rps") {
+			serialTuple("rps", arg);
+			cli();
+			OCR1A = calculateRPSTimer(arg);
+			Serial.print("Set OCR1A to ");
+			Serial.println(OCR1A);
+			sei();
+		}
+		else if (cmd == "rms_current") {
+			serialTuple("rms_current", arg);
+			myStepper.rms_current(arg, hold_x);
+		}
+		else if (cmd == "find_pos") {
+			serialTuple("find_pos", arg);
+			TIMSK1 &= ~(1 << OCIE1A);
+			while (myStepper.cur_a() != arg) { // Use cur_b if measuring from B coil
+				digitalWrite(STEP_PIN, HIGH);
+				digitalWrite(STEP_PIN, LOW);
+				delay(1);
+			}
+		}
+		else if (cmd == "rampTo") {
+			serialTuple("rampTo", arg);
+			accelerationRamp(arg);
 		}
 		else if (cmd == "Rsense") {
 			Serial.print("Setting R sense value to: ");
@@ -101,33 +212,33 @@ void loop() {
 			Serial.print("GCONF: 0b");
 			Serial.println(myStepper.GCONF(), BIN);
 		}
-		else if (cmd == "external_ref") {
-			serialTuple("external_ref", arg);
-			myStepper.external_ref(arg);
+		else if (cmd == "I_scale_analog") {
+			serialTuple("I_scale_analog", arg);
+			myStepper.I_scale_analog(arg);
 		}
-		else if (cmd == "internal_sense_R") {
-			serialTuple("internal_sense_R", arg);
-			myStepper.internal_sense_R(arg);
+		else if (cmd == "internal_Rsense") {
+			serialTuple("internal_Rsense", arg);
+			myStepper.internal_Rsense(arg);
 		}
-		else if (cmd == "stealthChop") {
-			serialTuple("stealthChop", arg);
-			myStepper.stealthChop(arg);
+		else if (cmd == "en_pwm_mode") {
+			serialTuple("en_pwm_mode", arg);
+			myStepper.en_pwm_mode(arg);
 		}
-		else if (cmd == "commutation") {
-			serialTuple("commutation", arg);
-			myStepper.commutation(arg);
+		else if (cmd == "enc_commutation") {
+			serialTuple("enc_commutation", arg);
+			myStepper.enc_commutation(arg);
 		}
-		else if (cmd == "shaft_dir") {
-			serialTuple("shaft_dir", arg);
-			myStepper.shaft_dir(arg);
+		else if (cmd == "shaft") {
+			serialTuple("shaft", arg);
+			myStepper.shaft(arg);
 		}
-		else if (cmd == "diag0_errors") {
-			serialTuple("diag0_errors", arg);
-			myStepper.diag0_errors(arg);
+		else if (cmd == "diag0_error") {
+			serialTuple("diag0_error", arg);
+			myStepper.diag0_error(arg);
 		}
-		else if (cmd == "diag0_temp_prewarn") {
-			serialTuple("diag0_temp_prewarn", arg);
-			myStepper.diag0_temp_prewarn(arg);
+		else if (cmd == "diag0_otpw") {
+			serialTuple("diag0_otpw", arg);
+			myStepper.diag0_otpw(arg);
 		}
 		else if (cmd == "diag0_stall") {
 			serialTuple("diag0_stall", arg);
@@ -141,25 +252,21 @@ void loop() {
 			serialTuple("diag1_index", arg);
 			myStepper.diag1_index(arg);
 		}
-		else if (cmd == "diag1_chopper_on") {
-			serialTuple("diag1_chopper_on", arg);
-			myStepper.diag1_chopper_on(arg);
+		else if (cmd == "diag1_onstate") {
+			serialTuple("diag1_onstate", arg);
+			myStepper.diag1_onstate(arg);
 		}
-		else if (cmd == "diag1_steps_skipped") {
-			serialTuple("diag1_steps_skipped", arg);
-			myStepper.diag1_steps_skipped(arg);
+		else if (cmd == "diag0_int_pushpull") {
+			serialTuple("diag0_int_pushpull", arg);
+			myStepper.diag0_int_pushpull(arg);
 		}
-		else if (cmd == "diag0_active_high") {
-			serialTuple("diag0_active_high", arg);
-			myStepper.diag0_active_high(arg);
+		else if (cmd == "diag1_pushpull") {
+			serialTuple("diag1_pushpull", arg);
+			myStepper.diag1_pushpull(arg);
 		}
-		else if (cmd == "diag1_active_high") {
-			serialTuple("diag1_active_high", arg);
-			myStepper.diag1_active_high(arg);
-		}
-		else if (cmd == "small_hysterisis") {
-			serialTuple("small_hysterisis", arg);
-			myStepper.small_hysterisis(arg);
+		else if (cmd == "small_hysteresis") {
+			serialTuple("small_hysteresis", arg);
+			myStepper.small_hysteresis(arg);
 		}
 		else if (cmd == "stop_enable") {
 			serialTuple("stop_enable", arg);
@@ -169,212 +276,200 @@ void loop() {
 			serialTuple("direct_mode", arg);
 			myStepper.direct_mode(arg);
 		}
-		else if (cmd == "hold_current") {
-			serialTuple("hold_current", arg);
-			myStepper.hold_current(arg);
+		// IHOLD_IRUN
+		else if (cmd == "ihold") {
+			serialTuple("ihold", arg);
+			myStepper.ihold(arg);
 		}
-		else if (cmd == "run_current") {
-			serialTuple("run_current", arg);
-			myStepper.run_current(arg);
+		else if (cmd == "irun") {
+			serialTuple("irun", arg);
+			myStepper.irun(arg);
 		}
-		else if (cmd == "hold_delay") {
-			serialTuple("hold_delay", arg);
-			myStepper.hold_delay(arg);
+		else if (cmd == "iholddelay") {
+			serialTuple("iholddelay", arg);
+			myStepper.iholddelay(arg);
 		}
-		else if (cmd == "power_down_delay") {
-			serialTuple("power_down_delay", arg);
-			myStepper.power_down_delay(arg);
+
+		else if (cmd == "TSTEP") {
+			Serial.print("TSTEP: ");
+			Serial.println(myStepper.TSTEP());
 		}
-		else if (cmd == "microstep_time") {
-			Serial.print("microstep_time: ");
-			Serial.println(myStepper.microstep_time());
+
+		else if (cmd == "TPWMTHRS") {
+			serialTuple("TPWMTHRS", arg);
+			myStepper.TPWMTHRS(arg);
 		}
-		else if (cmd == "stealth_max_speed") {
-			serialTuple("stealth_max_speed", arg);
-			myStepper.stealth_max_speed(arg);
+		else if (cmd == "TCOOLTHRS") {
+			serialTuple("TCOOLTHRS", arg);
+			myStepper.TCOOLTHRS(arg);
 		}
-		else if (cmd == "coolstep_min_speed") {
-			serialTuple("coolstep_min_speed", arg);
-			myStepper.coolstep_min_speed(arg);
+		else if (cmd == "THIGH") {
+			serialTuple("THIGH", arg);
+			myStepper.THIGH(arg);
 		}
-		else if (cmd == "mode_sw_speed") {
-			serialTuple("mode_sw_speed", arg);
-			myStepper.mode_sw_speed(arg);
+		// XDIRECT
+		else if (cmd == "coil_A") {
+			serialTuple("coil_A", arg);
+			myStepper.coil_A(arg);
 		}
-		else if (cmd == "coil_A_current") {
-			serialTuple("coil_A_current", arg);
-			myStepper.coil_A_current(arg);
+		else if (cmd == "coil_B") {
+			serialTuple("coil_B", arg);
+			myStepper.coil_B(arg);
 		}
-		else if (cmd == "coil_B_current") {
-			serialTuple("coil_B_current", arg);
-			myStepper.coil_B_current(arg);
+
+		else if (cmd == "VDCMIN") {
+			serialTuple("VDCMIN", arg);
+			myStepper.VDCMIN(arg);
 		}
-		else if (cmd == "DCstep_min_speed") {
-			serialTuple("DCstep_min_speed", arg);
-			myStepper.DCstep_min_speed(arg);
-		}
+
 		else if (cmd == "CHOPCONF") {
 			Serial.print("CHOPCONF: 0b");
 			Serial.println(myStepper.CHOPCONF(), BIN);
 		}
-		else if (cmd == "off_time") {
-			serialTuple("off_time", arg);
-			myStepper.off_time(arg);
+		else if (cmd == "toff") {
+			serialTuple("toff", arg);
+			myStepper.toff(arg);
 		}
-		else if (cmd == "hysterisis_start") {
-			serialTuple("hysterisis_start", arg);
-			myStepper.hysterisis_start(arg);
+		else if (cmd == "hstrt") {
+			serialTuple("hstrt", arg);
+			myStepper.hstrt(arg);
 		}
-		else if (cmd == "fast_decay_time") {
-			serialTuple("fast_decay_time", arg);
-			myStepper.fast_decay_time(arg);
+		else if (cmd == "hend") {
+			serialTuple("hend", arg);
+			myStepper.hend(arg);
 		}
-		else if (cmd == "hysterisis_low") {
-			serialTuple("hysterisis_low", arg);
-			myStepper.hysterisis_low(arg);
+		/*
+		else if (cmd == "fd") {
+			serialTuple("fd", arg);
+			myStepper.fd(arg);
 		}
-/*		else if (cmd == "sine_offset") {
-			serialTuple("sine_offset", arg);
-			myStepper.sine_offset(arg);
-		}*/
-		else if (cmd == "disable_I_comparator") {
-			serialTuple("disable_I_comparator", arg);
-			myStepper.disable_I_comparator(arg);
+		*/
+		else if (cmd == "disfdcc") {
+			serialTuple("disfdcc", arg);
+			myStepper.disfdcc(arg);
 		}
-		else if (cmd == "random_off_time") {
-			serialTuple("random_off_time", arg);
-			myStepper.random_off_time(arg);
+		else if (cmd == "rndtf") {
+			serialTuple("rndtf", arg);
+			myStepper.rndtf(arg);
 		}
-		else if (cmd == "chopper_mode") {
-			serialTuple("chopper_mode", arg);
-			myStepper.chopper_mode(arg);
+		else if (cmd == "chm") {
+			serialTuple("chm", arg);
+			myStepper.chm(arg);
 		}
-		else if (cmd == "blank_time") {
-			serialTuple("blank_time", arg);
-			myStepper.blank_time(arg);
+		else if (cmd == "tbl") {
+			serialTuple("tbl", arg);
+			myStepper.tbl(arg);
 		}
-		else if (cmd == "high_sense_R") {
-			serialTuple("high_sense_R", arg);
-			myStepper.high_sense_R(arg);
+		else if (cmd == "vsense") {
+			serialTuple("vsense", arg);
+			myStepper.vsense(arg);
 		}
-		else if (cmd == "fullstep_threshold") {
-			serialTuple("fullstep_threshold", arg);
-			myStepper.fullstep_threshold(arg);
+		else if (cmd == "vhighfs") {
+			serialTuple("vhighfs", arg);
+			myStepper.vhighfs(arg);
 		}
-		else if (cmd == "high_speed_mode") {
-			serialTuple("high_speed_mode", arg);
-			myStepper.high_speed_mode(arg);
+		else if (cmd == "vhighchm") {
+			serialTuple("vhighchm", arg);
+			myStepper.vhighchm(arg);
 		}
-		else if (cmd == "sync_phases") {
-			serialTuple("sync_phases", arg);
-			myStepper.sync_phases(arg);
+		else if (cmd == "sync") {
+			serialTuple("sync", arg);
+			myStepper.sync(arg);
 		}
-		else if (cmd == "microsteps") {
-			serialTuple("microsteps", arg);
-			myStepper.microsteps(arg);
+		else if (cmd == "mres") {
+			serialTuple("mres", arg);
+			myStepper.mres(arg);
 		}
-		else if (cmd == "interpolate") {
-			serialTuple("interpolate", arg);
-			myStepper.interpolate(arg);
+		else if (cmd == "intpol") {
+			serialTuple("intpol", arg);
+			myStepper.intpol(arg);
 		}
-		else if (cmd == "double_edge_step") {
-			serialTuple("double_edge_step", arg);
-			myStepper.double_edge_step(arg);
+		else if (cmd == "dedge") {
+			serialTuple("dedge", arg);
+			myStepper.dedge(arg);
 		}
-		else if (cmd == "disable_short_protection") {
-			serialTuple("disable_short_protection", arg);
-			myStepper.disable_short_protection(arg);
+		else if (cmd == "diss2g") {
+			serialTuple("diss2g", arg);
+			myStepper.diss2g(arg);
 		}
-		else if (cmd == "sg_min") {
-			serialTuple("sg_min", arg);
-			myStepper.sg_min(arg);
+		// COOLCONF
+		else if (cmd == "semin") {
+			serialTuple("semin", arg);
+			myStepper.semin(arg);
 		}
-		else if (cmd == "sg_max") {
-			serialTuple("sg_max", arg);
-			myStepper.sg_max(arg);
+		else if (cmd == "seup") {
+			serialTuple("seup", arg);
+			myStepper.seup(arg);
 		}
-		else if (cmd == "sg_step_width") {
-			serialTuple("sg_step_width", arg);
-			myStepper.sg_step_width(arg);
+		else if (cmd == "semax") {
+			serialTuple("semax", arg);
+			myStepper.semax(arg);
 		}
-		else if (cmd == "sg_current_decrease") {
-			serialTuple("sg_current_decrease", arg);
-			myStepper.sg_current_decrease(arg);
+		else if (cmd == "sedn") {
+			serialTuple("sedn", arg);
+			myStepper.sedn(arg);
 		}
-		else if (cmd == "smart_min_current") {
-			serialTuple("smart_min_current", arg);
-			myStepper.smart_min_current(arg);
+		else if (cmd == "seimin") {
+			serialTuple("seimin", arg);
+			myStepper.seimin(arg);
 		}
-		else if (cmd == "sg_stall_value") {
-			serialTuple("sg_stall_value", arg);
-			myStepper.sg_stall_value(arg);
+		else if (cmd == "sgt") {
+			serialTuple("sgt", arg);
+			myStepper.sgt(arg);
 		}
-		else if (cmd == "sg_filter") {
-			serialTuple("sg_filter", arg);
-			myStepper.sg_filter(arg);
+		else if (cmd == "sfilt") {
+			serialTuple("sfilt", arg);
+			myStepper.sfilt(arg);
 		}
-		else if (cmd == "stealth_amplitude") {
-			serialTuple("stealth_amplitude", arg);
-			myStepper.stealth_amplitude(arg);
+		// PWMCONF
+		else if (cmd == "pwm_ampl") {
+			serialTuple("pwm_ampl", arg);
+			myStepper.pwm_ampl(arg);
 		}
-		else if (cmd == "stealth_gradient") {
-			serialTuple("stealth_gradient", arg);
-			myStepper.stealth_gradient(arg);
+		else if (cmd == "pwm_grad") {
+			serialTuple("pwm_grad", arg);
+			myStepper.pwm_grad(arg);
 		}
-		else if (cmd == "stealth_freq") {
-			serialTuple("stealth_freq", arg);
-			myStepper.stealth_freq(arg);
+		else if (cmd == "pwm_freq") {
+			serialTuple("pwm_freq", arg);
+			myStepper.pwm_freq(arg);
 		}
-		else if (cmd == "stealth_freq") {
-			serialTuple("stealth_freq", arg);
-			myStepper.stealth_freq(arg);
+		else if (cmd == "pwm_autoscale") {
+			serialTuple("pwm_autoscale", arg);
+			myStepper.pwm_autoscale(arg);
 		}
-		else if (cmd == "stealth_autoscale") {
-			serialTuple("stealth_autoscale", arg);
-			myStepper.stealth_autoscale(arg);
+		else if (cmd == "pwm_symmetric") {
+			serialTuple("pwm_symmetric", arg);
+			myStepper.pwm_symmetric(arg);
 		}
-		else if (cmd == "stealth_symmetric") {
-			serialTuple("stealth_symmetric", arg);
-			myStepper.stealth_symmetric(arg);
+		else if (cmd == "freewheel") {
+			serialTuple("freewheel", arg);
+			myStepper.freewheel(arg);
 		}
-		else if (cmd == "standstill_mode") {
-			serialTuple("standstill_mode", arg);
-			myStepper.standstill_mode(arg);
+		// ENCM_CTRL
+		else if (cmd == "inv") {
+			serialTuple("inv", arg);
+			myStepper.inv(arg);
 		}
+		else if (cmd == "maxspeed") {
+			serialTuple("maxspeed", arg);
+			myStepper.maxspeed(arg);
+		}
+
 		else if (cmd == "DRVSTATUS") {
 			Serial.print("DRVSTATUS: 0b");
 			Serial.println(myStepper.DRV_STATUS(), BIN);
 		}
 		else if (cmd == "PWM_SCALE") {
 			Serial.print("PWM_SCALE: 0b");
-			Serial.println(myStepper.PWM_SCALE(), BIN);
-		}
-		else if (cmd == "invert_encoder") {
-			serialTuple("invert_encoder", arg);
-			myStepper.invert_encoder(arg);
-		}
-		else if (cmd == "maxspeed") {
-			serialTuple("maxspeed", arg);
-			myStepper.maxspeed(arg);
-		}
-		else if (cmd == "interpolate") {
-			serialTuple("interpolate", arg);
-			myStepper.interpolate(arg);
+			Serial.println(myStepper.PWM_SCALE(), DEC);
 		}
 		else if (cmd == "LOST_STEPS") {
 			Serial.print("LOST_STEPS: 0b");
-			Serial.println(myStepper.LOST_STEPS(), BIN);
+			Serial.println(myStepper.LOST_STEPS(), DEC);
 		}
 		else {
 			Serial.println("Invalid command!");
 		}
 	}
-/*	
-	if (running) {
-		digitalWrite(STEP_PIN, HIGH);
-		delayMicroseconds(speed);
-		digitalWrite(STEP_PIN, LOW);
-		delayMicroseconds(speed);
-	}
-*/
 }
