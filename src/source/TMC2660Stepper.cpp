@@ -20,17 +20,17 @@ void TMC2660Stepper::switchCSpin(bool state) {
 
 uint32_t TMC2660Stepper::read() {
   uint32_t response = 0UL;
-  switchCSpin(LOW);
   uint32_t dummy = ((uint32_t)DRVCONF_register.address<<17) | DRVCONF_register.sr;
   if (uses_sw_spi) {
+    switchCSpin(LOW);
     response |= TMC_SW_SPI.transfer((dummy >> 16) & 0xFF);
     response <<= 8;
     response |= TMC_SW_SPI.transfer((dummy >>  8) & 0xFF);
     response <<= 8;
     response |= TMC_SW_SPI.transfer(dummy & 0xFF);
   } else {
-    SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
+    switchCSpin(LOW);
     response |= SPI.transfer((dummy >> 16) & 0xFF);
     response <<= 8;
     response |= SPI.transfer((dummy >>  8) & 0xFF);
@@ -44,14 +44,14 @@ uint32_t TMC2660Stepper::read() {
 
 void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
   uint32_t data = (uint32_t)addressByte<<17 | config;
-  switchCSpin(LOW);
   if (uses_sw_spi) {
+    switchCSpin(LOW);
     TMC_SW_SPI.transfer((data >> 16) & 0xFF);
     TMC_SW_SPI.transfer((data >>  8) & 0xFF);
     TMC_SW_SPI.transfer(data & 0xFF);
   } else {
-    SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
+    switchCSpin(LOW);
     SPI.transfer((data >> 16) & 0xFF);
     SPI.transfer((data >>  8) & 0xFF);
     SPI.transfer(data & 0xFF);
