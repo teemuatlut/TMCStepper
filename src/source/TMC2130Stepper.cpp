@@ -1,17 +1,16 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) {
-  this->_pinCS = pinCS;
-  Rsense = RS;
-}
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
+  TMCStepper(RS),
+  _pinCS(pinCS)
+  {}
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) {
-  this->_pinCS = pinCS;
-  Rsense = RS;
-  uses_sw_spi = true;
-  TMC_SW_SPI.setPins(pinMOSI, pinMISO, pinSCK);
-}
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+  TMCStepper(RS),
+  _pinCS(pinCS),
+  uses_sw_spi(true)
+  { TMC_SW_SPI.setPins(pinMOSI, pinMISO, pinSCK); }
 
 void TMC2130Stepper::setSPISpeed(uint32_t speed) {
   spi_speed = speed;

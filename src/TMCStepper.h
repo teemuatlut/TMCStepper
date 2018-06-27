@@ -82,6 +82,8 @@ class TMCStepper {
 		bool flag_otpw = false;
 
 	protected:
+		TMCStepper() {};
+		TMCStepper(float RS) : Rsense(RS) {};
 		INIT_REGISTER(GSTAT){0x01, {.sr=0}};
 		INIT_REGISTER(IHOLD_IRUN){0x10, {.sr=0}};
 		INIT_REGISTER(TPOWERDOWN){0x11, .sr=0};
@@ -314,15 +316,16 @@ class TMC2130Stepper : public TMCStepper {
 		INIT_REGISTER(ENCM_CTRL){0x72, {.sr=0}};
 		INIT_REGISTER(LOST_STEPS){0x73};
 
-		uint16_t _pinCS;
 		uint8_t status_response;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
-		bool uses_sw_spi = false;
+		const uint16_t _pinCS;
+		const bool uses_sw_spi = false;
 };
 
 class TMC5130Stepper : public TMC2130Stepper {
 	public:
 		TMC5130Stepper(uint16_t pinCS);
+		TMC5130Stepper(uint16_t pinCS, float RS);
 		void begin();
 
 		// R: IFCNT
