@@ -91,6 +91,8 @@ void TMC2130Stepper::begin() {
   pinMode(_pinCS, OUTPUT);
   switchCSpin(HIGH);
 
+  if (uses_sw_spi) TMC_SW_SPI.init();
+
   GCONF(GCONF_register.sr);
   CHOPCONF(CHOPCONF_register.sr);
   COOLCONF(COOLCONF_register.sr);
