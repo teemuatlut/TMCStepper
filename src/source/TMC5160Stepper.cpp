@@ -1,9 +1,7 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS) {
-  Rsense = RS;
-}
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS, RS) {}
 
 /*
   Requested current = mA = I_rms/1000
