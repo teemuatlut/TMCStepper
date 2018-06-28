@@ -26,21 +26,23 @@ struct DRVCTRL_0_t {
   };
 };
 
-struct TMC2660CHOPCONF_t {
-  uint8_t address;
-  union {
-    uint32_t sr;
-    struct {
-      uint8_t toff : 4;
-      uint8_t hstrt : 3;
-      uint8_t hend : 4;
-      uint8_t hdec : 2;
-      bool rndtf : 1;
-      bool chm : 1;
-      uint8_t tbl : 2;
+namespace TMC2660 {
+  struct CHOPCONF_t {
+    uint8_t address;
+    union {
+      uint32_t sr;
+      struct {
+        uint8_t toff : 4;
+        uint8_t hstrt : 3;
+        uint8_t hend : 4;
+        uint8_t hdec : 2;
+        bool rndtf : 1;
+        bool chm : 1;
+        uint8_t tbl : 2;
+      };
     };
   };
-};
+}
 
 struct SMARTEN_t {
   uint8_t address;

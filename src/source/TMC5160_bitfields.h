@@ -70,20 +70,22 @@ struct PWM_AUTO_t {
   };
 };
 
-struct TMC5160PWMCONF_t {
-  uint8_t address;
-  union {
-    uint32_t sr;
-    struct {
-      uint8_t pwm_ofs : 8,
-              pwm_grad : 8,
-              pwm_freq : 2;
-      bool pwm_autoscale : 1,
-           pwm_autograd : 1;
-      uint8_t freewheel : 2,
-                        : 2,
-              pwm_reg : 4,
-              pwm_lim : 4;
+namespace TMC5160 {
+  struct PWMCONF_t {
+    uint8_t address;
+    union {
+      uint32_t sr;
+      struct {
+        uint8_t pwm_ofs : 8,
+                pwm_grad : 8,
+                pwm_freq : 2;
+        bool pwm_autoscale : 1,
+             pwm_autograd : 1;
+        uint8_t freewheel : 2,
+                          : 2,
+                pwm_reg : 4,
+                pwm_lim : 4;
+      };
     };
   };
-};
+}

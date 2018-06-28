@@ -16,6 +16,12 @@
 #include "source/TMC2660_bitfields.h"
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
+#define INIT2130_REGISTER(REG) TMC2130::REG##_t REG##_register = TMC2130::REG##_t
+#define INIT5130_REGISTER(REG) TMC5130::REG##_t REG##_register = TMC5130::REG##_t
+#define INIT5160_REGISTER(REG) TMC5160::REG##_t REG##_register = TMC5160::REG##_t
+#define INIT2660_REGISTER(REG) TMC2660::REG##_t REG##_register = TMC2660::REG##_t
+#define INIT2208_REGISTER(REG) TMC2208::REG##_t REG##_register = TMC2208::REG##_t
+#define INIT2224_REGISTER(REG) TMC2224::REG##_t REG##_register = TMC2224::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
 #define TMCSTEPPER_VERSION 0x000001 // v0.0.1
@@ -468,7 +474,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 
 		INIT_REGISTER(IFCNT){0x02};
 		INIT_REGISTER(SLAVECONF){0x03, {.sr=0}};
-		IOIN_5130_t IOIN_register = IOIN_5130_t{0x04, {.sr=0}};
+		INIT5130_REGISTER(IOIN){0x04, {.sr=0}};
 		INIT_REGISTER(OUTPUT){0x04, .sr=0};
 		INIT_REGISTER(X_COMPARE){0x05, .sr=0};
 		INIT_REGISTER(RAMPMODE){0x20, .sr=0};
@@ -617,6 +623,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT_REGISTER(ENC_DEVIATION){0x3D, .sr=0};
 		//INIT_REGISTER(PWM_SCALE){0x0C, .sr=0};
 		INIT_REGISTER(PWM_AUTO){0x72, {.sr=0}};
+		INIT5160_REGISTER(PWMCONF){0x70, {.sr=0}};
 };
 
 class TMC2208Stepper : public TMCStepper {
@@ -765,24 +772,24 @@ class TMC2208Stepper : public TMCStepper {
 		bool CRCerror = false;
 	protected:
 		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
-		GCONF_2208_t GCONF_register = GCONF_2208_t{0x06, {.sr=0}};
+		INIT2208_REGISTER(GCONF)			{0x00, {.sr=0}};
 		INIT_REGISTER(IFCNT)					{0x02};
 		INIT_REGISTER(SLAVECONF)			{0x03, {.sr=0}};
 		INIT_REGISTER(OTP_PROG)				{0x04};
 		INIT_REGISTER(OTP_READ)				{0x05};
 		//INIT_REGISTER(IOIN_2208)			{0x06, {.sr=0}};
-		IOIN_2208_t IOIN_register = IOIN_2208_t{0x06, {.sr=0}};
+		INIT2208_REGISTER(IOIN)				{0x06, {.sr=0}};
 		INIT_REGISTER(FACTORY_CONF)		{0x07, {.sr=0}};
 		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
-		VACTUAL_2208_t VACTUAL_register = VACTUAL_2208_t{0x22, 0};
+		INIT2208_REGISTER(VACTUAL)		{0x22, 0};
 		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
-		CHOPCONF_2208_t CHOPCONF_register = CHOPCONF_2208_t{0x6C, {.sr=0}};
+		INIT2208_REGISTER(CHOPCONF){0x6C, {.sr=0}};
 		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};
-		DRV_STATUS_2208_t DRV_STATUS_register = DRV_STATUS_2208_t{0x6F, {.sr=0}};
+		INIT2208_REGISTER(DRV_STATUS)	{0x6F, {.sr=0}};
 		//INIT_REGISTER(PWMCONF_2208)		{0x70, {.sr=0}};
-		PWMCONF_2208_t PWMCONF_register = PWMCONF_2208_t{0x70, {.sr=0}};
+		INIT2208_REGISTER(PWMCONF)		{0x70, {.sr=0}};
 		//INIT_REGISTER(PWM_SCALE_2208)	{0x71, {.sr=0}};
-		PWM_SCALE_2208_t PWM_SCALE_register = PWM_SCALE_2208_t{0x71, {.sr=0}};
+		INIT2208_REGISTER(PWM_SCALE)	{0x71, {.sr=0}};
 		INIT_REGISTER(PWM_AUTO)				{0x72, {.sr=0}};
 
 		void * SerialObject;
@@ -952,7 +959,7 @@ class TMC2660Stepper {
 		*/
 		INIT_REGISTER(DRVCTRL_1){0b00, {.sr=0}};
 		INIT_REGISTER(DRVCTRL_0){0b00, {.sr=0}};
-		TMC2660CHOPCONF_t CHOPCONF_register = TMC2660CHOPCONF_t{0b100, {.sr=0}};
+		INIT2660_REGISTER(CHOPCONF){0b100, {.sr=0}};
 		INIT_REGISTER(SMARTEN){0b101, {.sr=0}};
 		INIT_REGISTER(SGCSCONF){0b110, {.sr=0}};
 		INIT_REGISTER(DRVCONF){0b111, {.sr=0}};

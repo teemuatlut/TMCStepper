@@ -15,24 +15,26 @@ struct SLAVECONF_t {
   };
 };
 
-struct IOIN_5130_t {
-  uint8_t address;
-  union {
-    uint32_t sr;
-    struct {
-      bool  refl_step : 1,
-            refr_dir : 1,
-            encb_dcen_cfg4 : 1,
-            enca_dcin_cfg5 : 1,
-            drv_enn_cfg6 : 1,
-            enc_n_dco : 1,
-            sd_mode : 1,
-            swcomp_in : 1;
-      uint16_t : 16;
-      uint8_t version : 8;
+namespace TMC5130{
+  struct IOIN_t {
+    uint8_t address;
+    union {
+      uint32_t sr;
+      struct {
+        bool  refl_step : 1,
+              refr_dir : 1,
+              encb_dcen_cfg4 : 1,
+              enca_dcin_cfg5 : 1,
+              drv_enn_cfg6 : 1,
+              enc_n_dco : 1,
+              sd_mode : 1,
+              swcomp_in : 1;
+        uint16_t : 16;
+        uint8_t version : 8;
+      };
     };
   };
-};
+}
 
 struct OUTPUT_t {
   uint8_t address;
