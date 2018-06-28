@@ -822,6 +822,7 @@ class TMC2660Stepper {
 		void switchCSpin(bool state);
 		void begin();
 		bool isEnabled();
+		uint8_t test_connection();
 		uint16_t rms_current();
 		void rms_current(uint16_t mA);
 		uint16_t getMilliamps() {return val_mA;}

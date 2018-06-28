@@ -75,6 +75,15 @@ void TMC2660Stepper::begin() {
 
 bool TMC2660Stepper::isEnabled() { return toff() > 0; }
 
+uint8_t TMC2660Stepper::test_connection() {
+  uint32_t drv_status = DRVSTATUS();
+  switch (drv_status) {
+      case 0xFFCFF: return 1;
+      case 0: return 2;
+      default: return 0;
+  }
+}
+
 /*
   Requested current = mA = I_rms/1000
   Equation for current:
