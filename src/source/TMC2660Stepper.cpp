@@ -113,7 +113,7 @@ void TMC2660Stepper::rms_current(uint16_t mA) {
     vsense(false);
   }
   cs(CS);
-  val_mA = mA;
+  //val_mA = mA;
 }
 
 void TMC2660Stepper::push() {

@@ -33,10 +33,6 @@ class TMCStepper {
 		virtual uint16_t rms_current();
 		void hold_multiplier(float val) { holdMultiplier = val; }
 		float hold_multiplier() { return holdMultiplier; }
-		bool checkOT();
-		bool getOTPW() { return flag_otpw; }
-		void clear_otpw() { flag_otpw = 0; }
-		uint16_t getMilliamps() { return val_mA; }
 		uint8_t test_connection();
 
 		// Helper functions
@@ -85,8 +81,6 @@ class TMCStepper {
 		int16_t cur_a();
 		int16_t cur_b();
 
-		bool flag_otpw = false;
-
 	protected:
 		TMCStepper() {};
 		TMCStepper(float RS) : Rsense(RS) {};
@@ -117,7 +111,6 @@ class TMCStepper {
 
 		float Rsense;
 		bool _started = 0;
-		uint16_t val_mA = 0;
 		float holdMultiplier = 0.5;
 };
 
@@ -768,7 +761,6 @@ class TMC2208Stepper : public TMCStepper {
 		uint16_t bytesWritten = 0;
 		float Rsense = 0.11;
 		uint16_t replyDelay = 10;
-		bool flag_otpw = false;
 		bool CRCerror = false;
 	protected:
 		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
@@ -832,7 +824,7 @@ class TMC2660Stepper {
 		uint8_t test_connection();
 		uint16_t rms_current();
 		void rms_current(uint16_t mA);
-		uint16_t getMilliamps() {return val_mA;}
+		//uint16_t getMilliamps() {return val_mA;}
 		void push();
 		uint8_t savedToff() { return _savedToff; }
 
@@ -971,8 +963,7 @@ class TMC2660Stepper {
 		float Rsense;
 		bool _started;
 		uint8_t status_response;
-		bool flag_otpw = false;
-		uint16_t val_mA           = 0;
+		//uint16_t val_mA           = 0;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		bool uses_sw_spi = false;

@@ -27,7 +27,7 @@ void TMC5160Stepper::rms_current(uint16_t mA) {
   CS -= 1.0;
   irun(CS);
   ihold(CS*holdMultiplier);
-  val_mA = mA;
+  //val_mA = mA;
 }
 void TMC5160Stepper::rms_current(uint16_t mA, float mult) {
   holdMultiplier = mult;

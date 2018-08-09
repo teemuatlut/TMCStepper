@@ -27,7 +27,7 @@ void TMCStepper::rms_current(uint16_t mA) {
   }
   irun(CS);
   ihold(CS*holdMultiplier);
-  val_mA = mA;
+  //val_mA = mA;
 }
 void TMCStepper::rms_current(uint16_t mA, float mult) {
   holdMultiplier = mult;
@@ -36,14 +36,6 @@ void TMCStepper::rms_current(uint16_t mA, float mult) {
 
 uint16_t TMCStepper::rms_current() {
   return (float)(irun()+1)/32.0 * (vsense()?0.180:0.325)/(Rsense+0.02) / 1.41421 * 1000;
-}
-
-bool TMCStepper::checkOT() {
-  if (otpw()) {
-    flag_otpw = 1;
-    return true; // bit 26 for overtemperature warning flag
-  }
-  return false;
 }
 
 uint8_t TMCStepper::test_connection() {
