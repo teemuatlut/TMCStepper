@@ -45,6 +45,12 @@
 //TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE); // Hardware SPI
 //TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
 
+bool vsense;
+
+uint16_t rms_current(uint8_t CS) {
+  return (float)(CS+1)/32.0 * (vsense?0.180:0.325)/(R_SENSE+0.02) / 1.41421 * 1000;
+}
+
 void setup() {
   SPI.begin();
   Serial.begin(250000);         // Init serial port and set baudrate
@@ -115,11 +121,13 @@ void loop()
     else if (read_byte == '-') { if (OCR1A < MIN_SPEED) OCR1A += 20; }
   }
     
-  if((ms-last_time) > 100) //run every 0.1s
-  {
-    last_time = ms;   
+  if((ms-last_time) > 100) { //run every 0.1s
+    last_time = ms;
+    uint32_t drv_status = driver.DRV_STATUS();
     Serial.print("0 ");
-    Serial.println(driver.sg_result(), DEC);
+    Serial.print((drv_status & SG_RESULT_bm)>>SG_RESULT_bp , DEC);
+    Serial.print(" ");
+    Serial.println(rms_current((drv_status & CS_ACTUAL_bm)>>CS_ACTUAL_bp), DEC);
   }
 }
 
