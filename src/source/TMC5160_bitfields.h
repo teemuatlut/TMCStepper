@@ -70,7 +70,7 @@ struct PWM_AUTO_t {
   };
 };
 
-namespace TMC5160 {
+namespace TMC5160_n {
   struct PWMCONF_t {
     uint8_t address;
     union {

@@ -26,7 +26,7 @@ struct DRVCTRL_0_t {
   };
 };
 
-namespace TMC2660 {
+namespace TMC2660_n {
   struct CHOPCONF_t {
     uint8_t address;
     union {

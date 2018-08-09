@@ -15,7 +15,7 @@ struct SLAVECONF_t {
   };
 };
 
-namespace TMC5130{
+namespace TMC5130_n {
   struct IOIN_t {
     uint8_t address;
     union {

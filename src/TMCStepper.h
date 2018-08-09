@@ -16,12 +16,12 @@
 #include "source/TMC2660_bitfields.h"
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
-#define INIT2130_REGISTER(REG) TMC2130::REG##_t REG##_register = TMC2130::REG##_t
-#define INIT5130_REGISTER(REG) TMC5130::REG##_t REG##_register = TMC5130::REG##_t
-#define INIT5160_REGISTER(REG) TMC5160::REG##_t REG##_register = TMC5160::REG##_t
-#define INIT2660_REGISTER(REG) TMC2660::REG##_t REG##_register = TMC2660::REG##_t
-#define INIT2208_REGISTER(REG) TMC2208::REG##_t REG##_register = TMC2208::REG##_t
-#define INIT2224_REGISTER(REG) TMC2224::REG##_t REG##_register = TMC2224::REG##_t
+#define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
+#define INIT5130_REGISTER(REG) TMC5130_n::REG##_t REG##_register = TMC5130_n::REG##_t
+#define INIT5160_REGISTER(REG) TMC5160_n::REG##_t REG##_register = TMC5160_n::REG##_t
+#define INIT2660_REGISTER(REG) TMC2660_n::REG##_t REG##_register = TMC2660_n::REG##_t
+#define INIT2208_REGISTER(REG) TMC2208_n::REG##_t REG##_register = TMC2208_n::REG##_t
+#define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
 #define TMCSTEPPER_VERSION 0x000001 // v0.0.1

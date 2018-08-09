@@ -1,6 +1,6 @@
 #pragma once
 
-namespace TMC2208 {
+namespace TMC2208_n {
   struct GCONF_t {
     uint8_t address;
     union {
@@ -29,7 +29,7 @@ struct OTP_READ_t {
 	uint8_t address;
 };
 
-namespace TMC2208 {
+namespace TMC2208_n {
   struct IOIN_t {
     uint8_t address;
     union {
@@ -84,7 +84,7 @@ struct FACTORY_CONF_t {
   };
 };
 
-namespace TMC2208 {
+namespace TMC2208_n {
   struct VACTUAL_t {
       uint8_t address;
       uint32_t sr;
@@ -107,7 +107,7 @@ struct MSCURACT_t {
   };
 };
 
-namespace TMC2208 {
+namespace TMC2208_n {
   struct CHOPCONF_t {
     uint8_t address;
     union {
