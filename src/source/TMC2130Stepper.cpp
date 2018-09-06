@@ -164,7 +164,7 @@ void TMC2130Stepper::XDIRECT(uint32_t input) {
   WRITE_REG(XDIRECT);
 }
 void TMC2130Stepper::coil_A(int16_t B)  { XDIRECT_register.coil_A = B; WRITE_REG(XDIRECT); }
-void TMC2130Stepper::coil_B(int16_t B)  { XDIRECT_register.coil_A = B; WRITE_REG(XDIRECT); }
+void TMC2130Stepper::coil_B(int16_t B)  { XDIRECT_register.coil_B = B; WRITE_REG(XDIRECT); }
 int16_t TMC2130Stepper::coil_A()        { XDIRECT(); return XDIRECT_register.coil_A; }
 int16_t TMC2130Stepper::coil_B()        { XDIRECT(); return XDIRECT_register.coil_B; }
 ///////////////////////////////////////////////////////////////////////////////////////
