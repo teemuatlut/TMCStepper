@@ -46,17 +46,19 @@ struct ENC_DEVIATION_t {
   uint32_t sr : 20;
 };
 
-struct PWM_SCALE_t {
-  uint8_t address;
-  union {
-    uint32_t sr : 25;
-    struct {
-      uint8_t pwm_scale_sum : 8,
-                            : 8;
-      uint16_t pwm_scale_auto : 9;
+namespace TMC5160_n {
+  struct PWM_SCALE_t {
+    uint8_t address;
+    union {
+      uint32_t sr : 25;
+      struct {
+        uint8_t pwm_scale_sum : 8,
+                              : 8;
+        uint16_t pwm_scale_auto : 9;
+      };
     };
   };
-};
+}
 
 struct PWM_AUTO_t {
   uint8_t address;

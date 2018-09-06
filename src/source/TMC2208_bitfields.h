@@ -114,8 +114,8 @@ namespace TMC2208_n {
       uint32_t sr;
       struct {
         uint8_t toff : 4,
-                hstrt : 3;
-        int8_t  hend : 4,
+                hstrt : 3,
+                hend : 4,
                      : 4,
                 tbl : 2;
         bool    vsense : 1;

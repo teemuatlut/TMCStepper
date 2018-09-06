@@ -13,15 +13,13 @@ struct GCONF_t {
             diag0_error : 1,
             diag0_otpw : 1,
             diag0_stall : 1,
-            diag0_step : 1,
             diag1_stall : 1,
-            diag1_dir : 1,
             diag1_index : 1,
             diag1_onstate : 1,
             diag1_steps_skipped : 1,
             diag0_int_pushpull : 1,
-            diag1_poscomp_pushpull : 1,
-            small_hysterisis : 1,
+            diag1_pushpull : 1,
+            small_hysteresis : 1,
             stop_enable : 1,
             direct_mode : 1;
     };
@@ -29,7 +27,12 @@ struct GCONF_t {
       bool recalibrate : 1,
            faststandstill : 1,
                           : 1,
-           multistep_filt : 1;
+           multistep_filt : 1,
+                    : 3,
+           diag0_step : 1,
+           diag1_dir : 1,
+                 : 4,
+           diag1_poscomp_pushpull : 1;
     };
   };
 };
@@ -65,14 +68,14 @@ struct IOIN_t {
   union {
     uint32_t sr;
     struct {
-      bool  step,
-            dir,
-            dcen_cfg4,
-            dcin_cfg5,
-            drv_enn_cfg6,
-            dco;
+      bool  step : 1,
+            dir : 1,
+            dcen_cfg4 : 1,
+            dcin_cfg5 : 1,
+            drv_enn_cfg6 : 1,
+            dco : 1,
+            : 2;
       uint16_t : 16;
-      uint8_t : 1;
       uint8_t version : 8;
     };
   };
@@ -125,8 +128,8 @@ struct CHOPCONF_t {
     uint32_t sr : 32;
     struct {
       uint8_t toff : 4,
-              hstrt : 3;
-      int8_t  hend : 4,
+              hstrt : 3,
+              hend : 4,
                    : 1;
       bool    disfdcc : 1,
               rndtf : 1,
@@ -142,7 +145,7 @@ struct CHOPCONF_t {
               diss2g : 1;
     };
     struct { // TMC5160
-      uint32_t : 20;
+      uint32_t     : 20;
       uint8_t tpfd : 4; // 5160
       uint16_t     : 10;
       bool diss2vs : 1; // TMC5160 only
@@ -205,6 +208,10 @@ struct PWMCONF_t {
       uint8_t freewheel : 2;
     };
   };
+};
+
+struct PWM_SCALE_t {
+  uint8_t address;
 };
 
 struct ENCM_CTRL_t {
