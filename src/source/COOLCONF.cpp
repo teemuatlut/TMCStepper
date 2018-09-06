@@ -28,6 +28,7 @@ bool 	TMC2130Stepper::sfilt()	{ GET_REG(sfilt);	}
 
 int8_t TMC2130Stepper::sgt() {
 	// Two's complement in a 7bit value
-	int8_t val = COOLCONF_register.sgt;
-	return val <= 63 ? val : val - 128;
+	int8_t val = (COOLCONF_register.sgt &  0x40) << 1; // Isolate sign bit
+	val |= COOLCONF_register.sgt & 0x7F;
+	return val;
 }
