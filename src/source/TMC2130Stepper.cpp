@@ -67,8 +67,6 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 }
 
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
-  //Serial.print("\naddressByte="); Serial.print(addressByte, HEX);
-  //Serial.print(" - config="); print_HEX(config);
   addressByte |= TMC_WRITE;
   if (uses_sw_spi) {
     switchCSpin(LOW);

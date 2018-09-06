@@ -4,24 +4,23 @@
 #include <SoftwareSerial.h>
 #include "TMC_MACROS.h"
 
-TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) {
-	this->Rsense = RS;
-	write_only = !has_rx;
-	uses_sw_serial = false;
-	SerialObject = &SerialPort;
-}
+TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
+	TMCStepper(RS),
+	write_only(!has_rx),
+	uses_sw_serial(false)
+	{ HWSerial = SerialPort; }
 
-TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) {
-	this->Rsense = RS;
-	write_only = !has_rx;
-	uses_sw_serial = true;
-	static SoftwareSerial mySWSerial = SoftwareSerial(SW_RX_pin, SW_TX_pin);
-	SerialObject = &mySWSerial;
-}
+TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
+	TMCStepper(RS),
+	write_only(!has_rx),
+	uses_sw_serial(true)
+	{
+		SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
+		SWSerial = SWSerialObj;
+	}
 
 void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-	if (uses_sw_serial) static_cast<SoftwareSerial*>(SerialObject)->begin(baudrate);
-	else static_cast<HardwareSerial*>(SerialObject)->begin(baudrate);
+	if (uses_sw_serial) SWSerial->begin(baudrate);
 }
 
 void TMC2208Stepper::push() {
@@ -57,34 +56,37 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 
 void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	uint8_t len = 7;
+	addr |= TMC_WRITE;
 	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
 
 	datagram[len] = calcCRC(datagram, len);
 
 	if (uses_sw_serial) {
-		for(int i=0; i<=len; i++){
-			bytesWritten += static_cast<SoftwareSerial*>(SerialObject)->write(datagram[i]);
-		}
+		#if SW_CAPABLE_PLATFORM
+			for(int i=0; i<=len; i++){
+				bytesWritten += SWSerial->write(datagram[i]);
+			}
+		#endif
 	} else {
 		for(int i=0; i<=len; i++){
-			bytesWritten += static_cast<Stream*>(SerialObject)->write(datagram[i]);
+			bytesWritten += HWSerial->write(datagram[i]);
 		}
 	}
+	delay(replyDelay);
 }
 
 template<typename SERIAL_TYPE>
-uint64_t _sendDatagram(SERIAL_TYPE *serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay) {
+uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay) {
 	uint64_t out = 0x00000000UL;
-	while (serPtr->available() > 0) serPtr->read(); // Flush
 
-	for(int i=0; i<=len; i++) serPtr->write(datagram[i]);
-	
-	serPtr->flush(); // Wait for TX to finish
-	for(int byte=0; byte<4; byte++) serPtr->read(); // Flush bytes written
+	while (serPtr.available() > 0) serPtr.read(); // Flush
+
+	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
+	for(int byte=0; byte<4; byte++) serPtr.read(); // Flush bytes written
 	delay(replyDelay);
 
-	while(serPtr->available() > 0) {
-		uint8_t res = serPtr->read();
+	while(serPtr.available() > 0) {
+		uint8_t res = serPtr.read();
 		out <<= 8;
 		out |= res&0xFF;
 	}
@@ -93,17 +95,16 @@ uint64_t _sendDatagram(SERIAL_TYPE *serPtr, uint8_t datagram[], uint8_t len, uin
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
 	uint8_t len = 3;
+	addr |= TMC_READ;
 	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, 0x00};
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
 
 	if (uses_sw_serial) {
-		SoftwareSerial *sw_ptr = static_cast<SoftwareSerial*>(SerialObject);
-		sw_ptr->listen();
-		out = _sendDatagram(sw_ptr, datagram, len, replyDelay);
+		SWSerial->listen();
+		out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
 	} else {
-		Stream *hw_ptr = static_cast<Stream*>(SerialObject);
-		out = _sendDatagram(hw_ptr, datagram, len, replyDelay);
+		out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
 	}
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};

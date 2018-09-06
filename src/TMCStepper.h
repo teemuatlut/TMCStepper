@@ -6,8 +6,13 @@
 	#include <Arduino.h>
 #endif
 
+#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768)
+
 #include <Stream.h>
 #include <SPI.h>
+#if SW_CAPABLE_PLATFORM
+	#include <SoftwareSerial.h>
+#endif
 #include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC5130_bitfields.h"
@@ -760,7 +765,7 @@ class TMC2208Stepper : public TMCStepper {
 
 		uint16_t bytesWritten = 0;
 		float Rsense = 0.11;
-		uint16_t replyDelay = 10;
+		uint16_t replyDelay = 5;
 		bool CRCerror = false;
 	protected:
 		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
@@ -784,14 +789,17 @@ class TMC2208Stepper : public TMCStepper {
 		INIT2208_REGISTER(PWM_SCALE)	{0x71, {.sr=0}};
 		INIT_REGISTER(PWM_AUTO)				{0x72, {.sr=0}};
 
-		void * SerialObject;
+		Stream * HWSerial = NULL;
+		#if SW_CAPABLE_PLATFORM
+			SoftwareSerial * SWSerial = NULL;
+		#endif
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
 		static constexpr uint8_t  TMC2208_SYNC = 0x05,
 															TMC2208_SLAVE_ADDR = 0x00;
-		bool write_only;
-		bool uses_sw_serial;
+		const bool write_only;
+		const bool uses_sw_serial;
 		uint16_t mA_val = 0;
 };
 
