@@ -1,7 +1,4 @@
-#include <Stream.h>
 #include "TMCStepper.h"
-#include <HardwareSerial.h>
-#include <SoftwareSerial.h>
 #include "TMC_MACROS.h"
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
