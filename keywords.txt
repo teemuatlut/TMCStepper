@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Stepper	TMC2130Stepper	KEYWORD1
+TMC2130Stepper	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
