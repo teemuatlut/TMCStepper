@@ -628,7 +628,9 @@ class TMC2208Stepper : public TMCStepper {
 	public:
 		//TMC2208Stepper(HardwareSerial& serial);
 		TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx=true);
-		TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+		#if SW_CAPABLE_PLATFORM
+			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+		#endif
 		void push();
 		void beginSerial(uint32_t baudrate);
 		bool isEnabled();

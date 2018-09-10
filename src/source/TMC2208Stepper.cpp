@@ -7,18 +7,20 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	uses_sw_serial(false)
 	{ HWSerial = SerialPort; }
 
-TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
-	TMCStepper(RS),
-	write_only(!has_rx),
-	uses_sw_serial(true)
-	{
-		SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
-		SWSerial = SWSerialObj;
-	}
+#if SW_CAPABLE_PLATFORM
+	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
+		TMCStepper(RS),
+		write_only(!has_rx),
+		uses_sw_serial(true)
+		{
+			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
+			SWSerial = SWSerialObj;
+		}
 
-void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-	if (uses_sw_serial) SWSerial->begin(baudrate);
-}
+	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
+		if (uses_sw_serial) SWSerial->begin(baudrate);
+	}
+#endif
 
 void TMC2208Stepper::push() {
 	GCONF(GCONF_register.sr);
@@ -98,8 +100,10 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	uint64_t out = 0x00000000UL;
 
 	if (uses_sw_serial) {
-		SWSerial->listen();
-		out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+		#if SW_CAPABLE_PLATFORM
+			SWSerial->listen();
+			out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+		#endif
 	} else {
 		out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
 	}
