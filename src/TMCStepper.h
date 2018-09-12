@@ -119,7 +119,6 @@ class TMCStepper {
 		virtual uint8_t tbl() = 0;
 
 		float Rsense;
-		bool _started = 0;
 		float holdMultiplier = 0.5;
 };
 
@@ -1045,7 +1044,6 @@ class TMC2660Stepper {
 
 		uint16_t _pinCS;
 		float Rsense;
-		bool _started;
 		uint8_t status_response;
 		//uint16_t val_mA           = 0;
 		float holdMultiplier = 0.5;

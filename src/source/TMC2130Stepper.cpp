@@ -99,8 +99,6 @@ void TMC2130Stepper::begin() {
 
   toff(8); //off_time(8);
   tbl(1); //blank_time(24);
-
-  _started = true;
 }
 
 /**

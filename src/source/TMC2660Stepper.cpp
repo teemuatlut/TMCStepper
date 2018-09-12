@@ -69,8 +69,6 @@ void TMC2660Stepper::begin() {
 
   toff(8); //off_time(8);
   tbl(1); //blank_time(24);
-
-  _started = true;
 }
 
 bool TMC2660Stepper::isEnabled() { return toff() > 0; }

@@ -23,8 +23,6 @@ void TMC5130Stepper::begin() {
   XTARGET(0);
   XACTUAL(0);
   //while (( RAMP_STAT() & cfg.VZERO_bm) != cfg.VZERO_bm) {}
-
-  _started = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
