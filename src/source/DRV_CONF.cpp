@@ -1,23 +1,23 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define SET_REG(SETTING) DRV_CONF_register.SETTING = B; write(DRV_CONF_address, DRV_CONF_register.sr);
-#define GET_REG(SETTING) return DRV_CONF_register.SETTING;
+#define SET_REG(SETTING) do{ REG(DRV_CONF).SETTING = B; SELF.write(ADR(DRV_CONF), REG(DRV_CONF).sr); }while(0)
+#define GET_REG(SETTING) return REG(DRV_CONF).SETTING
 
 // W: DRV_CONF
-uint32_t TMC5160Stepper::DRV_CONF() { return DRV_CONF_register.sr; }
-void TMC5160Stepper::DRV_CONF(uint32_t input) {
-	DRV_CONF_register.sr = input;
-	write(DRV_CONF_address, DRV_CONF_register.sr);
+TT uint32_t TMC5160StepperBase<T>::DRV_CONF() { return REG(DRV_CONF).sr; }
+TT void TMC5160StepperBase<T>::DRV_CONF(uint32_t input) {
+	REG(DRV_CONF).sr = input;
+	SELF.write(ADR(DRV_CONF), REG(DRV_CONF).sr);
 }
 
-void TMC5160Stepper::bbmtime(uint8_t B)		{ SET_REG(bbmtime); 	}
-void TMC5160Stepper::bbmclks(uint8_t B)		{ SET_REG(bbmclks); 	}
-void TMC5160Stepper::otselect(uint8_t B)	{ SET_REG(otselect); 	}
-void TMC5160Stepper::drvstrength(uint8_t B)	{ SET_REG(drvstrength); }
-void TMC5160Stepper::filt_isense(uint8_t B)	{ SET_REG(filt_isense); }
-uint8_t TMC5160Stepper::bbmtime()			{ GET_REG(bbmtime);		}
-uint8_t TMC5160Stepper::bbmclks()			{ GET_REG(bbmclks);		}
-uint8_t TMC5160Stepper::otselect()			{ GET_REG(otselect);	}
-uint8_t TMC5160Stepper::drvstrength()		{ GET_REG(drvstrength);	}
-uint8_t TMC5160Stepper::filt_isense()		{ GET_REG(filt_isense);	}
+TT void TMC5160StepperBase<T>::bbmtime(uint8_t B)		{ SET_REG(bbmtime); 	}
+TT void TMC5160StepperBase<T>::bbmclks(uint8_t B)		{ SET_REG(bbmclks); 	}
+TT void TMC5160StepperBase<T>::otselect(uint8_t B)	{ SET_REG(otselect); 	}
+TT void TMC5160StepperBase<T>::drvstrength(uint8_t B)	{ SET_REG(drvstrength); }
+TT void TMC5160StepperBase<T>::filt_isense(uint8_t B)	{ SET_REG(filt_isense); }
+TT uint8_t TMC5160StepperBase<T>::bbmtime()			{ GET_REG(bbmtime);		}
+TT uint8_t TMC5160StepperBase<T>::bbmclks()			{ GET_REG(bbmclks);		}
+TT uint8_t TMC5160StepperBase<T>::otselect()			{ GET_REG(otselect);	}
+TT uint8_t TMC5160StepperBase<T>::drvstrength()		{ GET_REG(drvstrength);	}
+TT uint8_t TMC5160StepperBase<T>::filt_isense()		{ GET_REG(filt_isense);	}

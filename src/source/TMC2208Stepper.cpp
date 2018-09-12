@@ -1,40 +1,40 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
-	TMCStepper(RS),
+TT TMC2208StepperBase<T>::TMC2208StepperBase(Stream * SerialPort, float RS, bool has_rx) :
+	TMCStepper<T>(RS),
 	write_only(!has_rx)
 	{ HWSerial = SerialPort; }
 
 #if SW_CAPABLE_PLATFORM
-	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
-		TMCStepper(RS),
+	TT TMC2208StepperBase<T>::TMC2208StepperBase(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
+		TMCStepper<T>(RS),
 		write_only(!has_rx)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
 		}
 
-	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
+	TT void TMC2208StepperBase<T>::beginSerial(uint32_t baudrate) {
 		if (SWSerial != NULL) SWSerial->begin(baudrate);
 	}
 #endif
 
-void TMC2208Stepper::push() {
-	GCONF(GCONF_register.sr);
-	IHOLD_IRUN(IHOLD_IRUN_register.sr);
-	SLAVECONF(SLAVECONF_register.sr);
-	FACTORY_CONF(FACTORY_CONF_register.sr);
-	TPOWERDOWN(TPOWERDOWN_register.sr);
-	TPWMTHRS(TPWMTHRS_register.sr);
-	VACTUAL(VACTUAL_register.sr);
-	CHOPCONF(CHOPCONF_register.sr);
-	PWMCONF(PWMCONF_register.sr);
+TT void TMC2208StepperBase<T>::push() {
+	this->GCONF(REG(GCONF).sr);
+	this->IHOLD_IRUN(REG(IHOLD_IRUN).sr);
+	this->SLAVECONF(REG(SLAVECONF).sr);
+	this->FACTORY_CONF(REG(FACTORY_CONF).sr);
+	this->TPOWERDOWN(REG(TPOWERDOWN).sr);
+	this->TPWMTHRS(REG(TPWMTHRS).sr);
+	this->VACTUAL(REG(VACTUAL).sr);
+	this->CHOPCONF(REG(CHOPCONF).sr);
+	this->PWMCONF(REG(PWMCONF).sr);
 }
 
-bool TMC2208Stepper::isEnabled() { return !enn() && toff(); }
+TT bool TMC2208StepperBase<T>::isEnabled() { return !enn() && toff(); }
 
-uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
+TT uint8_t TMC2208StepperBase<T>::calcCRC(uint8_t datagram[], uint8_t len) {
 	uint8_t crc = 0;
 	for (uint8_t i = 0; i < len; i++) {
 		uint8_t currentByte = datagram[i];
@@ -51,9 +51,9 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 	return crc;
 }
 
-void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
+TT void TMC2208StepperBase<T>::write(uint8_t addr, uint32_t regVal) {
 	uint8_t len = 7;
-	addr |= TMC_WRITE;
+	addr |= this->TMC_WRITE;
 	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
 
 	datagram[len] = calcCRC(datagram, len);
@@ -73,8 +73,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	delay(replyDelay);
 }
 
-template<typename SERIAL_TYPE>
-uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay) {
+TT uint64_t _sendDatagram(T &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
@@ -91,9 +90,9 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	return out;
 }
 
-uint32_t TMC2208Stepper::read(uint8_t addr) {
+TT uint32_t TMC2208StepperBase<T>::read(uint8_t addr) {
 	uint8_t len = 3;
-	addr |= TMC_READ;
+	addr |= this->TMC_READ;
 	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, 0x00};
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
@@ -117,86 +116,86 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	return out>>8;
 }
 
-uint8_t TMC2208Stepper::IFCNT() {
-	return read(IFCNT_address);
+TT uint8_t TMC2208StepperBase<T>::IFCNT() {
+	return SELF.read(ADR(IFCNT));
 }
 
-void TMC2208Stepper::SLAVECONF(uint16_t input) {
-	SLAVECONF_register.sr = input&0xF00;
-	write(SLAVECONF_address, SLAVECONF_register.sr);
+TT void TMC2208StepperBase<T>::SLAVECONF(uint16_t input) {
+	REG(SLAVECONF).sr = input&0xF00;
+	SELF.write(ADR(SLAVECONF), REG(SLAVECONF).sr);
 }
-uint16_t TMC2208Stepper::SLAVECONF() {
-	return SLAVECONF_register.sr;
+TT uint16_t TMC2208StepperBase<T>::SLAVECONF() {
+	return REG(SLAVECONF).sr;
 }
-void TMC2208Stepper::senddelay(uint8_t B) 	{ SLAVECONF_register.senddelay = B; write(SLAVECONF_address, SLAVECONF_register.sr); }
-uint8_t TMC2208Stepper::senddelay() 		{ return SLAVECONF_register.senddelay; }
+TT void TMC2208StepperBase<T>::senddelay(uint8_t B) 	{ REG(SLAVECONF).senddelay = B; SELF.write(ADR(SLAVECONF), REG(SLAVECONF).sr); }
+TT uint8_t TMC2208StepperBase<T>::senddelay() 		{ return REG(SLAVECONF).senddelay; }
 
-void TMC2208Stepper::OTP_PROG(uint16_t input) {
-	write(OTP_PROG_address, input);
-}
-
-uint32_t TMC2208Stepper::OTP_READ() {
-	return read(OTP_READ_address);
+TT void TMC2208StepperBase<T>::OTP_PROG(uint16_t input) {
+	SELF.write(ADR(OTP_PROG), input);
 }
 
-uint32_t TMC2208Stepper::IOIN() {
-	IOIN_register.sr = read(IOIN_address);
-	return IOIN_register.sr;
+TT uint32_t TMC2208StepperBase<T>::OTP_READ() {
+	return read(ADR(OTP_READ));
 }
-bool TMC2208Stepper::enn()			{ IOIN(); return IOIN_register.enn;		}
-bool TMC2208Stepper::ms1()			{ IOIN(); return IOIN_register.ms1;		}
-bool TMC2208Stepper::ms2()			{ IOIN(); return IOIN_register.ms2;		}
-bool TMC2208Stepper::diag()			{ IOIN(); return IOIN_register.diag;	}
-bool TMC2208Stepper::pdn_uart()		{ IOIN(); return IOIN_register.pdn_uart;}
-bool TMC2208Stepper::step()			{ IOIN(); return IOIN_register.step;	}
-bool TMC2208Stepper::sel_a()		{ IOIN(); return IOIN_register.sel_a;	}
-bool TMC2208Stepper::dir()			{ IOIN(); return IOIN_register.dir;		}
-uint8_t TMC2208Stepper::version() 	{ IOIN(); return IOIN_register.version;	}
+
+TT uint32_t TMC2208StepperBase<T>::IOIN() {
+	REG(IOIN).sr = read(ADR(IOIN));
+	return REG(IOIN).sr;
+}
+TT bool TMC2208StepperBase<T>::enn()			{ IOIN(); return REG(IOIN).enn;		}
+TT bool TMC2208StepperBase<T>::ms1()			{ IOIN(); return REG(IOIN).ms1;		}
+TT bool TMC2208StepperBase<T>::ms2()			{ IOIN(); return REG(IOIN).ms2;		}
+TT bool TMC2208StepperBase<T>::diag()			{ IOIN(); return REG(IOIN).diag;	}
+TT bool TMC2208StepperBase<T>::pdn_uart()		{ IOIN(); return REG(IOIN).pdn_uart;}
+TT bool TMC2208StepperBase<T>::step()			{ IOIN(); return REG(IOIN).step;	}
+TT bool TMC2208StepperBase<T>::sel_a()			{ IOIN(); return REG(IOIN).sel_a;	}
+TT bool TMC2208StepperBase<T>::dir()			{ IOIN(); return REG(IOIN).dir;		}
+TT uint8_t TMC2208StepperBase<T>::version() 	{ IOIN(); return REG(IOIN).version;	}
 
 uint32_t TMC2224Stepper::IOIN() {
-	IOIN_register.sr = read(IOIN_address);
-	return IOIN_register.sr;
+	REG(IOIN).sr = read(ADR(IOIN));
+	return REG(IOIN).sr;
 }
-bool TMC2224Stepper::enn()			{ IOIN(); return IOIN_register.enn;		}
-bool TMC2224Stepper::ms1()			{ IOIN(); return IOIN_register.ms1;		}
-bool TMC2224Stepper::ms2()			{ IOIN(); return IOIN_register.ms2;		}
-bool TMC2224Stepper::pdn_uart()		{ IOIN(); return IOIN_register.pdn_uart;}
-bool TMC2224Stepper::spread()		{ IOIN(); return IOIN_register.spread;	}
-bool TMC2224Stepper::step()			{ IOIN(); return IOIN_register.step;	}
-bool TMC2224Stepper::sel_a()		{ IOIN(); return IOIN_register.sel_a;	}
-bool TMC2224Stepper::dir()			{ IOIN(); return IOIN_register.dir;		}
-uint8_t TMC2224Stepper::version() 	{ IOIN(); return IOIN_register.version;	}
+bool TMC2224Stepper::enn()			{ IOIN(); return REG(IOIN).enn;		}
+bool TMC2224Stepper::ms1()			{ IOIN(); return REG(IOIN).ms1;		}
+bool TMC2224Stepper::ms2()			{ IOIN(); return REG(IOIN).ms2;		}
+bool TMC2224Stepper::pdn_uart()		{ IOIN(); return REG(IOIN).pdn_uart;}
+bool TMC2224Stepper::spread()		{ IOIN(); return REG(IOIN).spread;	}
+bool TMC2224Stepper::step()			{ IOIN(); return REG(IOIN).step;	}
+bool TMC2224Stepper::sel_a()		{ IOIN(); return REG(IOIN).sel_a;	}
+bool TMC2224Stepper::dir()			{ IOIN(); return REG(IOIN).dir;		}
+uint8_t TMC2224Stepper::version() 	{ IOIN(); return REG(IOIN).version;	}
 
-uint16_t TMC2208Stepper::FACTORY_CONF() {
-	if (write_only) return FACTORY_CONF_register.sr;
-	FACTORY_CONF_register.sr = read(FACTORY_CONF_address);
-	return FACTORY_CONF_register.sr;
+TT uint16_t TMC2208StepperBase<T>::FACTORY_CONF() {
+	if (write_only) return REG(FACTORY_CONF).sr;
+	REG(FACTORY_CONF).sr = read(ADR(FACTORY_CONF));
+	return REG(FACTORY_CONF).sr;
 }
-void TMC2208Stepper::FACTORY_CONF(uint16_t input) {
-	FACTORY_CONF_register.sr = input;
-	write(FACTORY_CONF_address, FACTORY_CONF_register.sr);
+TT void TMC2208StepperBase<T>::FACTORY_CONF(uint16_t input) {
+	REG(FACTORY_CONF).sr = input;
+	SELF.write(ADR(FACTORY_CONF), REG(FACTORY_CONF).sr);
 }
-void TMC2208Stepper::fclktrim(uint8_t B){ FACTORY_CONF_register.fclktrim = B; write(FACTORY_CONF_address, FACTORY_CONF_register.sr); }
-void TMC2208Stepper::ottrim(uint8_t B)	{ FACTORY_CONF_register.ottrim = B; write(FACTORY_CONF_address, FACTORY_CONF_register.sr); }
-uint8_t TMC2208Stepper::fclktrim()		{ read(FACTORY_CONF_address); return FACTORY_CONF_register.fclktrim; }
-uint8_t TMC2208Stepper::ottrim()		{ read(FACTORY_CONF_address); return FACTORY_CONF_register.ottrim; }
+TT void TMC2208StepperBase<T>::fclktrim(uint8_t B){ REG(FACTORY_CONF).fclktrim = B; SELF.write(ADR(FACTORY_CONF), REG(FACTORY_CONF).sr); }
+TT void TMC2208StepperBase<T>::ottrim(uint8_t B)	{ REG(FACTORY_CONF).ottrim = B; SELF.write(ADR(FACTORY_CONF), REG(FACTORY_CONF).sr); }
+TT uint8_t TMC2208StepperBase<T>::fclktrim()		{ SELF.read(ADR(FACTORY_CONF)); return REG(FACTORY_CONF).fclktrim; }
+TT uint8_t TMC2208StepperBase<T>::ottrim()		{ SELF.read(ADR(FACTORY_CONF)); return REG(FACTORY_CONF).ottrim; }
 
-void TMC2208Stepper::VACTUAL(uint32_t input) {
-	VACTUAL_register.sr = input;
-	write(VACTUAL_address, VACTUAL_register.sr);
+TT void TMC2208StepperBase<T>::VACTUAL(uint32_t input) {
+	REG(VACTUAL).sr = input;
+	SELF.write(ADR(VACTUAL), REG(VACTUAL).sr);
 }
-uint32_t TMC2208Stepper::VACTUAL() {
-	return VACTUAL_register.sr;
+TT uint32_t TMC2208StepperBase<T>::VACTUAL() {
+	return REG(VACTUAL).sr;
 }
 
-uint32_t TMC2208Stepper::PWM_SCALE() {
-	PWM_SCALE_register.sr = read(PWM_SCALE_address);
-	return PWM_SCALE_register.sr;
+TT uint32_t TMC2208StepperBase<T>::PWM_SCALE() {
+	REG(PWM_SCALE).sr = SELF.read(ADR(PWM_SCALE));
+	return REG(PWM_SCALE).sr;
 }
-uint8_t TMC2208Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
-int16_t TMC2208Stepper::pwm_scale_auto() {
+TT uint8_t TMC2208StepperBase<T>::pwm_scale_sum() { PWM_SCALE(); return REG(PWM_SCALE).pwm_scale_sum; }
+TT int16_t TMC2208StepperBase<T>::pwm_scale_auto() {
 	PWM_SCALE();
-	return PWM_SCALE_register.pwm_scale_auto;
+	return REG(PWM_SCALE).pwm_scale_auto;
 	// Not two's complement? 9nth bit determines sign
 	/*
 	uint32_t d = PWM_SCALE();

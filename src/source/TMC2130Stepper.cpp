@@ -1,31 +1,31 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-uint32_t TMC2130Stepper::spi_speed = 16000000/8;
+TT uint32_t TMC2130StepperBase<T>::spi_speed = 16000000 / 8;
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
-  TMCStepper(RS),
+TT TMC2130StepperBase<T>::TMC2130StepperBase(uint16_t pinCS, float RS) :
+  TMCStepper<T>(RS),
   _pinCS(pinCS)
   {}
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMCStepper(RS),
+TT TMC2130StepperBase<T>::TMC2130StepperBase(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+  TMCStepper<T>(RS),
   _pinCS(pinCS)
   {
     SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
     TMC_SW_SPI = SW_SPI_Obj;
   }
 
-void TMC2130Stepper::setSPISpeed(uint32_t speed) {
+TT void TMC2130StepperBase<T>::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
 
-void TMC2130Stepper::switchCSpin(bool state) {
+TT void TMC2130StepperBase<T>::switchCSpin(bool state) {
   // Allows for overriding in child class to make use of fast io
   digitalWrite(_pinCS, state);
 }
 
-uint32_t TMC2130Stepper::read(uint8_t addressByte) {
+TT uint32_t TMC2130StepperBase<T>::read(uint8_t addressByte) {
   uint32_t out = 0UL;
   if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
@@ -70,8 +70,8 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   return out;
 }
 
-void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
-  addressByte |= TMC_WRITE;
+TT void TMC2130StepperBase<T>::write(uint8_t addressByte, uint32_t config) {
+  addressByte |= this->TMC_WRITE;
   if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
     status_response = TMC_SW_SPI->transfer(addressByte & 0xFF);
@@ -88,108 +88,108 @@ void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   switchCSpin(HIGH);
 }
 
-void TMC2130Stepper::begin() {
+TT void TMC2130StepperBase<T>::begin() {
   //set pins
   pinMode(_pinCS, OUTPUT);
   switchCSpin(HIGH);
 
   if (TMC_SW_SPI != NULL) TMC_SW_SPI->init();
 
-  GCONF(GCONF_register.sr);
-  CHOPCONF(CHOPCONF_register.sr);
-  COOLCONF(COOLCONF_register.sr);
-  PWMCONF(PWMCONF_register.sr);
-  IHOLD_IRUN(IHOLD_IRUN_register.sr);
+  GCONF(REG(GCONF).sr);
+  CHOPCONF(REG(CHOPCONF).sr);
+  COOLCONF(REG(COOLCONF).sr);
+  PWMCONF(REG(PWMCONF).sr);
+  this->IHOLD_IRUN(REG(IHOLD_IRUN).sr);
 
   toff(8); //off_time(8);
-  tbl(1); //blank_time(24);
+  SELF.tbl(1); //blank_time(24);
 }
 
 /**
  *  Helper functions
  */
 
-bool TMC2130Stepper::isEnabled() { return !drv_enn_cfg6() && toff(); }
+TT bool TMC2130StepperBase<T>::isEnabled() { return !drv_enn_cfg6() && toff(); }
 
-void TMC2130Stepper::push() {
-  GCONF(GCONF_register.sr);
-  IHOLD_IRUN(IHOLD_IRUN_register.sr);
-  TPOWERDOWN(TPOWERDOWN_register.sr);
-  TPWMTHRS(TPWMTHRS_register.sr);
-  TCOOLTHRS(TCOOLTHRS_register.sr);
-  THIGH(THIGH_register.sr);
-  XDIRECT(XDIRECT_register.sr);
-  VDCMIN(VDCMIN_register.sr);
-  CHOPCONF(CHOPCONF_register.sr);
-  COOLCONF(COOLCONF_register.sr);
-  PWMCONF(PWMCONF_register.sr);
-  ENCM_CTRL(ENCM_CTRL_register.sr);
+TT void TMC2130StepperBase<T>::push() {
+  this->GCONF(REG(GCONF).sr);
+  this->IHOLD_IRUN(REG(IHOLD_IRUN).sr);
+  this->TPOWERDOWN(REG(TPOWERDOWN).sr);
+  this->TPWMTHRS(REG(TPWMTHRS).sr);
+  this->TCOOLTHRS(REG(TCOOLTHRS).sr);
+  this->THIGH(REG(THIGH).sr);
+  this->XDIRECT(REG(XDIRECT).sr);
+  this->VDCMIN(REG(VDCMIN).sr);
+  this->CHOPCONF(REG(CHOPCONF).sr);
+  this->COOLCONF(REG(COOLCONF).sr);
+  this->PWMCONF(REG(PWMCONF).sr);
+  this->ENCM_CTRL(REG(ENCM_CTRL).sr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN
-uint32_t  TMC2130Stepper::IOIN()    { return read(IOIN_address); }
-bool TMC2130Stepper::step()         { IOIN_t r{0}; r.sr = IOIN(); return r.step; }
-bool TMC2130Stepper::dir()          { IOIN_t r{0}; r.sr = IOIN(); return r.dir; }
-bool TMC2130Stepper::dcen_cfg4()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcen_cfg4; }
-bool TMC2130Stepper::dcin_cfg5()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcin_cfg5; }
-bool TMC2130Stepper::drv_enn_cfg6() { IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn_cfg6; }
-bool TMC2130Stepper::dco()          { IOIN_t r{0}; r.sr = IOIN(); return r.dco; }
-uint8_t TMC2130Stepper::version()   { IOIN_t r{0}; r.sr = IOIN(); return r.version; }
+TT uint32_t  TMC2130StepperBase<T>::IOIN()    { return SELF.read(ADR(IOIN)); }
+TT bool TMC2130StepperBase<T>::step()         { IOIN_t r{0}; r.sr = IOIN(); return r.step; }
+TT bool TMC2130StepperBase<T>::dir()          { IOIN_t r{0}; r.sr = IOIN(); return r.dir; }
+TT bool TMC2130StepperBase<T>::dcen_cfg4()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcen_cfg4; }
+TT bool TMC2130StepperBase<T>::dcin_cfg5()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcin_cfg5; }
+TT bool TMC2130StepperBase<T>::drv_enn_cfg6() { IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn_cfg6; }
+TT bool TMC2130StepperBase<T>::dco()          { IOIN_t r{0}; r.sr = IOIN(); return r.dco; }
+TT uint8_t TMC2130StepperBase<T>::version()   { IOIN_t r{0}; r.sr = IOIN(); return r.version; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: TCOOLTHRS
-uint32_t TMC2130Stepper::TCOOLTHRS() { return TCOOLTHRS_register.sr; }
-void TMC2130Stepper::TCOOLTHRS(uint32_t input) {
-  TCOOLTHRS_register.sr = input;
-  write(TCOOLTHRS_address, TCOOLTHRS_register.sr);
+TT uint32_t TMC2130StepperBase<T>::TCOOLTHRS() { return REG(TCOOLTHRS).sr; }
+TT void TMC2130StepperBase<T>::TCOOLTHRS(uint32_t input) {
+  REG(TCOOLTHRS).sr = input;
+  SELF.write(ADR(TCOOLTHRS), REG(TCOOLTHRS).sr);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: THIGH
-uint32_t TMC2130Stepper::THIGH() { return THIGH_register.sr; }
-void TMC2130Stepper::THIGH(uint32_t input) {
-  THIGH_register.sr = input;
-  write(THIGH_address, THIGH_register.sr);
+TT uint32_t TMC2130StepperBase<T>::THIGH() { return REG(THIGH).sr; }
+TT void TMC2130StepperBase<T>::THIGH(uint32_t input) {
+  REG(THIGH).sr = input;
+  SELF.write(ADR(THIGH), REG(THIGH).sr);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: XDIRECT
-uint32_t TMC2130Stepper::XDIRECT() {
-  XDIRECT_register.sr = read(XDIRECT_address);
-  return XDIRECT_register.sr;
+TT uint32_t TMC2130StepperBase<T>::XDIRECT() {
+  REG(XDIRECT).sr = SELF.read(ADR(XDIRECT));
+  return REG(XDIRECT).sr;
 }
-void TMC2130Stepper::XDIRECT(uint32_t input) {
-  XDIRECT_register.sr = input;
-  write(XDIRECT_address, XDIRECT_register.sr);
+TT void TMC2130StepperBase<T>::XDIRECT(uint32_t input) {
+  REG(XDIRECT).sr = input;
+  SELF.write(ADR(XDIRECT), REG(XDIRECT).sr);
 }
-void TMC2130Stepper::coil_A(int16_t B)  { XDIRECT_register.coil_A = B; write(XDIRECT_address, XDIRECT_register.sr); }
-void TMC2130Stepper::coil_B(int16_t B)  { XDIRECT_register.coil_B = B; write(XDIRECT_address, XDIRECT_register.sr); }
-int16_t TMC2130Stepper::coil_A()        { XDIRECT(); return XDIRECT_register.coil_A; }
-int16_t TMC2130Stepper::coil_B()        { XDIRECT(); return XDIRECT_register.coil_B; }
+TT void TMC2130StepperBase<T>::coil_A(int16_t B)  { REG(XDIRECT).coil_A = B; SELF.write(ADR(XDIRECT), REG(XDIRECT).sr); }
+TT void TMC2130StepperBase<T>::coil_B(int16_t B)  { REG(XDIRECT).coil_B = B; SELF.write(ADR(XDIRECT), REG(XDIRECT).sr); }
+TT int16_t TMC2130StepperBase<T>::coil_A()        { XDIRECT(); return REG(XDIRECT).coil_A; }
+TT int16_t TMC2130StepperBase<T>::coil_B()        { XDIRECT(); return REG(XDIRECT).coil_B; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VDCMIN
-uint32_t TMC2130Stepper::VDCMIN() { return VDCMIN_register.sr; }
-void TMC2130Stepper::VDCMIN(uint32_t input) {
-  VDCMIN_register.sr = input;
-  write(VDCMIN_address, VDCMIN_register.sr);
+TT uint32_t TMC2130StepperBase<T>::VDCMIN() { return REG(VDCMIN).sr; }
+TT void TMC2130StepperBase<T>::VDCMIN(uint32_t input) {
+  REG(VDCMIN).sr = input;
+  SELF.write(ADR(VDCMIN), REG(VDCMIN).sr);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: PWM_SCALE
-uint8_t TMC2130Stepper::PWM_SCALE() { return read(PWM_SCALE_address); }
+TT uint8_t TMC2130StepperBase<T>::PWM_SCALE() { return SELF.read(ADR(PWM_SCALE)); }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: ENCM_CTRL
-uint8_t TMC2130Stepper::ENCM_CTRL() { return ENCM_CTRL_register.sr; }
-void TMC2130Stepper::ENCM_CTRL(uint8_t input) {
-  ENCM_CTRL_register.sr = input;
-  write(ENCM_CTRL_address, ENCM_CTRL_register.sr);
+TT uint8_t TMC2130StepperBase<T>::ENCM_CTRL() { return REG(ENCM_CTRL).sr; }
+TT void TMC2130StepperBase<T>::ENCM_CTRL(uint8_t input) {
+  REG(ENCM_CTRL).sr = input;
+  SELF.write(ADR(ENCM_CTRL), REG(ENCM_CTRL).sr);
 }
-void TMC2130Stepper::inv(bool B)      { ENCM_CTRL_register.inv = B;       write(ENCM_CTRL_address, ENCM_CTRL_register.sr); }
-void TMC2130Stepper::maxspeed(bool B) { ENCM_CTRL_register.maxspeed  = B; write(ENCM_CTRL_address, ENCM_CTRL_register.sr); }
-bool TMC2130Stepper::inv()            { return ENCM_CTRL_register.inv; }
-bool TMC2130Stepper::maxspeed()       { return ENCM_CTRL_register.maxspeed; }
+TT void TMC2130StepperBase<T>::inv(bool B)      { REG(ENCM_CTRL).inv = B;       SELF.write(ADR(ENCM_CTRL), REG(ENCM_CTRL).sr); }
+TT void TMC2130StepperBase<T>::maxspeed(bool B) { REG(ENCM_CTRL).maxspeed  = B; SELF.write(ADR(ENCM_CTRL), REG(ENCM_CTRL).sr); }
+TT bool TMC2130StepperBase<T>::inv()            { return REG(ENCM_CTRL).inv; }
+TT bool TMC2130StepperBase<T>::maxspeed()       { return REG(ENCM_CTRL).maxspeed; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: LOST_STEPS
-uint32_t TMC2130Stepper::LOST_STEPS() { return read(LOST_STEPS_address); }
+TT uint32_t TMC2130StepperBase<T>::LOST_STEPS() { return SELF.read(ADR(LOST_STEPS)); }
 
-void TMC2130Stepper::sg_current_decrease(uint8_t value) {
+TT void TMC2130StepperBase<T>::sg_current_decrease(uint8_t value) {
   switch(value) {
     case 32: sedn(0b00); break;
     case  8: sedn(0b01); break;
@@ -197,7 +197,7 @@ void TMC2130Stepper::sg_current_decrease(uint8_t value) {
     case  1: sedn(0b11); break;
   }
 }
-uint8_t TMC2130Stepper::sg_current_decrease() {
+TT uint8_t TMC2130StepperBase<T>::sg_current_decrease() {
   switch(sedn()) {
     case 0b00: return 32;
     case 0b01: return  8;

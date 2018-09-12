@@ -1,20 +1,20 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define SET_REG(SETTING) IHOLD_IRUN_register.SETTING = B; write(IHOLD_IRUN_address, IHOLD_IRUN_register.sr);
-#define GET_REG(SETTING) return IHOLD_IRUN_register.SETTING;
+#define SET_REG(SETTING) do{ REG(IHOLD_IRUN).SETTING = B; SELF.write(ADR(IHOLD_IRUN), REG(IHOLD_IRUN).sr); }while(0)
+#define GET_REG(SETTING) return REG(IHOLD_IRUN).SETTING
 
 // IHOLD_IRUN
-uint32_t TMCStepper::IHOLD_IRUN() { return IHOLD_IRUN_register.sr; }
-void TMCStepper::IHOLD_IRUN(uint32_t input) {
-	IHOLD_IRUN_register.sr = input;
-	write(IHOLD_IRUN_address, IHOLD_IRUN_register.sr);
+TT uint32_t TMCStepper<T>::IHOLD_IRUN() { return REG(IHOLD_IRUN).sr; }
+TT void TMCStepper<T>::IHOLD_IRUN(uint32_t input) {
+	REG(IHOLD_IRUN).sr = input;
+	SELF.write(ADR(IHOLD_IRUN), REG(IHOLD_IRUN).sr);
 }
 
-void 	TMCStepper::ihold(uint8_t B) 		{ SET_REG(ihold);		}
-void 	TMCStepper::irun(uint8_t B)  		{ SET_REG(irun); 		}
-void 	TMCStepper::iholddelay(uint8_t B)	{ SET_REG(iholddelay); 	}
+TT void 	TMCStepper<T>::ihold(uint8_t B)			{ SET_REG(ihold);		}
+TT void 	TMCStepper<T>::irun(uint8_t B)			{ SET_REG(irun); 		}
+TT void 	TMCStepper<T>::iholddelay(uint8_t B)	{ SET_REG(iholddelay); 	}
 
-uint8_t TMCStepper::ihold() 				{ GET_REG(ihold);		}
-uint8_t TMCStepper::irun()  				{ GET_REG(irun); 		}
-uint8_t TMCStepper::iholddelay()  			{ GET_REG(iholddelay);	}
+TT uint8_t TMCStepper<T>::ihold()					{ GET_REG(ihold);		}
+TT uint8_t TMCStepper<T>::irun()					{ GET_REG(irun); 		}
+TT uint8_t TMCStepper<T>::iholddelay()				{ GET_REG(iholddelay);	}

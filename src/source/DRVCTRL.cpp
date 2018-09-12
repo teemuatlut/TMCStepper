@@ -1,8 +1,8 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define SET_REG0(SETTING) DRVCTRL_0_register.SETTING = B; DRVCTRL(DRVCTRL_0_register.sr)
-#define SET_REG1(SETTING) DRVCTRL_1_register.SETTING = B; DRVCTRL(DRVCTRL_1_register.sr)
+#define SET_REG0(SETTING) do{ DRVCTRL_0_register.SETTING = B; DRVCTRL(DRVCTRL_0_register.sr); }while(0)
+#define SET_REG1(SETTING) do{ DRVCTRL_1_register.SETTING = B; DRVCTRL(DRVCTRL_1_register.sr); }while(0)
 #define GET_REG0(SETTING) return DRVCTRL_0_register.SETTING
 #define GET_REG1(SETTING) return DRVCTRL_1_register.SETTING
 
@@ -13,10 +13,10 @@ uint32_t TMC2660Stepper::DRVCTRL() {
 void TMC2660Stepper::DRVCTRL(uint32_t data) {
 	if(sdoff() == 1) {
 		DRVCTRL_1_register.sr = data;
-		write(DRVCTRL_address, DRVCTRL_1_register.sr);
+		SELF.write(ADR(DRVCTRL), DRVCTRL_1_register.sr);
 	} else {
 		DRVCTRL_0_register.sr = data;
-		write(DRVCTRL_address, DRVCTRL_0_register.sr);
+		SELF.write(ADR(DRVCTRL), DRVCTRL_0_register.sr);
 	}
 }
 

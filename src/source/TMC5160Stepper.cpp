@@ -1,7 +1,7 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS, RS) {}
+TT TMC5160StepperBase<T>::TMC5160StepperBase(uint16_t pinCS, float RS) : TMC5130StepperBase<T>(pinCS, RS) {}
 
 /*
   Requested current = mA = I_rms/1000
@@ -12,75 +12,75 @@ TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS,
   CS = ------------------------------------ -1   |
                 GLOBALSCALER * V_fs              | V_fs = 0.325
 */
-void TMC5160Stepper::rms_current(uint16_t mA) {
+TT void TMC5160StepperBase<T>::rms_current(uint16_t mA) {
   uint32_t V_fs = 325; // x1000
   uint16_t scaler = GLOBAL_SCALER();
   if (!scaler) scaler = 256;
 
   uint32_t numerator = 1414UL * mA;
-  numerator *= Rsense*1000UL;
+  numerator *= this->Rsense * 1000UL;
   uint32_t CS = numerator / scaler;
   CS /= V_fs;
   CS <<= (5+8); // Multiply by 32 and 256
   CS /= 1000UL;
   CS /= 1000UL;
   CS -= 1.0;
-  irun(CS);
-  ihold(CS*holdMultiplier);
+  this->irun(CS);
+  this->ihold(CS * this->holdMultiplier);
   //val_mA = mA;
 }
-void TMC5160Stepper::rms_current(uint16_t mA, float mult) {
-  holdMultiplier = mult;
+TT void TMC5160StepperBase<T>::rms_current(uint16_t mA, float mult) {
+  this->holdMultiplier = mult;
   rms_current(mA);
 }
-uint16_t TMC5160Stepper::rms_current() {
+TT uint16_t TMC5160StepperBase<T>::rms_current() {
     uint16_t scaler = GLOBAL_SCALER();
     if (!scaler) scaler = 256;
-    uint32_t numerator = scaler * (irun()+1);
+    uint32_t numerator = scaler * (this->irun()+1);
     numerator *= 325;
     numerator >>= (8+5); // Divide by 256 and 32
     numerator *= 1000000;
-    uint32_t denominator = Rsense*1000;
+    uint32_t denominator = this->Rsense * 1000;
     denominator *= 1414;
 
     return numerator / denominator;
 }
 
 // W: GLOBAL_SCALER
-uint8_t TMC5160Stepper::GLOBAL_SCALER() { return GLOBAL_SCALER_register.sr; }
-void TMC5160Stepper::GLOBAL_SCALER(uint8_t input) {
-  GLOBAL_SCALER_register.sr = input;
-  write(GLOBAL_SCALER_address, GLOBAL_SCALER_register.sr);
+TT uint8_t TMC5160StepperBase<T>::GLOBAL_SCALER() { return REG(GLOBAL_SCALER).sr; }
+TT void TMC5160StepperBase<T>::GLOBAL_SCALER(uint8_t input) {
+  REG(GLOBAL_SCALER).sr = input;
+  SELF.write(ADR(GLOBAL_SCALER), REG(GLOBAL_SCALER).sr);
 }
 
 // R: OFFSET_READ
-uint16_t TMC5160Stepper::OFFSET_READ() { return read(OFFSET_READ_address); }
+TT uint16_t TMC5160StepperBase<T>::OFFSET_READ() { return SELF.read(ADR(OFFSET_READ)); }
 
 // R+WC: ENC_STATUS
-uint8_t TMC5160Stepper::ENC_STATUS() { return read(ENC_STATUS_address); }
-void TMC5160Stepper::ENC_STATUS(uint8_t input) {
-	write(ENC_STATUS_address, input & 0x3);
+TT uint8_t TMC5160StepperBase<T>::ENC_STATUS() { return SELF.read(ADR(ENC_STATUS)); }
+TT void TMC5160StepperBase<T>::ENC_STATUS(uint8_t input) {
+	SELF.write(ADR(ENC_STATUS), input & 0x3);
 }
 
 // W: ENC_DEVIATION
-uint32_t TMC5160Stepper::ENC_DEVIATION() { return ENC_DEVIATION_register.sr; }
-void TMC5160Stepper::ENC_DEVIATION(uint32_t input) {
-	ENC_DEVIATION_register.sr = input;
-	write(ENC_DEVIATION_address, ENC_DEVIATION_register.sr);
+TT uint32_t TMC5160StepperBase<T>::ENC_DEVIATION() { return REG(ENC_DEVIATION).sr; }
+TT void TMC5160StepperBase<T>::ENC_DEVIATION(uint32_t input) {
+	REG(ENC_DEVIATION).sr = input;
+	SELF.write(ADR(ENC_DEVIATION), REG(ENC_DEVIATION).sr);
 }
 
 // R: PWM_SCALE
-uint32_t TMC5160Stepper::PWM_SCALE() {
-	PWM_SCALE_register.sr = read(PWM_SCALE_address);
-	return PWM_SCALE_register.sr;
+TT uint32_t TMC5160StepperBase<T>::PWM_SCALE() {
+	REG(PWM_SCALE).sr = SELF.read(ADR(PWM_SCALE));
+	return REG(PWM_SCALE).sr;
 }
-uint8_t TMC5160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
-uint16_t TMC5160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_auto; }
+TT uint8_t TMC5160StepperBase<T>::pwm_scale_sum() { PWM_SCALE(); return REG(PWM_SCALE).pwm_scale_sum; }
+TT uint16_t TMC5160StepperBase<T>::pwm_scale_auto() { PWM_SCALE(); return REG(PWM_SCALE).pwm_scale_auto; }
 
 // R: PWM_AUTO
-uint32_t TMC5160Stepper::PWM_AUTO() {
-	PWM_AUTO_register.sr = read(PWM_AUTO_address);
-	return PWM_AUTO_register.sr;
+TT uint32_t TMC5160StepperBase<T>::PWM_AUTO() {
+	REG(PWM_AUTO).sr = SELF.read(ADR(PWM_AUTO));
+	return REG(PWM_AUTO).sr;
 }
-uint8_t TMC5160Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }
-uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_grad_auto; }
+TT uint8_t TMC5160StepperBase<T>::pwm_ofs_auto() { PWM_AUTO(); return REG(PWM_AUTO).pwm_ofs_auto; }
+TT uint8_t TMC5160StepperBase<T>::pwm_grad_auto() { PWM_AUTO(); return REG(PWM_AUTO).pwm_grad_auto; }

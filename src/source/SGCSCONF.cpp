@@ -1,13 +1,13 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define SET_REG(SETTING) SGCSCONF_register.SETTING = B; write(SGCSCONF_address, SGCSCONF_register.sr);
-#define GET_REG(SETTING) return SGCSCONF_register.SETTING;
+#define SET_REG(SETTING) do{ REG(SGCSCONF).SETTING = B; SELF.write(ADR(SGCSCONF), REG(SGCSCONF).sr);; }while(0)
+#define GET_REG(SETTING) return REG(SGCSCONF).SETTING
 
-uint32_t TMC2660Stepper::SGCSCONF() { return SGCSCONF_register.sr; }
+uint32_t TMC2660Stepper::SGCSCONF() { return REG(SGCSCONF).sr; }
 void TMC2660Stepper::SGCSCONF(uint32_t data) {
-  SGCSCONF_register.sr = data;
-  write(SGCSCONF_address, SGCSCONF_register.sr);
+  REG(SGCSCONF).sr = data;
+  SELF.write(ADR(SGCSCONF), REG(SGCSCONF).sr);
 }
 
 void TMC2660Stepper::sfilt(bool B) 	{ SET_REG(sfilt); }

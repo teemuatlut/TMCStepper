@@ -1,13 +1,13 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define SET_REG(SETTING) SMARTEN_register.SETTING = B; write(SMARTEN_address, SMARTEN_register.sr)
-#define GET_REG(SETTING) return SMARTEN_register.SETTING
+#define SET_REG(SETTING) do{ REG(SMARTEN).SETTING = B; SELF.write(ADR(SMARTEN), REG(SMARTEN).sr); }while(0)
+#define GET_REG(SETTING) return REG(SMARTEN).SETTING
 
-uint32_t TMC2660Stepper::SMARTEN() { return SMARTEN_register.sr; }
+uint32_t TMC2660Stepper::SMARTEN() { return REG(SMARTEN).sr; }
 void TMC2660Stepper::SMARTEN(uint32_t data) {
-  SMARTEN_register.sr = data;
-  write(SMARTEN_address, SMARTEN_register.sr);
+  REG(SMARTEN).sr = data;
+  SELF.write(ADR(SMARTEN), REG(SMARTEN).sr);
 }
 
 void TMC2660Stepper::seimin(bool B) 	{ SET_REG(seimin);	}

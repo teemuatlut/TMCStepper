@@ -1,12 +1,12 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
+#include "TMC_DECL.h"
 
-#define GET_REG00(SETTING) DRVSTATUS(); return READ_RDSEL00_register.SETTING
-#define GET_REG01(SETTING) DRVSTATUS(); return READ_RDSEL01_register.SETTING
-#define GET_REG10(SETTING) DRVSTATUS(); return READ_RDSEL10_register.SETTING
+#define GET_REG00(SETTING) do{ DRVSTATUS(); return READ_RDSEL00_register.SETTING; }while(0)
+#define GET_REG01(SETTING) do{ DRVSTATUS(); return READ_RDSEL01_register.SETTING; }while(0)
+#define GET_REG10(SETTING) do{ DRVSTATUS(); return READ_RDSEL10_register.SETTING; }while(0)
 
 uint32_t TMC2660Stepper::DRVSTATUS() {
-	uint32_t response = read()&0xFFCFF;
+	uint32_t response = SELF.read()&0xFFCFF;
 	READ_RDSEL00_register.sr = response & 0xFF;
 	READ_RDSEL01_register.sr = response & 0xFF;
 	READ_RDSEL10_register.sr = response & 0xFF;

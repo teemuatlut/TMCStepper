@@ -1,5 +1,5 @@
 #include "TMCStepper.h"
-#include "SW_SPI.h"
+#include "TMC_DECL.h"
 
 TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) :
   _pinCS(pinCS),
@@ -21,7 +21,7 @@ void TMC2660Stepper::switchCSpin(bool state) {
 
 uint32_t TMC2660Stepper::read() {
   uint32_t response = 0UL;
-  uint32_t dummy = ((uint32_t)DRVCONF_address<<17) | DRVCONF_register.sr;
+  uint32_t dummy = ((uint32_t)ADR(DRVCONF)<<17) | REG(DRVCONF).sr;
   if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
     response |= TMC_SW_SPI->transfer((dummy >> 16) & 0xFF);
@@ -69,7 +69,7 @@ void TMC2660Stepper::begin() {
   //TODO: Push shadow registers
 
   toff(8); //off_time(8);
-  tbl(1); //blank_time(24);
+  SELF.tbl(1); //blank_time(24);
 }
 
 bool TMC2660Stepper::isEnabled() { return toff() > 0; }
@@ -100,16 +100,16 @@ uint8_t TMC2660Stepper::test_connection() {
 */
 
 uint16_t TMC2660Stepper::rms_current() {
-  return (float)(cs()+1)/32.0 * (vsense()?0.165:0.310)/Rsense / 1.41421 * 1000;
+  return (float)(cs()+1)/32.0 * (SELF.vsense()?0.165:0.310)/Rsense / 1.41421 * 1000;
 }
 void TMC2660Stepper::rms_current(uint16_t mA) {
   uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.310 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
-    vsense(true);
+    SELF.vsense(true);
     CS = 32.0*1.41421*mA/1000.0*Rsense/0.165 - 1;
   } else { // If CS >= 16, turn off high_sense_r
-    vsense(false);
+    SELF.vsense(false);
   }
   cs(CS);
   //val_mA = mA;
@@ -117,35 +117,35 @@ void TMC2660Stepper::rms_current(uint16_t mA) {
 
 void TMC2660Stepper::push() {
   DRVCTRL( sdoff() ? DRVCTRL_1_register.sr : DRVCTRL_0_register.sr);
-  CHOPCONF(CHOPCONF_register.sr);
-  SMARTEN(SMARTEN_register.sr);
-  SGCSCONF(SGCSCONF_register.sr);
-  DRVCONF(DRVCONF_register.sr);
+  CHOPCONF(REG(CHOPCONF).sr);
+  SMARTEN(REG(SMARTEN).sr);
+  SGCSCONF(REG(SGCSCONF).sr);
+  DRVCONF(REG(DRVCONF).sr);
 }
 
-void TMC2660Stepper::hysteresis_end(int8_t value) { hend(value+3); }
-int8_t TMC2660Stepper::hysteresis_end() { return hend()-3; };
+void TMC2660Stepper::hysteresis_end(int8_t value) { SELF.hend(value+3); }
+int8_t TMC2660Stepper::hysteresis_end() { return SELF.hend()-3; };
 
-void TMC2660Stepper::hysteresis_start(uint8_t value) { hstrt(value-1); }
-uint8_t TMC2660Stepper::hysteresis_start() { return hstrt()+1; }
+void TMC2660Stepper::hysteresis_start(uint8_t value) { SELF.hstrt(value-1); }
+uint8_t TMC2660Stepper::hysteresis_start() { return SELF.hstrt()+1; }
 
 void TMC2660Stepper::microsteps(uint16_t ms) {
   switch(ms) {
-    case 256: mres(0); break;
-    case 128: mres(1); break;
-    case  64: mres(2); break;
-    case  32: mres(3); break;
-    case  16: mres(4); break;
-    case   8: mres(5); break;
-    case   4: mres(6); break;
-    case   2: mres(7); break;
-    case   0: mres(8); break;
+    case 256: SELF.mres(0); break;
+    case 128: SELF.mres(1); break;
+    case  64: SELF.mres(2); break;
+    case  32: SELF.mres(3); break;
+    case  16: SELF.mres(4); break;
+    case   8: SELF.mres(5); break;
+    case   4: SELF.mres(6); break;
+    case   2: SELF.mres(7); break;
+    case   0: SELF.mres(8); break;
     default: break;
   }
 }
 
 uint16_t TMC2660Stepper::microsteps() {
-  switch(mres()) {
+  switch(SELF.mres()) {
     case 0: return 256;
     case 1: return 128;
     case 2: return  64;
@@ -161,15 +161,15 @@ uint16_t TMC2660Stepper::microsteps() {
 
 void TMC2660Stepper::blank_time(uint8_t value) {
   switch (value) {
-    case 16: tbl(0b00); break;
-    case 24: tbl(0b01); break;
-    case 36: tbl(0b10); break;
-    case 54: tbl(0b11); break;
+    case 16: SELF.tbl(0b00); break;
+    case 24: SELF.tbl(0b01); break;
+    case 36: SELF.tbl(0b10); break;
+    case 54: SELF.tbl(0b11); break;
   }
 }
 
 uint8_t TMC2660Stepper::blank_time() {
-  switch (tbl()) {
+  switch (SELF.tbl()) {
     case 0b00: return 16;
     case 0b01: return 24;
     case 0b10: return 36;
