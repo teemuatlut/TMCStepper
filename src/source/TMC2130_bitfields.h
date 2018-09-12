@@ -157,26 +157,28 @@ struct COOLCONF_t {
   };
 };
 
-struct DRV_STATUS_t {
-  union {
-    uint32_t sr;
-    struct {
-      uint16_t sg_result : 10;
-      uint8_t            : 5;
-      bool fsactive : 1;
-      uint8_t cs_actual : 5,
-                        : 3;
-      bool  stallGuard : 1,
-            ot : 1,
-            otpw : 1,
-            s2ga : 1,
-            s2gb : 1,
-            ola : 1,
-            olb : 1,
-            stst : 1;
+namespace TMC2130_n {
+  struct DRV_STATUS_t {
+    union {
+      uint32_t sr;
+      struct {
+        uint16_t sg_result : 10;
+        uint8_t            : 5;
+        bool fsactive : 1;
+        uint8_t cs_actual : 5,
+                          : 3;
+        bool  stallGuard : 1,
+              ot : 1,
+              otpw : 1,
+              s2ga : 1,
+              s2gb : 1,
+              ola : 1,
+              olb : 1,
+              stst : 1;
+      };
     };
   };
-};
+}
 
 struct PWMCONF_t {
   union {

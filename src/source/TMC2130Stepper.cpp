@@ -126,17 +126,14 @@ void TMC2130Stepper::push() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN
-uint32_t  TMC2130Stepper::IOIN() {
-  IOIN_register.sr = read(IOIN_address);
-  return IOIN_register.sr;
-}
-bool TMC2130Stepper::step()         { IOIN(); return IOIN_register.step; }
-bool TMC2130Stepper::dir()          { IOIN(); return IOIN_register.dir; }
-bool TMC2130Stepper::dcen_cfg4()    { IOIN(); return IOIN_register.dcen_cfg4; }
-bool TMC2130Stepper::dcin_cfg5()    { IOIN(); return IOIN_register.dcin_cfg5; }
-bool TMC2130Stepper::drv_enn_cfg6() { IOIN(); return IOIN_register.drv_enn_cfg6; }
-bool TMC2130Stepper::dco()          { IOIN(); return IOIN_register.dco; }
-uint8_t TMC2130Stepper::version()   { IOIN(); return IOIN_register.version; }
+uint32_t  TMC2130Stepper::IOIN()    { return read(IOIN_address); }
+bool TMC2130Stepper::step()         { IOIN_t r{0}; r.sr = IOIN(); return r.step; }
+bool TMC2130Stepper::dir()          { IOIN_t r{0}; r.sr = IOIN(); return r.dir; }
+bool TMC2130Stepper::dcen_cfg4()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcen_cfg4; }
+bool TMC2130Stepper::dcin_cfg5()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcin_cfg5; }
+bool TMC2130Stepper::drv_enn_cfg6() { IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn_cfg6; }
+bool TMC2130Stepper::dco()          { IOIN_t r{0}; r.sr = IOIN(); return r.dco; }
+uint8_t TMC2130Stepper::version()   { IOIN_t r{0}; r.sr = IOIN(); return r.version; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: TCOOLTHRS
 uint32_t TMC2130Stepper::TCOOLTHRS() { return TCOOLTHRS_register.sr; }

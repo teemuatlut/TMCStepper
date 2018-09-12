@@ -89,11 +89,9 @@ class TMCStepper {
 	protected:
 		TMCStepper() {};
 		TMCStepper(float RS) : Rsense(RS) {};
-		INIT_REGISTER(GSTAT){{.sr=0}};
 		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};
 		INIT_REGISTER(TPOWERDOWN){.sr=0};
 		INIT_REGISTER(TPWMTHRS){.sr=0};
-		INIT_REGISTER(MSCURACT){{.sr=0}};
 
 		static constexpr uint8_t TMC_READ = 0x00,
 														TMC_WRITE = 0x80;
@@ -314,14 +312,12 @@ class TMC2130Stepper : public TMCStepper {
 		uint32_t read(uint8_t addressByte);
 
 		INIT_REGISTER(GCONF){{.sr=0}};
-		INIT_REGISTER(IOIN){{.sr=0}};
 		INIT_REGISTER(TCOOLTHRS){.sr=0};
 		INIT_REGISTER(THIGH){.sr=0};
 		INIT_REGISTER(XDIRECT){{.sr=0}};
 		INIT_REGISTER(VDCMIN){.sr=0};
 		INIT_REGISTER(CHOPCONF){{.sr=0}};
 		INIT_REGISTER(COOLCONF){{.sr=0}};
-		INIT_REGISTER(DRV_STATUS){{.sr=0}};
 		INIT_REGISTER(PWMCONF){{.sr=0}};
 		INIT_REGISTER(ENCM_CTRL){{.sr=0}};
 

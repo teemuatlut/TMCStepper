@@ -104,16 +104,11 @@ uint8_t TMCStepper::blank_time() {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // R+C: GSTAT
-uint8_t TMCStepper::GSTAT()  {
-  GSTAT_register.sr = read(GSTAT_address);
-  return GSTAT_register.sr;
-}
-void  TMCStepper::GSTAT(uint8_t){
-  write(GSTAT_address, 0b111);
-}
-bool  TMCStepper::reset()    { GSTAT(); return GSTAT_register.reset; }
-bool  TMCStepper::drv_err()  { GSTAT(); return GSTAT_register.drv_err; }
-bool  TMCStepper::uv_cp()    { GSTAT(); return GSTAT_register.uv_cp; }
+uint8_t TMCStepper::GSTAT()  { return read(GSTAT_address); }
+void  TMCStepper::GSTAT(uint8_t){ write(GSTAT_address, 0b111); }
+bool  TMCStepper::reset()    { GSTAT_t r{0}; r.sr = GSTAT(); return r.reset; }
+bool  TMCStepper::drv_err()  { GSTAT_t r{0}; r.sr = GSTAT(); return r.drv_err; }
+bool  TMCStepper::uv_cp()    { GSTAT_t r{0}; r.sr = GSTAT(); return r.uv_cp; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: TPOWERDOWN
 uint8_t TMCStepper::TPOWERDOWN() { return TPOWERDOWN_register.sr; }
@@ -136,19 +131,18 @@ uint16_t TMCStepper::MSCNT() {
   return read(MSCNT_address);
 }
 
-uint32_t TMCStepper::MSCURACT() {
-  MSCURACT_register.sr = read(MSCURACT_address);
-  return MSCURACT_register.sr;
-}
+uint32_t TMCStepper::MSCURACT() { return read(MSCURACT_address); }
 int16_t TMCStepper::cur_a() {
-  MSCURACT();
-  int16_t value = MSCURACT_register.cur_a;
+  MSCURACT_t r{0};
+  r.sr = MSCURACT();
+  int16_t value = r.cur_a;
   if (value > 255) value -= 512;
   return value;
 }
 int16_t TMCStepper::cur_b() {
-  MSCURACT();
-  int16_t value = MSCURACT_register.cur_b;
+  MSCURACT_t r{0};
+  r.sr = MSCURACT();
+  int16_t value = r.cur_b;
   if (value > 255) value -= 512;
   return value;
 }
