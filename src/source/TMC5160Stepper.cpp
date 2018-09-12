@@ -50,28 +50,28 @@ uint16_t TMC5160Stepper::rms_current() {
 uint8_t TMC5160Stepper::GLOBAL_SCALER() { return GLOBAL_SCALER_register.sr; }
 void TMC5160Stepper::GLOBAL_SCALER(uint8_t input) {
   GLOBAL_SCALER_register.sr = input;
-  write(GLOBAL_SCALER_register.address, GLOBAL_SCALER_register.sr);
+  write(GLOBAL_SCALER_address, GLOBAL_SCALER_register.sr);
 }
 
 // R: OFFSET_READ
-uint16_t TMC5160Stepper::OFFSET_READ() { return READ_REG(OFFSET_READ); }
+uint16_t TMC5160Stepper::OFFSET_READ() { return read(OFFSET_READ_address); }
 
 // R+WC: ENC_STATUS
-uint8_t TMC5160Stepper::ENC_STATUS() { return READ_REG(ENC_STATUS); }
+uint8_t TMC5160Stepper::ENC_STATUS() { return read(ENC_STATUS_address); }
 void TMC5160Stepper::ENC_STATUS(uint8_t input) {
-	write(ENC_STATUS_register.address, input & 0x3);
+	write(ENC_STATUS_address, input & 0x3);
 }
 
 // W: ENC_DEVIATION
 uint32_t TMC5160Stepper::ENC_DEVIATION() { return ENC_DEVIATION_register.sr; }
 void TMC5160Stepper::ENC_DEVIATION(uint32_t input) {
 	ENC_DEVIATION_register.sr = input;
-	write(ENC_DEVIATION_register.address, ENC_DEVIATION_register.sr);
+	write(ENC_DEVIATION_address, ENC_DEVIATION_register.sr);
 }
 
 // R: PWM_SCALE
 uint32_t TMC5160Stepper::PWM_SCALE() {
-	PWM_SCALE_register.sr = READ_REG(PWM_SCALE);
+	PWM_SCALE_register.sr = read(PWM_SCALE_address);
 	return PWM_SCALE_register.sr;
 }
 uint8_t TMC5160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
@@ -79,7 +79,7 @@ uint16_t TMC5160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_regist
 
 // R: PWM_AUTO
 uint32_t TMC5160Stepper::PWM_AUTO() {
-	PWM_AUTO_register.sr = READ_REG(PWM_AUTO);
+	PWM_AUTO_register.sr = read(PWM_AUTO_address);
 	return PWM_AUTO_register.sr;
 }
 uint8_t TMC5160Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }

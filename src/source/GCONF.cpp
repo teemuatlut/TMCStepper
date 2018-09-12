@@ -1,17 +1,17 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) GCONF_register.SETTING = B; WRITE_REG(GCONF)
+#define SET_REG(SETTING) GCONF_register.SETTING = B; write(GCONF_address, GCONF_register.sr)
 #define GET_REG(SETTING) GCONF(); return GCONF_register.SETTING
 
 // GCONF
 uint32_t TMC2130Stepper::GCONF() {
-	GCONF_register.sr = READ_REG(GCONF);
+	GCONF_register.sr = read(GCONF_address);
 	return GCONF_register.sr;
 }
 void TMC2130Stepper::GCONF(uint32_t input) {
 	GCONF_register.sr = input;
-	WRITE_REG(GCONF);
+	write(GCONF_address, GCONF_register.sr);
 }
 
 void TMC2130Stepper::I_scale_analog(bool B)			{ SET_REG(i_scale_analog);			}
@@ -68,12 +68,12 @@ bool TMC5160Stepper::multistep_filt()				{ GET_REG(multistep_filt);			}
 
 uint32_t TMC2208Stepper::GCONF() {
 	if (write_only) return GCONF_register.sr;
-	GCONF_register.sr = READ_REG(GCONF);
+	GCONF_register.sr = read(GCONF_address);
 	return GCONF_register.sr;
 }
 void TMC2208Stepper::GCONF(uint32_t input) {
 	GCONF_register.sr = input;
-	WRITE_REG(GCONF);
+	write(GCONF_address, GCONF_register.sr);
 }
 
 void TMC2208Stepper::I_scale_analog(bool B)		{ SET_REG(i_scale_analog);	}

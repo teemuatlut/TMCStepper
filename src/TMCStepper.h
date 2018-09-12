@@ -89,16 +89,23 @@ class TMCStepper {
 	protected:
 		TMCStepper() {};
 		TMCStepper(float RS) : Rsense(RS) {};
-		INIT_REGISTER(GSTAT){0x01, {.sr=0}};
-		INIT_REGISTER(IHOLD_IRUN){0x10, {.sr=0}};
-		INIT_REGISTER(TPOWERDOWN){0x11, .sr=0};
-		INIT_REGISTER(TSTEP){0x12};
-		INIT_REGISTER(TPWMTHRS){0x13, .sr=0};
-		INIT_REGISTER(MSCNT){0x6A};
-		INIT_REGISTER(MSCURACT){0x6B, {.sr=0}};
+		INIT_REGISTER(GSTAT){{.sr=0}};
+		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};
+		INIT_REGISTER(TPOWERDOWN){.sr=0};
+		INIT_REGISTER(TPWMTHRS){.sr=0};
+		INIT_REGISTER(MSCURACT){{.sr=0}};
 
 		static constexpr uint8_t TMC_READ = 0x00,
 														TMC_WRITE = 0x80;
+
+		static constexpr uint8_t	GSTAT_address = 0x01,
+															TPOWERDOWN_address = 0x11,
+															IHOLD_IRUN_address = 0x10,
+															TSTEP_address = 0x12,
+															TPWMTHRS_address = 0x13,
+															MSCNT_address = 0x6A,
+															MSCURACT_address = 0x6B;
+
 		virtual void write(uint8_t, uint32_t) = 0;
 		virtual uint32_t read(uint8_t) = 0;
 		virtual void vsense(bool) = 0;
@@ -306,19 +313,31 @@ class TMC2130Stepper : public TMCStepper {
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
 
-		INIT_REGISTER(GCONF){0x00, {.sr=0}};
-		INIT_REGISTER(IOIN){0x04, {.sr=0}};
-		INIT_REGISTER(TCOOLTHRS){0x14, .sr=0};
-		INIT_REGISTER(THIGH){0x15, .sr=0};
-		INIT_REGISTER(XDIRECT){0x2D, {.sr=0}};
-		INIT_REGISTER(VDCMIN){0x33, .sr=0};
-		INIT_REGISTER(CHOPCONF){0x6C, {.sr=0}};
-		INIT_REGISTER(COOLCONF){0x6D, {.sr=0}};
-		INIT_REGISTER(DRV_STATUS){0x6F, {.sr=0}};
-		INIT_REGISTER(PWMCONF){0x70, {.sr=0}};
-		INIT_REGISTER(PWM_SCALE){0x71};
-		INIT_REGISTER(ENCM_CTRL){0x72, {.sr=0}};
-		INIT_REGISTER(LOST_STEPS){0x73};
+		INIT_REGISTER(GCONF){{.sr=0}};
+		INIT_REGISTER(IOIN){{.sr=0}};
+		INIT_REGISTER(TCOOLTHRS){.sr=0};
+		INIT_REGISTER(THIGH){.sr=0};
+		INIT_REGISTER(XDIRECT){{.sr=0}};
+		INIT_REGISTER(VDCMIN){.sr=0};
+		INIT_REGISTER(CHOPCONF){{.sr=0}};
+		INIT_REGISTER(COOLCONF){{.sr=0}};
+		INIT_REGISTER(DRV_STATUS){{.sr=0}};
+		INIT_REGISTER(PWMCONF){{.sr=0}};
+		INIT_REGISTER(ENCM_CTRL){{.sr=0}};
+
+		static constexpr uint8_t	GCONF_address = 0x00,
+															IOIN_address = 0x04,
+															TCOOLTHRS_address = 0x14,
+															THIGH_address = 0x15,
+															XDIRECT_address = 0x2D,
+															VDCMIN_address = 0x33,
+															CHOPCONF_address = 0x6C,
+															COOLCONF_address = 0x6D,
+															DRV_STATUS_address = 0x6F,
+															PWMCONF_address = 0x70,
+															PWM_SCALE_address = 0x71,
+															ENCM_CTRL_address = 0x72,
+															LOST_STEPS_address = 0x73;
 
 		uint8_t status_response;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
@@ -469,33 +488,66 @@ class TMC5130Stepper : public TMC2130Stepper {
 		// RW: XTARGET
 		int32_t XTARGET();
 		void XTARGET(int32_t input);
+		// R: XLATCH
+		uint32_t XLATCH();
+		// RW: X_ENC
+		int32_t X_ENC();
+		void X_ENC(int32_t input);
+		// W: ENC_CONST
+		uint16_t ENC_CONST();
+		void ENC_CONST(uint16_t input);
+		// R: ENC_STATUS
+		bool ENC_STATUS();
+		// R: ENC_LATCH
+		uint32_t ENC_LATCH();
 
-		INIT_REGISTER(IFCNT){0x02};
-		INIT_REGISTER(SLAVECONF){0x03, {.sr=0}};
-		INIT5130_REGISTER(IOIN){0x04, {.sr=0}};
-		INIT_REGISTER(OUTPUT){0x04, .sr=0};
-		INIT_REGISTER(X_COMPARE){0x05, .sr=0};
-		INIT_REGISTER(RAMPMODE){0x20, .sr=0};
-		INIT_REGISTER(XACTUAL){0x21, .sr=0};
-		INIT_REGISTER(VACTUAL){0x22};
-		INIT_REGISTER(VSTART){0x23, .sr=0};
-		INIT_REGISTER(A1){0x24, .sr=0};
-		INIT_REGISTER(V1){0x25, .sr=0};
-		INIT_REGISTER(AMAX){0x26, .sr=0};
-		INIT_REGISTER(VMAX){0x27, .sr=0};
-		INIT_REGISTER(DMAX){0x28, .sr=0};
-		INIT_REGISTER(D1){0x2A, .sr=0};
-		INIT_REGISTER(VSTOP){0x2B, .sr=0};
-		INIT_REGISTER(TZEROWAIT){0x2C, .sr=0};
-		INIT_REGISTER(XTARGET){0x2D};
-		INIT_REGISTER(SW_MODE){0x34, {.sr=0}};
-		INIT_REGISTER(RAMP_STAT){0x35, {.sr=0}};
-		INIT_REGISTER(XLATCH){0x36};
-		INIT_REGISTER(ENCMODE){0x38, {.sr=0}};
-		INIT_REGISTER(X_ENC){0x39};
-		INIT_REGISTER(ENC_CONST){0x3A, .sr=0};
-		INIT_REGISTER(ENC_STATUS){0x3B};
-		INIT_REGISTER(ENC_LATCH){0x3C};
+		INIT_REGISTER(SLAVECONF){{.sr=0}};
+		INIT5130_REGISTER(IOIN){{.sr=0}};
+		INIT_REGISTER(OUTPUT){.sr=0};
+		INIT_REGISTER(X_COMPARE){.sr=0};
+		INIT_REGISTER(RAMPMODE){.sr=0};
+		INIT_REGISTER(XACTUAL){.sr=0};
+		INIT_REGISTER(VSTART){.sr=0};
+		INIT_REGISTER(A1){.sr=0};
+		INIT_REGISTER(V1){.sr=0};
+		INIT_REGISTER(AMAX){.sr=0};
+		INIT_REGISTER(VMAX){.sr=0};
+		INIT_REGISTER(DMAX){.sr=0};
+		INIT_REGISTER(D1){.sr=0};
+		INIT_REGISTER(VSTOP){.sr=0};
+		INIT_REGISTER(TZEROWAIT){.sr=0};
+		INIT_REGISTER(SW_MODE){{.sr=0}};
+		INIT_REGISTER(RAMP_STAT){{.sr=0}};
+		INIT_REGISTER(ENCMODE){{.sr=0}};
+		INIT_REGISTER(ENC_CONST){.sr=0};
+
+		static constexpr uint8_t	IFCNT_address = 0x02,
+															SLAVECONF_address = 0x03,
+															IOIN_address = 0x04,
+															OUTPUT_address = 0x04,
+															X_COMPARE_address = 0x05,
+															RAMPMODE_address = 0x20,
+															XACTUAL_address = 0x21,
+															VACTUAL_address = 0x22,
+															VSTART_address = 0x23,
+															A1_address = 0x24,
+															V1_address = 0x25,
+															AMAX_address = 0x26,
+															VMAX_address = 0x27,
+															DMAX_address = 0x28,
+															D1_address = 0x2A,
+															VSTOP_address = 0x2B,
+															TZEROWAIT_address = 0x2C,
+															XTARGET_address = 0x2D,
+															SW_MODE_address = 0x34,
+															RAMP_STAT_address = 0x35,
+															XLATCH_address = 0x36,
+															ENCMODE_address = 0x38,
+															X_ENC_address = 0x39,
+															ENC_CONST_address = 0x3A,
+															ENC_STATUS_address = 0x3B,
+															ENC_LATCH_address = 0x3C;
+
 		/*
 		INIT_REGISTER(MSLUT0){0x60, 0};
 		INIT_REGISTER(MSLUT1){0x61, 0};
@@ -614,14 +666,23 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC5130Stepper::vsense;
 		using TMC5130Stepper::rndtf;
 
-		INIT_REGISTER(DRV_CONF){0x0A, {.sr=0}};
-		INIT_REGISTER(SHORT_CONF){0x09, {.sr=0}};
-		INIT_REGISTER(GLOBAL_SCALER){0x0B, .sr=0};
-		INIT_REGISTER(OFFSET_READ){0x0C, .sr=0};
-		INIT_REGISTER(ENC_DEVIATION){0x3D, .sr=0};
-		INIT5160_REGISTER(PWM_SCALE){0x0C, {.sr=0}};
-		INIT_REGISTER(PWM_AUTO){0x72, {.sr=0}};
-		INIT5160_REGISTER(PWMCONF){0x70, {.sr=0}};
+		INIT_REGISTER(DRV_CONF){{.sr=0}};
+		INIT_REGISTER(SHORT_CONF){{.sr=0}};
+		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
+		INIT_REGISTER(OFFSET_READ){.sr=0};
+		INIT_REGISTER(ENC_DEVIATION){.sr=0};
+		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
+		INIT_REGISTER(PWM_AUTO){{.sr=0}};
+		INIT5160_REGISTER(PWMCONF){{.sr=0}};
+
+		static constexpr uint8_t	DRV_CONF_address = 0x0A,
+															SHORT_CONF_address = 0x09,
+															GLOBAL_SCALER_address = 0x0B,
+															OFFSET_READ_address = 0x0C,
+															ENC_DEVIATION_address = 0x3D,
+															PWM_SCALE_address = 0x0C,
+															PWM_AUTO_address = 0x72,
+															PWMCONF_address = 0x70;
 };
 
 class TMC2208Stepper : public TMCStepper {
@@ -771,25 +832,36 @@ class TMC2208Stepper : public TMCStepper {
 		bool CRCerror = false;
 	protected:
 		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
-		INIT2208_REGISTER(GCONF)			{0x00, {.sr=0}};
-		INIT_REGISTER(IFCNT)					{0x02};
-		INIT_REGISTER(SLAVECONF)			{0x03, {.sr=0}};
-		INIT_REGISTER(OTP_PROG)				{0x04};
-		INIT_REGISTER(OTP_READ)				{0x05};
+		INIT2208_REGISTER(GCONF)			{{.sr=0}};
+		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
 		//INIT_REGISTER(IOIN_2208)			{0x06, {.sr=0}};
-		INIT2208_REGISTER(IOIN)				{0x06, {.sr=0}};
-		INIT_REGISTER(FACTORY_CONF)		{0x07, {.sr=0}};
+		INIT2208_REGISTER(IOIN)				{{.sr=0}};
+		INIT_REGISTER(FACTORY_CONF)		{{.sr=0}};
 		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
-		INIT2208_REGISTER(VACTUAL)		{0x22, 0};
+		INIT2208_REGISTER(VACTUAL)		{.sr=0};
 		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
-		INIT2208_REGISTER(CHOPCONF){0x6C, {.sr=0}};
+		INIT2208_REGISTER(CHOPCONF)		{{.sr=0}};
 		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};
-		INIT2208_REGISTER(DRV_STATUS)	{0x6F, {.sr=0}};
+		INIT2208_REGISTER(DRV_STATUS)	{{.sr=0}};
 		//INIT_REGISTER(PWMCONF_2208)		{0x70, {.sr=0}};
-		INIT2208_REGISTER(PWMCONF)		{0x70, {.sr=0}};
+		INIT2208_REGISTER(PWMCONF)		{{.sr=0}};
 		//INIT_REGISTER(PWM_SCALE_2208)	{0x71, {.sr=0}};
-		INIT2208_REGISTER(PWM_SCALE)	{0x71, {.sr=0}};
-		INIT_REGISTER(PWM_AUTO)				{0x72, {.sr=0}};
+		INIT2208_REGISTER(PWM_SCALE)	{{.sr=0}};
+		INIT_REGISTER(PWM_AUTO)				{{.sr=0}};
+
+		static constexpr uint8_t 	GCONF_address = 0x00,
+															IFCNT_address = 0x02,
+															SLAVECONF_address = 0x03,
+															OTP_PROG_address = 0x04,
+															OTP_READ_address = 0x05,
+															IOIN_address = 0x06,
+															FACTORY_CONF_address = 0x07,
+															VACTUAL_address = 0x22,
+															CHOPCONF_address = 0x6C,
+															DRV_STATUS_address = 0x6F,
+															PWMCONF_address = 0x70,
+															PWM_SCALE_address = 0x71,
+															PWM_AUTO_address = 0x72;
 
 		Stream * HWSerial = NULL;
 		#if SW_CAPABLE_PLATFORM
@@ -818,7 +890,7 @@ class TMC2224Stepper : public TMC2208Stepper {
 		bool dir();
 		uint8_t version();
 	protected:
-		IOIN_2224_t IOIN_register = IOIN_2224_t{0x06, {.sr=0}};
+		IOIN_2224_t IOIN_register = IOIN_2224_t{{.sr=0}};
 
 };
 
@@ -959,15 +1031,22 @@ class TMC2660Stepper {
 		SET_ALIAS(void, hysteresis_start, uint8_t, hstrt);
 		SET_ALIAS(void, off_time, uint8_t, toff);
 		*/
-		INIT_REGISTER(DRVCTRL_1){0b00, {.sr=0}};
-		INIT_REGISTER(DRVCTRL_0){0b00, {.sr=0}};
-		INIT2660_REGISTER(CHOPCONF){0b100, {.sr=0}};
-		INIT_REGISTER(SMARTEN){0b101, {.sr=0}};
-		INIT_REGISTER(SGCSCONF){0b110, {.sr=0}};
-		INIT_REGISTER(DRVCONF){0b111, {.sr=0}};
+	private:
+		INIT_REGISTER(DRVCTRL_1){{.sr=0}};
+		INIT_REGISTER(DRVCTRL_0){{.sr=0}};
+		INIT2660_REGISTER(CHOPCONF){{.sr=0}};
+		INIT_REGISTER(SMARTEN){{.sr=0}};
+		INIT_REGISTER(SGCSCONF){{.sr=0}};
+		INIT_REGISTER(DRVCONF){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL00){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL01){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL10){{.sr=0}};
+
+		static constexpr uint8_t	DRVCTRL_address = 0b00,
+															CHOPCONF_address = 0b100,
+															SMARTEN_address = 0b101,
+															SGCSCONF_address = 0b110,
+															DRVCONF_address = 0b111;
 
 		uint16_t _pinCS;
 		float Rsense;

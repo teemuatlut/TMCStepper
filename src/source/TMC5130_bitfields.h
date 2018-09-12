@@ -1,11 +1,6 @@
 #pragma once
 
-struct IFCNT_t {
-  uint8_t address;
-};
-
 struct SLAVECONF_t {
-  uint8_t address;
   union {
     uint16_t sr : 12;
     struct {
@@ -17,7 +12,6 @@ struct SLAVECONF_t {
 
 namespace TMC5130_n {
   struct IOIN_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {
@@ -37,81 +31,58 @@ namespace TMC5130_n {
 }
 
 struct OUTPUT_t {
-  uint8_t address;
   bool sr : 1;
 };
 
 struct X_COMPARE_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct RAMPMODE_t {
-  uint8_t address;
   uint8_t sr : 2;
 };
 
 struct XACTUAL_t {
-  uint8_t address;
   uint32_t sr;
 };
 
-struct VACTUAL_t {
-  uint8_t address;
-
-};
-
 struct VSTART_t {
-  uint8_t address;
   uint32_t sr : 18;
 };
 
 struct A1_t {
-  uint8_t address;
   uint16_t sr : 16;
 };
 
 struct V1_t {
-  uint8_t address;
   uint32_t sr : 20;
 };
 
 struct AMAX_t {
-  uint8_t address;
   uint16_t sr : 16;
 };
 
 struct VMAX_t {
-  uint8_t address;
   uint32_t sr : 23;
 };
 
 struct DMAX_t {
-  uint8_t address;
   uint16_t sr : 16;
 };
 
 struct D1_t {
-  uint8_t address;
   uint16_t sr : 16;
 };
 
 struct VSTOP_t {
-  uint8_t address;
   uint32_t sr : 18;
 };
 
 struct TZEROWAIT_t {
-  uint8_t address;
   uint16_t sr : 16;
 };
 
-struct XTARGET_t {
-  uint8_t address;
-};
-
 struct SW_MODE_t {
-  uint8_t address;
   union {
     uint16_t sr : 12;
     struct {
@@ -132,7 +103,6 @@ struct SW_MODE_t {
 };
 
 struct RAMP_STAT_t {
-  uint8_t address;
   union {
     uint16_t sr : 14;
     struct {
@@ -154,12 +124,7 @@ struct RAMP_STAT_t {
   };
 };
 
-struct XLATCH_t {
-  uint8_t address;
-};
-
 struct ENCMODE_t {
-  uint8_t address;
   union {
     uint16_t sr : 11;
     struct {
@@ -178,65 +143,43 @@ struct ENCMODE_t {
   };
 };
 
-struct X_ENC_t {
-  uint8_t address;
-};
-
 struct ENC_CONST_t {
-  uint8_t address;
   int32_t sr;
 };
 
-struct ENC_STATUS_t {
-  uint8_t address;
-};
-
-struct ENC_LATCH_t {
-  uint8_t address;
-};
-
 struct MSLUT0_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT1_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT2_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT3_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT4_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT5_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT6_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUT7_t {
-  uint8_t address;
   uint32_t sr;
 };
 
 struct MSLUTSEL_t {
-  uint8_t address;
   union {
     uint32_t sr;
     struct {
@@ -252,7 +195,6 @@ struct MSLUTSEL_t {
 };
 
 struct MSLUTSTART_t {
-  uint8_t address;
   union {
     uint32_t sr : 24;
     struct {
@@ -264,7 +206,6 @@ struct MSLUTSTART_t {
 };
 
 struct DCCTRL_t {
-  uint8_t address;
   union {
     uint32_t sr : 24;
     struct {

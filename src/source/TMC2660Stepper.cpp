@@ -20,7 +20,7 @@ void TMC2660Stepper::switchCSpin(bool state) {
 
 uint32_t TMC2660Stepper::read() {
   uint32_t response = 0UL;
-  uint32_t dummy = ((uint32_t)DRVCONF_register.address<<17) | DRVCONF_register.sr;
+  uint32_t dummy = ((uint32_t)DRVCONF_address<<17) | DRVCONF_register.sr;
   if (uses_sw_spi) {
     switchCSpin(LOW);
     response |= TMC_SW_SPI.transfer((dummy >> 16) & 0xFF);

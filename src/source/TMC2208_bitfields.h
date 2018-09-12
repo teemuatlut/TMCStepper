@@ -2,7 +2,6 @@
 
 namespace TMC2208_n {
   struct GCONF_t {
-    uint8_t address;
     union {
       uint16_t sr : 10;
       struct {
@@ -21,17 +20,8 @@ namespace TMC2208_n {
   };
 }
 
-struct OTP_PROG_t {
-	uint8_t address;
-};
-
-struct OTP_READ_t {
-	uint8_t address;
-};
-
 namespace TMC2208_n {
   struct IOIN_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {
@@ -53,7 +43,6 @@ namespace TMC2208_n {
 }
 
 struct IOIN_2224_t {
-  uint8_t address;
   union {
     uint32_t sr;
     struct {
@@ -73,7 +62,6 @@ struct IOIN_2224_t {
 };
 
 struct FACTORY_CONF_t {
-  uint8_t address;
   union {
     uint16_t sr;
     struct {
@@ -86,17 +74,11 @@ struct FACTORY_CONF_t {
 
 namespace TMC2208_n {
   struct VACTUAL_t {
-      uint8_t address;
       uint32_t sr;
   };
 }
 
-struct MSCNT_t {
-  uint8_t address;
-};
-
 struct MSCURACT_t {
-  uint8_t address;
   union {
     uint32_t sr : 25;
     struct {
@@ -109,7 +91,6 @@ struct MSCURACT_t {
 
 namespace TMC2208_n {
   struct CHOPCONF_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {
@@ -130,7 +111,6 @@ namespace TMC2208_n {
   };
 
   struct PWMCONF_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {
@@ -148,7 +128,6 @@ namespace TMC2208_n {
   };
 
   struct DRV_STATUS_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {
@@ -174,7 +153,6 @@ namespace TMC2208_n {
   };
 
   struct PWM_SCALE_t {
-    uint8_t address;
     union {
       uint32_t sr;
       struct {

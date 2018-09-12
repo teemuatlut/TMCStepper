@@ -1,17 +1,17 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) ENCMODE_register.SETTING = B; WRITE_REG(ENCMODE);
+#define SET_REG(SETTING) ENCMODE_register.SETTING = B; write(ENCMODE_address, ENCMODE_register.sr);
 #define GET_REG(SETTING) ENCMODE(); return ENCMODE_register.SETTING;
 
 // ENCMODE
 uint32_t TMC5130Stepper::ENCMODE() {
-	ENCMODE_register.sr = READ_REG(ENCMODE);
+	ENCMODE_register.sr = read(ENCMODE_address);
 	return ENCMODE_register.sr;
 }
 void TMC5130Stepper::ENCMODE(uint32_t input) {
 	ENCMODE_register.sr = input;
-	WRITE_REG(ENCMODE);
+	write(ENCMODE_address, ENCMODE_register.sr);
 }
 
 void TMC5130Stepper::pol_a(bool B)			{ SET_REG(pol_a);			}

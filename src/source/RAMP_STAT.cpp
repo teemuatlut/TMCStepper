@@ -4,7 +4,7 @@
 #define GET_REG(SETTING) RAMP_STAT(); return RAMP_STAT_register.SETTING;
 
 uint32_t TMC5130Stepper::RAMP_STAT() {
-	RAMP_STAT_register.sr = READ_REG(RAMP_STAT);
+	RAMP_STAT_register.sr = read(RAMP_STAT_address);
 	return RAMP_STAT_register.sr;
 }
 

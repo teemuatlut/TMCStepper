@@ -1,7 +1,6 @@
 #pragma once
 
 struct GCONF_t {
-  uint8_t address;
   union {
     uint32_t sr : 18;
     struct {
@@ -38,7 +37,6 @@ struct GCONF_t {
 };
 
 struct IHOLD_IRUN_t {
-  uint8_t address;
   union {
     uint32_t sr : 20;
     struct {
@@ -52,7 +50,6 @@ struct IHOLD_IRUN_t {
 };
 
 struct GSTAT_t {
-  uint8_t address;
   union {
     uint8_t sr : 3;
     struct {
@@ -64,7 +61,6 @@ struct GSTAT_t {
 };
 
 struct IOIN_t {
-  uint8_t address;
   union {
     uint32_t sr;
     struct {
@@ -82,31 +78,22 @@ struct IOIN_t {
 };
 
 struct TPOWERDOWN_t {
-  uint8_t address;
   uint8_t sr : 8;
 };
 
-struct TSTEP_t {
-  uint8_t address;
-};
-
 struct TPWMTHRS_t {
-  uint8_t address;
   uint32_t sr : 20;
 };
 
 struct TCOOLTHRS_t {
-  uint8_t address;
   uint32_t sr : 20;
 };
 
 struct THIGH_t {
-  uint8_t address;
   uint32_t sr : 20;
 };
 
 struct XDIRECT_t {
-  uint8_t address;
   union {
     uint32_t sr : 25;
     struct {
@@ -118,12 +105,10 @@ struct XDIRECT_t {
 };
 
 struct VDCMIN_t {
-  uint8_t address;
   uint32_t sr : 23;
 };
 
 struct CHOPCONF_t {
-  uint8_t address;
   union {
     uint32_t sr : 32;
     struct {
@@ -154,7 +139,6 @@ struct CHOPCONF_t {
 };
 
 struct COOLCONF_t {
-  uint8_t address;
   union {
     uint32_t sr : 25;
     struct {
@@ -174,7 +158,6 @@ struct COOLCONF_t {
 };
 
 struct DRV_STATUS_t {
-  uint8_t address;
   union {
     uint32_t sr;
     struct {
@@ -196,7 +179,6 @@ struct DRV_STATUS_t {
 };
 
 struct PWMCONF_t {
-  uint8_t address;
   union {
     uint32_t sr : 22;
     struct {
@@ -210,12 +192,7 @@ struct PWMCONF_t {
   };
 };
 
-struct PWM_SCALE_t {
-  uint8_t address;
-};
-
 struct ENCM_CTRL_t {
-  uint8_t address;
   union {
     uint8_t sr : 2;
     struct {
@@ -223,8 +200,4 @@ struct ENCM_CTRL_t {
             maxspeed : 1;
     };
   };
-};
-
-struct LOST_STEPS_t {
-  uint8_t address;
 };

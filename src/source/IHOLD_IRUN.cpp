@@ -1,14 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) IHOLD_IRUN_register.SETTING = B; WRITE_REG(IHOLD_IRUN);
+#define SET_REG(SETTING) IHOLD_IRUN_register.SETTING = B; write(IHOLD_IRUN_address, IHOLD_IRUN_register.sr);
 #define GET_REG(SETTING) return IHOLD_IRUN_register.SETTING;
 
 // IHOLD_IRUN
 uint32_t TMCStepper::IHOLD_IRUN() { return IHOLD_IRUN_register.sr; }
 void TMCStepper::IHOLD_IRUN(uint32_t input) {
 	IHOLD_IRUN_register.sr = input;
-	WRITE_REG(IHOLD_IRUN);
+	write(IHOLD_IRUN_address, IHOLD_IRUN_register.sr);
 }
 
 void 	TMCStepper::ihold(uint8_t B) 		{ SET_REG(ihold);		}
