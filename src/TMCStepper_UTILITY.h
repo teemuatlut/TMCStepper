@@ -2,31 +2,17 @@
 #define TMCStepper_UTILITY_h
 
 void print_HEX(uint32_t data) {
-  for(uint8_t B=24; B>=4; B-=8){
-    Serial.print((data>>(B+4))&0xF, HEX);
-    Serial.print((data>>B)&0xF, HEX);
-    Serial.print(":");
+  for (uint8_t digits = 8; digits--;) {
+    Serial.print((data >> 28) & 0xFUL, HEX);
+    data <<= 4;
   }
-  Serial.print((data>>4)&0xF, HEX);
-  Serial.print(data&0xF, HEX);
 }
 
 void print_BIN(uint32_t data) {
-  int b = 31;
-  for(; b>=24; b--){
-    Serial.print((data>>b)&0b1);
-  }
-  Serial.print(".");
-  for(; b>=16; b--){
-    Serial.print((data>>b)&0b1);
-  }
-  Serial.print(".");
-  for(; b>=8; b--){
-    Serial.print((data>>b)&0b1);
-  }
-  Serial.print(".");
-  for(; b>=0; b--){
-    Serial.print((data>>b)&0b1);
+  for (uint8_t digits = 32; digits--;) {
+    Serial.print((data & 0x8000UL) ? '1' : '0');
+    data <<= 1;
+    if ((digits & 0x7) == 0x7 && digits < 24) Serial.print('.');
   }
 }
 
