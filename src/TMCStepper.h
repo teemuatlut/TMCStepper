@@ -33,9 +33,9 @@
 
 class TMCStepper {
 	public:
-		virtual void rms_current(uint16_t mA);
-		virtual void rms_current(uint16_t mA, float mult);
-		virtual uint16_t rms_current();
+		void rms_current(uint16_t mA);
+		void rms_current(uint16_t mA, float mult);
+		uint16_t rms_current();
 		void hold_multiplier(float val) { holdMultiplier = val; }
 		float hold_multiplier() { return holdMultiplier; }
 		uint8_t test_connection();
@@ -108,7 +108,6 @@ class TMCStepper {
 		virtual uint32_t read(uint8_t) = 0;
 		virtual void vsense(bool) = 0;
 		virtual bool vsense(void) = 0;
-		virtual bool otpw(void) = 0;
 		virtual uint32_t DRV_STATUS() = 0;
 		virtual void hend(uint8_t) = 0;
 		virtual uint8_t hend() = 0;
