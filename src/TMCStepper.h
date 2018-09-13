@@ -88,9 +88,9 @@ class TMCStepper {
 
 	protected:
 		TMCStepper(float RS) : Rsense(RS) {};
-		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};
-		INIT_REGISTER(TPOWERDOWN){.sr=0};
-		INIT_REGISTER(TPWMTHRS){.sr=0};
+		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};	// 32b
+		INIT_REGISTER(TPOWERDOWN){.sr=0};		// 8b
+		INIT_REGISTER(TPWMTHRS){.sr=0};			// 32b
 
 		static constexpr uint8_t TMC_READ = 0x00,
 														TMC_WRITE = 0x80;
@@ -307,15 +307,15 @@ class TMC2130Stepper : public TMCStepper {
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
 
-		INIT_REGISTER(GCONF){{.sr=0}};
-		INIT_REGISTER(TCOOLTHRS){.sr=0};
-		INIT_REGISTER(THIGH){.sr=0};
-		INIT_REGISTER(XDIRECT){{.sr=0}};
-		INIT_REGISTER(VDCMIN){.sr=0};
-		INIT_REGISTER(CHOPCONF){{.sr=0}};
-		INIT_REGISTER(COOLCONF){{.sr=0}};
-		INIT_REGISTER(PWMCONF){{.sr=0}};
-		INIT_REGISTER(ENCM_CTRL){{.sr=0}};
+		INIT_REGISTER(GCONF){{.sr=0}};		// 32b
+		INIT_REGISTER(TCOOLTHRS){.sr=0};	// 32b
+		INIT_REGISTER(THIGH){.sr=0};			// 32b
+		INIT_REGISTER(XDIRECT){{.sr=0}};	// 32b
+		INIT_REGISTER(VDCMIN){.sr=0};			// 32b
+		INIT_REGISTER(CHOPCONF){{.sr=0}};	// 32b
+		INIT_REGISTER(COOLCONF){{.sr=0}};	// 32b
+		INIT_REGISTER(PWMCONF){{.sr=0}};	// 32b
+		INIT_REGISTER(ENCM_CTRL){{.sr=0}};//  8b
 
 		static constexpr uint8_t	GCONF_address = 0x00,
 															IOIN_address = 0x04,
