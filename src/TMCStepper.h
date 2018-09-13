@@ -117,7 +117,7 @@ class TMCStepper {
 		virtual void tbl(uint8_t) = 0;
 		virtual uint8_t tbl() = 0;
 
-		float Rsense;
+		const float Rsense;
 		float holdMultiplier = 0.5;
 };
 
