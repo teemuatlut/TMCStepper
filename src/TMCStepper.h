@@ -87,7 +87,6 @@ class TMCStepper {
 		int16_t cur_b();
 
 	protected:
-		TMCStepper() {};
 		TMCStepper(float RS) : Rsense(RS) {};
 		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};
 		INIT_REGISTER(TPOWERDOWN){.sr=0};
@@ -129,7 +128,6 @@ class TMC2130Stepper : public TMCStepper {
 		void begin();
 		void setSPISpeed(uint32_t speed);
 		void switchCSpin(bool state);
-		//void checkStatus();
 		bool isEnabled();
 		void push();
 
@@ -305,7 +303,7 @@ class TMC2130Stepper : public TMCStepper {
 
 		// Function aliases
 
-		//protected:
+	protected:
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
 
@@ -495,6 +493,7 @@ class TMC5130Stepper : public TMC2130Stepper {
 		// R: ENC_LATCH
 		uint32_t ENC_LATCH();
 
+	protected:
 		INIT_REGISTER(SLAVECONF){{.sr=0}};
 		INIT5130_REGISTER(IOIN){{.sr=0}};
 		INIT_REGISTER(OUTPUT){.sr=0};
@@ -822,24 +821,16 @@ class TMC2208Stepper : public TMCStepper {
 
 		uint16_t bytesWritten = 0;
 		float Rsense = 0.11;
-		uint16_t replyDelay = 5;
 		bool CRCerror = false;
 	protected:
-		//INIT_REGISTER(GCONF)					{0x00, {.sr=0}};
 		INIT2208_REGISTER(GCONF)			{{.sr=0}};
 		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
-		//INIT_REGISTER(IOIN_2208)			{0x06, {.sr=0}};
 		INIT2208_REGISTER(IOIN)				{{.sr=0}};
 		INIT_REGISTER(FACTORY_CONF)		{{.sr=0}};
-		//INIT_REGISTER(VACTUAL_2208)		{0x22, 0};
 		INIT2208_REGISTER(VACTUAL)		{.sr=0};
-		//INIT_REGISTER(CHOPCONF_2208)	{0x6C, {.sr=0}};
 		INIT2208_REGISTER(CHOPCONF)		{{.sr=0}};
-		//INIT_REGISTER(DRV_STATUS_2208){0x6F, {.sr=0}};
 		INIT2208_REGISTER(DRV_STATUS)	{{.sr=0}};
-		//INIT_REGISTER(PWMCONF_2208)		{0x70, {.sr=0}};
 		INIT2208_REGISTER(PWMCONF)		{{.sr=0}};
-		//INIT_REGISTER(PWM_SCALE_2208)	{0x71, {.sr=0}};
 		INIT2208_REGISTER(PWM_SCALE)	{{.sr=0}};
 		INIT_REGISTER(PWM_AUTO)				{{.sr=0}};
 
@@ -867,8 +858,7 @@ class TMC2208Stepper : public TMCStepper {
 		static constexpr uint8_t  TMC2208_SYNC = 0x05,
 															TMC2208_SLAVE_ADDR = 0x00;
 		const bool write_only;
-		const bool uses_sw_serial;
-		uint16_t mA_val = 0;
+		static constexpr uint8_t replyDelay = 5;
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
@@ -1042,13 +1032,11 @@ class TMC2660Stepper {
 															SGCSCONF_address = 0b110,
 															DRVCONF_address = 0b111;
 
-		uint16_t _pinCS;
-		float Rsense;
+		const uint16_t _pinCS;
+		const float Rsense;
 		uint8_t status_response;
-		//uint16_t val_mA           = 0;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
-		bool uses_sw_spi = false;
 		uint8_t _savedToff = 0;
 		SW_SPIClass * TMC_SW_SPI = NULL;
 };
