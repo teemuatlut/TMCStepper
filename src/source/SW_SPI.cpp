@@ -1,7 +1,5 @@
 #include "SW_SPI.h"
 
-SW_SPIClass TMC_SW_SPI;
-
 #if defined(ARDUINO_ARCH_AVR)
   #define getPort(P) digitalPinToPort(P)
   #define writeMOSI_H *mosi_register |= mosi_bm
@@ -24,11 +22,11 @@ SW_SPIClass TMC_SW_SPI;
   #define readMISO digitalRead(miso_pin)
 #endif
 
-void SW_SPIClass::setPins(uint16_t sw_mosi_pin, uint16_t sw_miso_pin, uint16_t sw_sck_pin) {
-  mosi_pin = sw_mosi_pin;
-  miso_pin = sw_miso_pin;
-  sck_pin = sw_sck_pin;
-}
+SW_SPIClass::SW_SPIClass(uint16_t mosi, uint16_t miso, uint16_t sck) :
+  mosi_pin(mosi),
+  miso_pin(miso),
+  sck_pin(sck)
+  {}
 
 void SW_SPIClass::init() {
   pinMode(mosi_pin, OUTPUT);

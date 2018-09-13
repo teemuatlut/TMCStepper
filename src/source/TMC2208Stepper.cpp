@@ -3,22 +3,20 @@
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
-	write_only(!has_rx),
-	uses_sw_serial(false)
+	write_only(!has_rx)
 	{ HWSerial = SerialPort; }
 
 #if SW_CAPABLE_PLATFORM
 	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
 		TMCStepper(RS),
-		write_only(!has_rx),
-		uses_sw_serial(true)
+		write_only(!has_rx)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
 		}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-		if (uses_sw_serial) SWSerial->begin(baudrate);
+		if (SWSerial != NULL) SWSerial->begin(baudrate);
 	}
 #endif
 
@@ -60,15 +58,16 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 	datagram[len] = calcCRC(datagram, len);
 
-	if (uses_sw_serial) {
-		#if SW_CAPABLE_PLATFORM
+	#if SW_CAPABLE_PLATFORM
+		if (SWSerial != NULL) {
+				for(int i=0; i<=len; i++){
+					bytesWritten += SWSerial->write(datagram[i]);
+				}
+		} else
+	#endif
+		{
 			for(int i=0; i<=len; i++){
-				bytesWritten += SWSerial->write(datagram[i]);
-			}
-		#endif
-	} else {
-		for(int i=0; i<=len; i++){
-			bytesWritten += HWSerial->write(datagram[i]);
+				bytesWritten += HWSerial->write(datagram[i]);
 		}
 	}
 	delay(replyDelay);
@@ -99,14 +98,15 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
 
-	if (uses_sw_serial) {
-		#if SW_CAPABLE_PLATFORM
-			SWSerial->listen();
-			out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
-		#endif
-	} else {
-		out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
-	}
+	#if SW_CAPABLE_PLATFORM
+		if (SWSerial != NULL) {
+				SWSerial->listen();
+				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+		} else
+	#endif
+		{
+			out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
+		}
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
 	if (calcCRC(out_datagram, 7) == (uint8_t)(out&0xFF)) {

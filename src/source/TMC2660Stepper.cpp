@@ -1,17 +1,18 @@
 #include "TMCStepper.h"
 #include "SW_SPI.h"
 
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) {
-  this->_pinCS = pinCS;
-  Rsense = RS;
-}
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) :
+  _pinCS(pinCS),
+  Rsense(RS)
+  {}
 
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) {
-  this->_pinCS = pinCS;
-  Rsense = RS;
-  uses_sw_spi = true;
-  TMC_SW_SPI.setPins(pinMOSI, pinMISO, pinSCK);
-}
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) : 
+  _pinCS(pinCS),
+  Rsense(RS)
+  {
+    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+    TMC_SW_SPI = SW_SPI_Obj;
+  }
 
 void TMC2660Stepper::switchCSpin(bool state) {
   // Allows for overriding in child class to make use of fast io
@@ -21,13 +22,13 @@ void TMC2660Stepper::switchCSpin(bool state) {
 uint32_t TMC2660Stepper::read() {
   uint32_t response = 0UL;
   uint32_t dummy = ((uint32_t)DRVCONF_address<<17) | DRVCONF_register.sr;
-  if (uses_sw_spi) {
+  if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
-    response |= TMC_SW_SPI.transfer((dummy >> 16) & 0xFF);
+    response |= TMC_SW_SPI->transfer((dummy >> 16) & 0xFF);
     response <<= 8;
-    response |= TMC_SW_SPI.transfer((dummy >>  8) & 0xFF);
+    response |= TMC_SW_SPI->transfer((dummy >>  8) & 0xFF);
     response <<= 8;
-    response |= TMC_SW_SPI.transfer(dummy & 0xFF);
+    response |= TMC_SW_SPI->transfer(dummy & 0xFF);
   } else {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
@@ -44,11 +45,11 @@ uint32_t TMC2660Stepper::read() {
 
 void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
   uint32_t data = (uint32_t)addressByte<<17 | config;
-  if (uses_sw_spi) {
+  if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
-    TMC_SW_SPI.transfer((data >> 16) & 0xFF);
-    TMC_SW_SPI.transfer((data >>  8) & 0xFF);
-    TMC_SW_SPI.transfer(data & 0xFF);
+    TMC_SW_SPI->transfer((data >> 16) & 0xFF);
+    TMC_SW_SPI->transfer((data >>  8) & 0xFF);
+    TMC_SW_SPI->transfer(data & 0xFF);
   } else {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);

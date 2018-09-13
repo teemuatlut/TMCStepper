@@ -336,7 +336,7 @@ class TMC2130Stepper : public TMCStepper {
 		uint8_t status_response;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		const uint16_t _pinCS;
-		const bool uses_sw_spi = false;
+		SW_SPIClass * TMC_SW_SPI = NULL;
 };
 
 class TMC5130Stepper : public TMC2130Stepper {
@@ -1050,4 +1050,5 @@ class TMC2660Stepper {
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		bool uses_sw_spi = false;
 		uint8_t _savedToff = 0;
+		SW_SPIClass * TMC_SW_SPI = NULL;
 };
