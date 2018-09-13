@@ -332,7 +332,7 @@ class TMC2130Stepper : public TMCStepper {
 															LOST_STEPS_address = 0x73;
 
 		uint8_t status_response;
-		uint32_t spi_speed = 16000000/8; // Default 2MHz
+		static uint32_t spi_speed; // Default 2MHz
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = NULL;
 };

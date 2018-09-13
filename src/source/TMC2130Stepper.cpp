@@ -1,6 +1,8 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
+uint32_t TMC2130Stepper::spi_speed = 16000000/8;
+
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
   TMCStepper(RS),
   _pinCS(pinCS)
