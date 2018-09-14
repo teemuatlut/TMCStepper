@@ -21,21 +21,21 @@ void TMC2660Stepper::DRVCTRL(uint32_t data) {
 }
 
 // DRVCTRL (SPI)
-void TMC2660Stepper::pha(bool B)    { if(sdoff() == 0) return; SET_REG1(pha); }
-void TMC2660Stepper::ca(uint8_t B)  { if(sdoff() == 0) return; SET_REG1(ca);  }
-void TMC2660Stepper::phb(bool B)    { if(sdoff() == 0) return; SET_REG1(phb); }
-void TMC2660Stepper::cb(uint8_t B)  { if(sdoff() == 0) return; SET_REG1(cb);  }
+void TMC2660Stepper::pha(bool B)	{ if(sdoff() == 0) return; SET_REG1(pha);	}
+void TMC2660Stepper::ca(uint8_t B){ if(sdoff() == 0) return; SET_REG1(ca);	}
+void TMC2660Stepper::phb(bool B)	{ if(sdoff() == 0) return; SET_REG1(phb);	}
+void TMC2660Stepper::cb(uint8_t B){ if(sdoff() == 0) return; SET_REG1(cb);	}
 
-bool TMC2660Stepper::pha()    { if(sdoff() == 0) sdoff(1); GET_REG1(pha); }
-uint8_t TMC2660Stepper::ca()  { if(sdoff() == 0) sdoff(1); GET_REG1(ca);  }
-bool TMC2660Stepper::phb()    { if(sdoff() == 0) sdoff(1); GET_REG1(phb); }
-uint8_t TMC2660Stepper::cb()  { if(sdoff() == 0) sdoff(1); GET_REG1(cb);  }
+bool TMC2660Stepper::pha()		{ if(sdoff() == 0) sdoff(1); GET_REG1(pha);	}
+uint8_t TMC2660Stepper::ca()	{ if(sdoff() == 0) sdoff(1); GET_REG1(ca);	}
+bool TMC2660Stepper::phb()		{ if(sdoff() == 0) sdoff(1); GET_REG1(phb);	}
+uint8_t TMC2660Stepper::cb()	{ if(sdoff() == 0) sdoff(1); GET_REG1(cb);	}
 
 // DRVCTRL (STEP/DIR)
-void TMC2660Stepper::intpol(bool B) { if(sdoff()) return; SET_REG0(intpol); }
-void TMC2660Stepper::dedge(bool B)  { if(sdoff()) return; SET_REG0(dedge);  }
-void TMC2660Stepper::mres(uint8_t B){ if(sdoff()) return; SET_REG0(mres);   }
+void TMC2660Stepper::intpol(bool B)	{ if(sdoff()) return; SET_REG0(intpol);	}
+void TMC2660Stepper::dedge(bool B)	{ if(sdoff()) return; SET_REG0(dedge);	}
+void TMC2660Stepper::mres(uint8_t B){ if(sdoff()) return; SET_REG0(mres);		}
 
-bool TMC2660Stepper::intpol() { if(sdoff()) sdoff(0); GET_REG0(intpol); }
-bool TMC2660Stepper::dedge()  { if(sdoff()) sdoff(0); GET_REG0(dedge);  }
-uint8_t TMC2660Stepper::mres(){ if(sdoff()) sdoff(0); GET_REG0(mres);   }
+bool TMC2660Stepper::intpol()	{ if(sdoff()) sdoff(0); GET_REG0(intpol);	}
+bool TMC2660Stepper::dedge()	{ if(sdoff()) sdoff(0); GET_REG0(dedge);	}
+uint8_t TMC2660Stepper::mres(){ if(sdoff()) sdoff(0); GET_REG0(mres);		}

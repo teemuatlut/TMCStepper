@@ -15,15 +15,15 @@ TT void TMC2130StepperBase<T>::semin(	uint8_t B )	{ SET_REG(semin);	}
 TT void TMC2130StepperBase<T>::seup(	uint8_t B )	{ SET_REG(seup);	}
 TT void TMC2130StepperBase<T>::semax(	uint8_t B )	{ SET_REG(semax);	}
 TT void TMC2130StepperBase<T>::sedn(	uint8_t B )	{ SET_REG(sedn);	}
-TT void TMC2130StepperBase<T>::seimin(bool 	B )	{ SET_REG(seimin);	}
-TT void TMC2130StepperBase<T>::sgt(	int8_t  B )	{ SET_REG(sgt);		}
-TT void TMC2130StepperBase<T>::sfilt(	bool 	B )	{ SET_REG(sfilt);	}
+TT void TMC2130StepperBase<T>::seimin(	bool 	B )	{ SET_REG(seimin);}
+TT void TMC2130StepperBase<T>::sgt(		int8_t  B )	{ SET_REG(sgt);		}
+TT void TMC2130StepperBase<T>::sfilt(		bool 	B )	{ SET_REG(sfilt);	}
 
 TT uint8_t TMC2130StepperBase<T>::semin()	{ GET_REG(semin);	}
 TT uint8_t TMC2130StepperBase<T>::seup()	{ GET_REG(seup);	}
 TT uint8_t TMC2130StepperBase<T>::semax()	{ GET_REG(semax);	}
 TT uint8_t TMC2130StepperBase<T>::sedn()	{ GET_REG(sedn);	}
-TT bool 	TMC2130StepperBase<T>::seimin(){ GET_REG(seimin);	}
+TT bool 	TMC2130StepperBase<T>::seimin()	{ GET_REG(seimin);}
 TT bool 	TMC2130StepperBase<T>::sfilt()	{ GET_REG(sfilt);	}
 
 TT int8_t TMC2130StepperBase<T>::sgt() {

@@ -11,10 +11,10 @@ TT void TMCStepper<T>::IHOLD_IRUN(uint32_t input) {
 	SELF.write(ADR(IHOLD_IRUN), REG(IHOLD_IRUN).sr);
 }
 
-TT void 	TMCStepper<T>::ihold(uint8_t B)			{ SET_REG(ihold);		}
-TT void 	TMCStepper<T>::irun(uint8_t B)			{ SET_REG(irun); 		}
-TT void 	TMCStepper<T>::iholddelay(uint8_t B)	{ SET_REG(iholddelay); 	}
+TT void			TMCStepper<T>::ihold(			uint8_t B)	{ SET_REG(ihold);				}
+TT void			TMCStepper<T>::irun(			uint8_t B)	{ SET_REG(irun); 				}
+TT void			TMCStepper<T>::iholddelay(uint8_t B)	{ SET_REG(iholddelay);	}
 
-TT uint8_t TMCStepper<T>::ihold()					{ GET_REG(ihold);		}
-TT uint8_t TMCStepper<T>::irun()					{ GET_REG(irun); 		}
-TT uint8_t TMCStepper<T>::iholddelay()				{ GET_REG(iholddelay);	}
+TT uint8_t	TMCStepper<T>::ihold()			{ GET_REG(ihold);				}
+TT uint8_t	TMCStepper<T>::irun()				{ GET_REG(irun); 				}
+TT uint8_t	TMCStepper<T>::iholddelay()	{ GET_REG(iholddelay);	}
