@@ -1,6 +1,6 @@
 {
 	"name": "TMCStepper",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"keywords": "TMC, Trinamic, stepper, driver, SPI, UART, TMC2130, TMC2208, TMC2224, TMC2660, TMC5130, TMC5160",
 	"description": "Arduino library for configuring Trinamic stepper drivers.",
 	"repository":
