@@ -6,7 +6,7 @@ TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) :
   Rsense(RS)
   {}
 
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) : 
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
   _pinCS(pinCS),
   Rsense(RS)
   {

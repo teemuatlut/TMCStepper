@@ -1,7 +1,7 @@
 /**
  * Author Teemu Mäntykallio
  * Initializes the library and runs the stepper motor.
-*/
+ */
 
 #include <TMCStepper.h>
 

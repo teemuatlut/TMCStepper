@@ -7,7 +7,7 @@ struct DRVCTRL_1_t {
       uint8_t cb : 8;
       bool phb : 1;
       uint8_t ca : 8;
-      bool pha : 1; 
+      bool pha : 1;
     };
   };
 };
@@ -83,7 +83,7 @@ struct DRVCONF_t {
       uint8_t : 1;
       uint8_t slpl : 2;
       uint8_t slph : 2;
-      bool tst : 1; 
+      bool tst : 1;
     };
   };
 };

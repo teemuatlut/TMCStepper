@@ -41,4 +41,3 @@ uint16_t TMC2660Stepper::sg_result(){
 	}
 	return out;
 }
-

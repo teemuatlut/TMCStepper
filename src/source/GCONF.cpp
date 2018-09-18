@@ -52,11 +52,11 @@ bool TMC2130Stepper::direct_mode() 					{ GET_REG(direct_mode);				}
 
 /*
 bit 18 not implemented:
-test_mode 0: 
+test_mode 0:
 Normal operation 1:
-Enable analog test output on pin DCO. IHOLD[1..0] selects the function of DCO: 
+Enable analog test output on pin DCO. IHOLD[1..0] selects the function of DCO:
 0…2: T120, DAC, VDDH Attention:
-Not for user, set to 0 for normal operation! 
+Not for user, set to 0 for normal operation!
 */
 
 void TMC5160Stepper::recalibrate(bool B)			{ SET_REG(recalibrate); 			}

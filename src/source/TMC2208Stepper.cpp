@@ -46,7 +46,7 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 			}
 			crc &= 0xff;
 			currentByte = currentByte >> 1;
-		} 
+		}
 	}
 	return crc;
 }

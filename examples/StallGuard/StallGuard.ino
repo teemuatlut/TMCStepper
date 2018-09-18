@@ -1,13 +1,13 @@
 /**
  * Author Teemu Mäntykallio
- * 
+ *
  * Plot TMC2130 or TMC2660 motor load using the stallGuard value.
  * You can finetune the reading by changing the STALL_VALUE.
  * This will let you control at which load the value will read 0
  * and the stall flag will be triggered. This will also set pin DIAG1 high.
  * A higher STALL_VALUE will make the reading less sensitive and
  * a lower STALL_VALUE will make it more sensitive.
- * 
+ *
  * You can control the rotation speed with
  * 0 Stop
  * 1 Resume
@@ -91,7 +91,7 @@ void setup() {
     // turn on CTC mode
     TCCR1B |= (1 << WGM12);
     // Set CS11 bits for 8 prescaler
-    TCCR1B |= (1 << CS11);// | (1 << CS10);  
+    TCCR1B |= (1 << CS11);// | (1 << CS10);
     // enable timer compare interrupt
     TIMSK1 |= (1 << OCIE1A);
     sei();//allow interrupts
@@ -120,7 +120,7 @@ void loop()
     else if (read_byte == '+') { if (OCR1A > MAX_SPEED) OCR1A -= 20; }
     else if (read_byte == '-') { if (OCR1A < MIN_SPEED) OCR1A += 20; }
   }
-    
+
   if((ms-last_time) > 100) { //run every 0.1s
     last_time = ms;
     uint32_t drv_status = driver.DRV_STATUS();

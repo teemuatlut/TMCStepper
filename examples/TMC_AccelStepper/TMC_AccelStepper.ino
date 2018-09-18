@@ -1,7 +1,7 @@
 /**
  * Author Teemu Mäntykallio
  * Initializes the library and turns the motor in alternating directions.
-*/
+ */
 
 #define EN_PIN    38  // Nano v3:   16 Mega:    38  //enable (CFG6)
 #define DIR_PIN   55  //            19          55  //direction

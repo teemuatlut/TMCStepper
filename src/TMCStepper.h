@@ -289,7 +289,7 @@ class TMC2130Stepper : public TMCStepper {
 
 		// PWM_SCALE
 		uint8_t PWM_SCALE();
-		
+
 		// ENCM_CTRL
 		uint8_t ENCM_CTRL();
 		void ENCM_CTRL(						uint8_t input);
@@ -297,7 +297,7 @@ class TMC2130Stepper : public TMCStepper {
 		void maxspeed(						bool B);
 		bool inv();
 		bool maxspeed();
-		
+
 		// LOST_STEPS
 		uint32_t LOST_STEPS();
 
