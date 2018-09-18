@@ -44,7 +44,7 @@ struct IHOLD_IRUN_t {
                     : 3,
               irun : 5,
                    : 3,
-              iholddelay : 4; 
+              iholddelay : 4;
     };
   };
 };

@@ -1,7 +1,7 @@
 /**
  * Author Teemu Mäntykallio
  * Initializes the library and turns the motor in alternating directions.
-*/
+ */
 
 #define EN_PIN    7  // Nano v3:	16 Mega:	38	//enable (CFG6)
 #define DIR_PIN   6  //			19			55	//direction
@@ -24,7 +24,7 @@ void setup() {
 	driver.begin(); 			// Initiate pins and registeries
 	driver.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
 	driver.en_pwm_mode(1); 	// Enable extremely quiet stepping
-	
+
 	digitalWrite(EN_PIN, LOW);
 
 	Serial.print("DRV_STATUS=0b");
