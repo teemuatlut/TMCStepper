@@ -303,6 +303,8 @@ class TMC2130Stepper : public TMCStepper {
 
 		// Function aliases
 
+		uint8_t status_response;
+
 	protected:
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
@@ -331,7 +333,6 @@ class TMC2130Stepper : public TMCStepper {
 															ENCM_CTRL_address = 0x72,
 															LOST_STEPS_address = 0x73;
 
-		uint8_t status_response;
 		static uint32_t spi_speed; // Default 2MHz
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = NULL;
@@ -1015,6 +1016,9 @@ class TMC2660Stepper {
 		SET_ALIAS(void, hysteresis_start, uint8_t, hstrt);
 		SET_ALIAS(void, off_time, uint8_t, toff);
 		*/
+
+		uint8_t status_response;
+
 	private:
 		INIT_REGISTER(DRVCTRL_1){{.sr=0}};
 		INIT_REGISTER(DRVCTRL_0){{.sr=0}};
@@ -1034,7 +1038,6 @@ class TMC2660Stepper {
 
 		const uint16_t _pinCS;
 		const float Rsense;
-		uint8_t status_response;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		uint8_t _savedToff = 0;
