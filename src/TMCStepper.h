@@ -114,9 +114,11 @@ TT class TMCStepper {
 };
 
 TT class TMC2130StepperBase : public TMCStepper<T> {
-	public:
+	protected:
 		TMC2130StepperBase(uint16_t pinCS, float RS);
 		TMC2130StepperBase(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+
+	public:
 		void begin();
 		void setSPISpeed(uint32_t speed);
 		void switchCSpin(bool state);
@@ -341,9 +343,11 @@ class TMC2130Stepper : public TMC2130StepperBase<TMC2130Stepper> {
 };
 
 TT class TMC5130StepperBase : public TMC2130StepperBase<T> {
-	public:
+	protected:
 		TMC5130StepperBase(uint16_t pinCS);
 		TMC5130StepperBase(uint16_t pinCS, float RS);
+
+	public:
 		void begin();
 
 		// R: IFCNT
@@ -570,9 +574,10 @@ class TMC5130Stepper : public TMC5130StepperBase<TMC5130Stepper> {
 };
 
 TT class TMC5160StepperBase : public TMC5130StepperBase<T> {
-	public:
+	protected:
 		TMC5160StepperBase(uint16_t pinCS, float RS);
 
+	public:
 		void rms_current(uint16_t mA);
 		void rms_current(uint16_t mA, float mult);
 		uint16_t rms_current();
@@ -696,12 +701,14 @@ class TMC5160Stepper : public TMC5160StepperBase<TMC5160Stepper> {
 };
 
 TT class TMC2208StepperBase : public TMCStepper<T> {
-	public:
-		//TMC2208Stepper(HardwareSerial& serial);
+	protected:
+		//TMC2208StepperBase(HardwareSerial& serial);
 		TMC2208StepperBase(Stream * SerialPort, float RS, bool has_rx=true);
 		#if SW_CAPABLE_PLATFORM
 			TMC2208StepperBase(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
 		#endif
+
+	public:
 		void push();
 		void beginSerial(uint32_t baudrate);
 		bool isEnabled();
