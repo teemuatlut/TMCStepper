@@ -1,6 +1,7 @@
 #pragma once
 
 struct GCONF_t {
+  constexpr static uint8_t address = 0x00;
   union {
     uint32_t sr : 18;
     struct {
@@ -37,6 +38,7 @@ struct GCONF_t {
 };
 
 struct IHOLD_IRUN_t {
+  constexpr static uint8_t address = 0x10;
   union {
     uint32_t sr : 20;
     struct {
@@ -50,6 +52,7 @@ struct IHOLD_IRUN_t {
 };
 
 struct GSTAT_t {
+  constexpr static uint8_t address = 0x01;
   union {
     uint8_t sr : 3;
     struct {
@@ -61,6 +64,7 @@ struct GSTAT_t {
 };
 
 struct IOIN_t {
+  constexpr static uint8_t address = 0x04;
   union {
     uint32_t sr;
     struct {
@@ -78,22 +82,27 @@ struct IOIN_t {
 };
 
 struct TPOWERDOWN_t {
+  constexpr static uint8_t address = 0x11;
   uint8_t sr : 8;
 };
 
 struct TPWMTHRS_t {
+  constexpr static uint8_t address = 0x13;
   uint32_t sr : 20;
 };
 
 struct TCOOLTHRS_t {
+  constexpr static uint8_t address = 0x14;
   uint32_t sr : 20;
 };
 
 struct THIGH_t {
+  constexpr static uint8_t address = 0x15;
   uint32_t sr : 20;
 };
 
 struct XDIRECT_t {
+  constexpr static uint8_t address = 0x2D;
   union {
     uint32_t sr : 25;
     struct {
@@ -105,10 +114,12 @@ struct XDIRECT_t {
 };
 
 struct VDCMIN_t {
+  constexpr static uint8_t address = 0x33;
   uint32_t sr : 23;
 };
 
 struct CHOPCONF_t {
+  constexpr static uint8_t address = 0x6C;
   union {
     uint32_t sr : 32;
     struct {
@@ -139,6 +150,7 @@ struct CHOPCONF_t {
 };
 
 struct COOLCONF_t {
+  constexpr static uint8_t address = 0x6D;
   union {
     uint32_t sr : 25;
     struct {
@@ -159,6 +171,7 @@ struct COOLCONF_t {
 
 namespace TMC2130_n {
   struct DRV_STATUS_t {
+    constexpr static uint8_t address = 0x6F;
     union {
       uint32_t sr;
       struct {
@@ -181,6 +194,7 @@ namespace TMC2130_n {
 }
 
 struct PWMCONF_t {
+  constexpr static uint8_t address = 0x70;
   union {
     uint32_t sr : 22;
     struct {
@@ -195,6 +209,7 @@ struct PWMCONF_t {
 };
 
 struct ENCM_CTRL_t {
+  constexpr static uint8_t address = 0x72;
   union {
     uint8_t sr : 2;
     struct {

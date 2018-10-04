@@ -1,14 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) COOLCONF_register.SETTING = B; write(COOLCONF_address, COOLCONF_register.sr);
+#define SET_REG(SETTING) COOLCONF_register.SETTING = B; write(COOLCONF_register.address, COOLCONF_register.sr);
 #define GET_REG(SETTING) COOLCONF(); return COOLCONF_register.SETTING;
 
 // COOLCONF
 uint32_t TMC2130Stepper::COOLCONF() { return COOLCONF_register.sr; }
 void TMC2130Stepper::COOLCONF(uint32_t input) {
 	COOLCONF_register.sr = input;
-	write(COOLCONF_address, COOLCONF_register.sr);
+	write(COOLCONF_register.address, COOLCONF_register.sr);
 }
 
 void TMC2130Stepper::semin(	uint8_t B )	{ SET_REG(semin);	}

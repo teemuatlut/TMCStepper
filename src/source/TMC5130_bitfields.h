@@ -1,6 +1,7 @@
 #pragma once
 
 struct SLAVECONF_t {
+  constexpr static uint8_t address = 0x03;
   union {
     uint16_t sr : 12;
     struct {
@@ -12,6 +13,7 @@ struct SLAVECONF_t {
 
 namespace TMC5130_n {
   struct IOIN_t {
+    constexpr static uint8_t address = 0x04;
     union {
       uint32_t sr;
       struct {
@@ -31,58 +33,72 @@ namespace TMC5130_n {
 }
 
 struct OUTPUT_t {
+  constexpr static uint8_t address = 0x04;
   bool sr : 1;
 };
 
 struct X_COMPARE_t {
+  constexpr static uint8_t address = 0x05;
   uint32_t sr;
 };
 
 struct RAMPMODE_t {
+  constexpr static uint8_t address = 0x20;
   uint8_t sr : 2;
 };
 
 struct XACTUAL_t {
+  constexpr static uint8_t address = 0x21;
   uint32_t sr;
 };
 
 struct VSTART_t {
+  constexpr static uint8_t address = 0x23;
   uint32_t sr : 18;
 };
 
 struct A1_t {
+  constexpr static uint8_t address = 0x24;
   uint16_t sr : 16;
 };
 
 struct V1_t {
+  constexpr static uint8_t address = 0x25;
   uint32_t sr : 20;
 };
 
 struct AMAX_t {
+  constexpr static uint8_t address = 0x26;
   uint16_t sr : 16;
 };
 
 struct VMAX_t {
+  constexpr static uint8_t address = 0x27;
   uint32_t sr : 23;
 };
 
 struct DMAX_t {
+  constexpr static uint8_t address = 0x28;
   uint16_t sr : 16;
 };
 
 struct D1_t {
+  constexpr static uint8_t address = 0x2A;
   uint16_t sr : 16;
 };
 
 struct VSTOP_t {
+  constexpr static uint8_t address = 0x2B;
   uint32_t sr : 18;
 };
 
 struct TZEROWAIT_t {
+  constexpr static uint8_t address = 0x2C;
   uint16_t sr : 16;
 };
 
 struct SW_MODE_t {
+  constexpr static uint8_t address = 0x34;
   union {
     uint16_t sr : 12;
     struct {
@@ -103,6 +119,7 @@ struct SW_MODE_t {
 };
 
 struct RAMP_STAT_t {
+  constexpr static uint8_t address = 0x35;
   union {
     uint16_t sr : 14;
     struct {
@@ -125,6 +142,7 @@ struct RAMP_STAT_t {
 };
 
 struct ENCMODE_t {
+  constexpr static uint8_t address = 0x38;
   union {
     uint16_t sr : 11;
     struct {
@@ -144,42 +162,52 @@ struct ENCMODE_t {
 };
 
 struct ENC_CONST_t {
+  constexpr static uint8_t address = 0x3A;
   int32_t sr;
 };
 
 struct MSLUT0_t {
+  constexpr static uint8_t address = 0x60;
   uint32_t sr;
 };
 
 struct MSLUT1_t {
+  constexpr static uint8_t address = 0x61;
   uint32_t sr;
 };
 
 struct MSLUT2_t {
+  constexpr static uint8_t address = 0x62;
   uint32_t sr;
 };
 
 struct MSLUT3_t {
+  constexpr static uint8_t address = 0x63;
   uint32_t sr;
 };
 
 struct MSLUT4_t {
+  constexpr static uint8_t address = 0x64;
   uint32_t sr;
 };
 
 struct MSLUT5_t {
+  constexpr static uint8_t address = 0x65;
   uint32_t sr;
 };
 
 struct MSLUT6_t {
+  constexpr static uint8_t address = 0x66;
   uint32_t sr;
 };
 
 struct MSLUT7_t {
+  constexpr static uint8_t address = 0x67;
   uint32_t sr;
 };
 
 struct MSLUTSEL_t {
+  constexpr static uint8_t address = 0x68;
   union {
     uint32_t sr;
     struct {
@@ -195,6 +223,7 @@ struct MSLUTSEL_t {
 };
 
 struct MSLUTSTART_t {
+  constexpr static uint8_t address = 0x69;
   union {
     uint32_t sr : 24;
     struct {
@@ -206,6 +235,7 @@ struct MSLUTSTART_t {
 };
 
 struct DCCTRL_t {
+  constexpr static uint8_t address = 0x6E;
   union {
     uint32_t sr : 24;
     struct {

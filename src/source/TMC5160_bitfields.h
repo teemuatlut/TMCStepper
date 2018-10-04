@@ -1,6 +1,7 @@
 #pragma once
 
 struct SHORT_CONF_t {
+  constexpr static uint8_t address = 0x09;
   union {
     uint32_t sr : 19;
     struct {
@@ -15,6 +16,7 @@ struct SHORT_CONF_t {
 };
 
 struct DRV_CONF_t {
+  constexpr static uint8_t address = 0x0A;
   union {
     uint32_t sr : 22;
     struct {
@@ -30,19 +32,23 @@ struct DRV_CONF_t {
 };
 
 struct GLOBAL_SCALER_t {
+  constexpr static uint8_t address = 0x0B;
   uint8_t sr;
 };
 
 struct OFFSET_READ_t {
+  constexpr static uint8_t address = 0x0C;
   uint16_t sr;
 };
 
 struct ENC_DEVIATION_t {
+  constexpr static uint8_t address = 0x3D;
   uint32_t sr : 20;
 };
 
 namespace TMC5160_n {
   struct PWM_SCALE_t {
+    constexpr static uint8_t address = 0x0C;
     union {
       uint32_t sr : 25;
       struct {
@@ -55,6 +61,7 @@ namespace TMC5160_n {
 }
 
 struct PWM_AUTO_t {
+  constexpr static uint8_t address = 0x72;
   union {
     uint32_t sr : 24;
     struct {
@@ -67,6 +74,7 @@ struct PWM_AUTO_t {
 
 namespace TMC5160_n {
   struct PWMCONF_t {
+    constexpr static uint8_t address = 0x70;
     union {
       uint32_t sr;
       struct {

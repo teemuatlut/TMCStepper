@@ -1,17 +1,17 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) SW_MODE_register.SETTING = B; write(SW_MODE_address, SW_MODE_register.sr)
+#define SET_REG(SETTING) SW_MODE_register.SETTING = B; write(SW_MODE_register.address, SW_MODE_register.sr)
 #define GET_REG(SETTING) SW_MODE(); return SW_MODE_register.SETTING
 
 // SW_MODE
 uint32_t TMC5130Stepper::SW_MODE() {
-	SW_MODE_register.sr = read(SW_MODE_address);
+	SW_MODE_register.sr = read(SW_MODE_register.address);
 	return SW_MODE_register.sr;
 }
 void TMC5130Stepper::SW_MODE(uint32_t input) {
 	SW_MODE_register.sr = input;
-	write(SW_MODE_address, SW_MODE_register.sr);
+	write(SW_MODE_register.address, SW_MODE_register.sr);
 }
 
 void TMC5130Stepper::stop_l_enable(bool B)		{ SET_REG(stop_l_enable);	}

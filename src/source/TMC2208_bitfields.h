@@ -2,6 +2,7 @@
 
 namespace TMC2208_n {
   struct GCONF_t {
+    constexpr static uint8_t address = 0x00;
     union {
       uint16_t sr : 10;
       struct {
@@ -22,6 +23,7 @@ namespace TMC2208_n {
 
 namespace TMC2208_n {
   struct IOIN_t {
+    constexpr static uint8_t address = 0x06;
     union {
       uint32_t sr;
       struct {
@@ -43,6 +45,7 @@ namespace TMC2208_n {
 }
 
 struct IOIN_2224_t {
+  constexpr static uint8_t address = 0x06;
   union {
     uint32_t sr;
     struct {
@@ -62,6 +65,7 @@ struct IOIN_2224_t {
 };
 
 struct FACTORY_CONF_t {
+  constexpr static uint8_t address = 0x07;
   union {
     uint16_t sr;
     struct {
@@ -74,11 +78,13 @@ struct FACTORY_CONF_t {
 
 namespace TMC2208_n {
   struct VACTUAL_t {
-      uint32_t sr;
+    constexpr static uint8_t address = 0x22;
+    uint32_t sr;
   };
 }
 
 struct MSCURACT_t {
+  constexpr static uint8_t address = 0x6B;
   union {
     uint32_t sr : 25;
     struct {
@@ -91,6 +97,7 @@ struct MSCURACT_t {
 
 namespace TMC2208_n {
   struct CHOPCONF_t {
+    constexpr static uint8_t address = 0x6C;
     union {
       uint32_t sr;
       struct {
@@ -111,6 +118,7 @@ namespace TMC2208_n {
   };
 
   struct PWMCONF_t {
+    constexpr static uint8_t address = 0x70;
     union {
       uint32_t sr;
       struct {
@@ -128,6 +136,7 @@ namespace TMC2208_n {
   };
 
   struct DRV_STATUS_t {
+    constexpr static uint8_t address = 0x6F;
     union {
       uint32_t sr;
       struct {
@@ -153,6 +162,7 @@ namespace TMC2208_n {
   };
 
   struct PWM_SCALE_t {
+    constexpr static uint8_t address = 0x71;
     union {
       uint32_t sr;
       struct {

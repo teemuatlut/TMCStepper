@@ -1,6 +1,7 @@
 #pragma once
 
 struct DRVCTRL_1_t {
+  constexpr static uint8_t address = 0b00;
   union {
     uint32_t sr;
     struct {
@@ -13,6 +14,7 @@ struct DRVCTRL_1_t {
 };
 
 struct DRVCTRL_0_t {
+  constexpr static uint8_t address = 0b00;
   union {
     uint32_t sr;
     struct {
@@ -26,6 +28,7 @@ struct DRVCTRL_0_t {
 
 namespace TMC2660_n {
   struct CHOPCONF_t {
+    constexpr static uint8_t address = 0b100;
     union {
       uint32_t sr;
       struct {
@@ -42,6 +45,7 @@ namespace TMC2660_n {
 }
 
 struct SMARTEN_t {
+  constexpr static uint8_t address = 0b101;
   union {
     uint32_t sr;
     struct {
@@ -58,6 +62,7 @@ struct SMARTEN_t {
 };
 
 struct SGCSCONF_t {
+  constexpr static uint8_t address = 0b110;
   union {
     uint32_t sr;
     struct {
@@ -71,6 +76,7 @@ struct SGCSCONF_t {
 };
 
 struct DRVCONF_t {
+  constexpr static uint8_t address = 0b111;
   union {
     uint32_t sr;
     struct {

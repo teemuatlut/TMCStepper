@@ -1,14 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define SET_REG(SETTING) PWMCONF_register.SETTING = B; write(PWMCONF_address, PWMCONF_register.sr)
+#define SET_REG(SETTING) PWMCONF_register.SETTING = B; write(PWMCONF_register.address, PWMCONF_register.sr)
 #define GET_REG(SETTING) return PWMCONF_register.SETTING
 
 // PWMCONF
 uint32_t TMC2130Stepper::PWMCONF() { return PWMCONF_register.sr; }
 void TMC2130Stepper::PWMCONF(uint32_t input) {
 	PWMCONF_register.sr = input;
-	write(PWMCONF_address, PWMCONF_register.sr);
+	write(PWMCONF_register.address, PWMCONF_register.sr);
 }
 
 void TMC2130Stepper::pwm_ampl(		uint8_t B )	{ SET_REG(pwm_ampl);		}
@@ -27,22 +27,22 @@ uint8_t TMC2130Stepper::freewheel()		{ GET_REG(freewheel);		}
 
 uint32_t TMC2208Stepper::PWMCONF() {
 	if (write_only) return PWMCONF_register.sr;
-	PWMCONF_register.sr = read(PWMCONF_address);
+	PWMCONF_register.sr = read(PWMCONF_register.address);
 	return PWMCONF_register.sr;
 }
 void TMC2208Stepper::PWMCONF(uint32_t input) {
 	PWMCONF_register.sr = input;
-	write(PWMCONF_address, PWMCONF_register.sr);
+	write(PWMCONF_register.address, PWMCONF_register.sr);
 }
 
-void TMC2208Stepper::pwm_ofs		( uint8_t B ) { PWMCONF_register.pwm_ofs = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_grad		( uint8_t B ) { PWMCONF_register.pwm_grad = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_freq		( uint8_t B ) { PWMCONF_register.pwm_freq = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_autoscale	( bool 	  B ) { PWMCONF_register.pwm_autoscale = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_autograd	( bool    B ) { PWMCONF_register.pwm_autograd = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::freewheel		( uint8_t B ) { PWMCONF_register.freewheel = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_reg		( uint8_t B ) { PWMCONF_register.pwm_reg = B; write(PWMCONF_address, PWMCONF_register.sr); }
-void TMC2208Stepper::pwm_lim		( uint8_t B ) { PWMCONF_register.pwm_lim = B; write(PWMCONF_address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_ofs		( uint8_t B ) { PWMCONF_register.pwm_ofs = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_grad		( uint8_t B ) { PWMCONF_register.pwm_grad = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_freq		( uint8_t B ) { PWMCONF_register.pwm_freq = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_autoscale	( bool 	  B ) { PWMCONF_register.pwm_autoscale = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_autograd	( bool    B ) { PWMCONF_register.pwm_autograd = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::freewheel		( uint8_t B ) { PWMCONF_register.freewheel = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_reg		( uint8_t B ) { PWMCONF_register.pwm_reg = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
+void TMC2208Stepper::pwm_lim		( uint8_t B ) { PWMCONF_register.pwm_lim = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
 
 uint8_t TMC2208Stepper::pwm_ofs()		{ PWMCONF(); return PWMCONF_register.pwm_ofs;		}
 uint8_t TMC2208Stepper::pwm_grad()		{ PWMCONF(); return PWMCONF_register.pwm_grad;		}

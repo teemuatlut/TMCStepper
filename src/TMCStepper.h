@@ -95,13 +95,8 @@ class TMCStepper {
 		static constexpr uint8_t TMC_READ = 0x00,
 														TMC_WRITE = 0x80;
 
-		static constexpr uint8_t	GSTAT_address = 0x01,
-															TPOWERDOWN_address = 0x11,
-															IHOLD_IRUN_address = 0x10,
-															TSTEP_address = 0x12,
-															TPWMTHRS_address = 0x13,
-															MSCNT_address = 0x6A,
-															MSCURACT_address = 0x6B;
+		struct TSTEP_t { constexpr static uint8_t address = 0x12; };
+		struct MSCNT_t { constexpr static uint8_t address = 0x6A; };
 
 		virtual void write(uint8_t, uint32_t) = 0;
 		virtual uint32_t read(uint8_t) = 0;
@@ -319,19 +314,10 @@ class TMC2130Stepper : public TMCStepper {
 		INIT_REGISTER(PWMCONF){{.sr=0}};	// 32b
 		INIT_REGISTER(ENCM_CTRL){{.sr=0}};//  8b
 
-		static constexpr uint8_t	GCONF_address = 0x00,
-															IOIN_address = 0x04,
-															TCOOLTHRS_address = 0x14,
-															THIGH_address = 0x15,
-															XDIRECT_address = 0x2D,
-															VDCMIN_address = 0x33,
-															CHOPCONF_address = 0x6C,
-															COOLCONF_address = 0x6D,
-															DRV_STATUS_address = 0x6F,
-															PWMCONF_address = 0x70,
-															PWM_SCALE_address = 0x71,
-															ENCM_CTRL_address = 0x72,
-															LOST_STEPS_address = 0x73;
+		struct IOINT_t 		{ constexpr static uint8_t address = 0x04; };
+		struct PWM_SCALE_t 	{ constexpr static uint8_t address = 0x71; };
+		struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
+		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
 
 		static uint32_t spi_speed; // Default 2MHz
 		const uint16_t _pinCS;
@@ -515,47 +501,30 @@ class TMC5130Stepper : public TMC2130Stepper {
 		INIT_REGISTER(ENCMODE){{.sr=0}};
 		INIT_REGISTER(ENC_CONST){.sr=0};
 
-		static constexpr uint8_t	IFCNT_address = 0x02,
-															SLAVECONF_address = 0x03,
-															IOIN_address = 0x04,
-															OUTPUT_address = 0x04,
-															X_COMPARE_address = 0x05,
-															RAMPMODE_address = 0x20,
-															XACTUAL_address = 0x21,
-															VACTUAL_address = 0x22,
-															VSTART_address = 0x23,
-															A1_address = 0x24,
-															V1_address = 0x25,
-															AMAX_address = 0x26,
-															VMAX_address = 0x27,
-															DMAX_address = 0x28,
-															D1_address = 0x2A,
-															VSTOP_address = 0x2B,
-															TZEROWAIT_address = 0x2C,
-															XTARGET_address = 0x2D,
-															SW_MODE_address = 0x34,
-															RAMP_STAT_address = 0x35,
-															XLATCH_address = 0x36,
-															ENCMODE_address = 0x38,
-															X_ENC_address = 0x39,
-															ENC_CONST_address = 0x3A,
-															ENC_STATUS_address = 0x3B,
-															ENC_LATCH_address = 0x3C;
+		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
+		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; };
+		struct XTARGET_t 	{ constexpr static uint8_t address = 0x2D; };
+		struct XLATCH_t 	{ constexpr static uint8_t address = 0x36; };
+		struct X_ENC_t 		{ constexpr static uint8_t address = 0x39; };
+		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; };
+		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; };
+		struct MSCNT_t		{ constexpr static uint8_t address = 0x6A; };
+		struct MSCURACT_t 	{ constexpr static uint8_t address = 0x6B; };
 
 		/*
-		INIT_REGISTER(MSLUT0){0x60, 0};
-		INIT_REGISTER(MSLUT1){0x61, 0};
-		INIT_REGISTER(MSLUT2){0x62, 0};
-		INIT_REGISTER(MSLUT3){0x63, 0};
-		INIT_REGISTER(MSLUT4){0x64, 0};
-		INIT_REGISTER(MSLUT5){0x65, 0};
-		INIT_REGISTER(MSLUT6){0x66, 0};
-		INIT_REGISTER(MSLUT7){0x67, 0};
-		INIT_REGISTER(MSLUTSEL){0x68, {0,0,0,0,0,0,0}};
-		INIT_REGISTER(MSLUTSTART){0x69, {0,0}};
-		INIT_REGISTER(MSCNT){0x6A};
-		INIT_REGISTER(MSCURACT){0x6B, {0,0}};
-		INIT_REGISTER(DCCTRL){0x6E, {0,0}};
+		INIT_REGISTER(MSLUT0){0};
+		INIT_REGISTER(MSLUT1){0};
+		INIT_REGISTER(MSLUT2){0};
+		INIT_REGISTER(MSLUT3){0};
+		INIT_REGISTER(MSLUT4){0};
+		INIT_REGISTER(MSLUT5){0};
+		INIT_REGISTER(MSLUT6){0};
+		INIT_REGISTER(MSLUT7){0};
+		INIT_REGISTER(MSLUTSEL){0};
+		INIT_REGISTER(MSLUTSTART){0};
+		INIT_REGISTER(MSCNT){0};
+		INIT_REGISTER(MSCURACT){0};
+		INIT_REGISTER(DCCTRL){0};
 		*/
 };
 
@@ -668,15 +637,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 		INIT5160_REGISTER(PWMCONF){{.sr=0}};
-
-		static constexpr uint8_t	DRV_CONF_address = 0x0A,
-															SHORT_CONF_address = 0x09,
-															GLOBAL_SCALER_address = 0x0B,
-															OFFSET_READ_address = 0x0C,
-															ENC_DEVIATION_address = 0x3D,
-															PWM_SCALE_address = 0x0C,
-															PWM_AUTO_address = 0x72,
-															PWMCONF_address = 0x70;
 };
 
 class TMC2208Stepper : public TMCStepper {
@@ -835,19 +795,9 @@ class TMC2208Stepper : public TMCStepper {
 		INIT2208_REGISTER(PWM_SCALE)	{{.sr=0}};
 		INIT_REGISTER(PWM_AUTO)				{{.sr=0}};
 
-		static constexpr uint8_t 	GCONF_address = 0x00,
-															IFCNT_address = 0x02,
-															SLAVECONF_address = 0x03,
-															OTP_PROG_address = 0x04,
-															OTP_READ_address = 0x05,
-															IOIN_address = 0x06,
-															FACTORY_CONF_address = 0x07,
-															VACTUAL_address = 0x22,
-															CHOPCONF_address = 0x6C,
-															DRV_STATUS_address = 0x6F,
-															PWMCONF_address = 0x70,
-															PWM_SCALE_address = 0x71,
-															PWM_AUTO_address = 0x72;
+		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
+		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
+		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
 
 		Stream * HWSerial = NULL;
 		#if SW_CAPABLE_PLATFORM
@@ -876,7 +826,6 @@ class TMC2224Stepper : public TMC2208Stepper {
 		uint8_t version();
 	protected:
 		IOIN_2224_t IOIN_register = IOIN_2224_t{{.sr=0}};
-
 };
 
 class TMC2660Stepper {
@@ -1029,12 +978,6 @@ class TMC2660Stepper {
 		INIT_REGISTER(READ_RDSEL00){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL01){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL10){{.sr=0}};
-
-		static constexpr uint8_t	DRVCTRL_address = 0b00,
-															CHOPCONF_address = 0b100,
-															SMARTEN_address = 0b101,
-															SGCSCONF_address = 0b110,
-															DRVCONF_address = 0b111;
 
 		const uint16_t _pinCS;
 		const float Rsense;
