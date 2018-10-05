@@ -1,4 +1,5 @@
 #pragma once
+#pragma pack(1)
 
 struct SHORT_CONF_t {
   constexpr static uint8_t address = 0x09;

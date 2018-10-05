@@ -1,4 +1,5 @@
 #pragma once
+#pragma pack(1)
 
 struct DRVCTRL_1_t {
   constexpr static uint8_t address = 0b00;

@@ -1,4 +1,5 @@
 #pragma once
+#pragma pack(1)
 
 struct GCONF_t {
   constexpr static uint8_t address = 0x00;

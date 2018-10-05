@@ -1,4 +1,5 @@
 #pragma once
+#pragma pack(1)
 
 namespace TMC2208_n {
   struct GCONF_t {
