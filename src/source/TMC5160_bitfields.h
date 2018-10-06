@@ -1,5 +1,5 @@
 #pragma once
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct SHORT_CONF_t {
   constexpr static uint8_t address = 0x09;
@@ -92,3 +92,5 @@ namespace TMC5160_n {
     };
   };
 }
+
+#pragma pack(pop)

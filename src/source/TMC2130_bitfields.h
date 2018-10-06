@@ -1,5 +1,5 @@
 #pragma once
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct GCONF_t {
   constexpr static uint8_t address = 0x00;
@@ -219,3 +219,5 @@ struct ENCM_CTRL_t {
     };
   };
 };
+
+#pragma pack(pop)

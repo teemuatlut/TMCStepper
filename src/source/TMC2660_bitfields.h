@@ -1,5 +1,5 @@
 #pragma once
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct DRVCTRL_1_t {
   constexpr static uint8_t address = 0b00;
@@ -149,3 +149,5 @@ struct READ_RDSEL10_t {
     };
   };
 };
+
+#pragma pack(pop)

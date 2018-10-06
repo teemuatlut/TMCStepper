@@ -1,5 +1,5 @@
 #pragma once
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct SLAVECONF_t {
   constexpr static uint8_t address = 0x03;
@@ -246,3 +246,5 @@ struct DCCTRL_t {
     };
   };
 };
+
+#pragma pack(pop)
