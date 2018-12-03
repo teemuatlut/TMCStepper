@@ -155,7 +155,8 @@ namespace TMC2208_n {
              t157 : 1;
         uint8_t : 4,
                 cs_actual : 5,
-                : 2;
+                : 3,
+                : 6;
         bool stealth : 1,
              stst : 1;
       };
