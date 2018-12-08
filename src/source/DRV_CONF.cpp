@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) DRV_CONF_register.SETTING = B; write(DRV_CONF_register.address, DRV_CONF_register.sr);

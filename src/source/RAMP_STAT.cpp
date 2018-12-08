@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define GET_REG(SETTING) RAMP_STAT(); return RAMP_STAT_register.SETTING;

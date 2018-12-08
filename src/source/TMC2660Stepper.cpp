@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "SW_SPI.h"
 
 TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) :

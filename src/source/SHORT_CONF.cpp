@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) SHORT_CONF_register.SETTING = B; write(SHORT_CONF_register.address, SHORT_CONF_register.sr)

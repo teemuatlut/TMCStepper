@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS) : TMC2130Stepper(pinCS, RS) {}

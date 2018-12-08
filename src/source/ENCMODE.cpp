@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) ENCMODE_register.SETTING = B; write(ENCMODE_register.address, ENCMODE_register.sr);

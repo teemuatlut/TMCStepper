@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define GET_REG00(SETTING) DRVSTATUS(); return READ_RDSEL00_register.SETTING

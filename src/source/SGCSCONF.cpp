@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "TMCStepper_main.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) SGCSCONF_register.SETTING = B; write(SGCSCONF_register.address, SGCSCONF_register.sr);
