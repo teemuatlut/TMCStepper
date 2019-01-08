@@ -15,6 +15,7 @@
 #endif
 #include "source/SW_SPI.h"
 #include "source/TMC2130_bitfields.h"
+#include "source/TMC2160_bitfields.h"
 #include "source/TMC5130_bitfields.h"
 #include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
@@ -22,6 +23,7 @@
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 #define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
+#define INIT2160_REGISTER(REG) TMC2160_n::REG##_t REG##_register = TMC2160_n::REG##_t
 #define INIT5130_REGISTER(REG) TMC5130_n::REG##_t REG##_register = TMC5130_n::REG##_t
 #define INIT5160_REGISTER(REG) TMC5160_n::REG##_t REG##_register = TMC5160_n::REG##_t
 #define INIT2660_REGISTER(REG) TMC2660_n::REG##_t REG##_register = TMC2660_n::REG##_t
@@ -324,11 +326,80 @@ class TMC2130Stepper : public TMCStepper {
 		SW_SPIClass * TMC_SW_SPI = NULL;
 };
 
-class TMC5130Stepper : public TMC2130Stepper {
+class TMC2160Stepper : public TMC2130Stepper {
+	public:
+		TMC2160Stepper(uint16_t pinCS);
+		TMC2160Stepper(uint16_t pinCS, float RS);
+		void begin();
+
+		void rms_current(uint16_t mA);
+		void rms_current(uint16_t mA, float mult);
+		uint16_t rms_current();
+
+		// IOIN
+		uint32_t 	IOIN();
+		bool 			refl_step();
+		bool 			refr_dir();
+		bool 			encb_dcen_cfg4();
+		bool 			enca_dcin_cfg5();
+		bool 			drv_enn();
+		bool 			dco_cfg6();
+		uint8_t 	version();
+
+		// W: OTP_PROG
+		// R: OTP_READ
+		// RW: FACTORY_CONF
+
+		// W: SHORT_CONF
+		void SHORT_CONF(uint32_t);
+		void s2vs_level(uint8_t);
+		void s2g_level(uint8_t);
+		void shortfilter(uint8_t);
+		void shortdelay(bool);
+		uint32_t SHORT_CONF();
+		uint8_t s2vs_level();
+		uint8_t s2g_level();
+		uint8_t shortfilter();
+		bool shortdelay();
+
+		// W: DRV_CONF
+		void DRV_CONF(uint32_t);
+		void bbmtime(uint8_t);
+		void bbmclks(uint8_t);
+		void otselect(uint8_t);
+		void drvstrength(uint8_t);
+		void filt_isense(uint8_t);
+		uint32_t DRV_CONF();
+		uint8_t bbmtime();
+		uint8_t bbmclks();
+		uint8_t otselect();
+		uint8_t drvstrength();
+		uint8_t filt_isense();
+
+		// W: GLOBAL_SCALER
+		void GLOBAL_SCALER(uint8_t);
+		uint8_t GLOBAL_SCALER();
+
+		// R: OFFSET_READ
+		uint16_t OFFSET_READ();
+
+	protected:
+		INIT2160_REGISTER(IOIN){{.sr=0}};
+		INIT_REGISTER(SHORT_CONF){{.sr=0}};
+		INIT_REGISTER(DRV_CONF){{.sr=0}};
+		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
+		INIT_REGISTER(OFFSET_READ){.sr=0};
+};
+
+class TMC5130Stepper : public TMC2160Stepper {
 	public:
 		TMC5130Stepper(uint16_t pinCS);
 		TMC5130Stepper(uint16_t pinCS, float RS);
 		void begin();
+
+		void rms_current(uint16_t mA) { TMC2130Stepper::rms_current(mA); }
+		void rms_current(uint16_t mA, float mult) { TMC2130Stepper::rms_current(mA, mult); }
+		uint16_t rms_current() { return TMC2130Stepper::rms_current(); }
 
 		// R: IFCNT
 		uint8_t IFCNT();
@@ -526,15 +597,30 @@ class TMC5130Stepper : public TMC2130Stepper {
 		INIT_REGISTER(MSCURACT){0};
 		INIT_REGISTER(DCCTRL){0};
 		*/
+
+	protected:
+		using TMC2160Stepper::SHORT_CONF;
+		using TMC2160Stepper::s2vs_level;
+		using TMC2160Stepper::s2g_level;
+		using TMC2160Stepper::shortfilter;
+		using TMC2160Stepper::shortdelay;
+		using TMC2160Stepper::DRV_CONF;
+		using TMC2160Stepper::bbmtime;
+		using TMC2160Stepper::bbmclks;
+		using TMC2160Stepper::otselect;
+		using TMC2160Stepper::drvstrength;
+		using TMC2160Stepper::filt_isense;
+		using TMC2160Stepper::GLOBAL_SCALER;
+		using TMC2160Stepper::OFFSET_READ;
 };
 
 class TMC5160Stepper : public TMC5130Stepper {
 	public:
 		TMC5160Stepper(uint16_t pinCS, float RS);
 
-		void rms_current(uint16_t mA);
-		void rms_current(uint16_t mA, float mult);
-		uint16_t rms_current();
+		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
+		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
+		uint16_t rms_current() { return TMC2160Stepper::rms_current(); }
 
 		// RW: GCONF
 		void recalibrate(bool);
@@ -548,42 +634,26 @@ class TMC5160Stepper : public TMC5130Stepper {
 		bool drv_enn() { return drv_enn_cfg6(); }
 		bool enc_n_dco_cfg6() { return enc_n_dco(); }
 
-		// W: OTP_PROG
-		// R: OTP_READ
-		// RW: FACTORY_CONF
-
 		// W: SHORT_CONF
-		void SHORT_CONF(uint32_t);
-		void s2vs_level(uint8_t);
-		void s2g_level(uint8_t);
-		void shortfilter(uint8_t);
-		void shortdelay(bool);
-		uint32_t SHORT_CONF();
-		uint8_t s2vs_level();
-		uint8_t s2g_level();
-		uint8_t shortfilter();
-		bool shortdelay();
+		using TMC2160Stepper::SHORT_CONF;
+		using TMC2160Stepper::s2vs_level;
+		using TMC2160Stepper::s2g_level;
+		using TMC2160Stepper::shortfilter;
+		using TMC2160Stepper::shortdelay;
 
 		// W: DRV_CONF
-		void DRV_CONF(uint32_t);
-		void bbmtime(uint8_t);
-		void bbmclks(uint8_t);
-		void otselect(uint8_t);
-		void drvstrength(uint8_t);
-		void filt_isense(uint8_t);
-		uint32_t DRV_CONF();
-		uint8_t bbmtime();
-		uint8_t bbmclks();
-		uint8_t otselect();
-		uint8_t drvstrength();
-		uint8_t filt_isense();
+		using TMC2160Stepper::DRV_CONF;
+		using TMC2160Stepper::bbmtime;
+		using TMC2160Stepper::bbmclks;
+		using TMC2160Stepper::otselect;
+		using TMC2160Stepper::drvstrength;
+		using TMC2160Stepper::filt_isense;
 
 		// W: GLOBAL_SCALER
-		void GLOBAL_SCALER(uint8_t);
-		uint8_t GLOBAL_SCALER();
+		using TMC2160Stepper::GLOBAL_SCALER;
 
 		// R: OFFSET_READ
-		uint16_t OFFSET_READ();
+		using TMC2160Stepper::OFFSET_READ;
 
 		// R+WC: ENC_STATUS
 		void ENC_STATUS(uint8_t);
@@ -629,10 +699,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC5130Stepper::vsense;
 		using TMC5130Stepper::rndtf;
 
-		INIT_REGISTER(DRV_CONF){{.sr=0}};
-		INIT_REGISTER(SHORT_CONF){{.sr=0}};
-		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
-		INIT_REGISTER(OFFSET_READ){.sr=0};
 		INIT_REGISTER(ENC_DEVIATION){.sr=0};
 		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
