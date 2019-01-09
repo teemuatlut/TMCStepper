@@ -99,8 +99,12 @@ uint8_t TMC2660Stepper::test_connection() {
   CS = 24
 */
 
+uint16_t TMC2660Stepper::cs2rms(uint8_t CS) {
+  return (float)(CS+1)/32.0 * (vsense() ? 0.165 : 0.310)/(Rsense+0.02) / 1.41421 * 1000;
+}
+
 uint16_t TMC2660Stepper::rms_current() {
-  return (float)(cs()+1)/32.0 * (vsense()?0.165:0.310)/Rsense / 1.41421 * 1000;
+  return cs2rms(cs());
 }
 void TMC2660Stepper::rms_current(uint16_t mA) {
   uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.310 - 1;

@@ -51,10 +51,10 @@ void TMC2160Stepper::rms_current(uint16_t mA, float mult) {
   holdMultiplier = mult;
   rms_current(mA);
 }
-uint16_t TMC2160Stepper::rms_current() {
+uint16_t TMC2160Stepper::cs2rms(uint8_t CS) {
     uint16_t scaler = GLOBAL_SCALER();
     if (!scaler) scaler = 256;
-    uint32_t numerator = scaler * (irun()+1);
+    uint32_t numerator = scaler * (CS+1);
     numerator *= 325;
     numerator >>= (8+5); // Divide by 256 and 32
     numerator *= 1000000;
@@ -63,6 +63,7 @@ uint16_t TMC2160Stepper::rms_current() {
 
     return numerator / denominator;
 }
+uint16_t TMC2160Stepper::rms_current() { return cs2rms(irun()); }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN

@@ -16,6 +16,11 @@
   CS = 32*sqrt(2)*1.64*(0.10+0.02)/0.325 - 1 = 26.4
   CS = 26
 */
+
+uint16_t TMCStepper::cs2rms(uint8_t CS) {
+  return (float)(CS+1)/32.0 * (vsense() ? 0.180 : 0.325)/(Rsense+0.02) / 1.41421 * 1000;
+}
+
 void TMCStepper::rms_current(uint16_t mA) {
   uint8_t CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.325 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
@@ -35,7 +40,7 @@ void TMCStepper::rms_current(uint16_t mA, float mult) {
 }
 
 uint16_t TMCStepper::rms_current() {
-  return (float)(irun()+1)/32.0 * (vsense()?0.180:0.325)/(Rsense+0.02) / 1.41421 * 1000;
+  return cs2rms(irun());
 }
 
 uint8_t TMCStepper::test_connection() {

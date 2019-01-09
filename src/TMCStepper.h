@@ -35,6 +35,7 @@
 
 class TMCStepper {
 	public:
+		uint16_t cs2rms(uint8_t CS);
 		void rms_current(uint16_t mA);
 		void rms_current(uint16_t mA, float mult);
 		uint16_t rms_current();
@@ -332,6 +333,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		TMC2160Stepper(uint16_t pinCS, float RS);
 		void begin();
 
+		uint16_t cs2rms(uint8_t CS);
 		void rms_current(uint16_t mA);
 		void rms_current(uint16_t mA, float mult);
 		uint16_t rms_current();
@@ -904,6 +906,7 @@ class TMC2660Stepper {
 		void begin();
 		bool isEnabled();
 		uint8_t test_connection();
+		uint16_t cs2rms(uint8_t CS);
 		uint16_t rms_current();
 		void rms_current(uint16_t mA);
 		//uint16_t getMilliamps() {return val_mA;}
