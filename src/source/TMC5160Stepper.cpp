@@ -2,6 +2,10 @@
 #include "TMC_MACROS.h"
 
 TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS, RS) {}
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+  TMC5130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK) {}
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+  TMC5130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK) {}
 
 // R+WC: ENC_STATUS
 uint8_t TMC5160Stepper::ENC_STATUS() { return read(ENC_STATUS_t::address); }

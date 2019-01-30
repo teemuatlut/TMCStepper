@@ -8,6 +8,14 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
   _pinCS(pinCS)
   {}
 
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+  TMCStepper(default_RS),
+  _pinCS(pinCS)
+  {
+    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+    TMC_SW_SPI = SW_SPI_Obj;
+  }
+
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
   TMCStepper(RS),
   _pinCS(pinCS)

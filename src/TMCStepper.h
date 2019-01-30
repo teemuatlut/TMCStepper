@@ -121,7 +121,8 @@ class TMCStepper {
 
 class TMC2130Stepper : public TMCStepper {
 	public:
-		TMC2130Stepper(uint16_t pinCS, float RS);
+		TMC2130Stepper(uint16_t pinCS, float RS = default_RS);
+		TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void begin();
 		void setSPISpeed(uint32_t speed);
@@ -325,12 +326,14 @@ class TMC2130Stepper : public TMCStepper {
 		static uint32_t spi_speed; // Default 2MHz
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = NULL;
+		static constexpr float default_RS = 0.11;
 };
 
 class TMC2160Stepper : public TMC2130Stepper {
 	public:
-		TMC2160Stepper(uint16_t pinCS);
-		TMC2160Stepper(uint16_t pinCS, float RS);
+		TMC2160Stepper(uint16_t pinCS, float RS = default_RS);
+		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void begin();
 
 		uint16_t cs2rms(uint8_t CS);
@@ -391,12 +394,16 @@ class TMC2160Stepper : public TMC2130Stepper {
 		INIT_REGISTER(DRV_CONF){{.sr=0}};
 		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
 		INIT_REGISTER(OFFSET_READ){.sr=0};
+
+		static constexpr float default_RS = 0.075;
 };
 
 class TMC5130Stepper : public TMC2160Stepper {
 	public:
-		TMC5130Stepper(uint16_t pinCS);
-		TMC5130Stepper(uint16_t pinCS, float RS);
+		TMC5130Stepper(uint16_t pinCS, float RS = default_RS);
+		TMC5130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+
 		void begin();
 
 		void rms_current(uint16_t mA) { TMC2130Stepper::rms_current(mA); }
@@ -600,6 +607,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(DCCTRL){0};
 		*/
 
+		static constexpr float default_RS = 0.15;
+
 	protected:
 		using TMC2160Stepper::SHORT_CONF;
 		using TMC2160Stepper::s2vs_level;
@@ -618,7 +627,9 @@ class TMC5130Stepper : public TMC2160Stepper {
 
 class TMC5160Stepper : public TMC5130Stepper {
 	public:
-		TMC5160Stepper(uint16_t pinCS, float RS);
+		TMC5160Stepper(uint16_t pinCS, float RS = default_RS);
+		TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
+		TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 
 		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
@@ -705,6 +716,8 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 		INIT5160_REGISTER(PWMCONF){{.sr=0}};
+
+		static constexpr float default_RS = 0.075;
 };
 
 class TMC2208Stepper : public TMCStepper {
@@ -898,7 +911,8 @@ class TMC2224Stepper : public TMC2208Stepper {
 
 class TMC2660Stepper {
 	public:
-		TMC2660Stepper(uint16_t pinCS, float RS);
+		TMC2660Stepper(uint16_t pinCS, float RS = default_RS);
+		TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read();
@@ -1050,6 +1064,7 @@ class TMC2660Stepper {
 
 		const uint16_t _pinCS;
 		const float Rsense;
+		static constexpr float default_RS = 0.1;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		uint8_t _savedToff = 0;
