@@ -702,7 +702,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		uint8_t pwm_reg();
 		bool pwm_autograd();
 
-	private:
+	protected:
 		using TMC5130Stepper::I_scale_analog;
 		using TMC5130Stepper::internal_Rsense;
 		using TMC5130Stepper::enc_commutation;
@@ -718,6 +718,15 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT5160_REGISTER(PWMCONF){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
+};
+
+class TMC5161Stepper : public TMC5160Stepper {
+	public:
+		TMC5161Stepper(uint16_t pinCS, float RS = default_RS) : TMC5160Stepper(pinCS, RS) {}
+		TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+			TMC5160Stepper(pinCS, pinMOSI, pinMISO, pinSCK) {}
+		TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+			TMC5160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK) {}
 };
 
 class TMC2208Stepper : public TMCStepper {
