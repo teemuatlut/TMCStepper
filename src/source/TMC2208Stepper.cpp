@@ -80,7 +80,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
-	for(int byte=0; byte<4; byte++) serPtr.read(); // Flush bytes written
+	for(int byte=0; byte<=len; byte++) serPtr.read(); // Flush bytes written
 	delay(replyDelay);
 
 	while(serPtr.available() > 0) {
@@ -102,6 +102,24 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 		if (SWSerial != NULL) {
 				SWSerial->listen();
 				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+				#ifndef USE_NO_INTERRUPT_PINS
+					out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+			   	 #else				
+					while (SWSerial->available() > 0) SWSerial->read(); // Flush
+
+					for(int i=0; i<=len; i++) SWSerial->write(datagram[i]);
+					
+					uint32_t time = millis();
+					while(millis() <= time+replyDelay)
+					{
+						SWSerial->listenReceive();
+					}
+					while(SWSerial->available() > 0) {
+						uint8_t res = SWSerial->read();
+						out <<= 8;
+						out |= res&0xFF;
+					}				
+				#endif
 		} else
 	#endif
 		{
