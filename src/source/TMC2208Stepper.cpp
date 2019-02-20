@@ -101,7 +101,6 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != NULL) {
 				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
 				#ifndef USE_NO_INTERRUPT_PINS
 					out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
 			   	 #else				
