@@ -3,13 +3,17 @@
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
-	write_only(!has_rx)
+	write_only(!has_rx)	
+	#if SW_CAPABLE_PLATFORM
+		,full_duplex(false)
+	#endif
 	{ HWSerial = SerialPort; }
 
 #if SW_CAPABLE_PLATFORM
 	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
 		TMCStepper(RS),
-		write_only(!has_rx)
+		write_only(!has_rx),
+		full_duplex(SW_RX_pin != SW_TX_pin)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
@@ -74,19 +78,23 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay) {
+uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay, bool full_duplex) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
-
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
-	for(int byte=0; byte<4; byte++) serPtr.read(); // Flush bytes written
+	// allow time for a response
 	delay(replyDelay);
+	if (full_duplex)
+ 		for(int byte=0; byte<=len; byte++) serPtr.read(); // Flush bytes written
 
-	while(serPtr.available() > 0) {
-		uint8_t res = serPtr.read();
-		out <<= 8;
-		out |= res&0xFF;
+	// read 8 byte response packet
+ 	for(int byte = 0; byte < 8; byte++) {
+		int16_t res = serPtr.read();
+		if (res >= 0) {
+			out <<= 8;
+			out |= res&0xFF;
+		}
 	}
 	return out;
 }
@@ -101,18 +109,21 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != NULL) {
 				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+				out = _sendDatagram(*SWSerial, datagram, len, replyDelay, full_duplex);
+				SWSerial->stopListening();
 		} else
 	#endif
 		{
-			out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
+			out = _sendDatagram(*HWSerial, datagram, len, replyDelay, false);
 		}
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
 	if (calcCRC(out_datagram, 7) == (uint8_t)(out&0xFF)) {
 		CRCerror = false;
 	} else {
-		CRCerror = true;
+ 		CRCerror = true;
+		// probably better to return nothing rather than random bad data.
+		out = 0;
 	}
 	return out>>8;
 }
