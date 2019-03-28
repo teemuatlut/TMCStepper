@@ -29,24 +29,23 @@ void TMC2160Stepper::begin() {
   Equation for current:
   I_rms = GLOBALSCALER/256 * (CS+1)/32 * V_fs/R_sense * 1/sqrt(2)
   Solve for GLOBALSCALER ->
-   
-		             32 * 256 * sqrt(2) * I_rms * R_sense    |
+  
+                 32 * 256 * sqrt(2) * I_rms * R_sense    |
   GLOBALSCALER = ------------------------------------    |
-			                     (CS + 1) * V_fs               | V_fs = 0.325
-						   
+                           (CS + 1) * V_fs               | V_fs = 0.325
+  
 */
 void TMC2160Stepper::rms_current(uint16_t mA) {
   uint32_t V_fs = 325; // x1000
-  uint32_t CS = 31;
+  uint8_t CS = 31;
   uint32_t numerator = 1414UL * mA;
   numerator *= Rsense*1000UL;
-  uint16_t scaler = numerator / (CS + 1);
-  scaler /= V_fs;
-  scaler <<= (5+8); // Multiply by 32 and 256
+  uint32_t scaler = numerator / V_fs; // (CS+1) is always 32
+  scaler <<= (8); // Multiply by 256
   scaler /= 1000UL;
   scaler /= 1000UL;
-  if (scaler < 32) scaler = 32 // Not allowed for operation
-  if (scaler > 255) scaler = 0 // Maximum
+  if (scaler < 32) scaler = 32; // Not allowed for operation
+  if (scaler > 255) scaler = 0; // Maximum
   GLOBAL_SCALER(scaler);
   irun(CS);
   ihold(CS*holdMultiplier);
