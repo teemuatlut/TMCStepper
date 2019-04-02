@@ -70,18 +70,18 @@ class TMCStepper {
 		uint8_t irun();
 		uint8_t iholddelay();
 
-		// TPOWERDOWN
+		// W: TPOWERDOWN
 		uint8_t TPOWERDOWN();
 		void TPOWERDOWN(					uint8_t input);
 
-		// TSTEP
+		// R: TSTEP
 		uint32_t TSTEP();
 
-		// TPWMTHRS
+		// W: TPWMTHRS
 		uint32_t TPWMTHRS();
 		void TPWMTHRS(						uint32_t input);
 
-		// MSCNT
+		// R: MSCNT
 		uint16_t MSCNT();
 
 		// R: MSCURACT
@@ -134,7 +134,7 @@ class TMC2130Stepper : public TMCStepper {
 		void sg_current_decrease(uint8_t value);
 		uint8_t sg_current_decrease();
 
-		// GCONF
+		// RW: GCONF
 		uint32_t GCONF();
 		void GCONF(								uint32_t value);
 		void I_scale_analog(			bool B);
@@ -172,7 +172,7 @@ class TMC2130Stepper : public TMCStepper {
 		bool stop_enable();
 		bool direct_mode();
 
-		// IOIN
+		// R: IOIN
 		uint32_t IOIN();
 		bool step();
 		bool dir();
@@ -182,15 +182,15 @@ class TMC2130Stepper : public TMCStepper {
 		bool dco();
 		uint8_t version();
 
-		// TCOOLTHRS
+		// W: TCOOLTHRS
 		uint32_t TCOOLTHRS();
 		void TCOOLTHRS(						uint32_t input);
 
-		// THIGH
+		// W: THIGH
 		uint32_t THIGH();
 		void THIGH(								uint32_t input);
 
-		// XDRIRECT
+		// RW: XDRIRECT
 		uint32_t XDIRECT();
 		void XDIRECT(							uint32_t input);
 		void coil_A(							int16_t 	B);
@@ -198,11 +198,11 @@ class TMC2130Stepper : public TMCStepper {
 		int16_t coil_A();
 		int16_t coil_B();
 
-		// VDCMIN
+		// W: VDCMIN
 		uint32_t VDCMIN();
 		void VDCMIN(							uint32_t input);
 
-		// CHOPCONF
+		// RW: CHOPCONF
 		uint32_t CHOPCONF();
 		void CHOPCONF(						uint32_t value);
 		void toff(								uint8_t B);
@@ -238,7 +238,7 @@ class TMC2130Stepper : public TMCStepper {
 		bool 	dedge();
 		bool 	diss2g();
 
-		// COOLCONF
+		// W: COOLCONF
 		void COOLCONF(uint32_t value);
 		uint32_t COOLCONF();
 		void semin(								uint8_t B);
@@ -256,7 +256,7 @@ class TMC2130Stepper : public TMCStepper {
 		int8_t sgt();
 		bool sfilt();
 
-		// DRV_STATUS
+		// R: DRV_STATUS
 		uint32_t DRV_STATUS();
 		uint16_t sg_result();
 		bool fsactive();
@@ -270,7 +270,7 @@ class TMC2130Stepper : public TMCStepper {
 		bool olb();
 		bool stst();
 
-		// PWMCONF
+		// W: PWMCONF
 		void PWMCONF(							uint32_t value);
 		uint32_t PWMCONF();
 		void pwm_ampl(						uint8_t B);
@@ -286,10 +286,10 @@ class TMC2130Stepper : public TMCStepper {
 		bool 	pwm_symmetric();
 		uint8_t freewheel();
 
-		// PWM_SCALE
+		// R: PWM_SCALE
 		uint8_t PWM_SCALE();
 
-		// ENCM_CTRL
+		// W: ENCM_CTRL
 		uint8_t ENCM_CTRL();
 		void ENCM_CTRL(						uint8_t input);
 		void inv(									bool B);
@@ -297,7 +297,7 @@ class TMC2130Stepper : public TMCStepper {
 		bool inv();
 		bool maxspeed();
 
-		// LOST_STEPS
+		// R: LOST_STEPS
 		uint32_t LOST_STEPS();
 
 		// Function aliases
