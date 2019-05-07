@@ -1,4 +1,6 @@
 #if defined(ARDUINO_ARCH_AVR)
+  typedef volatile uint8_t* fastio_reg;
+  typedef uint8_t fastio_bm;
   #define getPort(P) digitalPinToPort(P)
   #define writeMOSI_H *mosi_register |= mosi_bm
   #define writeMOSI_L *mosi_register &= ~mosi_bm
@@ -12,12 +14,14 @@
   #define writeSCK_H g_APinDescription[sck_pin].pPort -> PIO_SODR = g_APinDescription[sck_pin].ulPin
   #define writeSCK_L g_APinDescription[sck_pin].pPort -> PIO_CODR = g_APinDescription[sck_pin].ulPin
   #define readMISO !!(g_APinDescription[miso_pin].pPort -> PIO_PDSR & g_APinDescription[miso_pin].ulPin)
-#elif defined(TARGET_LPC1768)
-  #define writeMOSI_H gpio_set(mosi_pin)
-  #define writeMOSI_L gpio_clear(mosi_pin)
-  #define writeSCK_H gpio_set(sck_pin)
-  #define writeSCK_L gpio_clear(sck_pin)
-  #define readMISO gpio_get(miso_pin)
+#elif defined(TARGET_LPC1768) // LPC1769:2.4MHz
+  typedef volatile LPC_GPIO_TypeDef* fastio_reg;
+  typedef uint32_t fastio_bm;
+  #define writeMOSI_H mosi_register->FIOSET = mosi_bm
+  #define writeMOSI_L mosi_register->FIOCLR = mosi_bm
+  #define writeSCK_H sck_register->FIOSET = sck_bm
+  #define writeSCK_L sck_register->FIOCLR = sck_bm
+  #define readMISO util::bit_test(miso_register->FIOPIN, LPC1768_PIN_PIN(miso_pin))
 #else // DUE:116kHz
   #define writeMOSI_H digitalWrite(mosi_pin, HIGH)
   #define writeMOSI_L digitalWrite(mosi_pin, LOW)
