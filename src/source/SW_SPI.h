@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "TMC_platforms.h"
 
 class SW_SPIClass {
 	public:
