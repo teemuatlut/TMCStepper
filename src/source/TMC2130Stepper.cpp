@@ -37,6 +37,8 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   uint32_t out = 0UL;
   if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
+    TMC_SW_SPI->beginTransaction();
+
     TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16(0x0000); // Clear SPI
     TMC_SW_SPI->transfer16(0x0000);
@@ -53,6 +55,8 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
     out <<= 8;
     out |= TMC_SW_SPI->transfer(0x00);
 
+    TMC_SW_SPI->endTransaction();
+    switchCSpin(HIGH);
   } else {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
@@ -72,19 +76,22 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
     out <<= 8;
     out |= SPI.transfer(0x00);
 
+    switchCSpin(HIGH);
     SPI.endTransaction();
   }
-  switchCSpin(HIGH);
+
   return out;
 }
 
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   addressByte |= TMC_WRITE;
   if (TMC_SW_SPI != NULL) {
+    TMC_SW_SPI->beginTransaction();
     switchCSpin(LOW);
     status_response = TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16((config>>16) & 0xFFFF);
     TMC_SW_SPI->transfer16(config & 0xFFFF);
+    TMC_SW_SPI->endTransaction();
   } else {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
