@@ -1,5 +1,6 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
+#include "/Users/andy/Documents/GitHub/Marlin/Marlin/src/core/serial.h"
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
@@ -58,7 +59,7 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	uint8_t len = 7;
 	addr |= TMC_WRITE;
-	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
+	uint8_t datagram[] = {TMC2208_SYNC|0xf0, TMC2208_SLAVE_ADDR, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
 
 	datagram[len] = calcCRC(datagram, len);
 
@@ -78,11 +79,33 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay, bool full_duplex) {
+uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay, bool full_duplex) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
+	// scan for the rx frame and read it
+	
+  uint32_t timeout = millis() + replyDelay;
+	int byte = -1;
+	while (byte < 8 && ((int32_t) (millis() - timeout)) < 0)
+	//while ((byte < 8) && (millis() - start <= 2*replyDelay))
+	{
+		int16_t res = serPtr.read();
+		if (res < 0)
+			continue;
+		out = (out << 8) | (res & 0xff);
+		if (byte < 0)	// wait for sync
+		{
+			if ((out & 0xffff) == ((TMC2208_SYNC << 8) | 0xff))
+				byte = 2;	// found the Rx sync byte and 0xff byte
+		}
+		else
+			byte++;
+	}
+SERIAL_PRINTF("Read %d bytes\n", byte);
+	return (byte >= 8) ? out : 0;	
+	/*
 	// allow time for a response
 	delay(replyDelay);
 
@@ -94,12 +117,13 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		}
 	}
 	return out;
+	*/
 }
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
 	uint8_t len = 3;
 	addr |= TMC_READ;
-	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, 0x00};
+	uint8_t datagram[] = {TMC2208_SYNC|0xf0, TMC2208_SLAVE_ADDR, addr, 0x00};
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
 
