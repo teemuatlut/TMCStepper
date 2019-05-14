@@ -905,7 +905,7 @@ class TMC2208Stepper : public TMCStepper {
     #if SW_CAPABLE_PLATFORM
     const bool full_duplex;
     #endif
-		static constexpr uint8_t replyDelay = 5;
+		static constexpr uint8_t replyDelay = 10;
 };
 
 class TMC2224Stepper : public TMC2208Stepper {

@@ -85,12 +85,25 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 	// scan for the rx frame and read it
-	
+	uint32_t ms = millis();
+	uint32_t timeout = replyDelay;
+	int byte = -1;
+	while (byte < 8)
+	{
+		uint32_t ms2 = millis();
+		if (ms2 != ms)
+		{	// 1ms tick
+			ms = ms2;
+			if (--timeout <= 0)
+				break;	// out of time
+		}
+/*
   uint32_t timeout = millis() + replyDelay;
 	int byte = -1;
 	while (byte < 8 && ((int32_t) (millis() - timeout)) < 0)
 	//while ((byte < 8) && (millis() - start <= 2*replyDelay))
 	{
+		*/
 		int16_t res = serPtr.read();
 		if (res < 0)
 			continue;
