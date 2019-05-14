@@ -85,11 +85,8 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 	// allow time for a response
 	delay(replyDelay);
-	if (full_duplex)
- 		for(int byte=0; byte<=len; byte++) serPtr.read(); // Flush bytes written
 
-	// read 8 byte response packet
- 	for(int byte = 0; byte < 8; byte++) {
+	while(serPtr.available() > 0) {
 		int16_t res = serPtr.read();
 		if (res >= 0) {
 			out <<= 8;
