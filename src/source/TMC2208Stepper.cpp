@@ -1,6 +1,5 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
-#include "/Users/andy/Documents/GitHub/Marlin/Marlin/src/core/serial.h"
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
@@ -79,61 +78,34 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t replyDelay, bool full_duplex) {
+uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout, bool full_duplex) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
-	uint32_t timeout = replyDelay;
 	int byte = -1;
-	while (byte < 8)
-	{
+	while (byte < 8 && timeout > 0) {
 		uint32_t ms2 = millis();
-		if (ms2 != ms)
-		{	// 1ms tick
+		if (ms2 != ms) {
+			// 1ms tick
 			ms = ms2;
-			if (--timeout <= 0)
-				break;	// out of time
+			timeout--;
 		}
-/*
-  uint32_t timeout = millis() + replyDelay;
-	int byte = -1;
-	while (byte < 8 && ((int32_t) (millis() - timeout)) < 0)
-	//while ((byte < 8) && (millis() - start <= 2*replyDelay))
-	{
-		*/
 		int16_t res = serPtr.read();
 		if (res < 0)
 			continue;
 		out = (out << 8) | (res & 0xff);
-		if (byte < 0)	// wait for sync
-		{
+		if (byte < 0)	{
+			// wait for sync
 			if ((out & 0xffff) == ((TMC2208_SYNC << 8) | 0xff))
 				byte = 2;	// found the Rx sync byte and 0xff byte
 		}
 		else
 			byte++;
 	}
-SERIAL_PRINTF("Read %d bytes\n", byte);
 	return (byte >= 8) ? out : 0;	
-	/*
-	// allow time for a response
-	delay(replyDelay);
-	if (full_duplex)
- 		for(int byte=0; byte<=len; byte++) serPtr.read(); // Flush bytes written
-
-	// read 8 byte response packet
- 	for(int byte = 0; byte < 8; byte++) {
-		int16_t res = serPtr.read();
-		if (res >= 0) {
-			out <<= 8;
-			out |= res&0xFF;
-		}
-	}
-	return out;
-	*/
 }
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
