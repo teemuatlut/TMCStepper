@@ -84,13 +84,16 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	uint32_t ms = millis();
 	uint32_t rx_sync = ((uint32_t)datagram[0]<<16) | 0xFF00 | datagram[2];
 	int B = -1;
-	while (B < 8 && timeout > 0) {
+
+	while (B < 8) {
 		uint32_t ms2 = millis();
 		if (ms2 != ms) {
 			// 1ms tick
 			ms = ms2;
 			timeout--;
 		}
+		if (!timeout) { delay(10); return 0; }
+
 		int16_t res = serPtr.read();
 		if (res < 0) continue;
 
@@ -104,7 +107,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	}
 
 	delay(10);
-	return (B >= 8) ? out : 0;
+	return out;
 }
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
