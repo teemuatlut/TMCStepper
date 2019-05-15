@@ -83,9 +83,10 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
 	uint32_t sync_target = ((uint32_t)datagram[0]<<16) | 0xFF00 | datagram[2];
+	uint32_t sync = 0;
 	int B = -1;
 
-	while (B < 8) {
+	while (B < 3) {
 		uint32_t ms2 = millis();
 		if (ms2 != ms) {
 			// 1ms tick
@@ -97,8 +98,27 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		int16_t res = serPtr.read();
 		if (res < 0) continue;
 
-		out = (out << 8) | (res & 0xFF);
-		if (B < 0)	{
+		sync <<= 8;
+		sync |= res & 0xFF;
+
+		if (B < 0) {
+			// wait for sync
+			if ((sync & 0xFFFFFF) == sync_target)
+				B = 3;	// found the Rx sync byte and 0xff byte and addr byte
+		} else
+			B++;
+	}
+
+	out = sync;
+
+	while (B < 8) {
+		int16_t res = serPtr.read();
+		if (res < 0) continue;
+
+		out <<= 8;
+		out |= res & 0xFF;
+
+		if (B < 0) {
 			// wait for sync
 			if ((((uint32_t)out) & 0xFFFFFF) == sync_target)
 				B = 3;	// found the Rx sync byte and 0xff byte and addr byte
