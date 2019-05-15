@@ -4,16 +4,12 @@
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
 	write_only(!has_rx)	
-	#if SW_CAPABLE_PLATFORM
-		,full_duplex(false)
-	#endif
 	{ HWSerial = SerialPort; }
 
 #if SW_CAPABLE_PLATFORM
 	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx) :
 		TMCStepper(RS),
-		write_only(!has_rx),
-		full_duplex(SW_RX_pin != SW_TX_pin)
+		write_only(!has_rx)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
@@ -78,13 +74,14 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout, bool full_duplex) {
+uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout, uint8_t addr) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
+	uint32_t rx_sync = (TMC2208_SYNC << 16) | (0xff << 8) | addr;
 	int byte = -1;
 	while (byte < 8 && timeout > 0) {
 		uint32_t ms2 = millis();
@@ -99,8 +96,8 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		out = (out << 8) | (res & 0xff);
 		if (byte < 0)	{
 			// wait for sync
-			if ((out & 0xffff) == ((TMC2208_SYNC << 8) | 0xff))
-				byte = 2;	// found the Rx sync byte and 0xff byte
+			if ((((uint32_t)out) & 0xffffff) == rx_sync)
+				byte = 3;	// found the Rx sync byte and 0xff byte and addr byte
 		}
 		else
 			byte++;
@@ -118,7 +115,7 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != NULL) {
 				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, replyDelay, full_duplex);
+				out = _sendDatagram(*SWSerial, datagram, len, replyDelay, addr);
 				SWSerial->stopListening();
 		} else
 	#endif
