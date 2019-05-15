@@ -74,16 +74,17 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout, uint8_t addr) {
+uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout) {
 	uint64_t out = 0x00000000UL;
 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
+
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
-	uint32_t rx_sync = (TMC2208_SYNC << 16) | (0xff << 8) | addr;
-	int byte = -1;
-	while (byte < 8 && timeout > 0) {
+	uint32_t rx_sync = ((uint32_t)datagram[0]<<16) | 0xFF00 | datagram[2];
+	int B = -1;
+	while (B < 8 && timeout > 0) {
 		uint32_t ms2 = millis();
 		if (ms2 != ms) {
 			// 1ms tick
@@ -91,36 +92,37 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 			timeout--;
 		}
 		int16_t res = serPtr.read();
-		if (res < 0)
-			continue;
-		out = (out << 8) | (res & 0xff);
-		if (byte < 0)	{
+		if (res < 0) continue;
+
+		out = (out << 8) | (res & 0xFF);
+		if (B < 0)	{
 			// wait for sync
-			if ((((uint32_t)out) & 0xffffff) == rx_sync)
-				byte = 3;	// found the Rx sync byte and 0xff byte and addr byte
-		}
-		else
-			byte++;
+			if ((((uint32_t)out) & 0xFFFFFF) == rx_sync)
+				B = 3;	// found the Rx sync byte and 0xff byte and addr byte
+		} else
+			B++;
 	}
-	return (byte >= 8) ? out : 0;	
+
+	delay(10);
+	return (B >= 8) ? out : 0;
 }
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
-	uint8_t len = 3;
+	constexpr uint8_t len = 3;
 	addr |= TMC_READ;
-	uint8_t datagram[] = {TMC2208_SYNC|0xf0, TMC2208_SLAVE_ADDR, addr, 0x00};
+	uint8_t datagram[] = {TMC2208_SYNC, TMC2208_SLAVE_ADDR, addr, 0x00};
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
 
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != NULL) {
 				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, replyDelay, addr);
+				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
 				SWSerial->stopListening();
 		} else
 	#endif
 		{
-			out = _sendDatagram(*HWSerial, datagram, len, replyDelay, false);
+			out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
 		}
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};

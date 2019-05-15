@@ -893,8 +893,6 @@ class TMC2208Stepper : public TMCStepper {
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = NULL;
 		#endif
-		template<typename SERIAL_TYPE>
-		uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout, uint8_t addr);
 
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
