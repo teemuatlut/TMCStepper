@@ -84,7 +84,6 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	uint32_t ms = millis();
 	uint32_t sync_target = ((uint32_t)datagram[0]<<16) | 0xFF00 | datagram[2];
 	uint32_t sync = 0;
-	int B = -1;
 
 	do {
 		uint32_t ms2 = millis();
@@ -104,17 +103,16 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 
 	} while (sync != sync_target);
 
-	B = 3;
 	out = sync;
 
-	while (B < 8) {
+	for(uint8_t i=0; i<5;) {
 		int16_t res = serPtr.read();
 		if (res < 0) continue;
 
 		out <<= 8;
 		out |= res & 0xFF;
 
-		B++;
+		i++;
 	}
 
 	delay(10);
