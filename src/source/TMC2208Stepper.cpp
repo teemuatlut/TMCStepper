@@ -86,7 +86,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	uint32_t sync = 0;
 	int B = -1;
 
-	while (B < 3) {
+	do {
 		uint32_t ms2 = millis();
 		if (ms2 != ms) {
 			// 1ms tick
@@ -109,6 +109,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 			B++;
 	}
 
+	} while (B < 3);
 	out = sync;
 
 	while (B < 8) {
