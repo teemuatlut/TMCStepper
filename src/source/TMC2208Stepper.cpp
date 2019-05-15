@@ -119,12 +119,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		out <<= 8;
 		out |= res & 0xFF;
 
-		if (B < 0) {
-			// wait for sync
-			if ((((uint32_t)out) & 0xFFFFFF) == sync_target)
-				B = 3;	// found the Rx sync byte and 0xff byte and addr byte
-		} else
-			B++;
+		B++;
 	}
 
 	delay(10);
