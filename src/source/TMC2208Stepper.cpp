@@ -75,8 +75,6 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 template<typename SERIAL_TYPE>
 uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uint16_t timeout) {
-	uint64_t out = 0x00000000UL;
-
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 
@@ -103,7 +101,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 
 	} while (sync != sync_target);
 
-	out = sync;
+	uint64_t out = sync;
 
 	for(uint8_t i=0; i<5;) {
 		int16_t res = serPtr.read();
