@@ -101,15 +101,11 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		sync <<= 8;
 		sync |= res & 0xFF;
 
-		if (B < 0) {
-			// wait for sync
-			if ((sync & 0xFFFFFF) == sync_target)
-				B = 3;	// found the Rx sync byte and 0xff byte and addr byte
-		} else
-			B++;
-	}
+		if ((sync & 0xFFFFFF) == sync_target) break;
 
 	} while (B < 3);
+
+	B = 3;
 	out = sync;
 
 	while (B < 8) {
