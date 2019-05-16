@@ -104,6 +104,14 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 	uint64_t out = sync;
 
 	for(uint8_t i=0; i<5;) {
+		uint32_t ms2 = millis();
+		if (ms2 != ms) {
+			// 1ms tick
+			ms = ms2;
+			timeout--;
+		}
+		if (!timeout) return 0;
+
 		int16_t res = serPtr.read();
 		if (res < 0) continue;
 
