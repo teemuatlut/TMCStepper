@@ -901,6 +901,7 @@ class TMC2208Stepper : public TMCStepper {
 															TMC2208_SLAVE_ADDR = 0x00;
 		const bool write_only;
 		static constexpr uint8_t replyDelay = 10;
+		static constexpr uint8_t abort_window = 30;
 };
 
 class TMC2224Stepper : public TMC2208Stepper {

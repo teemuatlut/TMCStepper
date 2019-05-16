@@ -127,12 +127,12 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != NULL) {
 				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, replyDelay);
+				out = _sendDatagram(*SWSerial, datagram, len, abort_window);
 				SWSerial->stopListening();
 		} else
 	#endif
 		{
-			out = _sendDatagram(*HWSerial, datagram, len, replyDelay);
+			out = _sendDatagram(*HWSerial, datagram, len, abort_window);
 		}
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
