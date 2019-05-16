@@ -415,7 +415,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		// W: SLAVECONF
 		uint16_t SLAVECONF();
 		void SLAVECONF(uint16_t input);
-		// IOIN
+		// R: IOIN
 		uint32_t 	IOIN();
 		bool 			refl_step();
 		bool 			refr_dir();
@@ -427,11 +427,11 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool 			swcomp_in();
 		uint8_t 	version();
 
-		// GCONF
+		// RW: GCONF
 		void diag1_poscomp_pushpull(bool B) { diag1_pushpull(B); }
 		bool diag1_poscomp_pushpull() { return diag1_pushpull(); }
 
-		// SW_MODE
+		// RW: SW_MODE
 		uint32_t SW_MODE();
 		void SW_MODE(uint32_t input);
 
@@ -460,7 +460,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool sg_stop();
 		bool en_softstop();
 
-		// RAMP_STAT
+		// R+C: RAMP_STAT
 		uint32_t RAMP_STAT();
 		bool status_stop_l();
 		bool status_stop_r();
@@ -477,7 +477,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool second_move();
 		bool status_sg();
 
-		// ENCMODE
+		// RW: ENCMODE
 		uint32_t ENCMODE();
 		void ENCMODE(uint32_t input);
 		void pol_a(bool B);
@@ -581,15 +581,15 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(ENCMODE){{.sr=0}};
 		INIT_REGISTER(ENC_CONST){.sr=0};
 
-		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
-		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; };
-		struct XTARGET_t 	{ constexpr static uint8_t address = 0x2D; };
-		struct XLATCH_t 	{ constexpr static uint8_t address = 0x36; };
-		struct X_ENC_t 		{ constexpr static uint8_t address = 0x39; };
-		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; };
-		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; };
-		struct MSCNT_t		{ constexpr static uint8_t address = 0x6A; };
-		struct MSCURACT_t 	{ constexpr static uint8_t address = 0x6B; };
+		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
+		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; }; // R
+		struct XTARGET_t 	{ constexpr static uint8_t address = 0x2D; }; // RW
+		struct XLATCH_t 	{ constexpr static uint8_t address = 0x36; }; // R
+		struct X_ENC_t 		{ constexpr static uint8_t address = 0x39; }; // RW
+		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; }; // R+C
+		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; }; // R
+		struct MSCNT_t		{ constexpr static uint8_t address = 0x6A; }; // R
+		struct MSCURACT_t 	{ constexpr static uint8_t address = 0x6B; }; // R
 
 		/*
 		INIT_REGISTER(MSLUT0){0};
