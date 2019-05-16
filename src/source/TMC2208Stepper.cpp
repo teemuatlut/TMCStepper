@@ -90,7 +90,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 			ms = ms2;
 			timeout--;
 		}
-		if (!timeout) { delay(10); return 0; }
+		if (!timeout) return 0;
 
 		int16_t res = serPtr.read();
 		if (res < 0) continue;
@@ -113,7 +113,6 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		i++;
 	}
 
-	delay(10);
 	return out;
 }
 
@@ -134,6 +133,8 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 		{
 			out = _sendDatagram(*HWSerial, datagram, len, abort_window);
 		}
+
+	delay(replyDelay);
 
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
 	if (calcCRC(out_datagram, 7) == (uint8_t)(out&0xFF)) {
