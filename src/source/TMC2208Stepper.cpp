@@ -121,6 +121,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], uint8_t len, uin
 		i++;
 	}
 
+	while (serPtr.available() > 0) serPtr.read(); // Flush
 	return out;
 }
 
