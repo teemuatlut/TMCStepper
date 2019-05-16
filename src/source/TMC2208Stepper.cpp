@@ -97,7 +97,7 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t le
 
 		sync <<= 8;
 		sync |= res & 0xFF;
-		sync &= 0xFFFFF;
+		sync &= 0xFFFFFF;
 
 	} while (sync != sync_target);
 
