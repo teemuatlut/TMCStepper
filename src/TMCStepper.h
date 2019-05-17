@@ -893,16 +893,15 @@ class TMC2208Stepper : public TMCStepper {
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = NULL;
 		#endif
+
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
 		static constexpr uint8_t  TMC2208_SYNC = 0x05,
 															TMC2208_SLAVE_ADDR = 0x00;
 		const bool write_only;
-    #if SW_CAPABLE_PLATFORM
-    const bool full_duplex;
-    #endif
 		static constexpr uint8_t replyDelay = 5;
+		static constexpr uint8_t abort_window = 30;
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
