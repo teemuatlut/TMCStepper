@@ -152,14 +152,15 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 
 	delay(replyDelay);
 
+	CRCerror = false;
 	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
-	if (calcCRC(out_datagram, 7) == (uint8_t)(out&0xFF)) {
-		CRCerror = false;
-	} else {
- 		CRCerror = true;
+	uint8_t crc = calcCRC(out_datagram, 7);
+	if ((crc != (uint8_t)out) || crc == 0 ) {
+		 CRCerror = true;
 		// probably better to return nothing rather than random bad data.
 		out = 0;
 	}
+
 	return out>>8;
 }
 
