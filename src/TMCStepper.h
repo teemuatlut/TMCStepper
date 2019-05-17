@@ -737,6 +737,7 @@ class TMC2208Stepper : public TMCStepper {
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
 		#endif
 		void push();
+		void begin();
 		void beginSerial(uint32_t baudrate);
 		bool isEnabled();
 

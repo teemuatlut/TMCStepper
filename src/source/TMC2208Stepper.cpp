@@ -20,6 +20,12 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	}
 #endif
 
+void TMC2208Stepper::begin() {
+	#if SW_CAPABLE_PLATFORM
+		beginSerial(115200);
+	#endif
+}
+
 void TMC2208Stepper::push() {
 	GCONF(GCONF_register.sr);
 	IHOLD_IRUN(IHOLD_IRUN_register.sr);
