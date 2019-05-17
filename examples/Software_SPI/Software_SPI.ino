@@ -1,21 +1,33 @@
 /**
  * Author Teemu Mäntykallio
- * Initializes the library and turns the motor in alternating directions.
+ * Initializes the library and runs the stepper motor.
  */
 
-#define EN_PIN    7  // Nano v3:	16 Mega:	38	//enable (CFG6)
-#define DIR_PIN   6  //			19			55	//direction
-#define STEP_PIN  5  //			18			54	//step
-#define CS_PIN    8  //			17			64	//chip select
-#define MOSI_PIN  9
-#define MISO_PIN 10
-#define SCK_PIN  11
-#define R_SENSE   0.11 // Match to your driver
+#include <TMCStepper.h>
+
+#define EN_PIN           38 // Enable
+#define DIR_PIN          55 // Direction
+#define STEP_PIN         54 // Step
+#define CS_PIN           42 // Chip select
+#define SW_MOSI          66 // Software Master Out Slave In (MOSI)
+#define SW_MISO          44 // Software Master In Slave Out (MISO)
+#define SW_SCK           64 // Software Slave Clock (SCK)
+
+#define R_SENSE 0.11 // Match to your driver
+                     // SilentStepStick series use 0.11
+                     // UltiMachine Einsy and Archim2 boards use 0.2
+                     // Panucatt BSD2660 uses 0.1
+                     // Watterott TMC5160 uses 0.075
+
+// Select your stepper driver type
+//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE); // Hardware SPI
+//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
+//TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE); // Hardware SPI
+//TMC2660Stepper driver = TMC2660Stepper(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
+//TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE);
+//TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
 
 bool dir = true;
-
-#include <TMCStepper.h>
-TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE, MOSI_PIN, MISO_PIN, SCK_PIN);
 
 void setup() {
 	Serial.begin(9600);
