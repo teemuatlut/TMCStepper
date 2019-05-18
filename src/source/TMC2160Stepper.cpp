@@ -29,27 +29,34 @@ void TMC2160Stepper::begin() {
   Equation for current:
   I_rms = GLOBALSCALER/256 * (CS+1)/32 * V_fs/R_sense * 1/sqrt(2)
   Solve for GLOBALSCALER ->
-  
+
                  32 * 256 * sqrt(2) * I_rms * R_sense    |
   GLOBALSCALER = ------------------------------------    |
                            (CS + 1) * V_fs               | V_fs = 0.325
-  
+
 */
 void TMC2160Stepper::rms_current(uint16_t mA) {
-  uint32_t V_fs = 325; // x1000
+  uint16_t V_fs = 325; // 0.325 * 1000
   uint8_t CS = 31;
-  uint32_t numerator = 1414UL * mA;
-  numerator *= Rsense*1000UL;
-  uint32_t scaler = numerator / V_fs; // (CS+1) is always 32
-  scaler <<= (8); // Multiply by 256
-  scaler /= 1000UL;
-  scaler /= 1000UL;
-  if (scaler < 32) scaler = 32; // Not allowed for operation
-  if (scaler > 255) scaler = 0; // Maximum
+  uint32_t scaler = 0; // = 256
+
+  uint32_t numerator = 11585; // 32 * 256 * sqrt(2)
+  uint16_t RS_scaled = Rsense * 0xFFFF; // Scale to 16b
+  numerator *= RS_scaled;
+  numerator >>= 8;
+  numerator *= mA;
+
+  do {
+    uint32_t denominator = (CS+1) * V_fs * 0xFFFF >> 8;
+    scaler = numerator / denominator;
+
+    if (scaler > 255) scaler = 0; // Maximum
+    else if (scaler < 128) CS--;  // Try again with smaller CS
+  } while(0 < scaler && scaler < 128);
+
   GLOBAL_SCALER(scaler);
   irun(CS);
   ihold(CS*holdMultiplier);
-  //val_mA = mA;
 }
 void TMC2160Stepper::rms_current(uint16_t mA, float mult) {
   holdMultiplier = mult;
