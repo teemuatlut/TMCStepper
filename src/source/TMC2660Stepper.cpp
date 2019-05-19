@@ -48,7 +48,7 @@ uint32_t TMC2660Stepper::read() {
     SPI.endTransaction();
   }
   switchCSpin(HIGH);
-  return response;
+  return response >> 4;
 }
 
 void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {

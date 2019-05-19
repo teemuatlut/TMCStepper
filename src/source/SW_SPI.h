@@ -10,8 +10,7 @@ class SW_SPIClass {
 		void begin() {};
 		byte transfer(uint8_t ulVal, uint8_t ulBitOrder=MSBFIRST);
 		uint16_t transfer16(uint16_t data);
-		void beginTransaction();
-		void endTransaction();
+		void endTransaction() {};
 	private:
 		const uint16_t	mosi_pin,
 						miso_pin,

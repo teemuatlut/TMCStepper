@@ -83,7 +83,7 @@ template<typename SERIAL_TYPE>
 uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t len, uint16_t timeout) {
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
-	delay(1);
+	delay(TMC2208Stepper::replyDelay);
 
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
@@ -109,6 +109,8 @@ uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t le
 	} while (sync != sync_target);
 
 	uint64_t out = sync;
+	ms = millis();
+	timeout = TMC2208Stepper::abort_window;
 
 	for(uint8_t i=0; i<5;) {
 		uint32_t ms2 = millis();
@@ -139,26 +141,29 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	datagram[len] = calcCRC(datagram, len);
 	uint64_t out = 0x00000000UL;
 
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != NULL) {
-				SWSerial->listen();
-				out = _sendDatagram(*SWSerial, datagram, len, abort_window);
-				SWSerial->stopListening();
-		} else
-	#endif
-		{
-			out = _sendDatagram(*HWSerial, datagram, len, abort_window);
+	for (uint8_t i = 0; i < max_retries; i++) {
+		#if SW_CAPABLE_PLATFORM
+			if (SWSerial != NULL) {
+					SWSerial->listen();
+					out = _sendDatagram(*SWSerial, datagram, len, abort_window);
+					SWSerial->stopListening();
+			} else
+		#endif
+			{
+				out = _sendDatagram(*HWSerial, datagram, len, abort_window);
+			}
+
+		delay(replyDelay);
+
+		CRCerror = false;
+		uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
+		uint8_t crc = calcCRC(out_datagram, 7);
+		if ((crc != (uint8_t)out) || crc == 0 ) {
+			CRCerror = true;
+			out = 0;
+		} else {
+			break;
 		}
-
-	delay(replyDelay);
-
-	CRCerror = false;
-	uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
-	uint8_t crc = calcCRC(out_datagram, 7);
-	if ((crc != (uint8_t)out) || crc == 0 ) {
-		 CRCerror = true;
-		// probably better to return nothing rather than random bad data.
-		out = 0;
 	}
 
 	return out>>8;

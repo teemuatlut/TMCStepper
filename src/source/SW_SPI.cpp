@@ -24,11 +24,7 @@ void SW_SPIClass::init() {
     miso_bm = digitalPinToBitMask(miso_pin);
     sck_bm = digitalPinToBitMask(sck_pin);
   #endif
-  writeSCK_H;
 }
-
-void SW_SPIClass::beginTransaction() { writeSCK_L; }
-void SW_SPIClass::endTransaction()   { writeSCK_H; }
 
 //Combined shiftOut and shiftIn from Arduino wiring_shift.c
 byte SW_SPIClass::transfer(uint8_t ulVal, uint8_t ulBitOrder) {
