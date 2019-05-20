@@ -59,7 +59,7 @@ void TMC5130Stepper::X_COMPARE(uint32_t input) {
 uint8_t TMC5130Stepper::RAMPMODE() { return read(RAMPMODE_register.address); }
 void TMC5130Stepper::RAMPMODE(uint8_t input) {
   RAMPMODE_register.sr = input;
-  write(THIGH_register.address, THIGH_register.sr);
+  write(RAMPMODE_register.address, RAMPMODE_register.sr);
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: XACTUAL
