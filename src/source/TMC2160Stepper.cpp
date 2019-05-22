@@ -36,18 +36,19 @@ void TMC2160Stepper::begin() {
 
 */
 void TMC2160Stepper::rms_current(uint16_t mA) {
-  uint16_t V_fs = 325; // 0.325 * 1000
+  constexpr uint32_t V_fs = 325; // 0.325 * 1000
   uint8_t CS = 31;
   uint32_t scaler = 0; // = 256
 
+  const uint16_t RS_scaled = Rsense * 0xFFFF; // Scale to 16b
   uint32_t numerator = 11585; // 32 * 256 * sqrt(2)
-  uint16_t RS_scaled = Rsense * 0xFFFF; // Scale to 16b
   numerator *= RS_scaled;
   numerator >>= 8;
   numerator *= mA;
 
   do {
-    uint32_t denominator = (CS+1) * V_fs * 0xFFFF >> 8;
+    uint32_t denominator = V_fs * 0xFFFF >> 8;
+    denominator *= CS+1;
     scaler = numerator / denominator;
 
     if (scaler > 255) scaler = 0; // Maximum
