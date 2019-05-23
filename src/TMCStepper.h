@@ -903,7 +903,7 @@ class TMC2208Stepper : public TMCStepper {
 		const bool write_only;
 		static constexpr uint8_t replyDelay = 2;
 		static constexpr uint8_t abort_window = 5;
-		static constexpr uint8_t max_retries = 4;
+		static constexpr uint8_t max_retries = 2;
 
 		template<typename SERIAL_TYPE>
 		friend uint64_t _sendDatagram(SERIAL_TYPE &, uint8_t [], const uint8_t, uint16_t);
