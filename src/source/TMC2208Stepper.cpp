@@ -3,7 +3,7 @@
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx) :
 	TMCStepper(RS),
-	write_only(!has_rx)	
+	write_only(!has_rx)
 	{ HWSerial = SerialPort; }
 
 #if SW_CAPABLE_PLATFORM
