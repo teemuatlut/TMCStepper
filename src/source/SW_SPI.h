@@ -16,7 +16,7 @@ class SW_SPIClass {
 						miso_pin,
 						sck_pin;
 
-		#if defined(ARDUINO_ARCH_AVR) || defined(TARGET_LPC1768)
+		#if defined(ARDUINO_ARCH_AVR)
 			fastio_bm mosi_bm,
 					miso_bm,
 					sck_bm;
