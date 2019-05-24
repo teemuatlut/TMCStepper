@@ -20,28 +20,16 @@ void SW_SPIClass::init() {
   #endif
 }
 
-//Combined shiftOut and shiftIn from Arduino wiring_shift.c
-byte SW_SPIClass::transfer(uint8_t ulVal, uint8_t ulBitOrder) {
+uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
   uint8_t value = 0;
 
-  for (uint8_t i=0 ; i<8 ; ++i) {
+  for (uint8_t i=7 ; i>=0 ; i--) {
     // Write bit
-    if ( ulBitOrder == LSBFIRST ) {
-      !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
-    } else {
-      !!(ulVal & (1 << (7 - i))) ? writeMOSI_H : writeMOSI_L;
-    }
-
+    !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
     // Start clock pulse
     writeSCK_H;
-
     // Read bit
-    if ( ulBitOrder == LSBFIRST ) {
-      value |= ( readMISO ? 1 : 0) << i ;
-    } else {
-      value |= ( readMISO ? 1 : 0) << (7 - i) ;
-    }
-
+    value |= ( readMISO ? 1 : 0) << i;
     // Stop clock pulse
     writeSCK_L;
   }
