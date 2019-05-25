@@ -18,12 +18,14 @@ void SW_SPIClass::init() {
     miso_bm = digitalPinToBitMask(miso_pin);
     sck_bm = digitalPinToBitMask(sck_pin);
   #endif
+  writeSCK_H;
 }
 
 uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
   uint8_t value = 0;
+  writeSCK_L;
 
-  for (uint8_t i=7 ; i>=0 ; i--) {
+  for (uint8_t i=7 ; i>=1 ; i--) {
     // Write bit
     !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
     // Start clock pulse
@@ -33,6 +35,10 @@ uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
     // Stop clock pulse
     writeSCK_L;
   }
+
+  !!(ulVal & (1 << 0)) ? writeMOSI_H : writeMOSI_L;
+  writeSCK_H;
+  value |= ( readMISO ? 1 : 0) << 0;
 
   return value;
 }

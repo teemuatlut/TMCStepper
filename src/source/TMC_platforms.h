@@ -1,4 +1,4 @@
-#if defined(ARDUINO_ARCH_AVR)
+#if defined(ARDUINO_ARCH_AVR) // 125kHz
   typedef volatile uint8_t* fastio_reg;
   typedef uint8_t fastio_bm;
   #define getPort(P) digitalPinToPort(P)
