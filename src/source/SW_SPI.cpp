@@ -10,7 +10,7 @@ void SW_SPIClass::init() {
   pinMode(mosi_pin, OUTPUT);
   pinMode(sck_pin, OUTPUT);
   pinMode(miso_pin, INPUT_PULLUP);
-  #if defined(ARDUINO_ARCH_AVR)
+  #ifdef ARDUINO_ARCH_AVR
     mosi_register = portOutputRegister(getPort(mosi_pin));
     miso_register = portInputRegister(getPort(miso_pin));
     sck_register = portOutputRegister(getPort(sck_pin));

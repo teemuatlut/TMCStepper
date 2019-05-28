@@ -15,13 +15,13 @@
   #define writeSCK_L g_APinDescription[sck_pin].pPort -> PIO_CODR = g_APinDescription[sck_pin].ulPin
   #define readMISO PIO_Get( g_APinDescription[miso_pin].pPort, PIO_INPUT, g_APinDescription[miso_pin].ulPin )
 #elif defined(TARGET_LPC1768) // LPC1769:2.4MHz
-  typedef volatile LPC_GPIO_TypeDef* fastio_reg;
-  typedef uint32_t fastio_bm;
-  #define writeMOSI_H digitalWrite(mosi_pin, HIGH)
-  #define writeMOSI_L digitalWrite(mosi_pin, LOW)
-  #define writeSCK_H digitalWrite(sck_pin, HIGH)
-  #define writeSCK_L digitalWrite(sck_pin, LOW)
-  #define readMISO digitalRead(miso_pin)
+  //typedef volatile LPC_GPIO_TypeDef* fastio_reg;
+  //typedef uint32_t fastio_bm;
+  #define writeMOSI_H gpio_set(mosi_pin)
+  #define writeMOSI_L gpio_clear(mosi_pin)
+  #define writeSCK_H gpio_set(sck_pin)
+  #define writeSCK_L gpio_clear(sck_pin)
+  #define readMISO gpio_get(miso_pin)
 #else // DUE:116kHz
   #define writeMOSI_H digitalWrite(mosi_pin, HIGH)
   #define writeMOSI_L digitalWrite(mosi_pin, LOW)
