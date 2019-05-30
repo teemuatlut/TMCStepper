@@ -68,7 +68,7 @@ sync_phases 			KEYWORD2
 microsteps 				KEYWORD2
 interpolate 			KEYWORD2
 double_edge_step 		KEYWORD2
-disable_short_protection KEYWORD2
+disable_short_protection	KEYWORD2
 sg_min 					KEYWORD2
 sg_step_width 			KEYWORD2
 sg_max 					KEYWORD2
