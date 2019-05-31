@@ -20,6 +20,7 @@
 #include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
 #include "source/TMC2660_bitfields.h"
+#include "source/TMC2209_bitfields.h"
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 #define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
@@ -28,10 +29,11 @@
 #define INIT5160_REGISTER(REG) TMC5160_n::REG##_t REG##_register = TMC5160_n::REG##_t
 #define INIT2660_REGISTER(REG) TMC2660_n::REG##_t REG##_register = TMC2660_n::REG##_t
 #define INIT2208_REGISTER(REG) TMC2208_n::REG##_t REG##_register = TMC2208_n::REG##_t
+#define INIT2209_REGISTER(REG) TMC2209_n::REG##_t REG##_register = TMC2209_n::REG##_t
 #define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
-#define TMCSTEPPER_VERSION 0x000305 // v0.3.5
+#define TMCSTEPPER_VERSION 0x000306 // v0.3.6
 
 class TMCStepper {
 	public:
@@ -1085,4 +1087,24 @@ class TMC2660Stepper {
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		uint8_t _savedToff = 0;
 		SW_SPIClass * TMC_SW_SPI = NULL;
+};
+
+class TMC2209Stepper : public TMC2208Stepper {	
+	public:
+		//TMC2209Stepper(HardwareSerial& serial);
+		TMC2209Stepper(Stream * SerialPort, float RS, bool has_rx=true);
+		#if SW_CAPABLE_PLATFORM
+			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+		#endif
+
+		void sgt(uint8_t  B);
+		uint8_t sgt();
+
+		// W: TCOOLTHRS
+		uint32_t TCOOLTHRS();
+		void TCOOLTHRS(uint32_t input);
+
+	protected:
+		INIT_REGISTER(SGTHRS){.sr=0};	// 32b
+		INIT2209_REGISTER(TCOOLTHRS){.sr=0};	// 32b
 };
