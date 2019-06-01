@@ -1092,9 +1092,9 @@ class TMC2660Stepper {
 class TMC2209Stepper : public TMC2208Stepper {	
 	public:
 		//TMC2209Stepper(HardwareSerial& serial);
-		TMC2209Stepper(Stream * SerialPort, float RS, bool has_rx=true);
+		TMC2209Stepper(Stream * SerialPort, float RS, uint8_t slave=0x00, bool has_rx=true);
 		#if SW_CAPABLE_PLATFORM
-			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t slave=0x00, bool has_rx=true);
 		#endif
 
 		void sgt(uint8_t  B);
@@ -1107,4 +1107,10 @@ class TMC2209Stepper : public TMC2208Stepper {
 	protected:
 		INIT_REGISTER(SGTHRS){.sr=0};	// 32b
 		INIT2209_REGISTER(TCOOLTHRS){.sr=0};	// 32b
+    
+		void write(uint8_t, uint32_t);
+		uint32_t read(uint8_t);
+    
+		static constexpr uint8_t  TMC2209_SYNC = 0x05;
+		uint8_t  slave_addr;
 };
