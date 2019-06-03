@@ -19,6 +19,7 @@
 #include "source/TMC5130_bitfields.h"
 #include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
+#include "source/TMC2209_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
@@ -731,10 +732,13 @@ class TMC5161Stepper : public TMC5160Stepper {
 
 class TMC2208Stepper : public TMCStepper {
 	public:
-		//TMC2208Stepper(HardwareSerial& serial);
-		TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx=true);
+		TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx=true) :
+			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
+			{}
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true);
+			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true) :
+				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR, has_rx)
+				{}
 		#endif
 		void push();
 		void begin();
@@ -890,6 +894,11 @@ class TMC2208Stepper : public TMCStepper {
 		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
 		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
 
+		TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr);
+		#if SW_CAPABLE_PLATFORM
+			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr, bool has_rx);
+		#endif
+
 		Stream * HWSerial = NULL;
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = NULL;
@@ -897,6 +906,7 @@ class TMC2208Stepper : public TMCStepper {
 
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
+		const uint8_t slave_address;
 		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
 		static constexpr uint8_t  TMC2208_SYNC = 0x05,
 															TMC2208_SLAVE_ADDR = 0x00;
@@ -907,6 +917,54 @@ class TMC2208Stepper : public TMCStepper {
 
 		template<typename SERIAL_TYPE>
 		friend uint64_t _sendDatagram(SERIAL_TYPE &, uint8_t [], const uint8_t, uint16_t);
+};
+
+class TMC2209Stepper : public TMC2208Stepper {
+	public:
+		TMC2209Stepper(Stream * SerialPort, float RS, uint8_t addr) :
+			TMC2208Stepper(SerialPort, RS, addr) {}
+
+		#if SW_CAPABLE_PLATFORM
+			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
+				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr, SW_RX_pin != SW_TX_pin) {}
+		#endif
+
+		// R: IOIN
+		uint32_t IOIN();
+		bool enn();
+		bool ms1();
+		bool ms2();
+		bool diag();
+		bool pdn_uart();
+		bool step();
+		bool spread_en();
+		bool dir();
+		uint8_t version();
+
+		// W: SGTHRS
+		void SGTHRS(uint8_t B);
+
+		// R: SG_RESULT
+		uint16_t SG_RESULT();
+
+		// W: COOLCONF
+		void COOLCONF(uint16_t B);
+		uint16_t COOLCONF();
+		void semin(uint8_t B);
+		void seup(uint8_t B);
+		void semax(uint8_t B);
+		void sedn(uint8_t B);
+		void seimin(bool B);
+		uint8_t semin();
+		uint8_t seup();
+		uint8_t semax();
+		uint8_t sedn();
+		bool seimin();
+
+	protected:
+		TMC2209_n::IOIN_t IOIN_register{{.sr=0}};
+		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
+		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
