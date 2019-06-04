@@ -9,3 +9,4 @@ Supported TMC drivers:
 * TMC5130
 * TMC5160
 * TMC5161
+* TMC2209
