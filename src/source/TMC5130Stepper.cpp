@@ -69,7 +69,13 @@ void TMC5130Stepper::XACTUAL(int32_t input) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: VACTUAL
-int32_t TMC5130Stepper::VACTUAL() { return read(VACTUAL_t::address); }
+int32_t TMC5130Stepper::VACTUAL() {
+  uint32_t int24 = read(VACTUAL_t::address);
+  if((int24 >> 23) & 0x01) {
+    int24 |= 0xFF000000;
+  }
+  return int24;
+}
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VSTART
 uint32_t TMC5130Stepper::VSTART() { return VSTART_register.sr; }
