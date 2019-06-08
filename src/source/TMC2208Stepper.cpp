@@ -30,6 +30,9 @@ void TMC2208Stepper::begin() {
 	#if SW_CAPABLE_PLATFORM
 		beginSerial(115200);
 	#endif
+	pdn_disable(true);
+	mstep_reg_select(true);
+
 }
 
 void TMC2208Stepper::push() {
