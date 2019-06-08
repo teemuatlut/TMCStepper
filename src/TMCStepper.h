@@ -395,6 +395,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		INIT_REGISTER(DRV_CONF){{.sr=0}};
 		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
 		INIT_REGISTER(OFFSET_READ){.sr=0};
+		INIT2160_REGISTER(PWMCONF){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
@@ -581,6 +582,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(RAMP_STAT){{.sr=0}};
 		INIT_REGISTER(ENCMODE){{.sr=0}};
 		INIT_REGISTER(ENC_CONST){.sr=0};
+		PWMCONF_t PWMCONF_register = PWMCONF_t{{.sr=0}};
 
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
 		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; }; // R
@@ -716,7 +718,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT_REGISTER(ENC_DEVIATION){.sr=0};
 		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
-		INIT5160_REGISTER(PWMCONF){{.sr=0}};
+		TMC2160_n::PWMCONF_t PWMCONF_register = TMC2160_n::PWMCONF_t{{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
