@@ -144,7 +144,7 @@ struct CHOPCONF_t {
     struct { // TMC5160
       uint32_t     : 20;
       uint8_t tpfd : 4; // 5160
-      uint16_t     : 10;
+      uint16_t     : 7;
       bool diss2vs : 1; // TMC5160 only
     };
   };
