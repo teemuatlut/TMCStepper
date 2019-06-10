@@ -8,11 +8,11 @@ namespace TMC2209_n {
       uint32_t sr;
       struct {
         bool  enn : 1,
-              : 1,
+                  : 1,
               ms1 : 1,
               ms2 : 1,
               diag : 1,
-              : 1,
+                   : 1,
               pdn_uart : 1,
               step : 1,
               spread_en : 1,
@@ -25,12 +25,12 @@ namespace TMC2209_n {
 
   struct SGTHRS_t {
     constexpr static uint8_t address = 0x40;
-    uint32_t sr : 8;
+    uint8_t sr : 8;
   };
 
   struct SG_RESULT_t {
     constexpr static uint8_t address = 0x41;
-    uint32_t sr : 10;
+    uint16_t sr : 10;
   };
 
   struct COOLCONF_t {
