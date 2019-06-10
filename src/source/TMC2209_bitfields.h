@@ -34,7 +34,7 @@ namespace TMC2209_n {
   };
 
   struct COOLCONF_t {
-    constexpr static uint8_t address = 0x6D;
+    constexpr static uint8_t address = 0x42;
     union {
       uint16_t sr;
       struct {
