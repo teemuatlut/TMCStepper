@@ -389,7 +389,30 @@ class TMC2160Stepper : public TMC2130Stepper {
 		// R: OFFSET_READ
 		uint16_t OFFSET_READ();
 
+		// W: PWMCONF
+		void PWMCONF(uint32_t input);
+		void pwm_ofs(uint8_t B);
+		void pwm_grad(uint8_t B);
+		void pwm_freq(uint8_t B);
+		void pwm_autoscale(bool B);
+		void pwm_autograd(bool B);
+		void freewheel(uint8_t B);
+		void pwm_reg(uint8_t B);
+		void pwm_lim(uint8_t B);
+		uint32_t PWMCONF();
+		uint8_t pwm_ofs();
+		uint8_t pwm_grad();
+		uint8_t pwm_freq();
+		bool pwm_autoscale();
+		bool pwm_autograd();
+		uint8_t freewheel();
+		uint8_t pwm_reg();
+		uint8_t pwm_lim();
+
 	protected:
+		using TMC2130Stepper::pwm_ampl;
+		using TMC2130Stepper::pwm_symmetric;
+
 		INIT2160_REGISTER(IOIN){{.sr=0}};
 		INIT_REGISTER(SHORT_CONF){{.sr=0}};
 		INIT_REGISTER(DRV_CONF){{.sr=0}};
@@ -562,6 +585,14 @@ class TMC5130Stepper : public TMC2160Stepper {
 		// R: ENC_LATCH
 		uint32_t ENC_LATCH();
 
+		using TMC2130Stepper::PWMCONF;
+		using TMC2130Stepper::pwm_ampl;
+		using TMC2130Stepper::pwm_grad;
+		using TMC2130Stepper::pwm_freq;
+		using TMC2130Stepper::pwm_autoscale;
+		using TMC2130Stepper::pwm_symmetric;
+		using TMC2130Stepper::freewheel;
+
 	protected:
 		INIT_REGISTER(SLAVECONF){{.sr=0}};
 		INIT5130_REGISTER(IOIN){{.sr=0}};
@@ -582,7 +613,6 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(RAMP_STAT){{.sr=0}};
 		INIT_REGISTER(ENCMODE){{.sr=0}};
 		INIT_REGISTER(ENC_CONST){.sr=0};
-		PWMCONF_t PWMCONF_register = PWMCONF_t{{.sr=0}};
 
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
 		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; }; // R
@@ -626,6 +656,11 @@ class TMC5130Stepper : public TMC2160Stepper {
 		using TMC2160Stepper::filt_isense;
 		using TMC2160Stepper::GLOBAL_SCALER;
 		using TMC2160Stepper::OFFSET_READ;
+
+		using TMC2160Stepper::pwm_ofs;
+		using TMC2160Stepper::pwm_autograd;
+		using TMC2160Stepper::pwm_reg;
+		using TMC2160Stepper::pwm_lim;
 };
 
 class TMC5160Stepper : public TMC5130Stepper {
@@ -696,14 +731,15 @@ class TMC5160Stepper : public TMC5130Stepper {
 		uint8_t tpfd();
 
 		// W: PWM_CONF
-		void PWM_CONF(uint32_t);
-		void pwm_lim(uint8_t);
-		void pwm_reg(uint8_t);
-		void pwm_autograd(bool);
-		uint32_t PWM_CONF();
-		uint8_t pwm_lim();
-		uint8_t pwm_reg();
-		bool pwm_autograd();
+		using TMC2160Stepper::PWMCONF;
+		using TMC2160Stepper::pwm_ofs;
+		using TMC2160Stepper::pwm_grad;
+		using TMC2160Stepper::pwm_freq;
+		using TMC2160Stepper::pwm_autoscale;
+		using TMC2160Stepper::pwm_autograd;
+		using TMC2160Stepper::freewheel;
+		using TMC2160Stepper::pwm_reg;
+		using TMC2160Stepper::pwm_lim;
 
 	protected:
 		using TMC5130Stepper::I_scale_analog;
@@ -718,7 +754,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		INIT_REGISTER(ENC_DEVIATION){.sr=0};
 		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
-		TMC2160_n::PWMCONF_t PWMCONF_register = TMC2160_n::PWMCONF_t{{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
