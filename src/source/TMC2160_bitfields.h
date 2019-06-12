@@ -19,9 +19,7 @@ namespace TMC2160_n {
       };
     };
   };
-}
 
-namespace TMC2160_n {
   struct PWMCONF_t {
     constexpr static uint8_t address = 0x70;
     union {
@@ -36,6 +34,18 @@ namespace TMC2160_n {
                           : 2,
                 pwm_reg : 4,
                 pwm_lim : 4;
+      };
+    };
+  };
+
+  struct DCCTRL_t {
+    constexpr static uint8_t address = 0x6E;
+    union {
+      uint32_t sr : 24;
+      struct {
+        uint16_t dc_time : 10,
+                         : 6;
+        uint8_t dc_sg : 8;
       };
     };
   };

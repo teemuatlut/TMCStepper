@@ -100,3 +100,30 @@ void TMC2160Stepper::GLOBAL_SCALER(uint8_t input) {
 
 // R: OFFSET_READ
 uint16_t TMC2160Stepper::OFFSET_READ() { return read(OFFSET_READ_register.address); }
+
+// W: DCCTRL (0x6E)
+void TMC2160Stepper::DCCTRL(uint32_t input) {
+  DCCTRL_register.sr = input;
+  write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+void TMC2160Stepper::dc_time(uint16_t input) {
+  DCCTRL_register.dc_time = input;
+  write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+void TMC2160Stepper::dc_sg(uint8_t input) {
+  DCCTRL_register.dc_sg = input;
+  write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+
+uint32_t TMC2160Stepper::DCCTRL() {
+  DCCTRL_register.sr = read(DCCTRL_register.address);
+  return DCCTRL_register.sr;
+}
+uint16_t TMC2160Stepper::dc_time() {
+  DCCTRL();
+  return DCCTRL_register.dc_time;
+}
+uint8_t TMC2160Stepper::dc_sg() {
+  DCCTRL();
+  return DCCTRL_register.dc_sg;
+}
