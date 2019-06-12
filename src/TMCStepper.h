@@ -1011,11 +1011,17 @@ class TMC2209Stepper : public TMC2208Stepper {
 		uint8_t sedn();
 		bool seimin();
 
+		// R: PWM_AUTO (0x72)
+		uint32_t PWM_AUTO();
+		uint8_t pwm_ofs_auto();
+		uint8_t pwm_grad_auto();
+
 	protected:
 		TMC2209_n::IOIN_t IOIN_register{{.sr=0}};
 		INIT_REGISTER(TCOOLTHRS){.sr=0};
 		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
 		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
+		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
