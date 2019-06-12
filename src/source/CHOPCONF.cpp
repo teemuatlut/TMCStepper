@@ -48,6 +48,11 @@ bool 	TMC2130Stepper::intpol()	{ GET_REG(intpol);	}
 bool 	TMC2130Stepper::dedge()		{ GET_REG(dedge);	}
 bool 	TMC2130Stepper::diss2g()	{ GET_REG(diss2g);	}
 
+void TMC5160Stepper::diss2vs(bool B){ SET_REG(diss2vs); }
+void TMC5160Stepper::tpfd(uint8_t B){ SET_REG(tpfd);	}
+bool TMC5160Stepper::diss2vs()		{ GET_REG(diss2vs); }
+uint8_t TMC5160Stepper::tpfd()		{ GET_REG(tpfd);	}
+
 void TMC2208Stepper::CHOPCONF(uint32_t input) {
 	CHOPCONF_register.sr = input;
 	write(CHOPCONF_register.address, CHOPCONF_register.sr);
