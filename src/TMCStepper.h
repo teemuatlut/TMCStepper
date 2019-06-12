@@ -987,6 +987,10 @@ class TMC2209Stepper : public TMC2208Stepper {
 		bool dir();
 		uint8_t version();
 
+		// W: TCOOLTHRS
+		uint32_t TCOOLTHRS();
+		void TCOOLTHRS(uint32_t input);
+
 		// W: SGTHRS
 		void SGTHRS(uint8_t B);
 
@@ -1009,6 +1013,7 @@ class TMC2209Stepper : public TMC2208Stepper {
 
 	protected:
 		TMC2209_n::IOIN_t IOIN_register{{.sr=0}};
+		INIT_REGISTER(TCOOLTHRS){.sr=0};
 		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
 		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
 };
