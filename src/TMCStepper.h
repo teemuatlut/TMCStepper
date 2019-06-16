@@ -646,7 +646,6 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(MSLUTSTART){0};
 		INIT_REGISTER(MSCNT){0};
 		INIT_REGISTER(MSCURACT){0};
-		INIT_REGISTER(DCCTRL){0};
 		*/
 
 		static constexpr float default_RS = 0.15;
