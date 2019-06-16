@@ -130,6 +130,7 @@ void TMC2130Stepper::push() {
   VDCMIN(VDCMIN_register.sr);
   CHOPCONF(CHOPCONF_register.sr);
   COOLCONF(COOLCONF_register.sr);
+  DCCTRL(DCCTRL_register.sr);
   PWMCONF(PWMCONF_register.sr);
   ENCM_CTRL(ENCM_CTRL_register.sr);
 }
@@ -178,6 +179,33 @@ uint32_t TMC2130Stepper::VDCMIN() { return VDCMIN_register.sr; }
 void TMC2130Stepper::VDCMIN(uint32_t input) {
   VDCMIN_register.sr = input;
   write(VDCMIN_register.address, VDCMIN_register.sr);
+}
+///////////////////////////////////////////////////////////////////////////////////////
+// RW: DCCTRL
+void TMC2130Stepper::DCCTRL(uint32_t input) {
+	DCCTRL_register.sr = input;
+	write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+void TMC2130Stepper::dc_time(uint16_t input) {
+	DCCTRL_register.dc_time = input;
+	write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+void TMC2130Stepper::dc_sg(uint8_t input) {
+	DCCTRL_register.dc_sg = input;
+	write(DCCTRL_register.address, DCCTRL_register.sr);
+}
+
+uint32_t TMC2130Stepper::DCCTRL() {
+	DCCTRL_register.sr = read(DCCTRL_register.address);
+	return DCCTRL_register.sr;
+}
+uint16_t TMC2130Stepper::dc_time() {
+	DCCTRL();
+	return DCCTRL_register.dc_time;
+}
+uint8_t TMC2130Stepper::dc_sg() {
+	DCCTRL();
+	return DCCTRL_register.dc_sg;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: PWM_SCALE
