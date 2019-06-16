@@ -170,6 +170,18 @@ struct COOLCONF_t {
   };
 };
 
+struct DCCTRL_t {
+	constexpr static uint8_t address = 0x6E;
+	union {
+		uint32_t sr : 24;
+		struct {
+			uint16_t dc_time : 10,
+				: 6;
+			uint8_t dc_sg : 8;
+		};
+	};
+};
+
 namespace TMC2130_n {
   struct DRV_STATUS_t {
     constexpr static uint8_t address = 0x6F;

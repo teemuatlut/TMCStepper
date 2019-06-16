@@ -257,6 +257,14 @@ class TMC2130Stepper : public TMCStepper {
 		int8_t sgt();
 		bool sfilt();
 
+		// W: DCCTRL
+		void DCCTRL(uint32_t input);
+		void dc_time(uint16_t input);
+		void dc_sg(uint8_t input);
+		uint32_t DCCTRL();
+		uint16_t dc_time();
+		uint8_t dc_sg();
+
 		// R: DRV_STATUS
 		uint32_t DRV_STATUS();
 		uint16_t sg_result();
@@ -316,6 +324,7 @@ class TMC2130Stepper : public TMCStepper {
 		INIT_REGISTER(VDCMIN){.sr=0};			// 32b
 		INIT_REGISTER(CHOPCONF){{.sr=0}};	// 32b
 		INIT_REGISTER(COOLCONF){{.sr=0}};	// 32b
+		INIT_REGISTER(DCCTRL){{.sr = 0}};	// 32b
 		INIT_REGISTER(PWMCONF){{.sr=0}};	// 32b
 		INIT_REGISTER(ENCM_CTRL){{.sr=0}};//  8b
 
@@ -389,14 +398,6 @@ class TMC2160Stepper : public TMC2130Stepper {
 		// R: OFFSET_READ
 		uint16_t OFFSET_READ();
 
-		// W: DCCTRL (0x6E)
-		void DCCTRL(uint32_t input);
-		void dc_time(uint16_t input);
-		void dc_sg(uint8_t input);
-		uint32_t DCCTRL();
-		uint16_t dc_time();
-		uint8_t dc_sg();
-
 		// W: PWMCONF
 		void PWMCONF(uint32_t input);
 		void pwm_ofs(uint8_t B);
@@ -426,7 +427,6 @@ class TMC2160Stepper : public TMC2130Stepper {
 		INIT_REGISTER(DRV_CONF){{.sr=0}};
 		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
 		INIT_REGISTER(OFFSET_READ){.sr=0};
-		INIT2160_REGISTER(DCCTRL){{.sr=0}};
 		INIT2160_REGISTER(PWMCONF){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
