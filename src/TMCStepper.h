@@ -927,6 +927,11 @@ class TMC2208Stepper : public TMCStepper {
 		uint8_t pwm_scale_sum();
 		int16_t pwm_scale_auto();
 
+		// R: PWM_AUTO (0x72)
+		uint32_t PWM_AUTO();
+		uint8_t pwm_ofs_auto();
+		uint8_t pwm_grad_auto();
+
 		bool isWriteOnly() {return write_only;}
 
 		uint16_t bytesWritten = 0;
@@ -1018,11 +1023,6 @@ class TMC2209Stepper : public TMC2208Stepper {
 		uint8_t semax();
 		uint8_t sedn();
 		bool seimin();
-
-		// R: PWM_AUTO (0x72)
-		uint32_t PWM_AUTO();
-		uint8_t pwm_ofs_auto();
-		uint8_t pwm_grad_auto();
 
 	protected:
 		TMC2209_n::IOIN_t IOIN_register{{.sr=0}};

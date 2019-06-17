@@ -266,3 +266,11 @@ int16_t TMC2208Stepper::pwm_scale_auto() {
 	else return response;
 	*/
 }
+
+// R: PWM_AUTO
+uint32_t TMC2208Stepper::PWM_AUTO() {
+	PWM_AUTO_register.sr = read(PWM_AUTO_register.address);
+	return PWM_AUTO_register.sr;
+}
+uint8_t TMC2208Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }
+uint8_t TMC2208Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_grad_auto; }

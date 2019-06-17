@@ -29,11 +29,3 @@ void TMC2209Stepper::TCOOLTHRS(uint32_t input) {
 uint16_t TMC2209Stepper::SG_RESULT() {
 	return read(TMC2209_n::SG_RESULT_t::address);
 }
-
-// R: PWM_AUTO
-uint32_t TMC2209Stepper::PWM_AUTO() {
-	PWM_AUTO_register.sr = read(PWM_AUTO_register.address);
-	return PWM_AUTO_register.sr;
-}
-uint8_t TMC2209Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }
-uint8_t TMC2209Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_grad_auto; }
