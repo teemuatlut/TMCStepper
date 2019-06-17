@@ -418,6 +418,11 @@ class TMC2160Stepper : public TMC2130Stepper {
 		uint8_t pwm_reg();
 		uint8_t pwm_lim();
 
+		// R: PWM_SCALE
+		uint32_t PWM_SCALE();
+		uint8_t pwm_scale_sum();
+		uint16_t pwm_scale_auto();
+
 	protected:
 		using TMC2130Stepper::pwm_ampl;
 		using TMC2130Stepper::pwm_symmetric;
@@ -428,6 +433,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
 		INIT_REGISTER(OFFSET_READ){.sr=0};
 		INIT2160_REGISTER(PWMCONF){{.sr=0}};
+		INIT2160_REGISTER(PWM_SCALE){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
@@ -602,6 +608,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		using TMC2130Stepper::pwm_symmetric;
 		using TMC2130Stepper::freewheel;
 
+		using TMC2130Stepper::PWM_SCALE;
+
 	protected:
 		INIT_REGISTER(SLAVECONF){{.sr=0}};
 		INIT5130_REGISTER(IOIN){{.sr=0}};
@@ -669,6 +677,9 @@ class TMC5130Stepper : public TMC2160Stepper {
 		using TMC2160Stepper::pwm_autograd;
 		using TMC2160Stepper::pwm_reg;
 		using TMC2160Stepper::pwm_lim;
+
+		using TMC2160Stepper::pwm_scale_sum;
+		using TMC2160Stepper::pwm_scale_auto;
 };
 
 class TMC5160Stepper : public TMC5130Stepper {
@@ -722,11 +733,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		void ENC_DEVIATION(uint32_t);
 		uint32_t ENC_DEVIATION();
 
-		// R: PWM_SCALE
-		uint32_t PWM_SCALE();
-		uint8_t pwm_scale_sum();
-		uint16_t pwm_scale_auto();
-
 		// R: PWM_AUTO
 		uint32_t PWM_AUTO();
 		uint8_t pwm_ofs_auto();
@@ -749,6 +755,10 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC2160Stepper::pwm_reg;
 		using TMC2160Stepper::pwm_lim;
 
+		using TMC2160Stepper::PWM_SCALE;
+		using TMC2160Stepper::pwm_scale_sum;
+		using TMC2160Stepper::pwm_scale_auto;
+
 	protected:
 		using TMC5130Stepper::I_scale_analog;
 		using TMC5130Stepper::internal_Rsense;
@@ -760,7 +770,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC5130Stepper::rndtf;
 
 		INIT_REGISTER(ENC_DEVIATION){.sr=0};
-		INIT5160_REGISTER(PWM_SCALE){{.sr=0}};
 		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;

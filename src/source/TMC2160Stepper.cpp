@@ -100,3 +100,11 @@ void TMC2160Stepper::GLOBAL_SCALER(uint8_t input) {
 
 // R: OFFSET_READ
 uint16_t TMC2160Stepper::OFFSET_READ() { return read(OFFSET_READ_register.address); }
+
+// R: PWM_SCALE
+uint32_t TMC2160Stepper::PWM_SCALE() {
+  PWM_SCALE_register.sr = read(PWM_SCALE_register.address);
+  return PWM_SCALE_register.sr;
+}
+uint8_t TMC2160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
+uint16_t TMC2160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_auto; }

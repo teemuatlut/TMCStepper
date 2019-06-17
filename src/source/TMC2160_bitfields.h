@@ -37,6 +37,18 @@ namespace TMC2160_n {
       };
     };
   };
+
+  struct PWM_SCALE_t {
+    constexpr static uint8_t address = 0x0C;
+    union {
+      uint32_t sr : 25;
+      struct {
+        uint8_t pwm_scale_sum : 8,
+                              : 8;
+        uint16_t pwm_scale_auto : 9;
+      };
+    };
+  };
 }
 
 #pragma pack(pop)
