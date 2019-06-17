@@ -39,7 +39,7 @@ namespace TMC2160_n {
   };
 
   struct PWM_SCALE_t {
-    constexpr static uint8_t address = 0x0C;
+    constexpr static uint8_t address = 0x71;
     union {
       uint32_t sr : 25;
       struct {
