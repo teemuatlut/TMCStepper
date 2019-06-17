@@ -24,5 +24,5 @@ void TMC5160Stepper::ENC_DEVIATION(uint32_t input) {
 uint32_t TMC5160Stepper::PWM_AUTO() {
 	return read(PWM_AUTO_t::address);
 }
-uint8_t TMC5160Stepper::pwm_ofs_auto()  { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); r.pwm_ofs_auto; }
-uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); r.pwm_grad_auto; }
+uint8_t TMC5160Stepper::pwm_ofs_auto()  { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_ofs_auto; }
+uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_grad_auto; }
