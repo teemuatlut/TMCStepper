@@ -26,7 +26,6 @@ bool 	TMC2130Stepper::pwm_symmetric()	{ GET_REG(pwm_symmetric);	}
 uint8_t TMC2130Stepper::freewheel()		{ GET_REG(freewheel);		}
 
 uint32_t TMC2160Stepper::PWMCONF() {
-	PWMCONF_register.sr = read(PWMCONF_register.address);
 	return PWMCONF_register.sr;
 }
 void TMC2160Stepper::PWMCONF(uint32_t input) {
@@ -43,14 +42,14 @@ void TMC2160Stepper::freewheel		( uint8_t B ) { PWMCONF_register.freewheel = B; 
 void TMC2160Stepper::pwm_reg		( uint8_t B ) { PWMCONF_register.pwm_reg = B; 		write(PWMCONF_register.address, PWMCONF_register.sr); }
 void TMC2160Stepper::pwm_lim		( uint8_t B ) { PWMCONF_register.pwm_lim = B; 		write(PWMCONF_register.address, PWMCONF_register.sr); }
 
-uint8_t TMC2160Stepper::pwm_ofs()		{ PWMCONF(); return PWMCONF_register.pwm_ofs;		}
-uint8_t TMC2160Stepper::pwm_grad()		{ PWMCONF(); return PWMCONF_register.pwm_grad;		}
-uint8_t TMC2160Stepper::pwm_freq()		{ PWMCONF(); return PWMCONF_register.pwm_freq;		}
-bool 	TMC2160Stepper::pwm_autoscale()	{ PWMCONF(); return PWMCONF_register.pwm_autoscale;	}
-bool 	TMC2160Stepper::pwm_autograd()	{ PWMCONF(); return PWMCONF_register.pwm_autograd;	}
-uint8_t TMC2160Stepper::freewheel()		{ PWMCONF(); return PWMCONF_register.freewheel;		}
-uint8_t TMC2160Stepper::pwm_reg()		{ PWMCONF(); return PWMCONF_register.pwm_reg;		}
-uint8_t TMC2160Stepper::pwm_lim()		{ PWMCONF(); return PWMCONF_register.pwm_lim;		}
+uint8_t TMC2160Stepper::pwm_ofs()		{ return PWMCONF_register.pwm_ofs;		}
+uint8_t TMC2160Stepper::pwm_grad()		{ return PWMCONF_register.pwm_grad;		}
+uint8_t TMC2160Stepper::pwm_freq()		{ return PWMCONF_register.pwm_freq;		}
+bool 	TMC2160Stepper::pwm_autoscale()	{ return PWMCONF_register.pwm_autoscale;}
+bool 	TMC2160Stepper::pwm_autograd()	{ return PWMCONF_register.pwm_autograd;	}
+uint8_t TMC2160Stepper::freewheel()		{ return PWMCONF_register.freewheel;	}
+uint8_t TMC2160Stepper::pwm_reg()		{ return PWMCONF_register.pwm_reg;		}
+uint8_t TMC2160Stepper::pwm_lim()		{ return PWMCONF_register.pwm_lim;		}
 
 uint32_t TMC2208Stepper::PWMCONF() {
 	if (write_only) return PWMCONF_register.sr;
