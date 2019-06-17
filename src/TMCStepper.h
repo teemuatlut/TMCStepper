@@ -997,6 +997,7 @@ class TMC2209Stepper : public TMC2208Stepper {
 
 		// W: SGTHRS
 		void SGTHRS(uint8_t B);
+		uint8_t SGTHRS();
 
 		// R: SG_RESULT
 		uint16_t SG_RESULT();

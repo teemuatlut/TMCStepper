@@ -17,6 +17,9 @@ void TMC2209Stepper::SGTHRS(uint8_t input) {
 	SGTHRS_register.sr = input;
 	write(SGTHRS_register.address, SGTHRS_register.sr);
 }
+uint8_t TMC2209Stepper::SGTHRS() {
+	return SGTHRS_register.sr;
+}
 
 // W: TCOOLTHRS
 uint32_t TMC2209Stepper::TCOOLTHRS() { return TCOOLTHRS_register.sr; }
