@@ -427,13 +427,10 @@ class TMC2160Stepper : public TMC2130Stepper {
 		using TMC2130Stepper::pwm_ampl;
 		using TMC2130Stepper::pwm_symmetric;
 
-		INIT2160_REGISTER(IOIN){{.sr=0}};
 		INIT_REGISTER(SHORT_CONF){{.sr=0}};
 		INIT_REGISTER(DRV_CONF){{.sr=0}};
 		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
-		INIT_REGISTER(OFFSET_READ){.sr=0};
 		INIT2160_REGISTER(PWMCONF){{.sr=0}};
-		INIT2160_REGISTER(PWM_SCALE){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
@@ -612,7 +609,6 @@ class TMC5130Stepper : public TMC2160Stepper {
 
 	protected:
 		INIT_REGISTER(SLAVECONF){{.sr=0}};
-		INIT5130_REGISTER(IOIN){{.sr=0}};
 		INIT_REGISTER(OUTPUT){.sr=0};
 		INIT_REGISTER(X_COMPARE){.sr=0};
 		INIT_REGISTER(RAMPMODE){.sr=0};
@@ -770,7 +766,6 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC5130Stepper::rndtf;
 
 		INIT_REGISTER(ENC_DEVIATION){.sr=0};
-		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 
 		static constexpr float default_RS = 0.075;
 };
@@ -940,14 +935,10 @@ class TMC2208Stepper : public TMCStepper {
 	protected:
 		INIT2208_REGISTER(GCONF)			{{.sr=0}};
 		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
-		INIT2208_REGISTER(IOIN)				{{.sr=0}};
 		INIT_REGISTER(FACTORY_CONF)		{{.sr=0}};
 		INIT2208_REGISTER(VACTUAL)		{.sr=0};
 		INIT2208_REGISTER(CHOPCONF)		{{.sr=0}};
-		INIT2208_REGISTER(DRV_STATUS)	{{.sr=0}};
 		INIT2208_REGISTER(PWMCONF)		{{.sr=0}};
-		INIT2208_REGISTER(PWM_SCALE)	{{.sr=0}};
-		INIT_REGISTER(PWM_AUTO)				{{.sr=0}};
 
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
 		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
@@ -1025,11 +1016,9 @@ class TMC2209Stepper : public TMC2208Stepper {
 		bool seimin();
 
 	protected:
-		TMC2209_n::IOIN_t IOIN_register{{.sr=0}};
 		INIT_REGISTER(TCOOLTHRS){.sr=0};
 		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
 		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
-		INIT_REGISTER(PWM_AUTO){{.sr=0}};
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
@@ -1044,8 +1033,6 @@ class TMC2224Stepper : public TMC2208Stepper {
 		bool sel_a();
 		bool dir();
 		uint8_t version();
-	protected:
-		IOIN_2224_t IOIN_register = IOIN_2224_t{{.sr=0}};
 };
 
 class TMC2660Stepper {

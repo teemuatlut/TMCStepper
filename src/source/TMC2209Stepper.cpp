@@ -1,18 +1,17 @@
 #include "TMCStepper.h"
 
 uint32_t TMC2209Stepper::IOIN() {
-	IOIN_register.sr = read(IOIN_register.address);
-	return IOIN_register.sr;
+	return read(TMC2209_n::IOIN_t::address);
 }
-bool TMC2209Stepper::enn()			{ IOIN(); return IOIN_register.enn;			}
-bool TMC2209Stepper::ms1()			{ IOIN(); return IOIN_register.ms1;			}
-bool TMC2209Stepper::ms2()			{ IOIN(); return IOIN_register.ms2;			}
-bool TMC2209Stepper::diag()			{ IOIN(); return IOIN_register.diag;		}
-bool TMC2209Stepper::pdn_uart()		{ IOIN(); return IOIN_register.pdn_uart;	}
-bool TMC2209Stepper::step()			{ IOIN(); return IOIN_register.step;		}
-bool TMC2209Stepper::spread_en()	{ IOIN(); return IOIN_register.spread_en;	}
-bool TMC2209Stepper::dir()			{ IOIN(); return IOIN_register.dir;			}
-uint8_t TMC2209Stepper::version() 	{ IOIN(); return IOIN_register.version;		}
+bool TMC2209Stepper::enn()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.enn;		}
+bool TMC2209Stepper::ms1()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms1;		}
+bool TMC2209Stepper::ms2()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms2;		}
+bool TMC2209Stepper::diag()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.diag;		}
+bool TMC2209Stepper::pdn_uart()		{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.pdn_uart;	}
+bool TMC2209Stepper::step()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.step;		}
+bool TMC2209Stepper::spread_en()	{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.spread_en;}
+bool TMC2209Stepper::dir()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
+uint8_t TMC2209Stepper::version() 	{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 void TMC2209Stepper::SGTHRS(uint8_t input) {
 	SGTHRS_register.sr = input;

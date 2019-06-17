@@ -201,32 +201,30 @@ uint32_t TMC2208Stepper::OTP_READ() {
 }
 
 uint32_t TMC2208Stepper::IOIN() {
-	IOIN_register.sr = read(IOIN_register.address);
-	return IOIN_register.sr;
+	return read(TMC2208_n::IOIN_t::address);
 }
-bool TMC2208Stepper::enn()			{ IOIN(); return IOIN_register.enn;		}
-bool TMC2208Stepper::ms1()			{ IOIN(); return IOIN_register.ms1;		}
-bool TMC2208Stepper::ms2()			{ IOIN(); return IOIN_register.ms2;		}
-bool TMC2208Stepper::diag()			{ IOIN(); return IOIN_register.diag;	}
-bool TMC2208Stepper::pdn_uart()		{ IOIN(); return IOIN_register.pdn_uart;}
-bool TMC2208Stepper::step()			{ IOIN(); return IOIN_register.step;	}
-bool TMC2208Stepper::sel_a()		{ IOIN(); return IOIN_register.sel_a;	}
-bool TMC2208Stepper::dir()			{ IOIN(); return IOIN_register.dir;		}
-uint8_t TMC2208Stepper::version() 	{ IOIN(); return IOIN_register.version;	}
+bool TMC2208Stepper::enn()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.enn;		}
+bool TMC2208Stepper::ms1()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms1;		}
+bool TMC2208Stepper::ms2()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms2;		}
+bool TMC2208Stepper::diag()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.diag;		}
+bool TMC2208Stepper::pdn_uart()		{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.pdn_uart;	}
+bool TMC2208Stepper::step()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.step;		}
+bool TMC2208Stepper::sel_a()		{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.sel_a;	}
+bool TMC2208Stepper::dir()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
+uint8_t TMC2208Stepper::version() 	{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 uint32_t TMC2224Stepper::IOIN() {
-	IOIN_register.sr = read(IOIN_register.address);
-	return IOIN_register.sr;
+	return read(TMC2224_n::IOIN_t::address);
 }
-bool TMC2224Stepper::enn()			{ IOIN(); return IOIN_register.enn;		}
-bool TMC2224Stepper::ms1()			{ IOIN(); return IOIN_register.ms1;		}
-bool TMC2224Stepper::ms2()			{ IOIN(); return IOIN_register.ms2;		}
-bool TMC2224Stepper::pdn_uart()		{ IOIN(); return IOIN_register.pdn_uart;}
-bool TMC2224Stepper::spread()		{ IOIN(); return IOIN_register.spread;	}
-bool TMC2224Stepper::step()			{ IOIN(); return IOIN_register.step;	}
-bool TMC2224Stepper::sel_a()		{ IOIN(); return IOIN_register.sel_a;	}
-bool TMC2224Stepper::dir()			{ IOIN(); return IOIN_register.dir;		}
-uint8_t TMC2224Stepper::version() 	{ IOIN(); return IOIN_register.version;	}
+bool TMC2224Stepper::enn()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.enn;		}
+bool TMC2224Stepper::ms1()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms1;		}
+bool TMC2224Stepper::ms2()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms2;		}
+bool TMC2224Stepper::pdn_uart()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.pdn_uart;	}
+bool TMC2224Stepper::spread()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.spread;	}
+bool TMC2224Stepper::step()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.step;		}
+bool TMC2224Stepper::sel_a()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.sel_a;	}
+bool TMC2224Stepper::dir()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
+uint8_t TMC2224Stepper::version() 	{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 uint16_t TMC2208Stepper::FACTORY_CONF() {
 	if (write_only) return FACTORY_CONF_register.sr;
@@ -251,13 +249,18 @@ uint32_t TMC2208Stepper::VACTUAL() {
 }
 
 uint32_t TMC2208Stepper::PWM_SCALE() {
-	PWM_SCALE_register.sr = read(PWM_SCALE_register.address);
-	return PWM_SCALE_register.sr;
+	return read(TMC2208_n::PWM_SCALE_t::address);
 }
-uint8_t TMC2208Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
+uint8_t TMC2208Stepper::pwm_scale_sum() {
+	TMC2208_n::PWM_SCALE_t r{0};
+	r.sr = PWM_SCALE();
+	return r.pwm_scale_sum;
+}
+
 int16_t TMC2208Stepper::pwm_scale_auto() {
-	PWM_SCALE();
-	return PWM_SCALE_register.pwm_scale_auto;
+	TMC2208_n::PWM_SCALE_t r{0};
+	r.sr = PWM_SCALE();
+	return r.pwm_scale_auto;
 	// Not two's complement? 9nth bit determines sign
 	/*
 	uint32_t d = PWM_SCALE();
@@ -269,8 +272,7 @@ int16_t TMC2208Stepper::pwm_scale_auto() {
 
 // R: PWM_AUTO
 uint32_t TMC2208Stepper::PWM_AUTO() {
-	PWM_AUTO_register.sr = read(PWM_AUTO_register.address);
-	return PWM_AUTO_register.sr;
+	return read(PWM_AUTO_t::address);
 }
-uint8_t TMC2208Stepper::pwm_ofs_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_ofs_auto; }
-uint8_t TMC2208Stepper::pwm_grad_auto() { PWM_AUTO(); return PWM_AUTO_register.pwm_grad_auto; }
+uint8_t TMC2208Stepper::pwm_ofs_auto()  { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_ofs_auto; }
+uint8_t TMC2208Stepper::pwm_grad_auto() { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_grad_auto; }

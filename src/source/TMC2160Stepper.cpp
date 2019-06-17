@@ -80,16 +80,15 @@ uint16_t TMC2160Stepper::rms_current() { return cs2rms(irun()); }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN
 uint32_t  TMC2160Stepper::IOIN() {
-  IOIN_register.sr = read(IOIN_register.address);
-  return IOIN_register.sr;
+  return read(TMC2160_n::IOIN_t::address);
 }
-bool    TMC2160Stepper::refl_step()      { IOIN(); return IOIN_register.refl_step; }
-bool    TMC2160Stepper::refr_dir()       { IOIN(); return IOIN_register.refr_dir; }
-bool    TMC2160Stepper::encb_dcen_cfg4() { IOIN(); return IOIN_register.encb_dcen_cfg4; }
-bool    TMC2160Stepper::enca_dcin_cfg5() { IOIN(); return IOIN_register.enca_dcin_cfg5; }
-bool    TMC2160Stepper::drv_enn()        { IOIN(); return IOIN_register.drv_enn; }
-bool    TMC2160Stepper::dco_cfg6()       { IOIN(); return IOIN_register.dco_cfg6; }
-uint8_t TMC2160Stepper::version()        { IOIN(); return IOIN_register.version; }
+bool    TMC2160Stepper::refl_step()      { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.refl_step; }
+bool    TMC2160Stepper::refr_dir()       { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.refr_dir; }
+bool    TMC2160Stepper::encb_dcen_cfg4() { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.encb_dcen_cfg4; }
+bool    TMC2160Stepper::enca_dcin_cfg5() { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.enca_dcin_cfg5; }
+bool    TMC2160Stepper::drv_enn()        { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn; }
+bool    TMC2160Stepper::dco_cfg6()       { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.dco_cfg6; }
+uint8_t TMC2160Stepper::version()        { TMC2160_n::IOIN_t r{0}; r.sr = IOIN(); return r.version; }
 
 // W: GLOBAL_SCALER
 uint8_t TMC2160Stepper::GLOBAL_SCALER() { return GLOBAL_SCALER_register.sr; }
@@ -99,12 +98,11 @@ void TMC2160Stepper::GLOBAL_SCALER(uint8_t input) {
 }
 
 // R: OFFSET_READ
-uint16_t TMC2160Stepper::OFFSET_READ() { return read(OFFSET_READ_register.address); }
+uint16_t TMC2160Stepper::OFFSET_READ() { return read(OFFSET_READ_t::address); }
 
 // R: PWM_SCALE
 uint32_t TMC2160Stepper::PWM_SCALE() {
-  PWM_SCALE_register.sr = read(PWM_SCALE_register.address);
-  return PWM_SCALE_register.sr;
+  return read(TMC2160_n::PWM_SCALE_t::address);
 }
-uint8_t TMC2160Stepper::pwm_scale_sum() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_sum; }
-uint16_t TMC2160Stepper::pwm_scale_auto() { PWM_SCALE(); return PWM_SCALE_register.pwm_scale_auto; }
+uint8_t TMC2160Stepper::pwm_scale_sum()   { TMC2160_n::PWM_SCALE_t r{0}; r.sr = PWM_SCALE(); return r.pwm_scale_sum; }
+uint16_t TMC2160Stepper::pwm_scale_auto() { TMC2160_n::PWM_SCALE_t r{0}; r.sr = PWM_SCALE(); return r.pwm_scale_auto; }

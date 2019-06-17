@@ -39,7 +39,6 @@ struct GLOBAL_SCALER_t {
 
 struct OFFSET_READ_t {
   constexpr static uint8_t address = 0x0C;
-  uint16_t sr;
 };
 
 struct ENC_DEVIATION_t {
