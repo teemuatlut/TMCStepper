@@ -345,6 +345,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void begin();
+		void push();
 
 		uint16_t cs2rms(uint8_t CS);
 		void rms_current(uint16_t mA);
@@ -442,6 +443,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 
 		void begin();
+		void push();
 
 		void rms_current(uint16_t mA) { TMC2130Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2130Stepper::rms_current(mA, mult); }
@@ -687,6 +689,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
 		uint16_t rms_current() { return TMC2160Stepper::rms_current(); }
+		void push();
 
 		// RW: GCONF
 		void recalibrate(bool);
@@ -978,6 +981,7 @@ class TMC2209Stepper : public TMC2208Stepper {
 			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr, SW_RX_pin != SW_TX_pin) {}
 		#endif
+		void push();
 
 		// R: IOIN
 		uint32_t IOIN();

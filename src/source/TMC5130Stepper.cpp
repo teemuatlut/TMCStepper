@@ -15,6 +15,40 @@ void TMC5130Stepper::begin() {
   //while (( RAMP_STAT() & cfg.VZERO_bm) != cfg.VZERO_bm) {}
 }
 
+void TMC5130Stepper::push() {
+    IHOLD_IRUN(IHOLD_IRUN_register.sr);
+    TPOWERDOWN(TPOWERDOWN_register.sr);
+    TPWMTHRS(TPWMTHRS_register.sr);
+    GCONF(GCONF_register.sr);
+    TCOOLTHRS(TCOOLTHRS_register.sr);
+    THIGH(THIGH_register.sr);
+    XDIRECT(XDIRECT_register.sr);
+    VDCMIN(VDCMIN_register.sr);
+    CHOPCONF(CHOPCONF_register.sr);
+    COOLCONF(COOLCONF_register.sr);
+    DCCTRL(DCCTRL_register.sr);
+    PWMCONF(PWMCONF_register.sr);
+    ENCM_CTRL(ENCM_CTRL_register.sr);
+    DRV_CONF(DRV_CONF_register.sr);
+    SLAVECONF(SLAVECONF_register.sr);
+    TMC_OUTPUT(OUTPUT_register.sr);
+    X_COMPARE(X_COMPARE_register.sr);
+    RAMPMODE(RAMPMODE_register.sr);
+    XACTUAL(XACTUAL_register.sr);
+    VSTART(VSTART_register.sr);
+    A1(A1_register.sr);
+    V1(V1_register.sr);
+    AMAX(AMAX_register.sr);
+    VMAX(VMAX_register.sr);
+    DMAX(DMAX_register.sr);
+    D1(D1_register.sr);
+    VSTOP(VSTOP_register.sr);
+    TZEROWAIT(TZEROWAIT_register.sr);
+    SW_MODE(SW_MODE_register.sr);
+    ENCMODE(ENCMODE_register.sr);
+    ENC_CONST(ENC_CONST_register.sr);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IFCNT
 uint8_t TMC5130Stepper::IFCNT() { return read(IFCNT_t::address); }

@@ -13,6 +13,19 @@ bool TMC2209Stepper::spread_en()	{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return
 bool TMC2209Stepper::dir()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
 uint8_t TMC2209Stepper::version() 	{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
+void TMC2209Stepper::push() {
+	IHOLD_IRUN(IHOLD_IRUN_register.sr);
+	TPOWERDOWN(TPOWERDOWN_register.sr);
+	TPWMTHRS(TPWMTHRS_register.sr);
+	GCONF(GCONF_register.sr);
+	SLAVECONF(SLAVECONF_register.sr);
+	FACTORY_CONF(FACTORY_CONF_register.sr);
+	VACTUAL(VACTUAL_register.sr);
+	CHOPCONF(CHOPCONF_register.sr);
+	PWMCONF(PWMCONF_register.sr);
+	TCOOLTHRS(TCOOLTHRS_register.sr);
+}
+
 void TMC2209Stepper::SGTHRS(uint8_t input) {
 	SGTHRS_register.sr = input;
 	write(SGTHRS_register.address, SGTHRS_register.sr);

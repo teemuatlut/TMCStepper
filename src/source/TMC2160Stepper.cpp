@@ -77,6 +77,25 @@ uint16_t TMC2160Stepper::cs2rms(uint8_t CS) {
 }
 uint16_t TMC2160Stepper::rms_current() { return cs2rms(irun()); }
 
+void TMC2160Stepper::push() {
+  GCONF(GCONF_register.sr);
+  IHOLD_IRUN(IHOLD_IRUN_register.sr);
+  TPOWERDOWN(TPOWERDOWN_register.sr);
+  TPWMTHRS(TPWMTHRS_register.sr);
+  TCOOLTHRS(TCOOLTHRS_register.sr);
+  THIGH(THIGH_register.sr);
+  XDIRECT(XDIRECT_register.sr);
+  VDCMIN(VDCMIN_register.sr);
+  CHOPCONF(CHOPCONF_register.sr);
+  COOLCONF(COOLCONF_register.sr);
+  DCCTRL(DCCTRL_register.sr);
+  PWMCONF(PWMCONF_register.sr);
+  ENCM_CTRL(ENCM_CTRL_register.sr);
+  SHORT_CONF(SHORT_CONF_register.sr);
+  DRV_CONF(DRV_CONF_register.sr);
+  GLOBAL_SCALER(GLOBAL_SCALER_register.sr);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IOIN
 uint32_t  TMC2160Stepper::IOIN() {
