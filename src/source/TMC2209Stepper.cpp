@@ -19,7 +19,6 @@ void TMC2209Stepper::push() {
 	TPWMTHRS(TPWMTHRS_register.sr);
 	GCONF(GCONF_register.sr);
 	SLAVECONF(SLAVECONF_register.sr);
-	FACTORY_CONF(FACTORY_CONF_register.sr);
 	VACTUAL(VACTUAL_register.sr);
 	CHOPCONF(CHOPCONF_register.sr);
 	PWMCONF(PWMCONF_register.sr);

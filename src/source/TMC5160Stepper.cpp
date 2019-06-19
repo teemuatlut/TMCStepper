@@ -1,11 +1,43 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS, RS) {}
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS) : TMC5130Stepper(pinCS, RS)
+  { defaults(); }
 TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC5130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC5130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
 TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC5130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC5130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
+
+void TMC5160Stepper::defaults() {
+  PWMCONF_register.sr = 0x00050480;
+  SHORT_CONF_register.s2vs_level = 6;
+  SHORT_CONF_register.s2g_level = 6;
+  SHORT_CONF_register.shortfilter = 0b01;
+  SHORT_CONF_register.shortdelay = 0;
+  DRV_CONF_register.bbmtime = 0;
+  DRV_CONF_register.bbmclks = 4;
+  DRV_CONF_register.otselect = 0b00;
+  DRV_CONF_register.drvstrength = 0b10;
+  DRV_CONF_register.filt_isense = 0b00;
+  TPOWERDOWN_register.sr = 10;
+  VSTOP_register.sr = 1;
+  ENC_CONST_register.sr = 65536;
+  //MSLUT0_register.sr = ???;
+  //MSLUT1_register.sr = ???;
+  //MSLUT2_register.sr = ???;
+  //MSLUT3_register.sr = ???;
+  //MSLUT4_register.sr = ???;
+  //MSLUT5_register.sr = ???;
+  //MSLUT6_register.sr = ???;
+  //MSLUT7_register.sr = ???;
+  //MSLUTSEL_register.sr = ???;
+  //MSLUTSTART_register.start_sin = 0;
+  //MSLUTSTART_register.start_sin90 = 247;
+  CHOPCONF_register.sr = 0x10410150;
+  PWMCONF_register.sr = 0xC40C001E;
+}
 
 void TMC5160Stepper::push() {
     IHOLD_IRUN(IHOLD_IRUN_register.sr);
