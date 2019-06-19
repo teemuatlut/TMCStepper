@@ -4,6 +4,7 @@ Supported TMC drivers:
 * TMC2130
 * TMC2160
 * TMC2208
+* TMC2209
 * TMC2224
 * TMC2660
 * TMC5130

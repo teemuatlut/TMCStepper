@@ -45,25 +45,27 @@ namespace TMC2208_n {
   };
 }
 
-struct IOIN_2224_t {
-  constexpr static uint8_t address = 0x06;
-  union {
-    uint32_t sr;
-    struct {
-      bool  : 1,
-            pdn_uart : 1,
-            spread : 1,
-            dir : 1,
-            enn : 1,
-            step : 1,
-            ms1 : 1,
-            ms2 : 1,
-            sel_a : 1;
-      uint16_t : 15;
-      uint8_t version : 8;
+namespace TMC2224_n {
+  struct IOIN_t {
+    constexpr static uint8_t address = 0x06;
+    union {
+      uint32_t sr;
+      struct {
+        bool  : 1,
+              pdn_uart : 1,
+              spread : 1,
+              dir : 1,
+              enn : 1,
+              step : 1,
+              ms1 : 1,
+              ms2 : 1,
+              sel_a : 1;
+        uint16_t : 15;
+        uint8_t version : 8;
+      };
     };
   };
-};
+}
 
 struct FACTORY_CONF_t {
   constexpr static uint8_t address = 0x07;

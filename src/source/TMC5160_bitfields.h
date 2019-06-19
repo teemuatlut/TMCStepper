@@ -39,27 +39,12 @@ struct GLOBAL_SCALER_t {
 
 struct OFFSET_READ_t {
   constexpr static uint8_t address = 0x0C;
-  uint16_t sr;
 };
 
 struct ENC_DEVIATION_t {
   constexpr static uint8_t address = 0x3D;
   uint32_t sr : 20;
 };
-
-namespace TMC5160_n {
-  struct PWM_SCALE_t {
-    constexpr static uint8_t address = 0x0C;
-    union {
-      uint32_t sr : 25;
-      struct {
-        uint8_t pwm_scale_sum : 8,
-                              : 8;
-        uint16_t pwm_scale_auto : 9;
-      };
-    };
-  };
-}
 
 struct PWM_AUTO_t {
   constexpr static uint8_t address = 0x72;
@@ -72,25 +57,5 @@ struct PWM_AUTO_t {
     };
   };
 };
-
-namespace TMC5160_n {
-  struct PWMCONF_t {
-    constexpr static uint8_t address = 0x70;
-    union {
-      uint32_t sr;
-      struct {
-        uint8_t pwm_ofs : 8,
-                pwm_grad : 8,
-                pwm_freq : 2;
-        bool pwm_autoscale : 1,
-             pwm_autograd : 1;
-        uint8_t freewheel : 2,
-                          : 2,
-                pwm_reg : 4,
-                pwm_lim : 4;
-      };
-    };
-  };
-}
 
 #pragma pack(pop)

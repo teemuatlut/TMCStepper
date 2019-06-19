@@ -144,7 +144,7 @@ struct CHOPCONF_t {
     struct { // TMC5160
       uint32_t     : 20;
       uint8_t tpfd : 4; // 5160
-      uint16_t     : 10;
+      uint16_t     : 7;
       bool diss2vs : 1; // TMC5160 only
     };
   };
@@ -168,6 +168,18 @@ struct COOLCONF_t {
       bool    sfilt : 1;
     };
   };
+};
+
+struct DCCTRL_t {
+	constexpr static uint8_t address = 0x6E;
+	union {
+		uint32_t sr : 24;
+		struct {
+			uint16_t dc_time : 10,
+				: 6;
+			uint8_t dc_sg : 8;
+		};
+	};
 };
 
 namespace TMC2130_n {

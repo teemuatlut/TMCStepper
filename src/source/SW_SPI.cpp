@@ -10,13 +10,7 @@ void SW_SPIClass::init() {
   pinMode(mosi_pin, OUTPUT);
   pinMode(sck_pin, OUTPUT);
   pinMode(miso_pin, INPUT_PULLUP);
-  #ifdef TARGET_LPC1768
-    mosi_register = gpio_port(LPC1768_PIN_PORT(mosi_pin));
-    miso_register = gpio_port(LPC1768_PIN_PORT(miso_pin));
-    sck_register = gpio_port(LPC1768_PIN_PORT(sck_pin));
-    mosi_bm = util::bit_value(LPC1768_PIN_PIN(mosi_pin));
-    sck_bm = util::bit_value(LPC1768_PIN_PIN(sck_pin));
-  #elif defined(ARDUINO_ARCH_AVR)
+  #ifdef ARDUINO_ARCH_AVR
     mosi_register = portOutputRegister(getPort(mosi_pin));
     miso_register = portInputRegister(getPort(miso_pin));
     sck_register = portOutputRegister(getPort(sck_pin));
@@ -24,33 +18,27 @@ void SW_SPIClass::init() {
     miso_bm = digitalPinToBitMask(miso_pin);
     sck_bm = digitalPinToBitMask(sck_pin);
   #endif
+  writeSCK_H;
 }
 
-//Combined shiftOut and shiftIn from Arduino wiring_shift.c
-byte SW_SPIClass::transfer(uint8_t ulVal, uint8_t ulBitOrder) {
+uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
   uint8_t value = 0;
+  writeSCK_L;
 
-  for (uint8_t i=0 ; i<8 ; ++i) {
+  for (uint8_t i=7 ; i>=1 ; i--) {
     // Write bit
-    if ( ulBitOrder == LSBFIRST ) {
-      !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
-    } else {
-      !!(ulVal & (1 << (7 - i))) ? writeMOSI_H : writeMOSI_L;
-    }
-
+    !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
     // Start clock pulse
     writeSCK_H;
-
     // Read bit
-    if ( ulBitOrder == LSBFIRST ) {
-      value |= ( readMISO ? 1 : 0) << i ;
-    } else {
-      value |= ( readMISO ? 1 : 0) << (7 - i) ;
-    }
-
+    value |= ( readMISO ? 1 : 0) << i;
     // Stop clock pulse
     writeSCK_L;
   }
+
+  !!(ulVal & (1 << 0)) ? writeMOSI_H : writeMOSI_L;
+  writeSCK_H;
+  value |= ( readMISO ? 1 : 0) << 0;
 
   return value;
 }

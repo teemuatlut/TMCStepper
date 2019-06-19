@@ -19,8 +19,7 @@ bool TMC2130Stepper::stst()			{ GET_REG(TMC2130_n, stst); 		}
 
 uint32_t TMC2208Stepper::DRV_STATUS() {
 	if (write_only) return 0;
-	DRV_STATUS_register.sr = read(DRV_STATUS_register.address);
-	return DRV_STATUS_register.sr;
+	return read(TMC2208_n::DRV_STATUS_t::address);
 }
 
 bool 		TMC2208Stepper::otpw()		{ GET_REG(TMC2208_n, otpw); 		}
