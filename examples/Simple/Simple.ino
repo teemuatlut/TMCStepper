@@ -27,8 +27,8 @@
 // Select your stepper driver type
 //TMC2130Stepper driver(CS_PIN, R_SENSE);                           // Hardware SPI
 //TMC2130Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
-//TMC2660Stepper driver(EN_PIN, R_SENSE);                           // Hardware SPI
-//TMC2660Stepper driver(EN_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
+//TMC2660Stepper driver(CS_PIN, R_SENSE);                           // Hardware SPI
+//TMC2660Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
 //TMC5160Stepper driver(CS_PIN, R_SENSE);
 //TMC5160Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
 
