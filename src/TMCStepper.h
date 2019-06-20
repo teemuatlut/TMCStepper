@@ -427,6 +427,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		uint16_t pwm_scale_auto();
 
 	protected:
+		using TMC2130Stepper::ENCM_CTRL;
 		using TMC2130Stepper::pwm_ampl;
 		using TMC2130Stepper::pwm_symmetric;
 
@@ -601,6 +602,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool ENC_STATUS();
 		// R: ENC_LATCH
 		uint32_t ENC_LATCH();
+
+		using TMC2130Stepper::ENCM_CTRL;
 
 		using TMC2130Stepper::PWMCONF;
 		using TMC2130Stepper::pwm_ampl;

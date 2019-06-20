@@ -120,7 +120,6 @@ void TMC2160Stepper::push() {
   COOLCONF(COOLCONF_register.sr);
   DCCTRL(DCCTRL_register.sr);
   PWMCONF(PWMCONF_register.sr);
-  ENCM_CTRL(ENCM_CTRL_register.sr);
   SHORT_CONF(SHORT_CONF_register.sr);
   DRV_CONF(DRV_CONF_register.sr);
   GLOBAL_SCALER(GLOBAL_SCALER_register.sr);
