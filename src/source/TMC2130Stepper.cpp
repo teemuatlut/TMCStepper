@@ -6,7 +6,7 @@ uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
   TMCStepper(RS),
   _pinCS(pinCS)
-  {}
+  { defaults(); }
 
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
   TMCStepper(default_RS),
@@ -14,6 +14,7 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMIS
   {
     SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
     TMC_SW_SPI = SW_SPI_Obj;
+    defaults();
   }
 
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
@@ -22,14 +23,27 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint1
   {
     SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
     TMC_SW_SPI = SW_SPI_Obj;
+    defaults();
   }
+
+void TMC2130Stepper::defaults() {
+  //MSLUT0_register.sr = ???;
+  //MSLUT1_register.sr = ???;
+  //MSLUT2_register.sr = ???;
+  //MSLUT3_register.sr = ???;
+  //MSLUT4_register.sr = ???;
+  //MSLUT5_register.sr = ???;
+  //MSLUT6_register.sr = ???;
+  //MSLUT7_register.sr = ???;
+  //MSLUTSTART_register.start_sin90 = 247;
+  PWMCONF_register.sr = 0x00050480;
+}
 
 void TMC2130Stepper::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
 
 void TMC2130Stepper::switchCSpin(bool state) {
-  // Allows for overriding in child class to make use of fast io
   digitalWrite(_pinCS, state);
 }
 

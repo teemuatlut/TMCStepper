@@ -1,11 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS) : TMC2160Stepper(pinCS, RS) {}
+TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS) : TMC2160Stepper(pinCS, RS)
+  { defaults(); }
 TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC2160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC2160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
 TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC2160Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC2160Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
 
 void TMC5130Stepper::begin() {
   TMC2160Stepper::begin();
@@ -13,6 +16,23 @@ void TMC5130Stepper::begin() {
   XTARGET(0);
   XACTUAL(0);
   //while (( RAMP_STAT() & cfg.VZERO_bm) != cfg.VZERO_bm) {}
+}
+
+void TMC5130Stepper::defaults() {
+  OUTPUT_register.sr = 1;
+  ENC_CONST_register.sr = 65536;
+  //MSLUT0_register.sr = ???;
+  //MSLUT1_register.sr = ???;
+  //MSLUT2_register.sr = ???;
+  //MSLUT3_register.sr = ???;
+  //MSLUT4_register.sr = ???;
+  //MSLUT5_register.sr = ???;
+  //MSLUT6_register.sr = ???;
+  //MSLUT7_register.sr = ???;
+  //MSLUTSEL_register.sr = ???;
+  //MSLUTSTART_register.start_sin = 0;
+  //MSLUTSTART_register.start_sin90 = 247;
+  PWMCONF_register.sr = 0x00050480;
 }
 
 void TMC5130Stepper::push() {

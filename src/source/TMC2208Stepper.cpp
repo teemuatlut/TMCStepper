@@ -7,7 +7,10 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 	TMCStepper(RS),
 	slave_address(addr),
 	write_only(false)
-	{ HWSerial = SerialPort; }
+	{
+		HWSerial = SerialPort;
+		defaults();
+	}
 
 #if SW_CAPABLE_PLATFORM
 	// Protected
@@ -19,6 +22,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
+			defaults();
 		}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
@@ -35,11 +39,31 @@ void TMC2208Stepper::begin() {
 
 }
 
+void TMC2208Stepper::defaults() {
+	GCONF_register.i_scale_analog = 1;
+	GCONF_register.internal_rsense = 0; // OTP
+	GCONF_register.en_spreadcycle = 0; // OTP
+	GCONF_register.multistep_filt = 1; // OTP
+	IHOLD_IRUN_register.iholddelay = 1; // OTP
+	TPOWERDOWN_register.sr = 20;
+	CHOPCONF_register.sr = 0x10000053;
+	PWMCONF_register.sr = 0xC10D0024;
+  //MSLUT0_register.sr = ???;
+  //MSLUT1_register.sr = ???;
+  //MSLUT2_register.sr = ???;
+  //MSLUT3_register.sr = ???;
+  //MSLUT4_register.sr = ???;
+  //MSLUT5_register.sr = ???;
+  //MSLUT6_register.sr = ???;
+  //MSLUT7_register.sr = ???;
+  //MSLUTSTART_register.start_sin90 = 247;
+  PWMCONF_register.sr = 0x00050480;
+}
+
 void TMC2208Stepper::push() {
 	GCONF(GCONF_register.sr);
 	IHOLD_IRUN(IHOLD_IRUN_register.sr);
 	SLAVECONF(SLAVECONF_register.sr);
-	FACTORY_CONF(FACTORY_CONF_register.sr);
 	TPOWERDOWN(TPOWERDOWN_register.sr);
 	TPWMTHRS(TPWMTHRS_register.sr);
 	VACTUAL(VACTUAL_register.sr);

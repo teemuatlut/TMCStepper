@@ -1,11 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, float RS) : TMC2130Stepper(pinCS, RS) {}
+TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, float RS) : TMC2130Stepper(pinCS, RS)
+  { defaults(); }
 TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC2130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC2130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
 TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMC2130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK) {}
+  TMC2130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK)
+  { defaults(); }
 
 void TMC2160Stepper::begin() {
   //set pins
@@ -22,6 +25,33 @@ void TMC2160Stepper::begin() {
 
   toff(8); //off_time(8);
   tbl(1); //blank_time(24);
+}
+
+void TMC2160Stepper::defaults() {
+  PWMCONF_register.sr = 0x00050480;
+  SHORT_CONF_register.s2vs_level = 6;
+  SHORT_CONF_register.s2g_level = 6;
+  SHORT_CONF_register.shortfilter = 0b01;
+  SHORT_CONF_register.shortdelay = 0;
+  DRV_CONF_register.bbmtime = 0;
+  DRV_CONF_register.bbmclks = 4;
+  DRV_CONF_register.otselect = 0b00;
+  DRV_CONF_register.drvstrength = 0b10;
+  DRV_CONF_register.filt_isense = 0b00;
+  TPOWERDOWN_register.sr = 10;
+  //MSLUT0_register.sr = ???;
+  //MSLUT1_register.sr = ???;
+  //MSLUT2_register.sr = ???;
+  //MSLUT3_register.sr = ???;
+  //MSLUT4_register.sr = ???;
+  //MSLUT5_register.sr = ???;
+  //MSLUT6_register.sr = ???;
+  //MSLUT7_register.sr = ???;
+  //MSLUTSEL_register.sr = ???;
+  //MSLUTSTART_register.start_sin = 0;
+  //MSLUTSTART_register.start_sin90 = 247;
+  CHOPCONF_register.sr = 0x10410150;
+  PWMCONF_register.sr = 0xC40C001E;
 }
 
 /*
@@ -90,7 +120,6 @@ void TMC2160Stepper::push() {
   COOLCONF(COOLCONF_register.sr);
   DCCTRL(DCCTRL_register.sr);
   PWMCONF(PWMCONF_register.sr);
-  ENCM_CTRL(ENCM_CTRL_register.sr);
   SHORT_CONF(SHORT_CONF_register.sr);
   DRV_CONF(DRV_CONF_register.sr);
   GLOBAL_SCALER(GLOBAL_SCALER_register.sr);

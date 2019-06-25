@@ -32,7 +32,7 @@
 #define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
-#define TMCSTEPPER_VERSION 0x000404 // v0.4.4
+#define TMCSTEPPER_VERSION 0x000405 // v0.4.5
 
 class TMCStepper {
 	public:
@@ -126,6 +126,7 @@ class TMC2130Stepper : public TMCStepper {
 		TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void begin();
+		void defaults();
 		void setSPISpeed(uint32_t speed);
 		void switchCSpin(bool state);
 		bool isEnabled();
@@ -345,6 +346,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 		void begin();
+		void defaults();
 		void push();
 
 		uint16_t cs2rms(uint8_t CS);
@@ -425,6 +427,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 		uint16_t pwm_scale_auto();
 
 	protected:
+		using TMC2130Stepper::ENCM_CTRL;
 		using TMC2130Stepper::pwm_ampl;
 		using TMC2130Stepper::pwm_symmetric;
 
@@ -443,6 +446,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
 
 		void begin();
+		void defaults();
 		void push();
 
 		void rms_current(uint16_t mA) { TMC2130Stepper::rms_current(mA); }
@@ -599,6 +603,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		// R: ENC_LATCH
 		uint32_t ENC_LATCH();
 
+		using TMC2130Stepper::ENCM_CTRL;
+
 		using TMC2130Stepper::PWMCONF;
 		using TMC2130Stepper::pwm_ampl;
 		using TMC2130Stepper::pwm_grad;
@@ -689,6 +695,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
 		uint16_t rms_current() { return TMC2160Stepper::rms_current(); }
+		void defaults();
 		void push();
 
 		// RW: GCONF
@@ -792,6 +799,7 @@ class TMC2208Stepper : public TMCStepper {
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR, has_rx)
 				{}
 		#endif
+		void defaults();
 		void push();
 		void begin();
 		void beginSerial(uint32_t baudrate);
