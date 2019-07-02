@@ -2,6 +2,10 @@
 
 //#define TMCDEBUG
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>
 #endif
@@ -13,7 +17,11 @@
 #if SW_CAPABLE_PLATFORM
 	#include <SoftwareSerial.h>
 #endif
+
 #include "source/SW_SPI.h"
+
+#pragma GCC diagnostic pop
+
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC2160_bitfields.h"
 #include "source/TMC5130_bitfields.h"
