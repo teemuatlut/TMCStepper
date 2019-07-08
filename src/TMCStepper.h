@@ -10,12 +10,17 @@
 	#include <Arduino.h>
 #endif
 
-#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_ESP32)
+#define SW_CAPABLE_PLATFORM_SELF  defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_ESP32)
+#define SW_CAPABLE_TMC_PROVIDES   defined(TARGET_STM32F1) || defined(TARGET_STM32F4)
+
+#define SW_CAPABLE_PLATFORM  SW_CAPABLE_PLATFORM_SELF || SW_CAPABLE_TMC_PROVIDES
 
 #include <Stream.h>
 #include <SPI.h>
-#if SW_CAPABLE_PLATFORM
+#if SW_CAPABLE_PLATFORM_SELF
 	#include <SoftwareSerial.h>
+#elif SW_CAPABLE_TMC_PROVIDES
+	#include "source/SW_UART.h"
 #endif
 
 #include "source/SW_SPI.h"
