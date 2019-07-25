@@ -995,7 +995,7 @@ class TMC2209Stepper : public TMC2208Stepper {
 
 		#if SW_CAPABLE_PLATFORM
 			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr, SW_RX_pin != SW_TX_pin) {}
+				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr, SW_RX_pin > -1) {}
 		#endif
 		void push();
 
