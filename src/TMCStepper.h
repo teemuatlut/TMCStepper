@@ -21,6 +21,9 @@
 
 #if SW_CAPABLE_PLATFORM
 	#include <SoftwareSerial.h>
+  #ifdef SW_SERIAL_PLACEHOLDER
+    #undef SW_CAPABLE_PLATFORM
+  #endif
 #endif
 
 #include "source/SW_SPI.h"
