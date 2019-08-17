@@ -19,8 +19,10 @@
 	#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_STM32F1)
 #endif
 
+#define SW_CAPABLE_PLATFORM true
+
 #if SW_CAPABLE_PLATFORM
-	#include <SoftwareSerial.h>
+	#include "soft_uart.h"
 #endif
 
 #include "source/SW_SPI.h"
@@ -964,6 +966,9 @@ class TMC2208Stepper : public TMCStepper {
 		INIT2208_REGISTER(CHOPCONF)		{{.sr=0}};
 		INIT2208_REGISTER(PWMCONF)		{{.sr=0}};
 
+		uint16_t SW_RX = -1;
+		uint16_t SW_TX = -1;
+
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
 		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
 		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
@@ -975,7 +980,7 @@ class TMC2208Stepper : public TMCStepper {
 
 		Stream * HWSerial = NULL;
 		#if SW_CAPABLE_PLATFORM
-			SoftwareSerial * SWSerial = NULL;
+			arduino_due::soft_uart::serial<arduino_due::soft_uart::timer_ids::TIMER_TC4, 256, 256> * SWSerial = NULL;
 		#endif
 
 		void write(uint8_t, uint32_t);

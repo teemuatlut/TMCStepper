@@ -20,13 +20,19 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 		slave_address(addr),
 		write_only(!has_rx)
 		{
-			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
+			SW_RX = SW_RX_pin;
+			SW_TX = SW_TX_pin;
+			auto *SWSerialObj = new arduino_due::soft_uart::serial<arduino_due::soft_uart::timer_ids::TIMER_TC4, 256, 256>();
 			SWSerial = SWSerialObj;
 			defaults();
 		}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-		if (SWSerial != NULL) SWSerial->begin(baudrate);
+		if (SWSerial != NULL) SWSerial->begin(SW_RX, SW_TX, baudrate,
+		                                      arduino_due::soft_uart::data_bit_codes::EIGHT_BITS,
+		                                      arduino_due::soft_uart::parity_codes::NO_PARITY,
+		                                      arduino_due::soft_uart::stop_bit_codes::ONE_STOP_BIT
+		                                     );
 	}
 #endif
 
@@ -177,9 +183,9 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	for (uint8_t i = 0; i < max_retries; i++) {
 		#if SW_CAPABLE_PLATFORM
 			if (SWSerial != NULL) {
-					SWSerial->listen();
+					//SWSerial.listen();
 					out = _sendDatagram(*SWSerial, datagram, len, abort_window);
-					SWSerial->stopListening();
+					//SWSerial.stopListening();
 			} else
 		#endif
 			{
