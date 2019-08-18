@@ -16,7 +16,7 @@
 #ifdef __has_include
 	#define SW_CAPABLE_PLATFORM __has_include(<SoftwareSerial.h>)
 #else
-	#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_ESP32) || defined(ARDUINO_ARCH_STM32F1)
+	#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_STM32F1)
 #endif
 
 #if SW_CAPABLE_PLATFORM
