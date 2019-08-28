@@ -47,6 +47,8 @@
 
 #define TMCSTEPPER_VERSION 0x000406 // v0.4.6
 
+#define MAX_TMC_STEPPERS  21  // max number of TMC steppers + 1
+
 class TMCStepper {
 	public:
 		uint16_t cs2rms(uint8_t CS);
@@ -102,6 +104,14 @@ class TMCStepper {
 		uint32_t MSCURACT();
 		int16_t cur_a();
 		int16_t cur_b();
+
+    // SPI chain
+    static uint8_t TMC_chain[MAX_TMC_STEPPERS];
+     // [0] - number of drivers in chain
+     // [1]... axis index for first device in the chain (closest to MOSI)
+    uint8_t axis_index;
+    uint8_t chain_pos = 0;  // 0 - not part of a chain
+    void set_chain_info(const uint8_t axis_index, const uint8_t chain_position);
 
 	protected:
 		TMCStepper(float RS) : Rsense(RS) {};
@@ -351,6 +361,15 @@ class TMC2130Stepper : public TMCStepper {
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = NULL;
 		static constexpr float default_RS = 0.11;
+    
+    void TMC_SW_SPI_transfer_40(uint8_t addressByte, uint32_t config=0);
+    uint32_t TMC_SW_SPI_read_40(uint8_t addressByte);
+    void TMC_HW_SPI_transfer_40(uint8_t addressByte, uint32_t config=0);
+    uint32_t TMC_HW_SPI_read_40(uint8_t addressByte);
+    void TMC_SPI_chain_transfer_40(uint8_t addressByte, uint32_t config=0);      
+    uint32_t TMC_SPI_chain_read_40(uint8_t addressByte);
+      
+    
 };
 
 class TMC2160Stepper : public TMC2130Stepper {
