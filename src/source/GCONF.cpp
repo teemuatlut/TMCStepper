@@ -67,8 +67,10 @@ bool TMC5160Stepper::faststandstill()				{ GET_REG(faststandstill);			}
 bool TMC5160Stepper::multistep_filt()				{ GET_REG(multistep_filt);			}
 
 uint32_t TMC2208Stepper::GCONF() {
+	GCONF_t gc{0};
 	if (write_only) return GCONF_register.sr;
-	GCONF_register.sr = read(GCONF_register.address);
+	gc.sr = read(GCONF_register.address);
+	if (!CRCerror) GCONF_register.sr = gc.sr;
 	return GCONF_register.sr;
 }
 void TMC2208Stepper::GCONF(uint32_t input) {
