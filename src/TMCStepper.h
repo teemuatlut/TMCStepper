@@ -362,7 +362,6 @@ class TMC2130Stepper : public TMCStepper {
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = NULL;
 		static constexpr float default_RS = 0.11;
-
 };
 
 class TMC2160Stepper : public TMC2130Stepper {
