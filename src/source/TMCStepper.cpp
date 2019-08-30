@@ -151,17 +151,3 @@ int16_t TMCStepper::cur_b() {
   if (value > 255) value -= 512;
   return value;
 }
-
-uint8_t TMCStepper::TMC_chain[MAX_TMC_STEPPERS];
-
-// Add to the chain array and save chain info for this stepper
-void TMCStepper::set_chain_info(const uint8_t axis, const uint8_t chain_position=0) {
-  if (chain_position) {
-    TMC_chain[0]++;
-    TMC_chain[chain_position] = axis;
-    chain_pos = chain_position;
-    axis_index = axis;
-  }
-  else
-    TMC_chain[0] = 0;  // Reset array back to uninitialized
-}
