@@ -52,8 +52,10 @@ uint8_t TMC2160Stepper::pwm_reg()		{ return PWMCONF_register.pwm_reg;		}
 uint8_t TMC2160Stepper::pwm_lim()		{ return PWMCONF_register.pwm_lim;		}
 
 uint32_t TMC2208Stepper::PWMCONF() {
+	PWMCONF_t pwm{0};
 	if (write_only) return PWMCONF_register.sr;
-	PWMCONF_register.sr = read(PWMCONF_register.address);
+	pwm.sr = read(PWMCONF_register.address);
+	if (!CRCerror) PWMCONF_register.sr = pwm.sr;
 	return PWMCONF_register.sr;
 }
 void TMC2208Stepper::PWMCONF(uint32_t input) {

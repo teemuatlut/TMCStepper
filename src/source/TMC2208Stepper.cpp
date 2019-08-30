@@ -251,8 +251,10 @@ bool TMC2224Stepper::dir()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.d
 uint8_t TMC2224Stepper::version() 	{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 uint16_t TMC2208Stepper::FACTORY_CONF() {
+	FACTORY_CONF_t fc{0};
 	if (write_only) return FACTORY_CONF_register.sr;
-	FACTORY_CONF_register.sr = read(FACTORY_CONF_register.address);
+	fc.sr = read(FACTORY_CONF_register.address);
+	if (!CRCerror) FACTORY_CONF_register.sr = fc.sr;
 	return FACTORY_CONF_register.sr;
 }
 void TMC2208Stepper::FACTORY_CONF(uint16_t input) {
