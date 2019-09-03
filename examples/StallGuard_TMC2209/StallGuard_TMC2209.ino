@@ -19,15 +19,15 @@
 #define MAX_SPEED        40 // In timer value
 #define MIN_SPEED      1000
 
-#define STALL_VALUE      15 // [-64..63]
+#define STALL_VALUE     100 // [0..255]
 
 #define EN_PIN           38 // Enable
 #define DIR_PIN          55 // Direction
 #define STEP_PIN         54 // Step
-#define CS_PIN           42 // Chip select
-#define SW_MOSI          66 // Software Master Out Slave In (MOSI)
-#define SW_MISO          44 // Software Master In Slave Out (MISO)
-#define SW_SCK           64 // Software Slave Clock (SCK)
+#define SW_RX            63 // TMC2208/TMC2224 SoftwareSerial receive pin
+#define SW_TX            40 // TMC2208/TMC2224 SoftwareSerial transmit pin
+#define SERIAL_PORT Serial1 // TMC2208/TMC2224 HardwareSerial port
+#define DRIVER_ADDRESS 0b00 // TMC2209 Driver address according to MS1 and MS2
 
 #define R_SENSE 0.11f // Match to your driver
                       // SilentStepStick series use 0.11
@@ -36,12 +36,10 @@
                       // Watterott TMC5160 uses 0.075
 
 // Select your stepper driver type
-//TMC2130Stepper driver(CS_PIN, R_SENSE);                           // Hardware SPI
-//TMC2130Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
-//TMC5160Stepper driver(CS_PIN, R_SENSE);
-//TMC5160Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
+//TMC2209Stepper driver(&SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
+//TMC2209Stepper driver(SW_RX, SW_TX, R_SENSE, DRIVER_ADDRESS);
 
-using namespace TMC2130_n;
+using namespace TMC2208_n;
 
 // Using direct register manipulation can reach faster stepping times
 #define STEP_PORT     PORTF // Match with STEP_PIN
@@ -53,16 +51,16 @@ ISR(TIMER1_COMPA_vect){
 }
 
 void setup() {
-  SPI.begin();
   Serial.begin(250000);         // Init serial port and set baudrate
   while(!Serial);               // Wait for serial port to connect
   Serial.println("\nStart...");
 
+  SERIAL_PORT.begin(115200);
+  driver.beginSerial(115200);
+
   pinMode(EN_PIN, OUTPUT);
   pinMode(STEP_PIN, OUTPUT);
-  pinMode(CS_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);
-  pinMode(MISO, INPUT_PULLUP);
   digitalWrite(EN_PIN, LOW);
 
   driver.begin();
@@ -71,11 +69,10 @@ void setup() {
   driver.rms_current(400); // mA
   driver.microsteps(16);
   driver.TCOOLTHRS(0xFFFFF); // 20bit max
-  driver.THIGH(0);
   driver.semin(5);
   driver.semax(2);
   driver.sedn(0b01);
-  driver.sgt(STALL_VALUE);
+  driver.SGTHRS(STALL_VALUE);
 
   // Set stepper interrupt
   {
@@ -114,13 +111,10 @@ void loop() {
   if((ms-last_time) > 100) { //run every 0.1s
     last_time = ms;
 
-    DRV_STATUS_t drv_status{0};
-    drv_status.sr = driver.DRV_STATUS();
-
     Serial.print("0 ");
-    Serial.print(drv_status.sg_result, DEC);
+    Serial.print(driver.SG_RESULT(), DEC);
     Serial.print(" ");
-    Serial.println(driver.cs2rms(drv_status.cs_actual), DEC);
+    Serial.println(driver.cs2rms(driver.SGTHRS()), DEC);
   }
 }
 

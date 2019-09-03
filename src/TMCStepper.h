@@ -2,18 +2,31 @@
 
 //#define TMCDEBUG
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>
 #endif
 
-#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_ESP32)
-
 #include <Stream.h>
 #include <SPI.h>
+
+#ifdef __has_include
+	#define SW_CAPABLE_PLATFORM __has_include(<SoftwareSerial.h>)
+#else
+	#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_STM32F1)
+#endif
+
 #if SW_CAPABLE_PLATFORM
 	#include <SoftwareSerial.h>
 #endif
+
 #include "source/SW_SPI.h"
+
+#pragma GCC diagnostic pop
+
 #include "source/TMC2130_bitfields.h"
 #include "source/TMC2160_bitfields.h"
 #include "source/TMC5130_bitfields.h"
@@ -32,7 +45,7 @@
 #define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
-#define TMCSTEPPER_VERSION 0x000405 // v0.4.5
+#define TMCSTEPPER_VERSION 0x000406 // v0.4.6
 
 class TMCStepper {
 	public:
