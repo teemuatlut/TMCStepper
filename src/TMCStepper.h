@@ -23,6 +23,10 @@
 	#include <SoftwareSerial.h>
 #endif
 
+#ifdef TMC_SERIAL_SWITCH
+#include "source/SERIAL_SWITCH.h"
+#endif
+
 #include "source/SW_SPI.h"
 
 #pragma GCC diagnostic pop
@@ -804,6 +808,9 @@ class TMC5161Stepper : public TMC5160Stepper {
 
 class TMC2208Stepper : public TMCStepper {
 	public:
+	  #ifdef TMC_SERIAL_SWITCH
+	    TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
+	  #endif
 		TMC2208Stepper(Stream * SerialPort, float RS, bool has_rx=true) :
 			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
 			{}
@@ -977,6 +984,10 @@ class TMC2208Stepper : public TMCStepper {
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = NULL;
 		#endif
+
+		#ifdef TMC_SERIAL_SWITCH
+      	    SSwitch *sswitch = NULL;
+    	#endif
 
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);

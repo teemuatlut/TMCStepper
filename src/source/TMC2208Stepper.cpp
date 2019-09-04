@@ -1,8 +1,25 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
+#ifdef TMC_SERIAL_SWITCH
+  #include "SERIAL_SWITCH.h"
+#endif
+
 // Protected
 // addr needed for TMC2209
+#ifdef TMC_SERIAL_SWITCH
+  TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2) :
+  	TMCStepper(RS),
+  	slave_address(TMC2208_SLAVE_ADDR),
+  	write_only(false)
+  	{
+  	  SSwitch *SMulObj = new SSwitch(mul_pin1,mul_pin2,addr);
+  	  sswitch = SMulObj;
+  		HWSerial = SerialPort;
+  		defaults();
+  	}
+#endif
+
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 	TMCStepper(RS),
 	slave_address(addr),
@@ -105,7 +122,10 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 		} else
 	#endif
 		{
-			for(int i=0; i<=len; i++){
+		  #ifdef TMC_SERIAL_SWITCH
+		    sswitch->active();
+		  #endif
+			for(int i=0; i<=len; i++){			
 				bytesWritten += HWSerial->write(datagram[i]);
 		}
 	}
@@ -183,6 +203,9 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 			} else
 		#endif
 			{
+			  #ifdef TMC_SERIAL_SWITCH
+		      sswitch->active();
+		    #endif
 				out = _sendDatagram(*HWSerial, datagram, len, abort_window);
 			}
 
