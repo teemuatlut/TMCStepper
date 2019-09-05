@@ -1,29 +1,44 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
+int8_t TMC2130Stepper::chain_length = 0;
 uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
   TMCStepper(RS),
-  _pinCS(pinCS)
-  { defaults(); }
-
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMCStepper(default_RS),
-  _pinCS(pinCS)
+  _pinCS(pinCS),
+  link_index(link)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
     defaults();
+
+    if (link > chain_length)
+      chain_length = link;
   }
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  TMCStepper(RS),
-  _pinCS(pinCS)
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+  TMCStepper(default_RS),
+  _pinCS(pinCS),
+  link_index(link)
   {
     SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
     TMC_SW_SPI = SW_SPI_Obj;
     defaults();
+
+    if (link > chain_length)
+      chain_length = link;
+  }
+
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+  TMCStepper(RS),
+  _pinCS(pinCS),
+  link_index(link)
+  {
+    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+    TMC_SW_SPI = SW_SPI_Obj;
+    defaults();
+
+    if (link > chain_length)
+      chain_length = link;
   }
 
 void TMC2130Stepper::defaults() {
@@ -49,73 +64,35 @@ void TMC2130Stepper::switchCSpin(bool state) {
 
 uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   uint32_t out = 0UL;
-  if (TMC_chain[0]) {
-    if (TMC_SW_SPI != NULL) {
-      switchCSpin(LOW);
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          TMC_SW_SPI->transfer(addressByte & 0xFF);
-          TMC_SW_SPI->transfer16(0x0000); // Clear SPI
-          TMC_SW_SPI->transfer16(0x0000);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            TMC_SW_SPI->transfer(0);
-    } else {
-      SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
-      switchCSpin(LOW);
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          SPI.transfer(addressByte & 0xFF);
-          SPI.transfer16(0x0000); // Clear SPI
-          SPI.transfer16(0x0000);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            SPI.transfer(0);
-    }
-    switchCSpin(HIGH);
-    switchCSpin(LOW);
-    if (TMC_SW_SPI != NULL) {
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          status_response = TMC_SW_SPI->transfer(addressByte & 0xFF); // Send the address byte again
-          out  = TMC_SW_SPI->transfer(0x00);
-          out <<= 8;
-          out |= TMC_SW_SPI->transfer(0x00);
-          out <<= 8;
-          out |= TMC_SW_SPI->transfer(0x00);
-          out <<= 8;
-          out |= TMC_SW_SPI->transfer(0x00);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            TMC_SW_SPI->transfer(0);
-    } else {
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          status_response = SPI.transfer(addressByte & 0xFF); // Send the address byte again
-          out  = SPI.transfer(0x00);
-          out <<= 8;
-          out |= SPI.transfer(0x00);
-          out <<= 8;
-          out |= SPI.transfer(0x00);
-          out <<= 8;
-          out |= SPI.transfer(0x00);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            SPI.transfer(0);
-    }
-  } else if (TMC_SW_SPI != NULL) {
+  int8_t i = 1;
+
+  if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
     TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16(0x0000); // Clear SPI
     TMC_SW_SPI->transfer16(0x0000);
 
+    // Shift the written data to the correct driver in chain
+    // Default link_index = -1 and no shifting happens
+    while(i < link_index) {
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer(0x00);
+      i++;
+    }
+
     switchCSpin(HIGH);
     switchCSpin(LOW);
 
+    // Shift data from target link into the last one...
+    while(i < chain_length) {
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer(0x00);
+      i++;
+    }
+
+    // ...and once more to MCU
     status_response = TMC_SW_SPI->transfer(addressByte & 0xFF); // Send the address byte again
     out  = TMC_SW_SPI->transfer(0x00);
     out <<= 8;
@@ -152,36 +129,21 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   addressByte |= TMC_WRITE;
-  if (TMC_chain[0]) {
-    if (TMC_SW_SPI != NULL) {
-      switchCSpin(LOW);
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          status_response = TMC_SW_SPI->transfer(addressByte & 0xFF);
-          TMC_SW_SPI->transfer16((config>>16) & 0xFFFF);
-          TMC_SW_SPI->transfer16(config & 0xFFFF);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            TMC_SW_SPI->transfer(0);
-    } else {
-      SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
-      switchCSpin(LOW);
-      for (uint8_t i = TMC_chain[0]; i != 0; i--)
-        if (axis_index == TMC_chain[i]) {
-          status_response = SPI.transfer(addressByte & 0xFF);
-          SPI.transfer16((config>>16) & 0xFFFF);
-          SPI.transfer16(config & 0xFFFF);
-        }
-        else
-          for (uint8_t j = 0; j < 5; j++)   // send out five nulls
-            SPI.transfer(0);
-    }
-  } else if (TMC_SW_SPI != NULL) {
+  int8_t i = 1;
+  if (TMC_SW_SPI != NULL) {
     switchCSpin(LOW);
     status_response = TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16((config>>16) & 0xFFFF);
     TMC_SW_SPI->transfer16(config & 0xFFFF);
+
+    // Shift the written data to the correct driver in chain
+    // Default link_index = -1 and no shifting happens
+    while(i < link_index) {
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer16(0x0000);
+      TMC_SW_SPI->transfer(0x00);
+      i++;
+    }
   } else {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
@@ -338,18 +300,4 @@ uint8_t TMC2130Stepper::sg_current_decrease() {
     case 0b11: return  1;
   }
   return 0;
-}
-
-uint8_t TMC2130Stepper::TMC_chain[MAX_TMC_STEPPERS];
-
-// Add to the chain array and save chain info for this stepper
-void TMC2130Stepper::set_chain_info(const uint8_t axis, const uint8_t chain_position=0) {
-  if (chain_position) {
-    TMC_chain[0]++;
-    TMC_chain[chain_position] = axis;
-    chain_pos = chain_position;
-    axis_index = axis;
-  }
-  else
-    TMC_chain[0] = 0;  // Reset array back to uninitialized
 }
