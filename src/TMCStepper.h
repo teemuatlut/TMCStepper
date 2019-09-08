@@ -818,7 +818,9 @@ class TMC2208Stepper : public TMCStepper {
 		void defaults();
 		void push();
 		void begin();
+		#if SW_CAPABLE_PLATFORM
 		void beginSerial(uint32_t baudrate);
+		#endif
 		bool isEnabled();
 
 		// RW: GCONF
