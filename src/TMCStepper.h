@@ -24,7 +24,7 @@
 #endif
 
 #ifdef TMC_SERIAL_SWITCH
-#include "source/SERIAL_SWITCH.h"
+	#include "source/SERIAL_SWITCH.h"
 #endif
 
 #include "source/SW_SPI.h"
@@ -651,7 +651,6 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(VSTOP){.sr=0};
 		INIT_REGISTER(TZEROWAIT){.sr=0};
 		INIT_REGISTER(SW_MODE){{.sr=0}};
-		INIT_REGISTER(RAMP_STAT){{.sr=0}};
 		INIT_REGISTER(ENCMODE){{.sr=0}};
 		INIT_REGISTER(ENC_CONST){.sr=0};
 
