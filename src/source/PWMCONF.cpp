@@ -53,8 +53,7 @@ uint8_t TMC2160Stepper::pwm_lim()		{ return PWMCONF_register.pwm_lim;		}
 
 uint32_t TMC2208Stepper::PWMCONF() {
 	if (write_only) return PWMCONF_register.sr;
-	PWMCONF_register.sr = read(PWMCONF_register.address);
-	return PWMCONF_register.sr;
+	return read(PWMCONF_register.address);
 }
 void TMC2208Stepper::PWMCONF(uint32_t input) {
 	PWMCONF_register.sr = input;
@@ -70,11 +69,11 @@ void TMC2208Stepper::freewheel		( uint8_t B ) { PWMCONF_register.freewheel = B; 
 void TMC2208Stepper::pwm_reg		( uint8_t B ) { PWMCONF_register.pwm_reg = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
 void TMC2208Stepper::pwm_lim		( uint8_t B ) { PWMCONF_register.pwm_lim = B; write(PWMCONF_register.address, PWMCONF_register.sr); }
 
-uint8_t TMC2208Stepper::pwm_ofs()		{ PWMCONF(); return PWMCONF_register.pwm_ofs;		}
-uint8_t TMC2208Stepper::pwm_grad()		{ PWMCONF(); return PWMCONF_register.pwm_grad;		}
-uint8_t TMC2208Stepper::pwm_freq()		{ PWMCONF(); return PWMCONF_register.pwm_freq;		}
-bool 	TMC2208Stepper::pwm_autoscale()	{ PWMCONF(); return PWMCONF_register.pwm_autoscale;	}
-bool 	TMC2208Stepper::pwm_autograd()	{ PWMCONF(); return PWMCONF_register.pwm_autograd;	}
-uint8_t TMC2208Stepper::freewheel()		{ PWMCONF(); return PWMCONF_register.freewheel;		}
-uint8_t TMC2208Stepper::pwm_reg()		{ PWMCONF(); return PWMCONF_register.pwm_reg;		}
-uint8_t TMC2208Stepper::pwm_lim()		{ PWMCONF(); return PWMCONF_register.pwm_lim;		}
+uint8_t TMC2208Stepper::pwm_ofs()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_ofs;			}
+uint8_t TMC2208Stepper::pwm_grad()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_grad;		}
+uint8_t TMC2208Stepper::pwm_freq()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_freq;		}
+bool 	TMC2208Stepper::pwm_autoscale()	{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_autoscale;	}
+bool 	TMC2208Stepper::pwm_autograd()	{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_autograd;	}
+uint8_t TMC2208Stepper::freewheel()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.freewheel;		}
+uint8_t TMC2208Stepper::pwm_reg()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_reg;			}
+uint8_t TMC2208Stepper::pwm_lim()		{ TMC2208_n::PWMCONF_t r{0}; r.sr = PWMCONF(); return PWMCONF_register.pwm_lim;			}

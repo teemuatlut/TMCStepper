@@ -2,7 +2,7 @@
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) COOLCONF_register.SETTING = B; write(COOLCONF_register.address, COOLCONF_register.sr);
-#define GET_REG(SETTING) COOLCONF(); return COOLCONF_register.SETTING;
+#define GET_REG(SETTING) return COOLCONF_register.SETTING;
 
 // COOLCONF
 uint32_t TMC2130Stepper::COOLCONF() { return COOLCONF_register.sr; }

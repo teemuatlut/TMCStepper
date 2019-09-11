@@ -249,8 +249,7 @@ void TMC2130Stepper::THIGH(uint32_t input) {
 ///////////////////////////////////////////////////////////////////////////////////////
 // RW: XDIRECT
 uint32_t TMC2130Stepper::XDIRECT() {
-  XDIRECT_register.sr = read(XDIRECT_register.address);
-  return XDIRECT_register.sr;
+  return read(XDIRECT_register.address);
 }
 void TMC2130Stepper::XDIRECT(uint32_t input) {
   XDIRECT_register.sr = input;
@@ -258,8 +257,8 @@ void TMC2130Stepper::XDIRECT(uint32_t input) {
 }
 void TMC2130Stepper::coil_A(int16_t B)  { XDIRECT_register.coil_A = B; write(XDIRECT_register.address, XDIRECT_register.sr); }
 void TMC2130Stepper::coil_B(int16_t B)  { XDIRECT_register.coil_B = B; write(XDIRECT_register.address, XDIRECT_register.sr); }
-int16_t TMC2130Stepper::coil_A()        { XDIRECT(); return XDIRECT_register.coil_A; }
-int16_t TMC2130Stepper::coil_B()        { XDIRECT(); return XDIRECT_register.coil_B; }
+int16_t TMC2130Stepper::coil_A()        { XDIRECT_t r{0}; r.sr = XDIRECT(); return r.coil_A; }
+int16_t TMC2130Stepper::coil_B()        { XDIRECT_t r{0}; r.sr = XDIRECT(); return r.coil_B; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: VDCMIN
 uint32_t TMC2130Stepper::VDCMIN() { return VDCMIN_register.sr; }
@@ -283,15 +282,16 @@ void TMC2130Stepper::dc_sg(uint8_t input) {
 }
 
 uint32_t TMC2130Stepper::DCCTRL() {
-	DCCTRL_register.sr = read(DCCTRL_register.address);
-	return DCCTRL_register.sr;
+	return read(DCCTRL_register.address);
 }
 uint16_t TMC2130Stepper::dc_time() {
-	DCCTRL();
-	return DCCTRL_register.dc_time;
+	DCCTRL_t r{0};
+  r.sr = DCCTRL();
+	return r.dc_time;
 }
 uint8_t TMC2130Stepper::dc_sg() {
-	DCCTRL();
+	DCCTRL_t r{0};
+  r.sr = DCCTRL();
 	return DCCTRL_register.dc_sg;
 }
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -275,8 +275,7 @@ uint8_t TMC2224Stepper::version() 	{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); retu
 
 uint16_t TMC2208Stepper::FACTORY_CONF() {
 	if (write_only) return FACTORY_CONF_register.sr;
-	FACTORY_CONF_register.sr = read(FACTORY_CONF_register.address);
-	return FACTORY_CONF_register.sr;
+	return read(FACTORY_CONF_register.address);
 }
 void TMC2208Stepper::FACTORY_CONF(uint16_t input) {
 	FACTORY_CONF_register.sr = input;
@@ -284,8 +283,8 @@ void TMC2208Stepper::FACTORY_CONF(uint16_t input) {
 }
 void TMC2208Stepper::fclktrim(uint8_t B){ FACTORY_CONF_register.fclktrim = B; write(FACTORY_CONF_register.address, FACTORY_CONF_register.sr); }
 void TMC2208Stepper::ottrim(uint8_t B)	{ FACTORY_CONF_register.ottrim = B; write(FACTORY_CONF_register.address, FACTORY_CONF_register.sr); }
-uint8_t TMC2208Stepper::fclktrim()		{ read(FACTORY_CONF_register.address); return FACTORY_CONF_register.fclktrim; }
-uint8_t TMC2208Stepper::ottrim()		{ read(FACTORY_CONF_register.address); return FACTORY_CONF_register.ottrim; }
+uint8_t TMC2208Stepper::fclktrim()		{ FACTORY_CONF_t r{0}; r.sr = FACTORY_CONF(); return r.fclktrim; }
+uint8_t TMC2208Stepper::ottrim()		{ FACTORY_CONF_t r{0}; r.sr = FACTORY_CONF(); return r.ottrim; }
 
 void TMC2208Stepper::VACTUAL(uint32_t input) {
 	VACTUAL_register.sr = input;
