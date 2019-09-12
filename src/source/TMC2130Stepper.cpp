@@ -292,7 +292,7 @@ uint16_t TMC2130Stepper::dc_time() {
 uint8_t TMC2130Stepper::dc_sg() {
 	DCCTRL_t r{0};
   r.sr = DCCTRL();
-	return DCCTRL_register.dc_sg;
+	return r.dc_sg;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: PWM_SCALE
