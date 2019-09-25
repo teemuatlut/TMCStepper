@@ -74,7 +74,6 @@ void TMC2208Stepper::defaults() {
   //MSLUT6_register.sr = ???;
   //MSLUT7_register.sr = ???;
   //MSLUTSTART_register.start_sin90 = 247;
-  PWMCONF_register.sr = 0x00050480;
 }
 
 void TMC2208Stepper::push() {
