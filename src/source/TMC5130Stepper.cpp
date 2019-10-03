@@ -210,8 +210,8 @@ void TMC5130Stepper::X_ENC(int32_t input) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: ENC_CONST
-uint16_t TMC5130Stepper::ENC_CONST() { return ENC_CONST_register.sr; }
-void TMC5130Stepper::ENC_CONST(uint16_t input) {
+uint32_t TMC5130Stepper::ENC_CONST() { return ENC_CONST_register.sr; }
+void TMC5130Stepper::ENC_CONST(uint32_t input) {
   ENC_CONST_register.sr = input;
   write(ENC_CONST_register.address, ENC_CONST_register.sr);
 }

@@ -164,7 +164,7 @@ struct ENCMODE_t {
 
 struct ENC_CONST_t {
   constexpr static uint8_t address = 0x3A;
-  int32_t sr;
+  uint32_t sr;
 };
 
 struct MSLUT0_t {
