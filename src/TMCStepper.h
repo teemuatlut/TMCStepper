@@ -20,6 +20,9 @@
 #endif
 
 #if SW_CAPABLE_PLATFORM
+	#if defined(ARDUINO_ARCH_STM32) && defined (TIM6_BASE)
+		#define TIMER_SERIAL TIM6
+	#endif
 	#include <SoftwareSerial.h>
 #endif
 
