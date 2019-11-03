@@ -27,6 +27,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 	// addr needed for TMC2209
 	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
 		TMCStepper(RS),
+		RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
 		slave_address(addr)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
@@ -124,9 +125,21 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 template<typename SERIAL_TYPE>
-uint64_t _sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t len, uint16_t timeout) {
+uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t len, uint16_t timeout) {
 	while (serPtr.available() > 0) serPtr.read(); // Flush
+
+	#if SW_CAPABLE_PLATFORM
+		if (RXTX_pin > 0)
+			pinMode(RXTX_pin, OUTPUT);
+	#endif
+
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
+
+	#if SW_CAPABLE_PLATFORM
+		if (RXTX_pin > 0)
+			pinMode(RXTX_pin, INPUT);
+	#endif
+
 	delay(TMC2208Stepper::replyDelay);
 
 	// scan for the rx frame and read it

@@ -980,6 +980,7 @@ class TMC2208Stepper : public TMCStepper {
 		Stream * HWSerial = NULL;
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = NULL;
+			const uint16_t RXTX_pin = 0; // Half duplex
 		#endif
 
 		SSwitch *sswitch = NULL;
@@ -995,7 +996,7 @@ class TMC2208Stepper : public TMCStepper {
 		static constexpr uint8_t max_retries = 2;
 
 		template<typename SERIAL_TYPE>
-		friend uint64_t _sendDatagram(SERIAL_TYPE &, uint8_t [], const uint8_t, uint16_t);
+		uint64_t _sendDatagram(SERIAL_TYPE &, uint8_t [], const uint8_t, uint16_t);
 };
 
 class TMC2209Stepper : public TMC2208Stepper {
