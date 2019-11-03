@@ -6,8 +6,7 @@
 // addr needed for TMC2209
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2) :
 	TMCStepper(RS),
-	slave_address(TMC2208_SLAVE_ADDR),
-	write_only(false)
+	slave_address(TMC2208_SLAVE_ADDR)
 	{
 		SSwitch *SMulObj = new SSwitch(mul_pin1,mul_pin2,addr);
 		sswitch = SMulObj;
@@ -17,8 +16,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 	TMCStepper(RS),
-	slave_address(addr),
-	write_only(false)
+	slave_address(addr)
 	{
 		HWSerial = SerialPort;
 		defaults();
@@ -27,10 +25,9 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 #if SW_CAPABLE_PLATFORM
 	// Protected
 	// addr needed for TMC2209
-	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr, bool has_rx) :
+	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
 		TMCStepper(RS),
-		slave_address(addr),
-		write_only(!has_rx)
+		slave_address(addr)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
@@ -268,7 +265,6 @@ bool TMC2224Stepper::dir()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.d
 uint8_t TMC2224Stepper::version() 	{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 uint16_t TMC2208Stepper::FACTORY_CONF() {
-	if (write_only) return FACTORY_CONF_register.sr;
 	return read(FACTORY_CONF_register.address);
 }
 void TMC2208Stepper::FACTORY_CONF(uint16_t input) {

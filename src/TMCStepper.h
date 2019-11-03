@@ -812,8 +812,8 @@ class TMC2208Stepper : public TMCStepper {
 			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
 			{}
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool has_rx=true) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR, has_rx)
+			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS) :
+				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
 				{}
 		#endif
 		void defaults();
@@ -957,8 +957,6 @@ class TMC2208Stepper : public TMCStepper {
 		uint8_t pwm_ofs_auto();
 		uint8_t pwm_grad_auto();
 
-		bool isWriteOnly() {return write_only;}
-
 		uint16_t bytesWritten = 0;
 		float Rsense = 0.11;
 		bool CRCerror = false;
@@ -976,7 +974,7 @@ class TMC2208Stepper : public TMCStepper {
 
 		TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr);
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr, bool has_rx);
+			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr);
 		#endif
 
 		Stream * HWSerial = NULL;
@@ -992,7 +990,6 @@ class TMC2208Stepper : public TMCStepper {
 		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
 		static constexpr uint8_t  TMC2208_SYNC = 0x05,
 															TMC2208_SLAVE_ADDR = 0x00;
-		const bool write_only;
 		static constexpr uint8_t replyDelay = 2;
 		static constexpr uint8_t abort_window = 5;
 		static constexpr uint8_t max_retries = 2;
@@ -1007,8 +1004,8 @@ class TMC2209Stepper : public TMC2208Stepper {
 			TMC2208Stepper(SerialPort, RS, addr) {}
 
 		#if SW_CAPABLE_PLATFORM
-			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr, bool has_rx = true) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr, has_rx) {}
+			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
+				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr) {}
 		#endif
 		void push();
 
