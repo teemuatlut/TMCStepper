@@ -4,22 +4,19 @@
 
 // Protected
 // addr needed for TMC2209
-TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2) :
-	TMCStepper(RS),
-	slave_address(TMC2208_SLAVE_ADDR)
-	{
-		SSwitch *SMulObj = new SSwitch(mul_pin1,mul_pin2,addr);
-		sswitch = SMulObj;
-		HWSerial = SerialPort;
-		defaults();
-	}
-
 TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
 	TMCStepper(RS),
 	slave_address(addr)
 	{
 		HWSerial = SerialPort;
 		defaults();
+	}
+
+TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2) :
+	TMC2208Stepper(SerialPort, RS)
+	{
+		SSwitch *SMulObj = new SSwitch(mul_pin1, mul_pin2, addr);
+		sswitch = SMulObj;
 	}
 
 #if SW_CAPABLE_PLATFORM
