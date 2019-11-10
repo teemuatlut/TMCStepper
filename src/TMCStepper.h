@@ -815,12 +815,16 @@ class TMC2208Stepper : public TMCStepper {
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
 				{}
+		#else
+			TMC2208Stepper(uint16_t, uint16_t, float) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void defaults();
 		void push();
 		void begin();
 		#if SW_CAPABLE_PLATFORM
-		void beginSerial(uint32_t baudrate);
+			void beginSerial(uint32_t baudrate);
+		#else
+			void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		bool isEnabled();
 
@@ -1007,6 +1011,8 @@ class TMC2209Stepper : public TMC2208Stepper {
 		#if SW_CAPABLE_PLATFORM
 			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr) {}
+		#else
+			TMC2209Stepper(uint16_t, uint16_t, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void push();
 
