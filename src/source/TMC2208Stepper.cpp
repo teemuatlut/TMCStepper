@@ -126,15 +126,19 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 
 	#if SW_CAPABLE_PLATFORM
-		if (RXTX_pin > 0)
+		if (RXTX_pin > 0) {
+			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, OUTPUT);
+		}
 	#endif
 
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 
 	#if SW_CAPABLE_PLATFORM
-		if (RXTX_pin > 0)
+		if (RXTX_pin > 0) {
+			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, INPUT);
+		}
 	#endif
 
 	delay(TMC2208Stepper::replyDelay);
