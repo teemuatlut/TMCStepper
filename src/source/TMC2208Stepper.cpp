@@ -125,7 +125,7 @@ template<typename SERIAL_TYPE>
 uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t len, uint16_t timeout) {
 	while (serPtr.available() > 0) serPtr.read(); // Flush
 
-	#if SW_CAPABLE_PLATFORM
+	#if defined(ARDUINO_ARCH_AVR)
 		if (RXTX_pin > 0) {
 			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, OUTPUT);
@@ -134,7 +134,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 
 	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
 
-	#if SW_CAPABLE_PLATFORM
+	#if defined(ARDUINO_ARCH_AVR)
 		if (RXTX_pin > 0) {
 			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, INPUT);
