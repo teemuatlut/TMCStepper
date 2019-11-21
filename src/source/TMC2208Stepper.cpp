@@ -33,7 +33,11 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 		}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-		if (SWSerial != NULL) SWSerial->begin(baudrate);
+		if (SWSerial != NULL)
+		{
+			SWSerial->begin(baudrate);
+			SWSerial->stopListening();
+		}
 		#if defined(ARDUINO_ARCH_AVR)
 			if (RXTX_pin > 0) {
 				digitalWrite(RXTX_pin, HIGH);
