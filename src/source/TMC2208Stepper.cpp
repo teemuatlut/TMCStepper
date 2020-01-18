@@ -154,7 +154,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
-	uint32_t sync_target = ((uint32_t)datagram[0]<<16) | 0xFF00 | datagram[2];
+	uint32_t sync_target = (static_cast<uint32_t>(datagram[0])<<16) | 0xFF00 | datagram[2];
 	uint32_t sync = 0;
 
 	do {
@@ -234,9 +234,18 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 		delay(replyDelay);
 
 		CRCerror = false;
-		uint8_t out_datagram[] = {(uint8_t)(out>>56), (uint8_t)(out>>48), (uint8_t)(out>>40), (uint8_t)(out>>32), (uint8_t)(out>>24), (uint8_t)(out>>16), (uint8_t)(out>>8), (uint8_t)(out>>0)};
+		uint8_t out_datagram[] = {
+			static_cast<uint8_t>(out>>56),
+			static_cast<uint8_t>(out>>48),
+			static_cast<uint8_t>(out>>40),
+			static_cast<uint8_t>(out>>32),
+			static_cast<uint8_t>(out>>24),
+			static_cast<uint8_t>(out>>16),
+			static_cast<uint8_t>(out>> 8),
+			static_cast<uint8_t>(out>> 0)
+		};
 		uint8_t crc = calcCRC(out_datagram, 7);
-		if ((crc != (uint8_t)out) || crc == 0 ) {
+		if ((crc != static_cast<uint8_t>(out)) || crc == 0 ) {
 			CRCerror = true;
 			out = 0;
 		} else {
