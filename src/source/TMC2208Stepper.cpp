@@ -33,7 +33,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 		}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-		if (SWSerial != NULL)
+		if (SWSerial != nullptr)
 		{
 			SWSerial->begin(baudrate);
 			SWSerial->stopListening();
@@ -114,14 +114,14 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	datagram[len] = calcCRC(datagram, len);
 
 	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != NULL) {
+		if (SWSerial != nullptr) {
 				for(int i=0; i<=len; i++){
 					bytesWritten += SWSerial->write(datagram[i]);
 				}
 		} else
 	#endif
 		{
-			if (sswitch != NULL)
+			if (sswitch != nullptr)
 				sswitch->active();
 
 			for(int i=0; i<=len; i++){			
@@ -218,14 +218,14 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 
 	for (uint8_t i = 0; i < max_retries; i++) {
 		#if SW_CAPABLE_PLATFORM
-			if (SWSerial != NULL) {
+			if (SWSerial != nullptr) {
 					SWSerial->listen();
 					out = _sendDatagram(*SWSerial, datagram, len, abort_window);
 					SWSerial->stopListening();
 			} else
 		#endif
 			{
-				if (sswitch != NULL)
+				if (sswitch != nullptr)
 					sswitch->active();
 
 				out = _sendDatagram(*HWSerial, datagram, len, abort_window);

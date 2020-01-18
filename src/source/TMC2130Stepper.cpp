@@ -66,7 +66,7 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   uint32_t out = 0UL;
   int8_t i = 1;
 
-  if (TMC_SW_SPI != NULL) {
+  if (TMC_SW_SPI != nullptr) {
     switchCSpin(LOW);
     TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16(0x0000); // Clear SPI
@@ -148,7 +148,7 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   addressByte |= TMC_WRITE;
   int8_t i = 1;
-  if (TMC_SW_SPI != NULL) {
+  if (TMC_SW_SPI != nullptr) {
     switchCSpin(LOW);
     status_response = TMC_SW_SPI->transfer(addressByte & 0xFF);
     TMC_SW_SPI->transfer16((config>>16) & 0xFFFF);
@@ -188,7 +188,7 @@ void TMC2130Stepper::begin() {
   pinMode(_pinCS, OUTPUT);
   switchCSpin(HIGH);
 
-  if (TMC_SW_SPI != NULL) TMC_SW_SPI->init();
+  if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
 
   GCONF(GCONF_register.sr);
   CHOPCONF(CHOPCONF_register.sr);
