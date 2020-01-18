@@ -150,7 +150,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		}
 	#endif
 
-	delay(TMC2208Stepper::replyDelay);
+	delay(this->replyDelay);
 
 	// scan for the rx frame and read it
 	uint32_t ms = millis();
@@ -177,7 +177,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 
 	uint64_t out = sync;
 	ms = millis();
-	timeout = TMC2208Stepper::abort_window;
+	timeout = this->abort_window;
 
 	for(uint8_t i=0; i<5;) {
 		uint32_t ms2 = millis();
