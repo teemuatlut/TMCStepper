@@ -990,6 +990,8 @@ class TMC2208Stepper : public TMCStepper {
 
 		SSwitch *sswitch = nullptr;
 
+		template<class SERIAL_TYPE> int16_t serial_read(SERIAL_TYPE &serPtr) __attribute__((weak));
+		template<class SERIAL_TYPE> uint8_t serial_write(SERIAL_TYPE &serPtr, const uint8_t data) __attribute__((weak));
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		const uint8_t slave_address;

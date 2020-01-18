@@ -106,6 +106,15 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 	return crc;
 }
 
+template<class SERIAL_TYPE>
+int16_t TMC2208Stepper::serial_read(SERIAL_TYPE &serPtr) {
+	return serPtr.read();
+}
+template<class SERIAL_TYPE>
+uint8_t TMC2208Stepper::serial_write(SERIAL_TYPE &serPtr, const uint8_t data) {
+	return serPtr.write(data);
+}
+
 void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	uint8_t len = 7;
 	addr |= TMC_WRITE;
@@ -115,8 +124,8 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
-				for(int i=0; i<=len; i++){
-					bytesWritten += SWSerial->write(datagram[i]);
+				for(uint8_t i=0; i<=len; i++){
+					bytesWritten += serial_write(*SWSerial, datagram[i]);
 				}
 		} else
 	#endif
@@ -124,8 +133,8 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 			if (sswitch != nullptr)
 				sswitch->active();
 
-			for(int i=0; i<=len; i++){			
-				bytesWritten += HWSerial->write(datagram[i]);
+			for(uint8_t i=0; i<=len; i++){			
+				bytesWritten += serial_write(*HWSerial, datagram[i]);
 		}
 	}
 	delay(replyDelay);
@@ -133,7 +142,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 template<typename SERIAL_TYPE>
 uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], const uint8_t len, uint16_t timeout) {
-	while (serPtr.available() > 0) serPtr.read(); // Flush
+	while (serPtr.available() > 0) serial_read(serPtr); // Flush
 
 	#if defined(ARDUINO_ARCH_AVR)
 		if (RXTX_pin > 0) {
@@ -142,7 +151,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		}
 	#endif
 
-	for(int i=0; i<=len; i++) serPtr.write(datagram[i]);
+	for(int i=0; i<=len; i++) serial_write(serPtr, datagram[i]);
 
 	#if defined(ARDUINO_ARCH_AVR)
 		if (RXTX_pin > 0) {
@@ -166,7 +175,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		}
 		if (!timeout) return 0;
 
-		int16_t res = serPtr.read();
+		int16_t res = serial_read(serPtr);
 		if (res < 0) continue;
 
 		sync <<= 8;
@@ -188,7 +197,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		}
 		if (!timeout) return 0;
 
-		int16_t res = serPtr.read();
+		int16_t res = serial_read(serPtr);
 		if (res < 0) continue;
 
 		out <<= 8;
@@ -204,7 +213,7 @@ uint64_t TMC2208Stepper::_sendDatagram(SERIAL_TYPE &serPtr, uint8_t datagram[], 
 		}
 	#endif
 
-	while (serPtr.available() > 0) serPtr.read(); // Flush
+	while (serPtr.available() > 0) serial_read(serPtr); // Flush
 
 	return out;
 }

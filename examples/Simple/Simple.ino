@@ -32,7 +32,7 @@
 //TMC5160Stepper driver(CS_PIN, R_SENSE);
 //TMC5160Stepper driver(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
 
-//TMC2208Stepper driver(&SERIAL_PORT, R_SENSE);                     // Hardware Serial
+TMC2208Stepper driver(&SERIAL_PORT, R_SENSE);                     // Hardware Serial
 //TMC2208Stepper driver(SW_RX, SW_TX, R_SENSE);                     // Software serial
 //TMC2209Stepper driver(&SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
 //TMC2209Stepper driver(SW_RX, SW_TX, R_SENSE, DRIVER_ADDRESS);
