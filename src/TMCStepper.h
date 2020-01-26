@@ -658,8 +658,6 @@ class TMC5130Stepper : public TMC2160Stepper {
 		struct X_ENC_t 		{ constexpr static uint8_t address = 0x39; }; // RW
 		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; }; // R+C
 		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; }; // R
-		struct MSCNT_t		{ constexpr static uint8_t address = 0x6A; }; // R
-		struct MSCURACT_t 	{ constexpr static uint8_t address = 0x6B; }; // R
 
 		/*
 		INIT_REGISTER(MSLUT0){0};
