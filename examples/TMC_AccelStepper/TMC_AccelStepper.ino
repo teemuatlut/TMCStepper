@@ -16,7 +16,7 @@
 #define SW_TX            40 // TMC2208/TMC2224 SoftwareSerial transmit pin
 #define SERIAL_PORT Serial1 // TMC2208/TMC2224 HardwareSerial port
 
-#define R_SENSE 0.11 // Match to your driver
+#define R_SENSE 0.11f // Match to your driver
                      // SilentStepStick series use 0.11
                      // UltiMachine Einsy and Archim2 boards use 0.2
                      // Panucatt BSD2660 uses 0.1

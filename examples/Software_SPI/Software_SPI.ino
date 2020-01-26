@@ -13,7 +13,7 @@
 #define SW_MISO          44 // Software Master In Slave Out (MISO)
 #define SW_SCK           64 // Software Slave Clock (SCK)
 
-#define R_SENSE 0.11 // Match to your driver
+#define R_SENSE 0.11f // Match to your driver
                      // SilentStepStick series use 0.11
                      // UltiMachine Einsy and Archim2 boards use 0.2
                      // Panucatt BSD2660 uses 0.1
