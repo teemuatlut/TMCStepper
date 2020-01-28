@@ -10,3 +10,5 @@ Supported TMC drivers:
 * TMC5130
 * TMC5160
 * TMC5161
+
+[New Doxygen documentation](https://teemuatlut.github.io/TMCStepper/index.html)

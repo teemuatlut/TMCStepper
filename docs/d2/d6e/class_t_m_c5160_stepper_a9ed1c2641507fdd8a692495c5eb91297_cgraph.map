@@ -1,0 +1,12 @@
+<map id="TMC5160Stepper::enc_n_dco_cfg6" name="TMC5160Stepper::enc_n_dco_cfg6">
+<area shape="rect" id="node1" title=" " alt="" coords="5,99,156,141"/>
+<area shape="rect" id="node2" href="$d9/df8/class_t_m_c5130_stepper.html#adc1e0971a9d17880735d30fcb0eac342" title=" " alt="" coords="204,99,355,141"/>
+<area shape="rect" id="node3" href="$d9/df8/class_t_m_c5130_stepper.html#a74e9e262a8da77925d246916b431161d" title=" " alt="" coords="403,107,557,133"/>
+<area shape="rect" id="node4" href="$dd/deb/class_t_m_c2130_stepper.html#a161ca6ebe3736454e17e9236572a6001" title=" " alt="" coords="605,107,760,133"/>
+<area shape="rect" id="node5" href="$dd/deb/class_t_m_c2130_stepper.html#a1fc868601a32fb0cd8fc536dafa8ecea" title=" " alt="" coords="808,5,1036,32"/>
+<area shape="rect" id="node6" href="$dd/deb/class_t_m_c2130_stepper.html#aeace18dcee808585dd4449e783811600" title=" " alt="" coords="813,56,1031,83"/>
+<area shape="rect" id="node7" href="$dd/deb/class_t_m_c2130_stepper.html#a4a8f3b6ac100045ed5f84fe4d18d9d5a" title=" " alt="" coords="821,107,1023,133"/>
+<area shape="rect" id="node8" href="$dd/deb/class_t_m_c2130_stepper.html#a0673af4887ec52b23aa658aa290f6623" title=" " alt="" coords="1084,187,1257,213"/>
+<area shape="rect" id="node10" href="$dd/deb/class_t_m_c2130_stepper.html#aba94fc7bb8e2c8c12191f44561f19d95" title=" " alt="" coords="835,209,1009,250"/>
+<area shape="rect" id="node9" href="$df/d8b/class_s_w___s_p_i_class.html#af260fdc0af3f1312b106483161e559c3" title=" " alt="" coords="1305,187,1461,213"/>
+</map>

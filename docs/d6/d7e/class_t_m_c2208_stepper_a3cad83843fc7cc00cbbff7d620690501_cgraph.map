@@ -1,0 +1,14 @@
+<map id="TMC2208Stepper::PWM_AUTO" name="TMC2208Stepper::PWM_AUTO">
+<area shape="rect" id="node1" title=" " alt="" coords="5,173,211,200"/>
+<area shape="rect" id="node2" href="$d6/d7e/class_t_m_c2208_stepper.html#a2fae2050849c3ab7968012def8ea1cc5" title=" " alt="" coords="259,173,413,200"/>
+<area shape="rect" id="node3" href="$d6/d7e/class_t_m_c2208_stepper.html#a321ad81155b7a20c0858920d32d0b074" title=" " alt="" coords="473,72,695,99"/>
+<area shape="rect" id="node9" href="$d6/d7e/class_t_m_c2208_stepper.html#a409c19fa6b052a370a317d061bf9af4e" title=" " alt="" coords="493,123,675,149"/>
+<area shape="rect" id="node10" href="$d6/d7e/class_t_m_c2208_stepper.html#a673ade174158b47e3b345b1d7b3c473d" title=" " alt="" coords="461,173,707,200"/>
+<area shape="rect" id="node11" href="$d6/d7e/class_t_m_c2208_stepper.html#a0ba01db6c4c01da7cb0ace8a524ab1da" title=" " alt="" coords="465,224,703,251"/>
+<area shape="rect" id="node4" href="$d6/d7e/class_t_m_c2208_stepper.html#a7a670b15f45466f8d167a9b80fbf384f" title=" " alt="" coords="762,5,941,32"/>
+<area shape="rect" id="node5" href="$d6/d7e/class_t_m_c2208_stepper.html#a4ec5d2b2f5a31259c7aba1f3208d63b8" title=" " alt="" coords="774,56,929,83"/>
+<area shape="rect" id="node7" href="$d6/d7e/class_t_m_c2208_stepper.html#a129ceb04c3ea18e2c4ec1a59a51ece85" title=" " alt="" coords="755,107,948,133"/>
+<area shape="rect" id="node8" href="$d6/d7e/class_t_m_c2208_stepper.html#aa7f2c1a3a1cda9a328c186c6d7cbfe41" title=" " alt="" coords="771,158,932,199"/>
+<area shape="rect" id="node6" href="$d6/d7e/class_t_m_c2208_stepper.html#a5441dd87d0bcea4ffc309cb012166a57" title=" " alt="" coords="996,165,1151,192"/>
+<area shape="rect" id="node12" href="$d9/d98/class_s_switch.html#a6ff09d0850d551571dc333fb74ff8628" title=" " alt="" coords="796,224,907,251"/>
+</map>
