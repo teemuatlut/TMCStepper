@@ -11,7 +11,7 @@
 <polygon fill="white" stroke="none" points="-4,4 -4,-24 81,-24 81,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node"><title>Node0</title>
-<g id="a_node1"><a xlink:href="dc/d82/struct_d_r_v___c_o_n_f__t.html" target="_top" xlink:title=" ">
+<g id="a_node1"><a xlink:href="struct_d_r_v___c_o_n_f__t.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="black" points="0,-0.5 0,-19.5 77,-19.5 77,-0.5 0,-0.5"/>
 <text text-anchor="middle" x="38.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">DRV_CONF_t</text>
 </a>

@@ -11,7 +11,7 @@
 <polygon fill="white" stroke="none" points="-4,4 -4,-24 89,-24 89,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node"><title>Node0</title>
-<g id="a_node1"><a xlink:href="d6/de3/struct_x___c_o_m_p_a_r_e__t.html" target="_top" xlink:title=" ">
+<g id="a_node1"><a xlink:href="struct_x___c_o_m_p_a_r_e__t.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="black" points="0,-0.5 0,-19.5 85,-19.5 85,-0.5 0,-0.5"/>
 <text text-anchor="middle" x="42.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">X_COMPARE_t</text>
 </a>

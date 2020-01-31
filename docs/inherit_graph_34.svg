@@ -11,7 +11,7 @@
 <polygon fill="white" stroke="none" points="-4,4 -4,-24 85,-24 85,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node"><title>Node0</title>
-<g id="a_node1"><a xlink:href="d7/dfa/struct_p_w_m___a_u_t_o__t.html" target="_top" xlink:title=" ">
+<g id="a_node1"><a xlink:href="struct_p_w_m___a_u_t_o__t.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="black" points="0,-0.5 0,-19.5 81,-19.5 81,-0.5 0,-0.5"/>
 <text text-anchor="middle" x="40.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">PWM_AUTO_t</text>
 </a>
