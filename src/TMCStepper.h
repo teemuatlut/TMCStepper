@@ -15,8 +15,10 @@
 
 #if (__cplusplus == 201703L) && defined(__has_include)
 	#define SW_CAPABLE_PLATFORM __has_include(<SoftwareSerial.h>)
+#elif defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_STM32)
+	#define SW_CAPABLE_PLATFORM true
 #else
-	#define SW_CAPABLE_PLATFORM defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_STM32)
+	#define SW_CAPABLE_PLATFORM false
 #endif
 
 #if SW_CAPABLE_PLATFORM
