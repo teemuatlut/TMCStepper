@@ -813,9 +813,11 @@ class TMC2208Stepper : public TMCStepper {
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
 				{}
+
+			__attribute__((deprecated("Boolean argument has been deprecated and does nothing")))
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
-				{}
+				{};
 		#else
 			TMC2208Stepper(uint16_t, uint16_t, float) = delete; // Your platform does not currently support Software Serial
 		#endif
