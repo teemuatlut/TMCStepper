@@ -173,12 +173,13 @@ void setup() {
     Serial.print(F(" = "));
     Serial.println(config.hysteresis_end + config.hysteresis_start);
     Serial.println(F("Your configuration parameters in Marlin are:"));
-    Serial.print(F("#define CHOPPER_TIMING "));
+    Serial.print(F("#define CHOPPER_TIMING { "));
     Serial.print(config.off_time);
-    Serial.print(F(" "));
+    Serial.print(F(", "));
     Serial.print(config.hysteresis_end);
-    Serial.print(F(" "));
+    Serial.print(F(", "));
     Serial.print(config.hysteresis_start);
+    Serial.println(F(" }"));
 }
 
 void initPins() {
