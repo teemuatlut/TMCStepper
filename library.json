@@ -9,5 +9,9 @@
 		"url": "https://github.com/teemuatlut/TMCStepper.git"
 	},
 	"frameworks": "arduino",
-	"platforms": "*"
+	"platforms": "*",
+	"dependencies":
+    {
+		"SPI": "*"
+    }
 }
