@@ -35,9 +35,11 @@ void setup() {
 	Serial.println("Start...");
 	driver.begin(); 			// Initiate pins and registeries
 	driver.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
-	driver.en_pwm_mode(1); 	// Enable extremely quiet stepping
+	driver.en_pwm_mode(1);  	// Enable extremely quiet stepping
 
-	digitalWrite(EN_PIN, LOW);
+	pinMode(EN_PIN, OUTPUT);
+	pinMode(STEP_PIN, OUTPUT);
+	digitalWrite(EN_PIN, LOW); 	// Enable driver in hardware
 
 	Serial.print("DRV_STATUS=0b");
 	Serial.println(driver.DRV_STATUS(), BIN);
