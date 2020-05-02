@@ -351,16 +351,16 @@ class TMC2130Stepper : public TMCStepper {
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
 
-		INIT_REGISTER(GCONF){{.sr=0}};		// 32b
-		INIT_REGISTER(TCOOLTHRS){.sr=0};	// 32b
-		INIT_REGISTER(THIGH){.sr=0};			// 32b
-		INIT_REGISTER(XDIRECT){{.sr=0}};	// 32b
-		INIT_REGISTER(VDCMIN){.sr=0};			// 32b
-		INIT_REGISTER(CHOPCONF){{.sr=0}};	// 32b
-		INIT_REGISTER(COOLCONF){{.sr=0}};	// 32b
-		INIT_REGISTER(DCCTRL){{.sr = 0}};	// 32b
-		INIT_REGISTER(PWMCONF){{.sr=0}};	// 32b
-		INIT_REGISTER(ENCM_CTRL){{.sr=0}};//  8b
+		INIT_REGISTER(GCONF)		{{0}};	// 32b
+		INIT_REGISTER(TCOOLTHRS) {0};		// 32b
+		INIT_REGISTER(THIGH)		 {0};		// 32b
+		INIT_REGISTER(XDIRECT)	{{0}};	// 32b
+		INIT_REGISTER(VDCMIN)		 {0};		// 32b
+		INIT_REGISTER(CHOPCONF)	{{0}};	// 32b
+		INIT_REGISTER(COOLCONF)	{{0}};	// 32b
+		INIT_REGISTER(DCCTRL)		{{0}};	// 32b
+		INIT_REGISTER(PWMCONF)	{{0}};	// 32b
+		INIT_REGISTER(ENCM_CTRL){{0}};	//  8b
 
 		struct IOINT_t 		{ constexpr static uint8_t address = 0x04; };
 		struct PWM_SCALE_t 	{ constexpr static uint8_t address = 0x71; };
