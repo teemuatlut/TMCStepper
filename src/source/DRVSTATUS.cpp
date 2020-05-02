@@ -1,10 +1,6 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-#define GET_REG00(SETTING) DRVSTATUS(); return READ_RDSEL00_register.SETTING
-#define GET_REG01(SETTING) DRVSTATUS(); return READ_RDSEL01_register.SETTING
-#define GET_REG10(SETTING) DRVSTATUS(); return READ_RDSEL10_register.SETTING
-
 uint32_t TMC2660Stepper::DRVSTATUS() {
 	uint32_t response = read()&0xFFCFF;
 	READ_RDSEL00_register.sr = response & 0xFF;
@@ -19,16 +15,28 @@ uint32_t TMC2660Stepper::DRVSTATUS() {
 	return response;
 }
 
-uint16_t TMC2660Stepper::mstep()	{ if(rdsel() != 0b00) rdsel(0b00); GET_REG00(mstep); 	}
-uint8_t TMC2660Stepper::se() 		{ if(rdsel() != 0b10) rdsel(0b10); GET_REG10(se); 		}
-bool TMC2660Stepper::stst() 		{ GET_REG00(stst); }
-bool TMC2660Stepper::olb() 			{ GET_REG00(olb);	 }
-bool TMC2660Stepper::ola() 			{ GET_REG00(ola);	 }
-bool TMC2660Stepper::s2gb() 		{ GET_REG00(s2gb); }
-bool TMC2660Stepper::s2ga() 		{ GET_REG00(s2ga); }
-bool TMC2660Stepper::otpw() 		{ GET_REG00(otpw); }
-bool TMC2660Stepper::ot() 			{ GET_REG00(ot);	 }
-bool TMC2660Stepper::sg() 			{ GET_REG00(sg_value);	 }
+uint16_t TMC2660Stepper::mstep() {
+	if(rdsel() != 0b00)
+		rdsel(0b00);
+
+	DRVSTATUS();
+	return READ_RDSEL00_register.mstep;
+}
+uint8_t TMC2660Stepper::se() {
+	if(rdsel() != 0b10)
+		rdsel(0b10);
+
+	DRVSTATUS();
+	return READ_RDSEL10_register.se;
+}
+bool TMC2660Stepper::stst() { DRVSTATUS(); return READ_RDSEL00_register.stst;	 }
+bool TMC2660Stepper::olb() 	{ DRVSTATUS(); return READ_RDSEL00_register.olb;	 }
+bool TMC2660Stepper::ola() 	{ DRVSTATUS(); return READ_RDSEL00_register.ola;	 }
+bool TMC2660Stepper::s2gb() { DRVSTATUS(); return READ_RDSEL00_register.s2gb;	 }
+bool TMC2660Stepper::s2ga() { DRVSTATUS(); return READ_RDSEL00_register.s2ga;	 }
+bool TMC2660Stepper::otpw() { DRVSTATUS(); return READ_RDSEL00_register.otpw;	 }
+bool TMC2660Stepper::ot() 	{ DRVSTATUS(); return READ_RDSEL00_register.ot;		 }
+bool TMC2660Stepper::sg() 	{ DRVSTATUS(); return READ_RDSEL00_register.sg_value;}
 
 uint16_t TMC2660Stepper::sg_result(){
 	uint16_t out = 0;

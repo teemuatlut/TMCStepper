@@ -49,7 +49,7 @@ struct ENC_DEVIATION_t {
 struct PWM_AUTO_t {
   constexpr static uint8_t address = 0x72;
   union {
-    uint32_t sr : 24;
+    uint32_t sr;
     struct {
       uint8_t pwm_ofs_auto : 8,
                            : 8,
