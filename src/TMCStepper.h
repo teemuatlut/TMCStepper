@@ -813,14 +813,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		static constexpr float default_RS = 0.075;
 };
 
-class TMC5161Stepper : public TMC5160Stepper {
-	public:
-    TMC5161Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1) : TMC5160Stepper(pinCS, RS, link_index) {}
-		TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
-			TMC5160Stepper(pinCS, pinMOSI, pinMISO, pinSCK, link_index) {}
-		TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
-			TMC5160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link_index) {}
-};
+typedef TMC5160Stepper TMC5161Stepper;
 
 class TMC2208Stepper : public TMCStepper {
 	public:
