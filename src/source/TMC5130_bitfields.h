@@ -120,6 +120,7 @@ struct SW_MODE_t {
 };
 
 struct RAMP_STAT_t {
+  RAMP_STAT_t(const uint16_t data) : sr(data) {};
   constexpr static uint8_t address = 0x35;
   union {
     uint16_t sr : 14;
@@ -143,6 +144,7 @@ struct RAMP_STAT_t {
 };
 
 struct ENCMODE_t {
+  ENCMODE_t(const uint16_t data) : sr(data) {};
   constexpr static uint8_t address = 0x38;
   union {
     uint16_t sr : 11;

@@ -550,7 +550,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool en_softstop();
 
 		// R+C: RAMP_STAT
-		uint32_t RAMP_STAT();
+		uint16_t RAMP_STAT();
 		bool status_stop_l();
 		bool status_stop_r();
 		bool status_latch_l();
@@ -567,8 +567,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		bool status_sg();
 
 		// RW: ENCMODE
-		uint32_t ENCMODE();
-		void ENCMODE(uint32_t input);
+		uint16_t ENCMODE();
+		void ENCMODE(uint16_t input);
 		void pol_a(bool B);
 		void pol_b(bool B);
 		void pol_n(bool B);
@@ -859,7 +859,7 @@ class TMC2208Stepper : public TMCStepper {
 		bool isEnabled();
 
 		// RW: GCONF
-		void GCONF(uint32_t input);
+		void GCONF(uint16_t input);
 		void I_scale_analog(bool B);
 		void internal_Rsense(bool B);
 		void en_spreadCycle(bool B);
@@ -869,7 +869,7 @@ class TMC2208Stepper : public TMCStepper {
 		void pdn_disable(bool B);
 		void mstep_reg_select(bool B);
 		void multistep_filt(bool B);
-		uint32_t GCONF();
+		uint16_t GCONF();
 		bool I_scale_analog();
 		bool internal_Rsense();
 		bool en_spreadCycle();
