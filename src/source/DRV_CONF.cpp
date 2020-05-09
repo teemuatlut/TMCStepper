@@ -10,13 +10,13 @@ void TMC2160Stepper::DRV_CONF(uint32_t input) {
 	write(DRV_CONF_register.address, DRV_CONF_register.sr);
 }
 
-void TMC2160Stepper::bbmtime(uint8_t B)		{ SET_REG(bbmtime); 	}
-void TMC2160Stepper::bbmclks(uint8_t B)		{ SET_REG(bbmclks); 	}
-void TMC2160Stepper::otselect(uint8_t B)	{ SET_REG(otselect); 	}
-void TMC2160Stepper::drvstrength(uint8_t B)	{ SET_REG(drvstrength); }
-void TMC2160Stepper::filt_isense(uint8_t B)	{ SET_REG(filt_isense); }
-uint8_t TMC2160Stepper::bbmtime()			{ GET_REG(bbmtime);		}
-uint8_t TMC2160Stepper::bbmclks()			{ GET_REG(bbmclks);		}
-uint8_t TMC2160Stepper::otselect()			{ GET_REG(otselect);	}
-uint8_t TMC2160Stepper::drvstrength()		{ GET_REG(drvstrength);	}
-uint8_t TMC2160Stepper::filt_isense()		{ GET_REG(filt_isense);	}
+void TMC2160Stepper::bbmtime(uint8_t B)		{ DRV_CONF_register.bbmtime = B; 		write(DRV_CONF_register.address, DRV_CONF_register.sr); }
+void TMC2160Stepper::bbmclks(uint8_t B)		{ DRV_CONF_register.bbmclks = B; 		write(DRV_CONF_register.address, DRV_CONF_register.sr); }
+void TMC2160Stepper::otselect(uint8_t B)	{ DRV_CONF_register.otselect = B; 		write(DRV_CONF_register.address, DRV_CONF_register.sr); }
+void TMC2160Stepper::drvstrength(uint8_t B)	{ DRV_CONF_register.drvstrength = B; 	write(DRV_CONF_register.address, DRV_CONF_register.sr); }
+void TMC2160Stepper::filt_isense(uint8_t B)	{ DRV_CONF_register.filt_isense = B; 	write(DRV_CONF_register.address, DRV_CONF_register.sr); }
+uint8_t TMC2160Stepper::bbmtime()			{ return DRV_CONF_register.bbmtime;		}
+uint8_t TMC2160Stepper::bbmclks()			{ return DRV_CONF_register.bbmclks;		}
+uint8_t TMC2160Stepper::otselect()			{ return DRV_CONF_register.otselect;	}
+uint8_t TMC2160Stepper::drvstrength()		{ return DRV_CONF_register.drvstrength;	}
+uint8_t TMC2160Stepper::filt_isense()		{ return DRV_CONF_register.filt_isense;	}

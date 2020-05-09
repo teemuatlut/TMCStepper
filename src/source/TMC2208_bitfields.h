@@ -3,6 +3,7 @@
 
 namespace TMC2208_n {
   struct GCONF_t {
+    GCONF_t(const uint16_t data) : sr(data) {};
     constexpr static uint8_t address = 0x00;
     union {
       uint16_t sr : 10;

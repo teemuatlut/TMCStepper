@@ -2,6 +2,7 @@
 #pragma pack(push, 1)
 
 struct GCONF_t {
+  GCONF_t(const uint32_t data) : sr(data) {};
   constexpr static uint8_t address = 0x00;
   union {
     uint32_t sr : 18;

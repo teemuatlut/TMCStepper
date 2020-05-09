@@ -1,37 +1,34 @@
 #include "TMCStepper.h"
 
-#define SET_REG(SETTING) ENCMODE_register.SETTING = B; write(ENCMODE_register.address, ENCMODE_register.sr);
-#define GET_REG(SETTING) ENCMODE_t r{0}; r.sr = ENCMODE(); return r.SETTING;
-
 // ENCMODE
-uint32_t TMC5130Stepper::ENCMODE() {
+uint16_t TMC5130Stepper::ENCMODE() {
 	return read(ENCMODE_register.address);
 }
-void TMC5130Stepper::ENCMODE(uint32_t input) {
+void TMC5130Stepper::ENCMODE(uint16_t input) {
 	ENCMODE_register.sr = input;
 	write(ENCMODE_register.address, ENCMODE_register.sr);
 }
 
-void TMC5130Stepper::pol_a(bool B)			{ SET_REG(pol_a);			}
-void TMC5130Stepper::pol_b(bool B)			{ SET_REG(pol_b);			}
-void TMC5130Stepper::pol_n(bool B)			{ SET_REG(pol_n);			}
-void TMC5130Stepper::ignore_ab(bool B)		{ SET_REG(ignore_ab);		}
-void TMC5130Stepper::clr_cont(bool B)		{ SET_REG(clr_cont);		}
-void TMC5130Stepper::clr_once(bool B)		{ SET_REG(clr_once);		}
-void TMC5130Stepper::pos_edge(bool B)		{ SET_REG(pos_edge);		}
-void TMC5130Stepper::neg_edge(bool B)		{ SET_REG(neg_edge);		}
-void TMC5130Stepper::clr_enc_x(bool B)		{ SET_REG(clr_enc_x);		}
-void TMC5130Stepper::latch_x_act(bool B)	{ SET_REG(latch_x_act);		}
-void TMC5130Stepper::enc_sel_decimal(bool B){ SET_REG(enc_sel_decimal);	}
+void TMC5130Stepper::pol_a(bool B)			{ ENCMODE_register.pol_a = B; 			write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::pol_b(bool B)			{ ENCMODE_register.pol_b = B; 			write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::pol_n(bool B)			{ ENCMODE_register.pol_n = B; 			write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::ignore_ab(bool B)		{ ENCMODE_register.ignore_ab = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::clr_cont(bool B)		{ ENCMODE_register.clr_cont = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::clr_once(bool B)		{ ENCMODE_register.clr_once = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::pos_edge(bool B)		{ ENCMODE_register.pos_edge = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::neg_edge(bool B)		{ ENCMODE_register.neg_edge = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::clr_enc_x(bool B)		{ ENCMODE_register.clr_enc_x = B; 		write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::latch_x_act(bool B)	{ ENCMODE_register.latch_x_act = B; 	write(ENCMODE_register.address, ENCMODE_register.sr); }
+void TMC5130Stepper::enc_sel_decimal(bool B){ ENCMODE_register.enc_sel_decimal = B; write(ENCMODE_register.address, ENCMODE_register.sr); }
 
-bool TMC5130Stepper::pol_a()			{ GET_REG(pol_a);			}
-bool TMC5130Stepper::pol_b()			{ GET_REG(pol_b);			}
-bool TMC5130Stepper::pol_n()			{ GET_REG(pol_n);			}
-bool TMC5130Stepper::ignore_ab()		{ GET_REG(ignore_ab);		}
-bool TMC5130Stepper::clr_cont()			{ GET_REG(clr_cont);		}
-bool TMC5130Stepper::clr_once()			{ GET_REG(clr_once);		}
-bool TMC5130Stepper::pos_edge()			{ GET_REG(pos_edge);		}
-bool TMC5130Stepper::neg_edge()			{ GET_REG(neg_edge);		}
-bool TMC5130Stepper::clr_enc_x()		{ GET_REG(clr_enc_x);		}
-bool TMC5130Stepper::latch_x_act()		{ GET_REG(latch_x_act);		}
-bool TMC5130Stepper::enc_sel_decimal()	{ GET_REG(enc_sel_decimal);	}
+bool TMC5130Stepper::pol_a()			{ return ENCMODE_t{ ENCMODE() }.pol_a;			}
+bool TMC5130Stepper::pol_b()			{ return ENCMODE_t{ ENCMODE() }.pol_b;			}
+bool TMC5130Stepper::pol_n()			{ return ENCMODE_t{ ENCMODE() }.pol_n;			}
+bool TMC5130Stepper::ignore_ab()		{ return ENCMODE_t{ ENCMODE() }.ignore_ab;		}
+bool TMC5130Stepper::clr_cont()			{ return ENCMODE_t{ ENCMODE() }.clr_cont;		}
+bool TMC5130Stepper::clr_once()			{ return ENCMODE_t{ ENCMODE() }.clr_once;		}
+bool TMC5130Stepper::pos_edge()			{ return ENCMODE_t{ ENCMODE() }.pos_edge;		}
+bool TMC5130Stepper::neg_edge()			{ return ENCMODE_t{ ENCMODE() }.neg_edge;		}
+bool TMC5130Stepper::clr_enc_x()		{ return ENCMODE_t{ ENCMODE() }.clr_enc_x;		}
+bool TMC5130Stepper::latch_x_act()		{ return ENCMODE_t{ ENCMODE() }.latch_x_act;	}
+bool TMC5130Stepper::enc_sel_decimal()	{ return ENCMODE_t{ ENCMODE() }.enc_sel_decimal;}
