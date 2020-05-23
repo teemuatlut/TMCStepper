@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
 
 uint32_t TMC2660Stepper::DRVSTATUS() {
 	uint32_t response = read()&0xFFCFF;

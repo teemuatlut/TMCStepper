@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
 #include "SERIAL_SWITCH.h"
 
 // Protected

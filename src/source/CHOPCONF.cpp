@@ -1,5 +1,4 @@
 #include "TMCStepper.h"
-#include "TMC_MACROS.h"
 
 // CHOPCONF
 uint32_t TMC2130Stepper::CHOPCONF() {
