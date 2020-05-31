@@ -7,3 +7,4 @@ examples/TMCStepper_CubeMX/Drivers
 examples/RemoteSystemsTempFiles/
 *.ld
 *.s
+*.launch

@@ -159,6 +159,101 @@
 
     inline void delay(size_t ms) { wait_us(1000*ms); }
 
+#elif (defined(USE_FULL_LL_DRIVER) || defined(USE_HAL_DRIVER))
+
+    #include <cstddef>
+    #include "main.h"
+    #if defined(USE_FULL_LL_DRIVER)
+        #include <stm32f4xx_ll_gpio.h>
+    #endif
+
+    #include <stdint.h>
+    #include <spi.h>
+    #include <usart.h>
+
+    #include "TMC_HAL.h"
+
+    namespace TMCStepper_n {
+
+        struct TMCPin {
+            TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+            void mode(const uint8_t mode) const;
+            bool operator ==(const TMCPin &p2) {
+                return (p2.port == port) && (p2.pin == pin);
+            }
+
+            GPIO_TypeDef* const port = nullptr;
+            uint32_t const pin;
+        };
+
+        class InputPin : public TMCPin {
+        public:
+            InputPin(const TMCPin &_pin);
+            InputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+
+            bool read() const;
+
+            operator bool() const { return read(); }
+        };
+
+        class OutputPin : public TMCPin {
+        public:
+            OutputPin(const TMCPin &_pin);
+            OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+
+            bool read() const;
+            void write(const bool state) const;
+            void toggle() const;
+            void operator =(bool state) { write(state); }
+        };
+
+        typedef TMCPin PinDef;
+
+        struct SPISettings {
+            SPISettings(uint32_t, uint8_t, uint8_t) {}
+        };
+
+        #if defined(HAL_SPI_MODULE_ENABLED)
+            typedef SPI_HandleTypeDef SPIType;
+        #elif defined(USE_FULL_LL_DRIVER)
+            typedef SPI_TypeDef SPIType;
+        #endif
+
+        struct SPIClass {
+            explicit SPIClass(SPIType * spi);
+
+            uint8_t transfer(const char data) const;
+            void transfer(char *buf, uint8_t count) const;
+            static void beginTransaction(SPISettings) {}
+            static void endTransaction() {}
+
+            operator bool() const { return hspi; }
+
+        private:
+            SPIType * const hspi;
+            static constexpr uint32_t timeout = 1000;
+        };
+
+        void delay(uint32_t ms);
+
+        #if defined(HAL_UART_MODULE_ENABLED)
+            typedef UART_HandleTypeDef UsartType;
+        #elif defined(USE_FULL_LL_DRIVER)
+            typedef USART_TypeDef UsartType;
+        #endif
+
+        struct HardwareSerial {
+            HardwareSerial(UsartType *const handle);
+
+            void write(const uint8_t *data, uint8_t length);
+            void read(uint8_t *buf, uint8_t length);
+            uint8_t available();
+            static constexpr uint32_t timeout = 1000;
+        private:
+            UsartType * const huart;
+        };
+    }
+
 #endif
 
 #ifndef HIGH
