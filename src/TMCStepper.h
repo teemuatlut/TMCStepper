@@ -1026,6 +1026,26 @@ class TMC2208Stepper : public TMCStepper {
 		uint8_t serial_write(const uint8_t data);
 		void postWriteCommunication();
 		void postReadCommunication();
+
+        struct ReadRequest {
+            static constexpr uint8_t length = 3;
+            uint8_t sync = TMC2208_SYNC;
+            uint8_t driverAddress;
+            uint8_t registerAddress;
+            uint8_t crc = 0;
+        };
+
+        struct WriteDatagram {
+            static constexpr uint8_t length = 7;
+            uint8_t sync = TMC2208_SYNC;
+            uint8_t driverAddress;
+            uint8_t registerAddress;
+            uint32_t data;
+            uint8_t crc = 0;
+        };
+
+        typedef WriteDatagram ReadResponse;
+
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		const uint8_t slave_address;

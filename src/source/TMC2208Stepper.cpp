@@ -184,134 +184,73 @@ void TMC2208Stepper::postReadCommunication() {
 }
 
 void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
-	uint8_t len = 7;
-	addr |= TMC_WRITE;
-	uint8_t datagram[] = {TMC2208_SYNC, slave_address, addr, (uint8_t)(regVal>>24), (uint8_t)(regVal>>16), (uint8_t)(regVal>>8), (uint8_t)(regVal>>0), 0x00};
+    WriteDatagram datagram;
+    datagram.driverAddress = slaveAddress;
+    datagram.registerAddress = addr | TMC_WRITE;
+    datagram.data = regVal;
 
-	datagram[len] = calcCRC(datagram, len);
+    datagram.crc = calcCRC((uint8_t*)&datagram, datagram.length);
 
 	preWriteCommunication();
-
-	for(uint8_t i=0; i<=len; i++) {
-		bytesWritten += serial_write(datagram[i]);
-	}
+	serial_write((uint8_t*)&datagram, datagram.length);
 	postWriteCommunication();
 
 	delay(replyDelay);
 }
 
-uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, uint16_t timeout) {
-	while (available() > 0) serial_read(); // Flush
+TMC2208Stepper::ReadResponse TMC2208Stepper::sendReadRequest(ReadRequest &datagram) {
+    serial_write((uint8_t*)&datagram, datagram.length);
 
-	#if defined(ARDUINO_ARCH_AVR)
-		if (RXTX_pin > 0) {
-			digitalWrite(RXTX_pin, HIGH);
-			pinMode(RXTX_pin, OUTPUT);
-		}
-	#endif
+    //delay(this->replyDelay);
+    const uint32_t timeout = this->getTime() + this->abort_window;
 
-	for(int i=0; i<=len; i++) serial_write(datagram[i]);
+    // scan for the rx frame and read it
+    const uint32_t sync_target = static_cast<uint32_t>(datagram.sync)<<16 | 0xFF00 | datagram.registerAddress;
+    uint32_t sync = 0;
 
-	#if defined(ARDUINO_ARCH_AVR)
-		if (RXTX_pin > 0) {
-			pinMode(RXTX_pin, INPUT_PULLUP);
-		}
-	#endif
+    do {
+        sync <<= 8;
+        serial_read((uint8_t*)&sync, 1);
 
-	delay(this->replyDelay);
+        if (this->getTime() > timeout) {
+            return ReadResponse{};
+        }
+    } while (sync != sync_target);
 
-	// scan for the rx frame and read it
-	uint32_t ms = millis();
-	uint32_t sync_target = (static_cast<uint32_t>(datagram[0])<<16) | 0xFF00 | datagram[2];
-	uint32_t sync = 0;
+    ReadResponse response;
+    response.driverAddress = 0xFF;
+    response.registerAddress = static_cast<uint8_t>(sync);
 
-	do {
-		uint32_t ms2 = millis();
-		if (ms2 != ms) {
-			// 1ms tick
-			ms = ms2;
-			timeout--;
-		}
-		if (!timeout) return 0;
+    serial_read((uint8_t*)&response.data, 5);
 
-		int16_t res = serial_read();
-		if (res < 0) continue;
-
-		sync <<= 8;
-		sync |= res & 0xFF;
-		sync &= 0xFFFFFF;
-
-	} while (sync != sync_target);
-
-	uint64_t out = sync;
-	ms = millis();
-	timeout = this->abort_window;
-
-	for(uint8_t i=0; i<5;) {
-		uint32_t ms2 = millis();
-		if (ms2 != ms) {
-			// 1ms tick
-			ms = ms2;
-			timeout--;
-		}
-		if (!timeout) return 0;
-
-		int16_t res = serial_read();
-		if (res < 0) continue;
-
-		out <<= 8;
-		out |= res & 0xFF;
-
-		i++;
-	}
-
-	#if defined(ARDUINO_ARCH_AVR)
-		if (RXTX_pin > 0) {
-			digitalWrite(RXTX_pin, HIGH);
-			pinMode(RXTX_pin, OUTPUT);
-		}
-	#endif
-
-	while (available() > 0) serial_read(); // Flush
-
-	return out;
+    return response;
 }
 
 uint32_t TMC2208Stepper::read(uint8_t addr) {
-	constexpr uint8_t len = 3;
-	addr |= TMC_READ;
-	uint8_t datagram[] = {TMC2208_SYNC, slave_address, addr, 0x00};
-	datagram[len] = calcCRC(datagram, len);
-	uint64_t out = 0x00000000UL;
+    ReadResponse response;
+    ReadRequest datagram;
+    datagram.driverAddress = slaveAddress;
+    datagram.registerAddress = addr | TMC_READ;
 
-	for (uint8_t i = 0; i < max_retries; i++) {
-		preReadCommunication();
-		out = _sendDatagram(datagram, len, abort_window);
-		postReadCommunication();
+    datagram.crc = calcCRC((uint8_t*)&datagram, datagram.length);
+    CRCerror = true;
 
-		delay(replyDelay);
+    for (uint8_t i = 0; i < max_retries; i++) {
+        preReadCommunication();
+        response = sendReadRequest(datagram);
+        postReadCommunication();
 
-		CRCerror = false;
-		uint8_t out_datagram[] = {
-			static_cast<uint8_t>(out>>56),
-			static_cast<uint8_t>(out>>48),
-			static_cast<uint8_t>(out>>40),
-			static_cast<uint8_t>(out>>32),
-			static_cast<uint8_t>(out>>24),
-			static_cast<uint8_t>(out>>16),
-			static_cast<uint8_t>(out>> 8),
-			static_cast<uint8_t>(out>> 0)
-		};
-		uint8_t crc = calcCRC(out_datagram, 7);
-		if ((crc != static_cast<uint8_t>(out)) || crc == 0 ) {
-			CRCerror = true;
-			out = 0;
-		} else {
-			break;
-		}
-	}
+        uint8_t crc = calcCRC((uint8_t*)&response, response.length);
 
-	return out>>8;
+        if (crc == response.crc || crc != 0) {
+            CRCerror = false;
+            break;
+        }
+
+        response.data = 0;
+    }
+
+    return response.data;
 }
 
 uint8_t TMC2208Stepper::IFCNT() {
