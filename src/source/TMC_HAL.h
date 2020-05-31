@@ -107,6 +107,34 @@
         };
     #endif
 
+#elif defined(ARDUINO)
+
+    namespace TMCStepper_n {
+
+        typedef uint8_t PinDef;
+
+        class TMCPin {
+        public:
+            explicit TMCPin(const uint8_t _pin);
+            void mode(const uint8_t mode) const;
+            bool read() const;
+            operator bool() const {
+                return read();
+            }
+
+        protected:
+            uint8_t const pin;
+        };
+
+        class OutputPin : public TMCPin {
+        public:
+            OutputPin(const uint8_t _pin);
+            void write(const bool state) const;
+        };
+
+        typedef TMCPin InputPin;
+    }
+
 #endif
 
 #ifndef HIGH
@@ -124,7 +152,7 @@
 #ifndef OUTPUT
     #define OUTPUT 0x01
 #endif
-#if !defined(MSBFIRST) && !(defined(ARDUINO_ARCH_SAM))
+#if !defined(MSBFIRST) && !(defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
     #define MSBFIRST 1
 #endif
 #ifndef SPI_MODE3
