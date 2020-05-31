@@ -135,6 +135,30 @@
         typedef TMCPin InputPin;
     }
 
+#elif defined(__MBED__)
+
+    #include <mbed.h>
+
+    namespace TMCStepper_n {
+        typedef PinName PinDef;
+
+        struct OutputPin : public DigitalOut {
+            OutputPin(PinName pin);
+            void mode(uint8_t);
+        };
+
+        struct InputPin : public DigitalIn {
+            InputPin(PinName pin);
+            void mode(const uint8_t inputType);
+        };
+
+    }
+
+    typedef SPI SPIClass;
+    typedef Serial HardwareSerial;
+
+    inline void delay(size_t ms) { wait_us(1000*ms); }
+
 #endif
 
 #ifndef HIGH
