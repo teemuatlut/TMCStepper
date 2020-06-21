@@ -48,7 +48,7 @@
 #define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
 #define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
-#define TMCSTEPPER_VERSION 0x000602 // v0.6.2
+#define TMCSTEPPER_VERSION 0x000700 // v0.7.0
 
 class TMCStepper {
 	public:
