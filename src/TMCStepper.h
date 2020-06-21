@@ -143,8 +143,8 @@ class TMC2130Stepper : public TMCStepper {
 		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		void begin();
 		void defaults();
-		void setSPISpeed(uint32_t speed) __attribute__((weak));
-		void switchCSpin(bool state) __attribute__((weak));
+		void setSPISpeed(uint32_t speed);
+		void switchCSpin(bool state);
 		bool isEnabled();
 		void push();
 
@@ -331,12 +331,12 @@ class TMC2130Stepper : public TMCStepper {
 		uint8_t status_response;
 
 	protected:
-		void beginTransaction() __attribute__((weak));
-		void endTransaction() __attribute__((weak));
-		uint8_t transfer(const uint8_t data) __attribute__((weak));
+		void beginTransaction();
+		void endTransaction();
+		uint8_t transfer(const uint8_t data);
 		void transferEmptyBytes(const uint8_t n);
-		void write(uint8_t addressByte, uint32_t config) __attribute__((weak));
-		uint32_t read(uint8_t addressByte) __attribute__((weak));
+		void write(uint8_t addressByte, uint32_t config);
+		uint32_t read(uint8_t addressByte);
 
 		INIT_REGISTER(GCONF){{.sr=0}};		// 32b
 		INIT_REGISTER(TCOOLTHRS){.sr=0};	// 32b
@@ -998,11 +998,11 @@ class TMC2208Stepper : public TMCStepper {
 
 		SSwitch *sswitch = nullptr;
 
-		int available() __attribute__((weak));
-		void preCommunication() __attribute__((weak));
-		int16_t serial_read() __attribute__((weak));
-		uint8_t serial_write(const uint8_t data) __attribute__((weak));
-		void postCommunication() __attribute__((weak));
+		int available();
+		void preCommunication();
+		int16_t serial_read();
+		uint8_t serial_write(const uint8_t data);
+		void postCommunication();
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		const uint8_t slave_address;

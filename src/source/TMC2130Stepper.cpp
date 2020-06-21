@@ -54,25 +54,30 @@ void TMC2130Stepper::defaults() {
   PWMCONF_register.sr = 0x00050480;
 }
 
+__attribute__((weak))
 void TMC2130Stepper::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
 
+__attribute__((weak))
 void TMC2130Stepper::switchCSpin(bool state) {
   digitalWrite(_pinCS, state);
 }
 
+__attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
   if (TMC_SW_SPI == nullptr) {
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
 }
+__attribute__((weak))
 void TMC2130Stepper::endTransaction() {
   if (TMC_SW_SPI == nullptr) {
     SPI.endTransaction();
   }
 }
 
+__attribute__((weak))
 uint8_t TMC2130Stepper::transfer(const uint8_t data) {
   uint8_t out = 0;
   if (TMC_SW_SPI != nullptr) {
@@ -90,6 +95,7 @@ void TMC2130Stepper::transferEmptyBytes(const uint8_t n) {
   }
 }
 
+__attribute__((weak))
 uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   uint32_t out = 0UL;
   int8_t i = 1;
@@ -131,6 +137,7 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   return out;
 }
 
+__attribute__((weak))
 void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
   addressByte |= TMC_WRITE;
   int8_t i = 1;
