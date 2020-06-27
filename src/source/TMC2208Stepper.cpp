@@ -122,7 +122,15 @@ int TMC2208Stepper::available() {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::preCommunication() {
+void TMC2208Stepper::preWriteCommunication() {
+	if (HWSerial != nullptr) {
+		if (sswitch != nullptr)
+			sswitch->active();
+	}
+}
+
+__attribute__((weak))
+void TMC2208Stepper::preReadCommunication() {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
 			SWSerial->listen();
@@ -165,7 +173,10 @@ uint8_t TMC2208Stepper::serial_write(const uint8_t data) {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::postCommunication() {
+void TMC2208Stepper::postWriteCommunication() {}
+
+__attribute__((weak))
+void TMC2208Stepper::postReadCommunication() {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
 			SWSerial->stopListening();
@@ -180,12 +191,12 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 	datagram[len] = calcCRC(datagram, len);
 
-	preCommunication();
+	preWriteCommunication();
 
 	for(uint8_t i=0; i<=len; i++) {
 		bytesWritten += serial_write(datagram[i]);
 	}
-	postCommunication();
+	postWriteCommunication();
 
 	delay(replyDelay);
 }
@@ -275,9 +286,9 @@ uint32_t TMC2208Stepper::read(uint8_t addr) {
 	uint64_t out = 0x00000000UL;
 
 	for (uint8_t i = 0; i < max_retries; i++) {
-		preCommunication();
+		preReadCommunication();
 		out = _sendDatagram(datagram, len, abort_window);
-		postCommunication();
+		postReadCommunication();
 
 		delay(replyDelay);
 

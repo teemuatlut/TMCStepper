@@ -999,10 +999,12 @@ class TMC2208Stepper : public TMCStepper {
 		SSwitch *sswitch = nullptr;
 
 		int available();
-		void preCommunication();
+		void preWriteCommunication();
+		void preReadCommunication();
 		int16_t serial_read();
 		uint8_t serial_write(const uint8_t data);
-		void postCommunication();
+		void postWriteCommunication();
+		void postReadCommunication();
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
 		const uint8_t slave_address;
