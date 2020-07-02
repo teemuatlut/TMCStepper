@@ -1,15 +1,25 @@
 Arduino library for Trinamic TMC stepper motor drivers.
 
 Supported TMC drivers:
-* TMC2130
-* TMC2160
-* TMC2208
-* TMC2209
-* TMC2224
-* TMC2660
-* TMC5130
-* TMC5160
-* TMC5161
+* [TMC2130][2130]
+* [TMC2160][2160]
+* [TMC2208][2208]
+* [TMC2209][2209]
+* [TMC2224][2224]
+* [TMC2660][2660]
+* [TMC5130][5130]
+* [TMC5160][5160]
+* [TMC5161][5161]
+
+[2130]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2130_stepper.html
+[2160]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2160_stepper.html
+[2208]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2208_stepper.html
+[2209]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2209_stepper.html
+[2224]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2224_stepper.html
+[2660]: https://teemuatlut.github.io/TMCStepper/class_t_m_c2660_stepper.html
+[5130]: https://teemuatlut.github.io/TMCStepper/class_t_m_c5130_stepper.html
+[5160]: https://teemuatlut.github.io/TMCStepper/class_t_m_c5160_stepper.html
+[5161]: https://teemuatlut.github.io/TMCStepper/class_t_m_c5161_stepper.html
 
 [New Doxygen documentation](https://teemuatlut.github.io/TMCStepper/index.html)
 
