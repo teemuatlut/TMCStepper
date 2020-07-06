@@ -701,7 +701,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		INIT_REGISTER(VSTOP){.sr=0};
 		INIT_REGISTER(TZEROWAIT){.sr=0};
 		INIT_REGISTER(SW_MODE){{.sr=0}};
-		INIT_REGISTER(ENCMODE){{.sr=0}};
+		INIT_REGISTER(ENCMODE){.sr=0};
 		INIT_REGISTER(ENC_CONST){.sr=0};
 
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
