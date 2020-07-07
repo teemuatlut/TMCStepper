@@ -56,6 +56,9 @@
 #include "source/TMC2209_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
+#include "source/interfaces/TMC2130.hpp"
+#include "source/interfaces/TMC2208.hpp"
+
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 #define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
 #define INIT2160_REGISTER(REG) TMC2160_n::REG##_t REG##_register = TMC2160_n::REG##_t
@@ -68,12 +71,31 @@
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
-template<typename> class TMCStepper;
-
 struct TMC_SPI {
-	protected:
+protected:
 
+	// Allow register interfaces to call read and write methods
 	template<class> friend class TMCStepper;
+	template<class> friend class TMC2130_n::GCONF_i;
+	template<class> friend class TMC2130_n::GSTAT_i;
+	template<class> friend class TMC2130_n::IOIN_i;
+	template<class> friend class TMC2130_n::IHOLD_IRUN_i;
+	template<class> friend class TMC2130_n::TPOWERDOWN_i;
+	template<class> friend class TMC2130_n::TSTEP_i;
+	template<class> friend class TMC2130_n::TPWMTHRS_i;
+	template<class> friend class TMC2130_n::TCOOLTHRS_i;
+	template<class> friend class TMC2130_n::THIGH_i;
+	template<class> friend class TMC2130_n::VDCMIN_i;
+	template<class> friend class TMC2130_n::MSCNT_i;
+	template<class> friend class TMC2130_n::MSCURACT_i;
+	template<class> friend class TMC2130_n::CHOPCONF_i;
+	template<class> friend class TMC2130_n::COOLCONF_i;
+	template<class> friend class TMC2130_n::DCCTRL_i;
+	template<class> friend class TMC2130_n::DRV_STATUS_i;
+	template<class> friend class TMC2130_n::PWMCONF_i;
+	template<class> friend class TMC2130_n::PWM_SCALE_i;
+	template<class> friend class TMC2130_n::ENCM_CTRL_i;
+	template<class> friend class TMC2130_n::LOST_STEPS_i;
 
 	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
 	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
@@ -116,9 +138,15 @@ struct TMC_SPI {
 };
 
 struct TMC_UART {
-	protected:
+protected:
 
-	template<typename> friend class TMCStepper;
+	template<class> friend class TMCStepper;
+	template<class> friend class TMC2208_n::GCONF_i;
+	template<class> friend class TMC2208_n::GSTAT_i;
+	template<class> friend class TMC2208_n::IHOLD_IRUN_i;
+	template<class> friend class TMC2208_n::TPOWERDOWN_i;
+	template<class> friend class TMC2208_n::TSTEP_i;
+	template<class> friend class TMC2208_n::TPWMTHRS_i;
 
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
@@ -200,68 +228,38 @@ class TMCStepper {
 		void hysteresis_start(uint8_t value);
 		uint8_t hysteresis_start();
 
-		// R+WC: GSTAT
-		void 	GSTAT(							uint8_t input);
-		uint8_t GSTAT();
-		bool 	reset();
-		bool 	drv_err();
-		bool 	uv_cp();
-
-		// W: IHOLD_IRUN
-		void IHOLD_IRUN(					uint32_t input);
-		uint32_t IHOLD_IRUN();
-		void 	ihold(							uint8_t B);
-		void 	irun(								uint8_t B);
-		void 	iholddelay(					uint8_t B);
-		uint8_t ihold();
-		uint8_t irun();
-		uint8_t iholddelay();
-
-		// W: TPOWERDOWN
-		uint8_t TPOWERDOWN();
-		void TPOWERDOWN(					uint8_t input);
-
-		// R: TSTEP
-		uint32_t TSTEP();
-
-		// W: TPWMTHRS
-		uint32_t TPWMTHRS();
-		void TPWMTHRS(						uint32_t input);
-
-		// R: MSCNT
-		uint16_t MSCNT();
-
-		// R: MSCURACT
-		uint32_t MSCURACT();
-		int16_t cur_a();
-		int16_t cur_b();
-
 	protected:
 		TMCStepper(float RS) : Rsense(RS) {};
-		INIT_REGISTER(IHOLD_IRUN){{.sr=0}};	// 32b
-		INIT_REGISTER(TPOWERDOWN){.sr=0};		// 8b
-		INIT_REGISTER(TPWMTHRS){.sr=0};			// 32b
-
-		struct TSTEP_t { constexpr static uint8_t address = 0x12; };
-		struct MSCNT_t { constexpr static uint8_t address = 0x6A; };
-
-		virtual void vsense(bool) = 0;
-		virtual bool vsense(void) = 0;
-		virtual uint32_t DRV_STATUS() = 0;
-		virtual void hend(uint8_t) = 0;
-		virtual uint8_t hend() = 0;
-		virtual void hstrt(uint8_t) = 0;
-		virtual uint8_t hstrt() = 0;
-		virtual void mres(uint8_t) = 0;
-		virtual uint8_t mres() = 0;
-		virtual void tbl(uint8_t) = 0;
-		virtual uint8_t tbl() = 0;
 
 		const float Rsense;
 		float holdMultiplier = 0.5;
 };
 
-class TMC2130Stepper : public TMC_SPI, public TMCStepper<TMC2130Stepper> {
+class TMC2130Stepper :
+	public TMC_SPI,
+	public TMCStepper<TMC2130Stepper>,
+	public TMC2130_n::GCONF_i<TMC2130Stepper>,
+	public TMC2130_n::GSTAT_i<TMC2130Stepper>,
+	public TMC2130_n::IOIN_i<TMC2130Stepper>,
+	public TMC2130_n::IHOLD_IRUN_i<TMC2130Stepper>,
+	public TMC2130_n::TPOWERDOWN_i<TMC2130Stepper>,
+	public TMC2130_n::TSTEP_i<TMC2130Stepper>,
+	public TMC2130_n::TPWMTHRS_i<TMC2130Stepper>,
+	public TMC2130_n::TCOOLTHRS_i<TMC2130Stepper>,
+	public TMC2130_n::THIGH_i<TMC2130Stepper>,
+	public TMC2130_n::XDIRECT_i<TMC2130Stepper>,
+	public TMC2130_n::VDCMIN_i<TMC2130Stepper>,
+	public TMC2130_n::MSCNT_i<TMC2130Stepper>,
+	public TMC2130_n::MSCURACT_i<TMC2130Stepper>,
+	public TMC2130_n::CHOPCONF_i<TMC2130Stepper>,
+	public TMC2130_n::COOLCONF_i<TMC2130Stepper>,
+	public TMC2130_n::DCCTRL_i<TMC2130Stepper>,
+	public TMC2130_n::DRV_STATUS_i<TMC2130Stepper>,
+	public TMC2130_n::PWMCONF_i<TMC2130Stepper>,
+	public TMC2130_n::PWM_SCALE_i<TMC2130Stepper>,
+	public TMC2130_n::ENCM_CTRL_i<TMC2130Stepper>,
+	public TMC2130_n::LOST_STEPS_i<TMC2130Stepper>
+	{
 	public:
 		TMC2130Stepper(SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
 		TMC2130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
@@ -275,182 +273,6 @@ class TMC2130Stepper : public TMC_SPI, public TMCStepper<TMC2130Stepper> {
 		void sg_current_decrease(uint8_t value);
 		uint8_t sg_current_decrease();
 
-		// RW: GCONF
-		uint32_t GCONF();
-		void GCONF(								uint32_t value);
-		void I_scale_analog(			bool B);
-		void internal_Rsense(			bool B);
-		void en_pwm_mode(					bool B);
-		void enc_commutation(			bool B);
-		void shaft(								bool B);
-		void diag0_error(					bool B);
-		void diag0_otpw(					bool B);
-		void diag0_stall(					bool B);
-		void diag1_stall(					bool B);
-		void diag1_index(					bool B);
-		void diag1_onstate(				bool B);
-		void diag1_steps_skipped(	bool B);
-		void diag0_int_pushpull(	bool B);
-		void diag1_pushpull(			bool B);
-		void small_hysteresis(		bool B);
-		void stop_enable(					bool B);
-		void direct_mode(					bool B);
-		bool I_scale_analog();
-		bool internal_Rsense();
-		bool en_pwm_mode();
-		bool enc_commutation();
-		bool shaft();
-		bool diag0_error();
-		bool diag0_otpw();
-		bool diag0_stall();
-		bool diag1_stall();
-		bool diag1_index();
-		bool diag1_onstate();
-		bool diag1_steps_skipped();
-		bool diag0_int_pushpull();
-		bool diag1_pushpull();
-		bool small_hysteresis();
-		bool stop_enable();
-		bool direct_mode();
-
-		// R: IOIN
-		uint32_t IOIN();
-		bool step();
-		bool dir();
-		bool dcen_cfg4();
-		bool dcin_cfg5();
-		bool drv_enn_cfg6();
-		bool dco();
-		uint8_t version();
-
-		// W: TCOOLTHRS
-		uint32_t TCOOLTHRS();
-		void TCOOLTHRS(						uint32_t input);
-
-		// W: THIGH
-		uint32_t THIGH();
-		void THIGH(								uint32_t input);
-
-		// RW: XDRIRECT
-		uint32_t XDIRECT();
-		void XDIRECT(							uint32_t input);
-		void coil_A(							int16_t 	B);
-		void coil_B(							int16_t 	B);
-		int16_t coil_A();
-		int16_t coil_B();
-
-		// W: VDCMIN
-		uint32_t VDCMIN();
-		void VDCMIN(							uint32_t input);
-
-		// RW: CHOPCONF
-		uint32_t CHOPCONF();
-		void CHOPCONF(						uint32_t value);
-		void toff(								uint8_t B);
-		void hstrt(								uint8_t B);
-		void hend(								uint8_t B);
-		//void fd(									uint8_t B);
-		void disfdcc(							bool 		B);
-		void rndtf(								bool 		B);
-		void chm(									bool 		B);
-		void tbl(									uint8_t B);
-		void vsense(							bool 		B);
-		void vhighfs(							bool 		B);
-		void vhighchm(						bool 		B);
-		void sync(								uint8_t B);
-		void mres(								uint8_t B);
-		void intpol(							bool 		B);
-		void dedge(								bool 		B);
-		void diss2g(							bool 		B);
-		uint8_t toff();
-		uint8_t hstrt();
-		uint8_t hend();
-		//uint8_t fd();
-		bool 	disfdcc();
-		bool 	rndtf();
-		bool 	chm();
-		uint8_t tbl();
-		bool 	vsense();
-		bool 	vhighfs();
-		bool 	vhighchm();
-		uint8_t sync();
-		uint8_t mres();
-		bool 	intpol();
-		bool 	dedge();
-		bool 	diss2g();
-
-		// W: COOLCONF
-		void COOLCONF(uint32_t value);
-		uint32_t COOLCONF();
-		void semin(								uint8_t B);
-		void seup(								uint8_t B);
-		void semax(								uint8_t B);
-		void sedn(								uint8_t B);
-		void seimin(							bool 		B);
-		void sgt(									int8_t  B);
-		void sfilt(								bool 		B);
-		uint8_t semin();
-		uint8_t seup();
-		uint8_t semax();
-		uint8_t sedn();
-		bool seimin();
-		int8_t sgt();
-		bool sfilt();
-
-		// W: DCCTRL
-		void DCCTRL(uint32_t input);
-		void dc_time(uint16_t input);
-		void dc_sg(uint8_t input);
-		uint32_t DCCTRL();
-		uint16_t dc_time();
-		uint8_t dc_sg();
-
-		// R: DRV_STATUS
-		uint32_t DRV_STATUS();
-		uint16_t sg_result();
-		bool fsactive();
-		uint8_t cs_actual();
-		bool stallguard();
-		bool ot();
-		bool otpw();
-		bool s2ga();
-		bool s2gb();
-		bool ola();
-		bool olb();
-		bool stst();
-
-		// W: PWMCONF
-		void PWMCONF(							uint32_t value);
-		uint32_t PWMCONF();
-		void pwm_ampl(						uint8_t B);
-		void pwm_grad(						uint8_t B);
-		void pwm_freq(						uint8_t B);
-		void pwm_autoscale(				bool		B);
-		void pwm_symmetric(				bool		B);
-		void freewheel(						uint8_t B);
-		uint8_t pwm_ampl();
-		uint8_t pwm_grad();
-		uint8_t pwm_freq();
-		bool 	pwm_autoscale();
-		bool 	pwm_symmetric();
-		uint8_t freewheel();
-
-		// R: PWM_SCALE
-		uint8_t PWM_SCALE();
-
-		// W: ENCM_CTRL
-		uint8_t ENCM_CTRL();
-		void ENCM_CTRL(						uint8_t input);
-		void inv(									bool B);
-		void maxspeed(						bool B);
-		bool inv();
-		bool maxspeed();
-
-		// R: LOST_STEPS
-		uint32_t LOST_STEPS();
-
-		// Function aliases
-
 		// Can be accessed for a common default value
 		static constexpr float default_RS = 0.11;
 
@@ -460,24 +282,6 @@ class TMC2130Stepper : public TMC_SPI, public TMCStepper<TMC2130Stepper> {
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
-
-	protected:
-
-		INIT_REGISTER(GCONF)		{0};	// 32b
-		INIT_REGISTER(TCOOLTHRS) {0};		// 32b
-		INIT_REGISTER(THIGH)		 {0};		// 32b
-		INIT_REGISTER(XDIRECT)	{{0}};	// 32b
-		INIT_REGISTER(VDCMIN)		 {0};		// 32b
-		INIT_REGISTER(CHOPCONF)	{{0}};	// 32b
-		INIT_REGISTER(COOLCONF)	{{0}};	// 32b
-		INIT_REGISTER(DCCTRL)		{{0}};	// 32b
-		INIT_REGISTER(PWMCONF)	{{0}};	// 32b
-		INIT_REGISTER(ENCM_CTRL){{0}};	//  8b
-
-		struct IOINT_t 		{ constexpr static uint8_t address = 0x04; };
-		struct PWM_SCALE_t 	{ constexpr static uint8_t address = 0x71; };
-		struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
-		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
 };
 
 class TMC2160Stepper : public TMC2130Stepper {
@@ -926,7 +730,18 @@ class TMC5160Stepper : public TMC5130Stepper {
 
 typedef TMC5160Stepper TMC5161Stepper;
 
-class TMC2208Stepper : public TMC_UART, public TMCStepper<TMC2208Stepper> {
+class TMC2208Stepper :
+	public TMC_UART,
+	public TMCStepper<TMC2208Stepper>,
+	public TMC2208_n::GCONF_i<TMC2208Stepper>,
+	public TMC2208_n::IOIN_i<TMC2208Stepper>,
+	public TMC2208_n::IHOLD_IRUN_i<TMC2208Stepper>,
+	public TMC2208_n::TPOWERDOWN_i<TMC2208Stepper>,
+	public TMC2208_n::TSTEP_i<TMC2208Stepper>,
+	public TMC2208_n::TPWMTHRS_i<TMC2208Stepper>,
+	public TMC2208_n::MSCNT_i<TMC2208Stepper>,
+	public TMC2208_n::MSCURACT_i<TMC2208Stepper>
+	{
 	public:
 	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::PinDef mul_pin1, TMCStepper_n::PinDef mul_pin2);
 		TMC2208Stepper(HardwareSerial * SerialPort, float RS) :
@@ -953,28 +768,6 @@ class TMC2208Stepper : public TMC_UART, public TMCStepper<TMC2208Stepper> {
 			void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		bool isEnabled();
-
-		// RW: GCONF
-		void GCONF(uint16_t input);
-		void I_scale_analog(bool B);
-		void internal_Rsense(bool B);
-		void en_spreadCycle(bool B);
-		void shaft(bool B);
-		void index_otpw(bool B);
-		void index_step(bool B);
-		void pdn_disable(bool B);
-		void mstep_reg_select(bool B);
-		void multistep_filt(bool B);
-		uint16_t GCONF();
-		bool I_scale_analog();
-		bool internal_Rsense();
-		bool en_spreadCycle();
-		bool shaft();
-		bool index_otpw();
-		bool index_step();
-		bool pdn_disable();
-		bool mstep_reg_select();
-		bool multistep_filt();
 
 		// R: IFCNT
 		uint8_t IFCNT();

@@ -14,9 +14,9 @@ bool TMC2209Stepper::dir()			{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.d
 uint8_t TMC2209Stepper::version() 	{ TMC2209_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 void TMC2209Stepper::push() {
-	IHOLD_IRUN(IHOLD_IRUN_register.sr);
-	TPOWERDOWN(TPOWERDOWN_register.sr);
-	TPWMTHRS(TPWMTHRS_register.sr);
+	IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
+	TPOWERDOWN(TPOWERDOWN_i::r.sr);
+	TPWMTHRS(TPWMTHRS_i::r.sr);
 	GCONF(GCONF_register.sr);
 	SLAVECONF(SLAVECONF_register.sr);
 	VACTUAL(VACTUAL_register.sr);

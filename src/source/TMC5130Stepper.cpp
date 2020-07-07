@@ -19,7 +19,7 @@ void TMC5130Stepper::begin() {
 
 void TMC5130Stepper::defaults() {
   OUTPUT_register.sr = 1;
-  ENC_CONST_register.sr = 65536;
+  ENC_CONST(65536);
   //MSLUT0_register.sr = ???;
   //MSLUT1_register.sr = ???;
   //MSLUT2_register.sr = ???;
@@ -31,23 +31,20 @@ void TMC5130Stepper::defaults() {
   //MSLUTSEL_register.sr = ???;
   //MSLUTSTART_register.start_sin = 0;
   //MSLUTSTART_register.start_sin90 = 247;
-  PWMCONF_register.sr = 0x00050480;
+  PWMCONF(0x00050480);
 }
 
 void TMC5130Stepper::push() {
-    IHOLD_IRUN(IHOLD_IRUN_register.sr);
-    TPOWERDOWN(TPOWERDOWN_register.sr);
-    TPWMTHRS(TPWMTHRS_register.sr);
-    GCONF(GCONF_register.sr);
-    TCOOLTHRS(TCOOLTHRS_register.sr);
-    THIGH(THIGH_register.sr);
-    XDIRECT(XDIRECT_register.sr);
-    VDCMIN(VDCMIN_register.sr);
-    CHOPCONF(CHOPCONF_register.sr);
-    COOLCONF(COOLCONF_register.sr);
-    DCCTRL(DCCTRL_register.sr);
+    IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
+    TPOWERDOWN(TPOWERDOWN_i::r.sr);
+    TPWMTHRS(TPWMTHRS_i::r.sr);
+    TCOOLTHRS(TCOOLTHRS_i::r.sr);
+    THIGH(THIGH_i::r.sr);
+    VDCMIN(VDCMIN_i::r.sr);
+    COOLCONF(COOLCONF_i::r.sr);
+    DCCTRL(DCCTRL_i::r.sr);
     PWMCONF(PWMCONF_register.sr);
-    ENCM_CTRL(ENCM_CTRL_register.sr);
+    ENCM_CTRL(ENCM_CTRL_i::r.sr);
     DRV_CONF(DRV_CONF_register.sr);
     SLAVECONF(SLAVECONF_register.sr);
     TMC_OUTPUT(OUTPUT_register.sr);

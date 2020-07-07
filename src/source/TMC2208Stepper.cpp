@@ -80,8 +80,8 @@ void TMC2208Stepper::defaults() {
 	GCONF_register.internal_rsense = 0; // OTP
 	GCONF_register.en_spreadcycle = 0; // OTP
 	GCONF_register.multistep_filt = 1; // OTP
-	IHOLD_IRUN_register.iholddelay = 1; // OTP
-	TPOWERDOWN_register.sr = 20;
+	IHOLD_IRUN_i::r.iholddelay = 1; // OTP
+	TPOWERDOWN_i::r.sr = 20;
 	CHOPCONF_register.sr = 0x10000053;
 	PWMCONF_register.sr = 0xC10D0024;
   //MSLUT0_register.sr = ???;
@@ -97,10 +97,10 @@ void TMC2208Stepper::defaults() {
 
 void TMC2208Stepper::push() {
 	GCONF(GCONF_register.sr);
-	IHOLD_IRUN(IHOLD_IRUN_register.sr);
+	IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
 	SLAVECONF(SLAVECONF_register.sr);
-	TPOWERDOWN(TPOWERDOWN_register.sr);
-	TPWMTHRS(TPWMTHRS_register.sr);
+	TPOWERDOWN(TPOWERDOWN_i::r.sr);
+	TPWMTHRS(TPWMTHRS_i::r.sr);
 	VACTUAL(VACTUAL_register.sr);
 	CHOPCONF(CHOPCONF_register.sr);
 	PWMCONF(PWMCONF_register.sr);
@@ -217,19 +217,6 @@ void TMC2208Stepper::OTP_PROG(uint16_t input) {
 uint32_t TMC2208Stepper::OTP_READ() {
 	return read(OTP_READ_t::address);
 }
-
-uint32_t TMC2208Stepper::IOIN() {
-	return read(TMC2208_n::IOIN_t::address);
-}
-bool TMC2208Stepper::enn()			{ return TMC2208_n::IOIN_t{ IOIN() }.enn;		}
-bool TMC2208Stepper::ms1()			{ return TMC2208_n::IOIN_t{ IOIN() }.ms1;		}
-bool TMC2208Stepper::ms2()			{ return TMC2208_n::IOIN_t{ IOIN() }.ms2;		}
-bool TMC2208Stepper::diag()			{ return TMC2208_n::IOIN_t{ IOIN() }.diag;		}
-bool TMC2208Stepper::pdn_uart()		{ return TMC2208_n::IOIN_t{ IOIN() }.pdn_uart;	}
-bool TMC2208Stepper::step()			{ return TMC2208_n::IOIN_t{ IOIN() }.step;		}
-bool TMC2208Stepper::sel_a()		{ return TMC2208_n::IOIN_t{ IOIN() }.sel_a;		}
-bool TMC2208Stepper::dir()			{ return TMC2208_n::IOIN_t{ IOIN() }.dir;		}
-uint8_t TMC2208Stepper::version() 	{ return TMC2208_n::IOIN_t{ IOIN() }.version;	}
 
 uint32_t TMC2224Stepper::IOIN() {
 	return read(TMC2224_n::IOIN_t::address);

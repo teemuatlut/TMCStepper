@@ -1,50 +1,8 @@
 #include "TMCStepper.h"
 
 // CHOPCONF
-uint32_t TMC2130Stepper::CHOPCONF() {
-	return read(CHOPCONF_register.address);
-}
-void TMC2130Stepper::CHOPCONF(uint32_t input) {
-	CHOPCONF_register.sr = input;
-	write(CHOPCONF_register.address, CHOPCONF_register.sr);
-}
-
-void TMC2130Stepper::toff(		uint8_t B )	{ CHOPCONF_register.toff = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::hstrt(		uint8_t B )	{ CHOPCONF_register.hstrt = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::hend(		uint8_t B )	{ CHOPCONF_register.hend = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-//void TMC2130Stepper::fd(		uint8_t B )	{ CHOPCONF_register.fd = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::disfdcc(	bool 	B )	{ CHOPCONF_register.disfdcc = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::rndtf(		bool 	B )	{ CHOPCONF_register.rndtf = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::chm(		bool 	B )	{ CHOPCONF_register.chm = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::tbl(		uint8_t B )	{ CHOPCONF_register.tbl = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::vsense(	bool 	B )	{ CHOPCONF_register.vsense = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::vhighfs(	bool 	B )	{ CHOPCONF_register.vhighfs = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::vhighchm(	bool 	B )	{ CHOPCONF_register.vhighchm = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::sync(		uint8_t B )	{ CHOPCONF_register.sync = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::mres(		uint8_t B )	{ CHOPCONF_register.mres = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::intpol(	bool 	B )	{ CHOPCONF_register.intpol = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::dedge(		bool 	B )	{ CHOPCONF_register.dedge = B; 		write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-void TMC2130Stepper::diss2g(	bool 	B )	{ CHOPCONF_register.diss2g = B; 	write(CHOPCONF_register.address, CHOPCONF_register.sr);	}
-
-uint8_t TMC2130Stepper::toff()		{ return CHOPCONF_t{ CHOPCONF() }.toff;		}
-uint8_t TMC2130Stepper::hstrt()		{ return CHOPCONF_t{ CHOPCONF() }.hstrt;	}
-uint8_t TMC2130Stepper::hend()		{ return CHOPCONF_t{ CHOPCONF() }.hend;		}
-//uint8_t TMC2130Stepper::fd()		{ return CHOPCONF_t{ CHOPCONF() }.fd;		}
-bool 	TMC2130Stepper::disfdcc()	{ return CHOPCONF_t{ CHOPCONF() }.disfdcc;	}
-bool 	TMC2130Stepper::rndtf()		{ return CHOPCONF_t{ CHOPCONF() }.rndtf;	}
-bool 	TMC2130Stepper::chm()		{ return CHOPCONF_t{ CHOPCONF() }.chm;		}
-uint8_t TMC2130Stepper::tbl()		{ return CHOPCONF_t{ CHOPCONF() }.tbl;		}
-bool 	TMC2130Stepper::vsense()	{ return CHOPCONF_t{ CHOPCONF() }.vsense;	}
-bool 	TMC2130Stepper::vhighfs()	{ return CHOPCONF_t{ CHOPCONF() }.vhighfs;	}
-bool 	TMC2130Stepper::vhighchm()	{ return CHOPCONF_t{ CHOPCONF() }.vhighchm;	}
-uint8_t TMC2130Stepper::sync()		{ return CHOPCONF_t{ CHOPCONF() }.sync;		}
-uint8_t TMC2130Stepper::mres()		{ return CHOPCONF_t{ CHOPCONF() }.mres;		}
-bool 	TMC2130Stepper::intpol()	{ return CHOPCONF_t{ CHOPCONF() }.intpol;	}
-bool 	TMC2130Stepper::dedge()		{ return CHOPCONF_t{ CHOPCONF() }.dedge;	}
-bool 	TMC2130Stepper::diss2g()	{ return CHOPCONF_t{ CHOPCONF() }.diss2g;	}
-
-void TMC5160Stepper::diss2vs(bool B){ CHOPCONF_register.diss2vs = B; write(CHOPCONF_register.address, CHOPCONF_register.sr);}
-void TMC5160Stepper::tpfd(uint8_t B){ CHOPCONF_register.tpfd = B; 	 write(CHOPCONF_register.address, CHOPCONF_register.sr);}
+void TMC5160Stepper::diss2vs(bool B){ CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B; CHOPCONF(r.sr);}
+void TMC5160Stepper::tpfd(uint8_t B){ CHOPCONF_t r{ CHOPCONF() }; r.tpfd = B; 	 CHOPCONF(r.sr);}
 bool TMC5160Stepper::diss2vs()		{ return CHOPCONF_t{ CHOPCONF() }.diss2vs;	}
 uint8_t TMC5160Stepper::tpfd()		{ return CHOPCONF_t{ CHOPCONF() }.tpfd;		}
 
