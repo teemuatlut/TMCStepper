@@ -2,31 +2,39 @@
 
 using namespace TMCStepper_n;
 
-int8_t TMC2130Stepper::chain_length = 0;
-uint32_t TMC2130Stepper::spi_speed = 16000000/8;
+int8_t TMC_SPI::chain_length = 0;
+uint32_t TMC_SPI::spi_speed = 16000000/8;
 
-TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, float RS, int8_t link) :
-  TMCStepper(RS),
+TMC_SPI::TMC_SPI(SPIClass &spi, PinDef cs, int8_t link) :
   pinCS(cs),
   TMC_HW_SPI(&spi),
   link_index(link)
   {
-    defaults();
-
     if (link > chain_length)
       chain_length = link;
   }
 
-TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, float RS, int8_t link) :
-  TMCStepper(RS),
+TMC_SPI::TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link) :
   pinCS(cs),
   TMC_SW_SPI(&spi),
   link_index(link)
   {
-    defaults();
-
     if (link > chain_length)
       chain_length = link;
+  }
+
+TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, float RS, int8_t link) :
+  TMC_SPI(spi, cs, link),
+  TMCStepper<TMC2130Stepper>(RS)
+  {
+    defaults();
+  }
+
+TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, float RS, int8_t link) :
+  TMC_SPI(spi, cs, link),
+  TMCStepper<TMC2130Stepper>(RS)
+  {
+    defaults();
   }
 
 void TMC2130Stepper::defaults() {
@@ -43,12 +51,12 @@ void TMC2130Stepper::defaults() {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::setSPISpeed(uint32_t speed) {
+void TMC_SPI::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
 
 __attribute__((weak))
-uint32_t TMC2130Stepper::read(uint8_t addressByte) {
+uint32_t TMC_SPI::read(uint8_t addressByte) {
   TransferData data;
   OutputPin cs(pinCS);
 
@@ -83,7 +91,7 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::write(uint8_t addressByte, uint32_t config) {
+void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
   OutputPin cs(pinCS);
   TransferData data;
   addressByte |= TMC_WRITE;

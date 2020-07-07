@@ -3,11 +3,24 @@
 
 using namespace TMCStepper_n;
 
+TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr = TMC2208_SLAVE_ADDR) :
+	slaveAddress(addr)
+	{
+		HWSerial = SerialPort;
+	}
+
+TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2) :
+	TMC_UART(SerialPort)
+	{
+		SSwitch *SMulObj = new SSwitch(mul_pin1, mul_pin2, addr);
+		sswitch = SMulObj;
+	}
+
 // Protected
 // addr needed for TMC2209
 TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
-	TMCStepper(RS),
-	slaveAddress(addr)
+	TMC_UART(SerialPort, addr),
+	TMCStepper(RS)
 	{
 		HWSerial = SerialPort;
 		defaults();
@@ -21,15 +34,20 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t ad
 	}
 
 #if SW_CAPABLE_PLATFORM
-	// Protected
-	// addr needed for TMC2209
-	TMC2208Stepper::TMC2208Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
-		TMCStepper(RS),
+	TMC_UART::TMC_UART(PinDef SW_RX_pin, PinDef SW_TX_pin, uint8_t addr) :
 		RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
 		slaveAddress(addr)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
+		}
+
+	// Protected
+	// addr needed for TMC2209
+	TMC2208Stepper::TMC2208Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
+		TMC_UART(SW_RX_pin, SW_TX_pin, addr),
+		TMCStepper(RS)
+		{
 			defaults();
 		}
 
@@ -90,7 +108,7 @@ void TMC2208Stepper::push() {
 
 bool TMC2208Stepper::isEnabled() { return !enn() && toff(); }
 
-uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
+uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
 	uint8_t crc = 0;
 	for (uint8_t i = 0; i < len; i++) {
 		uint8_t currentByte = datagram[i];
@@ -108,7 +126,7 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
+void TMC_UART::write(uint8_t addr, uint32_t regVal) {
     WriteDatagram datagram;
     datagram.driverAddress = slaveAddress;
     datagram.registerAddress = addr | TMC_WRITE;
@@ -123,7 +141,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 	delay(replyDelay);
 }
 
-TMC2208Stepper::ReadResponse TMC2208Stepper::sendReadRequest(ReadRequest &datagram) {
+TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
     serial_write((uint8_t*)&datagram, datagram.length);
 
     //delay(this->replyDelay);
@@ -151,7 +169,7 @@ TMC2208Stepper::ReadResponse TMC2208Stepper::sendReadRequest(ReadRequest &datagr
     return response;
 }
 
-uint32_t TMC2208Stepper::read(uint8_t addr) {
+uint32_t TMC_UART::read(uint8_t addr) {
     ReadResponse response;
     ReadRequest datagram;
     datagram.driverAddress = slaveAddress;
