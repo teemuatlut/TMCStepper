@@ -19,7 +19,7 @@ void TMC5160Stepper::defaults() {
   DRV_CONF_register.otselect = 0b00;
   DRV_CONF_register.drvstrength = 0b10;
   DRV_CONF_register.filt_isense = 0b00;
-  TPOWERDOWN_register.sr = 10;
+  TPOWERDOWN_i::r.sr = 10;
   VSTOP_register.sr = 1;
   ENC_CONST_register.sr = 65536;
   //MSLUT0_register.sr = ???;
@@ -33,22 +33,19 @@ void TMC5160Stepper::defaults() {
   //MSLUTSEL_register.sr = ???;
   //MSLUTSTART_register.start_sin = 0;
   //MSLUTSTART_register.start_sin90 = 247;
-  CHOPCONF_register.sr = 0x10410150;
-  PWMCONF_register.sr = 0xC40C001E;
+  CHOPCONF(0x10410150);
+  PWMCONF(0xC40C001E);
 }
 
 void TMC5160Stepper::push() {
-    IHOLD_IRUN(IHOLD_IRUN_register.sr);
-    TPOWERDOWN(TPOWERDOWN_register.sr);
-    TPWMTHRS(TPWMTHRS_register.sr);
-    GCONF(GCONF_register.sr);
-    TCOOLTHRS(TCOOLTHRS_register.sr);
-    THIGH(THIGH_register.sr);
-    XDIRECT(XDIRECT_register.sr);
-    VDCMIN(VDCMIN_register.sr);
-    CHOPCONF(CHOPCONF_register.sr);
-    COOLCONF(COOLCONF_register.sr);
-    DCCTRL(DCCTRL_register.sr);
+    IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
+    TPOWERDOWN(TPOWERDOWN_i::r.sr);
+    TPWMTHRS(TPWMTHRS_i::r.sr);
+    TCOOLTHRS(TCOOLTHRS_i::r.sr);
+    THIGH(THIGH_i::r.sr);
+    VDCMIN(VDCMIN_i::r.sr);
+    COOLCONF(COOLCONF_i::r.sr);
+    DCCTRL(DCCTRL_i::r.sr);
     PWMCONF(PWMCONF_register.sr);
     SHORT_CONF(SHORT_CONF_register.sr);
     DRV_CONF(DRV_CONF_register.sr);

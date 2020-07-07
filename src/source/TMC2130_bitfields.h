@@ -88,6 +88,10 @@ struct TPOWERDOWN_t {
   uint8_t sr : 8;
 };
 
+struct TSTEP_t {
+  constexpr static uint8_t address = 0x12;
+};
+
 struct TPWMTHRS_t {
   constexpr static uint8_t address = 0x13;
   uint32_t sr : 20;
@@ -119,6 +123,8 @@ struct VDCMIN_t {
   constexpr static uint8_t address = 0x33;
   uint32_t sr : 23;
 };
+
+struct MSCNT_t { constexpr static uint8_t address = 0x6A; };
 
 struct CHOPCONF_t {
   constexpr static uint8_t address = 0x6C;
@@ -222,6 +228,8 @@ struct PWMCONF_t {
   };
 };
 
+struct PWM_SCALE_t  { constexpr static uint8_t address = 0x71; };
+
 struct ENCM_CTRL_t {
   constexpr static uint8_t address = 0x72;
   union {
@@ -232,5 +240,7 @@ struct ENCM_CTRL_t {
     };
   };
 };
+
+struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
 
 #pragma pack(pop)
