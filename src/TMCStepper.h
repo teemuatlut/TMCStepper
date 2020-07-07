@@ -68,6 +68,118 @@
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
+template<typename> class TMCStepper;
+
+struct TMC_SPI {
+	protected:
+
+	template<class> friend class TMCStepper;
+
+	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
+	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
+
+	// |         8b        |       32b     |
+	// | Address or Status | Register data |
+	// |           40b data buffer         |
+	union TransferData {
+	    struct {
+	        union {
+	            uint8_t address;
+	            uint8_t status;
+	        };
+	        uint32_t data;
+	    };
+	    char buffer[5] = {0};
+	};
+
+	void setSPISpeed(uint32_t speed);
+	void switchCSpin(bool state);
+
+	void beginTransaction();
+	void endTransaction();
+	void transfer(char *buf, const uint8_t count);
+	void write(uint8_t addressByte, uint32_t config);
+	uint32_t read(uint8_t addressByte);
+
+	uint8_t status_response;
+
+	static constexpr uint8_t TMC_READ = 0x00,
+													TMC_WRITE = 0x80;
+
+	static uint32_t spi_speed; // Default 2MHz
+	const TMCStepper_n::PinDef pinCS;
+	SPIClass *TMC_HW_SPI = nullptr;
+	SW_SPIClass *TMC_SW_SPI = nullptr;
+
+	int8_t link_index;
+	static int8_t chain_length;
+};
+
+struct TMC_UART {
+	protected:
+
+	template<typename> friend class TMCStepper;
+
+	TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
+	TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
+	TMC_UART(PinDef SW_RX_pin, PinDef SW_TX_pin, uint8_t addr);
+
+	static constexpr uint8_t TMC_READ = 0x00,
+													TMC_WRITE = 0x80;
+
+    HardwareSerial * HWSerial = nullptr;
+	#if SW_CAPABLE_PLATFORM
+		SoftwareSerial * SWSerial = nullptr;
+		const TMCStepper_n::PinDef RXTX_pin = 0; // Half duplex
+	#endif
+
+	SSwitch *sswitch = nullptr;
+
+    static constexpr uint8_t  TMC2208_SYNC = 0x05,
+                                                        TMC2208_SLAVE_ADDR = 0x00;
+    static constexpr uint8_t replyDelay = 2;
+    static constexpr uint8_t abort_window = 5;
+    static constexpr uint8_t max_retries = 2;
+
+    struct ReadRequest {
+        static constexpr uint8_t length = 3;
+        uint8_t sync = TMC2208_SYNC;
+        uint8_t driverAddress;
+        uint8_t registerAddress;
+        uint8_t crc = 0;
+    };
+
+    struct WriteDatagram {
+        static constexpr uint8_t length = 7;
+        uint8_t sync = TMC2208_SYNC;
+        uint8_t driverAddress;
+        uint8_t registerAddress;
+        uint32_t data;
+        uint8_t crc = 0;
+    };
+
+    typedef WriteDatagram ReadResponse;
+
+	int available();
+	size_t getTime() const;
+	void preWriteCommunication();
+	void preReadCommunication();
+	void serial_read(uint8_t *data, int8_t length);
+	void serial_write(const uint8_t *data, int8_t length);
+	void postWriteCommunication();
+	void postReadCommunication();
+	void write(uint8_t, uint32_t);
+	uint32_t read(uint8_t);
+	const uint8_t slaveAddress;
+	uint8_t calcCRC(uint8_t datagram[], uint8_t len);
+
+	ReadResponse sendReadRequest(ReadRequest &datagram);
+
+	uint16_t bytesWritten = 0;
+	bool CRCerror = false;
+};
+
+template<typename DERIVED>
 class TMCStepper {
 	public:
 		uint16_t cs2rms(uint8_t CS);
@@ -130,14 +242,9 @@ class TMCStepper {
 		INIT_REGISTER(TPOWERDOWN){.sr=0};		// 8b
 		INIT_REGISTER(TPWMTHRS){.sr=0};			// 32b
 
-		static constexpr uint8_t TMC_READ = 0x00,
-														TMC_WRITE = 0x80;
-
 		struct TSTEP_t { constexpr static uint8_t address = 0x12; };
 		struct MSCNT_t { constexpr static uint8_t address = 0x6A; };
 
-		virtual void write(uint8_t, uint32_t) = 0;
-		virtual uint32_t read(uint8_t) = 0;
 		virtual void vsense(bool) = 0;
 		virtual bool vsense(void) = 0;
 		virtual uint32_t DRV_STATUS() = 0;
@@ -154,15 +261,13 @@ class TMCStepper {
 		float holdMultiplier = 0.5;
 };
 
-class TMC2130Stepper : public TMCStepper {
+class TMC2130Stepper : public TMC_SPI, public TMCStepper<TMC2130Stepper> {
 	public:
 		TMC2130Stepper(SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
 		TMC2130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
 
 		void begin();
 		void defaults();
-		void setSPISpeed(uint32_t speed);
-		void switchCSpin(bool state);
 		bool isEnabled();
 		void push();
 
@@ -346,8 +451,6 @@ class TMC2130Stepper : public TMCStepper {
 
 		// Function aliases
 
-		uint8_t status_response;
-
 		// Can be accessed for a common default value
 		static constexpr float default_RS = 0.11;
 
@@ -359,26 +462,6 @@ class TMC2130Stepper : public TMCStepper {
 		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
 
 	protected:
-
-		// |         8b        |       32b     |
-		// | Address or Status | Register data |
-		// |           40b data buffer         |
-        union TransferData {
-            struct {
-                union {
-                    uint8_t address;
-                    uint8_t status;
-                };
-                uint32_t data;
-            };
-            char buffer[5] = {0};
-        };
-
-		void beginTransaction();
-		void endTransaction();
-		void transfer(char *buf, const uint8_t count);
-		void write(uint8_t addressByte, uint32_t config);
-		uint32_t read(uint8_t addressByte);
 
 		INIT_REGISTER(GCONF)		{0};	// 32b
 		INIT_REGISTER(TCOOLTHRS) {0};		// 32b
@@ -395,14 +478,6 @@ class TMC2130Stepper : public TMCStepper {
 		struct PWM_SCALE_t 	{ constexpr static uint8_t address = 0x71; };
 		struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
 		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
-
-		static uint32_t spi_speed; // Default 2MHz
-		const TMCStepper_n::PinDef pinCS;
-		SPIClass *TMC_HW_SPI = nullptr;
-		SW_SPIClass *TMC_SW_SPI = nullptr;
-
-		int8_t link_index;
-		static int8_t chain_length;
 };
 
 class TMC2160Stepper : public TMC2130Stepper {
@@ -851,7 +926,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 
 typedef TMC5160Stepper TMC5161Stepper;
 
-class TMC2208Stepper : public TMCStepper {
+class TMC2208Stepper : public TMC_UART, public TMCStepper<TMC2208Stepper> {
 	public:
 	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::PinDef mul_pin1, TMCStepper_n::PinDef mul_pin2);
 		TMC2208Stepper(HardwareSerial * SerialPort, float RS) :
@@ -1012,9 +1087,7 @@ class TMC2208Stepper : public TMCStepper {
 		uint8_t pwm_ofs_auto();
 		uint8_t pwm_grad_auto();
 
-		uint16_t bytesWritten = 0;
 		float Rsense = 0.11;
-		bool CRCerror = false;
 	protected:
 		INIT2208_REGISTER(GCONF)			{0};
 		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
@@ -1031,54 +1104,6 @@ class TMC2208Stepper : public TMCStepper {
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
 		#endif
-
-        HardwareSerial * HWSerial = nullptr;
-		#if SW_CAPABLE_PLATFORM
-			SoftwareSerial * SWSerial = nullptr;
-			const TMCStepper_n::PinDef RXTX_pin = 0; // Half duplex
-		#endif
-
-		SSwitch *sswitch = nullptr;
-
-        static constexpr uint8_t  TMC2208_SYNC = 0x05,
-                                                            TMC2208_SLAVE_ADDR = 0x00;
-        static constexpr uint8_t replyDelay = 2;
-        static constexpr uint8_t abort_window = 5;
-        static constexpr uint8_t max_retries = 2;
-
-        struct ReadRequest {
-            static constexpr uint8_t length = 3;
-            uint8_t sync = TMC2208_SYNC;
-            uint8_t driverAddress;
-            uint8_t registerAddress;
-            uint8_t crc = 0;
-        };
-
-        struct WriteDatagram {
-            static constexpr uint8_t length = 7;
-            uint8_t sync = TMC2208_SYNC;
-            uint8_t driverAddress;
-            uint8_t registerAddress;
-            uint32_t data;
-            uint8_t crc = 0;
-        };
-
-        typedef WriteDatagram ReadResponse;
-
-		int available();
-		size_t getTime() const;
-		void preWriteCommunication();
-		void preReadCommunication();
-		void serial_read(uint8_t *data, int8_t length);
-		void serial_write(const uint8_t *data, int8_t length);
-		void postWriteCommunication();
-		void postReadCommunication();
-		void write(uint8_t, uint32_t);
-		uint32_t read(uint8_t);
-		const uint8_t slaveAddress;
-		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
-
-		ReadResponse sendReadRequest(ReadRequest &datagram);
 };
 
 class TMC2209Stepper : public TMC2208Stepper {

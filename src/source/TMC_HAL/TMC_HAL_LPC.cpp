@@ -45,14 +45,14 @@ void OutputPin::write(const bool state) const {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::beginTransaction() {
+void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->beginTransaction();
     }
 }
 
 __attribute__((weak))
-void TMC2130Stepper::transfer(char *buf, const uint8_t count) {
+void TMC_SPI::transfer(char *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         for (auto i = 0; i>count; i++) {
             *buf = TMC_HW_SPI->transfer(*buf);
@@ -65,7 +65,7 @@ void TMC2130Stepper::transfer(char *buf, const uint8_t count) {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::endTransaction() {}
+void TMC_SPI::endTransaction() {}
 
 __attribute__((weak))
 void TMC2660Stepper::beginTransaction() {
@@ -91,7 +91,7 @@ __attribute__((weak))
 void TMC2660Stepper::endTransaction() {}
 
 __attribute__((weak))
-int TMC2208Stepper::available() {
+int TMC_UART::available() {
     int out = 0;
     if (SWSerial != nullptr) {
         out = SWSerial->available();
@@ -104,12 +104,12 @@ int TMC2208Stepper::available() {
 }
 
 __attribute__((weak))
-size_t TMC2208Stepper::getTime() const {
+size_t TMC_UART::getTime() const {
     return millis();
 }
 
 __attribute__((weak))
-void TMC2208Stepper::preWriteCommunication() {
+void TMC_UART::preWriteCommunication() {
     if (HWSerial != nullptr) {
         if (sswitch != nullptr)
             sswitch->active();
@@ -117,7 +117,7 @@ void TMC2208Stepper::preWriteCommunication() {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::preReadCommunication() {
+void TMC_UART::preReadCommunication() {
     if (SWSerial != nullptr) {
         SWSerial->listen();
     }
@@ -128,7 +128,7 @@ void TMC2208Stepper::preReadCommunication() {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::serial_read(uint8_t *data, int8_t length) {
+void TMC_UART::serial_read(uint8_t *data, int8_t length) {
     if (SWSerial != nullptr) {
         SWSerial->readBytes(data, length);
     } else
@@ -138,7 +138,7 @@ void TMC2208Stepper::serial_read(uint8_t *data, int8_t length) {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::serial_write(const uint8_t *data, int8_t length) {
+void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
     if (SWSerial != nullptr) {
         SWSerial->write(data, length);
     } else
@@ -148,10 +148,10 @@ void TMC2208Stepper::serial_write(const uint8_t *data, int8_t length) {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::postWriteCommunication() {}
+void TMC_UART::postWriteCommunication() {}
 
 __attribute__((weak))
-void TMC2208Stepper::postReadCommunication() {
+void TMC_UART::postReadCommunication() {
     if (SWSerial != nullptr) {
         SWSerial->end();
     }

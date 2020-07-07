@@ -21,7 +21,7 @@ void InputPin::mode(const uint8_t inputType) {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::beginTransaction() {
+void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->frequency(spi_speed);
         constexpr int bitsPerFrame = 8;
@@ -32,14 +32,14 @@ void TMC2130Stepper::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC2130Stepper::transfer(char *buf, const uint8_t count) {
+void TMC_SPI::transfer(char *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->write(buf, count, buf, count);
     }
 }
 
 __attribute__((weak))
-void TMC2130Stepper::endTransaction() {
+void TMC_SPI::endTransaction() {
     if (TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->unlock();
     }
@@ -73,12 +73,12 @@ void TMC2660Stepper::endTransaction() {
 static Timer serialTimeout;
 
 __attribute__((weak))
-size_t TMC2208Stepper::getTime() const {
+size_t TMC_UART::getTime() const {
     return serialTimeout.read_ms();
 }
 
 __attribute__((weak))
-void TMC2208Stepper::preWriteCommunication() {
+void TMC_UART::preWriteCommunication() {
     if (HWSerial != nullptr) {
         serialTimeout.start();
 
@@ -88,7 +88,7 @@ void TMC2208Stepper::preWriteCommunication() {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::preReadCommunication() {
+void TMC_UART::preReadCommunication() {
     if (HWSerial != nullptr) {
         serialTimeout.start();
 
@@ -98,26 +98,26 @@ void TMC2208Stepper::preReadCommunication() {
 }
 
 __attribute__((weak))
-void TMC2208Stepper::serial_read(uint8_t *data, int8_t length) {
+void TMC_UART::serial_read(uint8_t *data, int8_t length) {
     if (HWSerial != nullptr) {
         HWSerial->read(data, length, nullptr);
     }
 }
 
 __attribute__((weak))
-void TMC2208Stepper::serial_write(const uint8_t *data, int8_t length) {
+void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
     if (HWSerial != nullptr) {
         bytesWritten += HWSerial->write(data, length, nullptr);
     }
 }
 
 __attribute__((weak))
-void TMC2208Stepper::postWriteCommunication() {
+void TMC_UART::postWriteCommunication() {
     serialTimeout.reset();
 }
 
 __attribute__((weak))
-void TMC2208Stepper::postReadCommunication() {
+void TMC_UART::postReadCommunication() {
     serialTimeout.reset();
 }
 
