@@ -58,6 +58,7 @@
 
 #include "source/interfaces/TMC2130.hpp"
 #include "source/interfaces/TMC2208.hpp"
+#include "source/interfaces/TMC2209.hpp"
 
 #define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
 #define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
@@ -161,6 +162,11 @@ protected:
 	template<class> friend class TMC2208_n::PWMCONF_i;
 	template<class> friend class TMC2208_n::PWM_SCALE_i;
 	template<class> friend class TMC2208_n::PWM_AUTO_i;
+
+	template<class> friend class TMC2209_n::IOIN_i;
+	template<class> friend class TMC2209_n::SGTHRS_i;
+	template<class> friend class TMC2209_n::SG_RESULT_i;
+	template<class> friend class TMC2209_n::COOLCONF_i;
 
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
@@ -803,7 +809,14 @@ class TMC2208Stepper :
 		#endif
 };
 
-class TMC2209Stepper : public TMC2208Stepper {
+class TMC2209Stepper :
+	public TMC2208Stepper,
+	public TMC2209_n::IOIN_i<TMC2209Stepper>,
+	public TMC2209_n::TCOOLTHRS_i<TMC2209Stepper>,
+	public TMC2209_n::SGTHRS_i<TMC2209Stepper>,
+	public TMC2209_n::SG_RESULT_i<TMC2209Stepper>,
+	public TMC2209_n::COOLCONF_i<TMC2209Stepper>
+	{
 	public:
 		TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
 			TMC2208Stepper(SerialPort, RS, addr) {}
@@ -815,48 +828,6 @@ class TMC2209Stepper : public TMC2208Stepper {
 			TMC2209Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void push();
-
-		// R: IOIN
-		uint32_t IOIN();
-		bool enn();
-		bool ms1();
-		bool ms2();
-		bool diag();
-		bool pdn_uart();
-		bool step();
-		bool spread_en();
-		bool dir();
-		uint8_t version();
-
-		// W: TCOOLTHRS
-		uint32_t TCOOLTHRS();
-		void TCOOLTHRS(uint32_t input);
-
-		// W: SGTHRS
-		void SGTHRS(uint8_t B);
-		uint8_t SGTHRS();
-
-		// R: SG_RESULT
-		uint16_t SG_RESULT();
-
-		// W: COOLCONF
-		void COOLCONF(uint16_t B);
-		uint16_t COOLCONF();
-		void semin(uint8_t B);
-		void seup(uint8_t B);
-		void semax(uint8_t B);
-		void sedn(uint8_t B);
-		void seimin(bool B);
-		uint8_t semin();
-		uint8_t seup();
-		uint8_t semax();
-		uint8_t sedn();
-		bool seimin();
-
-	protected:
-		TMC2130_n::TCOOLTHRS_t TCOOLTHRS_register{.sr=0};
-		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
-		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
 };
 
 class TMC2224Stepper : public TMC2208Stepper {
