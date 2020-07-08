@@ -1,6 +1,8 @@
 #pragma once
 #pragma pack(push, 1)
 
+namespace TMC2130_n {
+
 struct GCONF_t {
   GCONF_t(const uint32_t data) : sr(data) {};
   constexpr static uint8_t address = 0x00;
@@ -126,6 +128,18 @@ struct VDCMIN_t {
 
 struct MSCNT_t { constexpr static uint8_t address = 0x6A; };
 
+struct MSCURACT_t {
+  constexpr static uint8_t address = 0x6B;
+  union {
+    uint32_t sr : 25;
+    struct {
+      int16_t cur_a : 9,
+                    : 7,
+              cur_b : 9;
+    };
+  };
+};
+
 struct CHOPCONF_t {
   constexpr static uint8_t address = 0x6C;
   union {
@@ -189,7 +203,6 @@ struct DCCTRL_t {
 	};
 };
 
-namespace TMC2130_n {
   struct DRV_STATUS_t {
     constexpr static uint8_t address = 0x6F;
     union {
@@ -211,7 +224,6 @@ namespace TMC2130_n {
       };
     };
   };
-}
 
 struct PWMCONF_t {
   constexpr static uint8_t address = 0x70;
@@ -242,5 +254,7 @@ struct ENCM_CTRL_t {
 };
 
 struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
+
+}
 
 #pragma pack(pop)

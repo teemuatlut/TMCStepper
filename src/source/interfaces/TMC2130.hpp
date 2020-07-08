@@ -2,7 +2,7 @@
 #pragma once
 
 #include "TMCStepper.h"
-#include "source/TMC2130_bitfields.h"
+#include "../TMC2130_bitfields.h"
 
 namespace TMC2130_n {
     // 0x00 RW: GCONF

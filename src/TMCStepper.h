@@ -143,10 +143,24 @@ protected:
 	template<class> friend class TMCStepper;
 	template<class> friend class TMC2208_n::GCONF_i;
 	template<class> friend class TMC2208_n::GSTAT_i;
+	template<class> friend class TMC2208_n::IFCNT_i;
+	template<class> friend class TMC2208_n::SLAVECONF_i;
+	template<class> friend class TMC2208_n::OTP_PROG_i;
+	template<class> friend class TMC2208_n::OTP_READ_i;
+	template<class> friend class TMC2208_n::IOIN_i;
+	template<class> friend class TMC2208_n::FACTORY_CONF_i;
 	template<class> friend class TMC2208_n::IHOLD_IRUN_i;
 	template<class> friend class TMC2208_n::TPOWERDOWN_i;
 	template<class> friend class TMC2208_n::TSTEP_i;
 	template<class> friend class TMC2208_n::TPWMTHRS_i;
+	template<class> friend class TMC2208_n::VACTUAL_i;
+	template<class> friend class TMC2208_n::MSCNT_i;
+	template<class> friend class TMC2208_n::MSCURACT_i;
+	template<class> friend class TMC2208_n::CHOPCONF_i;
+	template<class> friend class TMC2208_n::DRV_STATUS_i;
+	template<class> friend class TMC2208_n::PWMCONF_i;
+	template<class> friend class TMC2208_n::PWM_SCALE_i;
+	template<class> friend class TMC2208_n::PWM_AUTO_i;
 
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
 	TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
@@ -734,13 +748,25 @@ class TMC2208Stepper :
 	public TMC_UART,
 	public TMCStepper<TMC2208Stepper>,
 	public TMC2208_n::GCONF_i<TMC2208Stepper>,
+	public TMC2208_n::GSTAT_i<TMC2208Stepper>,
+	public TMC2208_n::IFCNT_i<TMC2208Stepper>,
+	public TMC2208_n::SLAVECONF_i<TMC2208Stepper>,
+	public TMC2208_n::OTP_PROG_i<TMC2208Stepper>,
+	public TMC2208_n::OTP_READ_i<TMC2208Stepper>,
 	public TMC2208_n::IOIN_i<TMC2208Stepper>,
+	public TMC2208_n::FACTORY_CONF_i<TMC2208Stepper>,
 	public TMC2208_n::IHOLD_IRUN_i<TMC2208Stepper>,
 	public TMC2208_n::TPOWERDOWN_i<TMC2208Stepper>,
 	public TMC2208_n::TSTEP_i<TMC2208Stepper>,
 	public TMC2208_n::TPWMTHRS_i<TMC2208Stepper>,
+	public TMC2208_n::VACTUAL_i<TMC2208Stepper>,
 	public TMC2208_n::MSCNT_i<TMC2208Stepper>,
-	public TMC2208_n::MSCURACT_i<TMC2208Stepper>
+	public TMC2208_n::MSCURACT_i<TMC2208Stepper>,
+	public TMC2208_n::CHOPCONF_i<TMC2208Stepper>,
+	public TMC2208_n::DRV_STATUS_i<TMC2208Stepper>,
+	public TMC2208_n::PWMCONF_i<TMC2208Stepper>,
+	public TMC2208_n::PWM_SCALE_i<TMC2208Stepper>,
+	public TMC2208_n::PWM_AUTO_i<TMC2208Stepper>
 	{
 	public:
 	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::PinDef mul_pin1, TMCStepper_n::PinDef mul_pin2);
@@ -769,129 +795,7 @@ class TMC2208Stepper :
 		#endif
 		bool isEnabled();
 
-		// R: IFCNT
-		uint8_t IFCNT();
-
-		// W: SLAVECONF
-		void SLAVECONF(uint16_t input);
-		uint16_t SLAVECONF();
-		void senddelay(uint8_t B);
-		uint8_t senddelay();
-
-		// W: OTP_PROG
-		void OTP_PROG(uint16_t input);
-
-		// R: OTP_READ
-		uint32_t OTP_READ();
-
-		// R: IOIN
-		uint32_t IOIN();
-		bool enn();
-		bool ms1();
-		bool ms2();
-		bool diag();
-		bool pdn_uart();
-		bool step();
-		bool sel_a();
-		bool dir();
-		uint8_t version();
-
-		// RW: FACTORY_CONF
-		void FACTORY_CONF(uint16_t input);
-		uint16_t FACTORY_CONF();
-		void fclktrim(uint8_t B);
-		void ottrim(uint8_t B);
-		uint8_t fclktrim();
-		uint8_t ottrim();
-
-		// W: VACTUAL
-		void VACTUAL(uint32_t input);
-		uint32_t VACTUAL();
-
-		// RW: CHOPCONF
-		void CHOPCONF(uint32_t input);
-		void toff(uint8_t B);
-		void hstrt(uint8_t B);
-		void hend(uint8_t B);
-		void tbl(uint8_t B);
-		void vsense(bool B);
-		void mres(uint8_t B);
-		void intpol(bool B);
-		void dedge(bool B);
-		void diss2g(bool B);
-		void diss2vs(bool B);
-		uint32_t CHOPCONF();
-		uint8_t toff();
-		uint8_t hstrt();
-		uint8_t hend();
-		uint8_t tbl();
-		bool vsense();
-		uint8_t mres();
-		bool intpol();
-		bool dedge();
-		bool diss2g();
-		bool diss2vs();
-
-		// R: DRV_STATUS
-		uint32_t DRV_STATUS();
-		bool otpw();
-		bool ot();
-		bool s2ga();
-		bool s2gb();
-		bool s2vsa();
-		bool s2vsb();
-		bool ola();
-		bool olb();
-		bool t120();
-		bool t143();
-		bool t150();
-		bool t157();
-		uint16_t cs_actual();
-		bool stealth();
-		bool stst();
-
-		// RW: PWMCONF
-		void PWMCONF(uint32_t input);
-		void pwm_ofs(uint8_t B);
-		void pwm_grad(uint8_t B);
-		void pwm_freq(uint8_t B);
-		void pwm_autoscale(bool B);
-		void pwm_autograd(bool B);
-		void freewheel(uint8_t B);
-		void pwm_reg(uint8_t B);
-		void pwm_lim(uint8_t B);
-		uint32_t PWMCONF();
-		uint8_t pwm_ofs();
-		uint8_t pwm_grad();
-		uint8_t pwm_freq();
-		bool pwm_autoscale();
-		bool pwm_autograd();
-		uint8_t freewheel();
-		uint8_t pwm_reg();
-		uint8_t pwm_lim();
-
-		// R: PWM_SCALE
-		uint32_t PWM_SCALE();
-		uint8_t pwm_scale_sum();
-		int16_t pwm_scale_auto();
-
-		// R: PWM_AUTO (0x72)
-		uint32_t PWM_AUTO();
-		uint8_t pwm_ofs_auto();
-		uint8_t pwm_grad_auto();
-
-		float Rsense = 0.11;
 	protected:
-		INIT2208_REGISTER(GCONF)			{0};
-		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
-		INIT_REGISTER(FACTORY_CONF)		{{.sr=0}};
-		INIT2208_REGISTER(VACTUAL)		{.sr=0};
-		INIT2208_REGISTER(CHOPCONF)		{{.sr=0}};
-		INIT2208_REGISTER(PWMCONF)		{{.sr=0}};
-
-		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; };
-		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
-		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
 
 		TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
 		#if SW_CAPABLE_PLATFORM
@@ -950,7 +854,7 @@ class TMC2209Stepper : public TMC2208Stepper {
 		bool seimin();
 
 	protected:
-		INIT_REGISTER(TCOOLTHRS){.sr=0};
+		TMC2130_n::TCOOLTHRS_t TCOOLTHRS_register{.sr=0};
 		TMC2209_n::SGTHRS_t SGTHRS_register{.sr=0};
 		TMC2209_n::COOLCONF_t COOLCONF_register{{.sr=0}};
 };
