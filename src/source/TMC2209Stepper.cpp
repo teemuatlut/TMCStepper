@@ -17,12 +17,8 @@ void TMC2209Stepper::push() {
 	IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
 	TPOWERDOWN(TPOWERDOWN_i::r.sr);
 	TPWMTHRS(TPWMTHRS_i::r.sr);
-	GCONF(GCONF_register.sr);
-	SLAVECONF(SLAVECONF_register.sr);
-	VACTUAL(VACTUAL_register.sr);
-	CHOPCONF(CHOPCONF_register.sr);
-	PWMCONF(PWMCONF_register.sr);
-	TCOOLTHRS(TCOOLTHRS_register.sr);
+	SLAVECONF(SLAVECONF_i::r.sr);
+	VACTUAL(VACTUAL_i::r.sr);
 }
 
 void TMC2209Stepper::SGTHRS(uint8_t input) {

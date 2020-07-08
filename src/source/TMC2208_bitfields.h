@@ -23,9 +23,11 @@ namespace TMC2208_n {
       };
     };
   };
-}
 
-namespace TMC2208_n {
+  struct IFCNT_t    { constexpr static uint8_t address = 0x02; };
+  struct OTP_PROG_t { constexpr static uint8_t address = 0x04; };
+  struct OTP_READ_t { constexpr static uint8_t address = 0x05; };
+
   struct IOIN_t {
     constexpr static uint8_t address = 0x06;
     union {
@@ -46,62 +48,26 @@ namespace TMC2208_n {
       };
     };
   };
-}
 
-namespace TMC2224_n {
-  struct IOIN_t {
-    constexpr static uint8_t address = 0x06;
+  struct FACTORY_CONF_t {
+    constexpr static uint8_t address = 0x07;
     union {
-      uint32_t sr;
+      uint16_t sr;
       struct {
-        bool  : 1,
-              pdn_uart : 1,
-              spread : 1,
-              dir : 1,
-              enn : 1,
-              step : 1,
-              ms1 : 1,
-              ms2 : 1,
-              sel_a : 1;
-        uint16_t : 15;
-        uint8_t version : 8;
+          uint8_t fclktrim : 5,
+                           : 3,
+                  ottrim : 2;
       };
     };
   };
-}
 
-struct FACTORY_CONF_t {
-  constexpr static uint8_t address = 0x07;
-  union {
-    uint16_t sr;
-    struct {
-        uint8_t fclktrim : 5,
-                         : 3,
-                ottrim : 2;
-    };
-  };
-};
-
-namespace TMC2208_n {
   struct VACTUAL_t {
     constexpr static uint8_t address = 0x22;
     uint32_t sr;
   };
-}
 
-struct MSCURACT_t {
-  constexpr static uint8_t address = 0x6B;
-  union {
-    uint32_t sr : 25;
-    struct {
-      int16_t cur_a : 9,
-                    : 7,
-              cur_b : 9;
-    };
-  };
-};
+  using TMC2130_n::MSCURACT_t;
 
-namespace TMC2208_n {
   struct CHOPCONF_t {
     constexpr static uint8_t address = 0x6C;
     union {
@@ -176,6 +142,28 @@ namespace TMC2208_n {
         uint8_t pwm_scale_sum : 8,
                 : 8;
         int16_t pwm_scale_auto : 9;
+      };
+    };
+  };
+}
+
+namespace TMC2224_n {
+  struct IOIN_t {
+    constexpr static uint8_t address = 0x06;
+    union {
+      uint32_t sr;
+      struct {
+        bool  : 1,
+              pdn_uart : 1,
+              spread : 1,
+              dir : 1,
+              enn : 1,
+              step : 1,
+              ms1 : 1,
+              ms2 : 1,
+              sel_a : 1;
+        uint16_t : 15;
+        uint8_t version : 8;
       };
     };
   };
