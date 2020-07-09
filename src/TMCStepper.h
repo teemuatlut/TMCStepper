@@ -57,6 +57,7 @@
 #include "source/TMC2660_bitfields.h"
 
 #include "source/interfaces/TMC2130.hpp"
+#include "source/interfaces/TMC2160.hpp"
 #include "source/interfaces/TMC2208.hpp"
 #include "source/interfaces/TMC2209.hpp"
 
@@ -97,6 +98,14 @@ protected:
 	template<class> friend class TMC2130_n::PWM_SCALE_i;
 	template<class> friend class TMC2130_n::ENCM_CTRL_i;
 	template<class> friend class TMC2130_n::LOST_STEPS_i;
+
+	template<class> friend class TMC2160_n::IOIN_i;
+	template<class> friend class TMC2160_n::GLOBAL_SCALER_i;
+	template<class> friend class TMC2160_n::OFFSET_READ_i;
+	template<class> friend class TMC2160_n::PWM_SCALE_i;
+	template<class> friend class TMC2160_n::SHORT_CONF_i;
+	template<class> friend class TMC2160_n::DRV_CONF_i;
+	template<class> friend class TMC2160_n::PWMCONF_i;
 
 	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
 	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
@@ -304,7 +313,35 @@ class TMC2130Stepper :
 		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
 };
 
-class TMC2160Stepper : public TMC2130Stepper {
+class TMC2160Stepper :
+	public TMC_SPI,
+	public TMCStepper<TMC2160Stepper>,
+	public TMC2160_n::GCONF_i<TMC2160Stepper>,
+	public TMC2160_n::GSTAT_i<TMC2160Stepper>,
+	public TMC2160_n::IOIN_i<TMC2160Stepper>,
+	public TMC2160_n::IHOLD_IRUN_i<TMC2160Stepper>,
+	public TMC2160_n::TPOWERDOWN_i<TMC2160Stepper>,
+	public TMC2160_n::TSTEP_i<TMC2160Stepper>,
+	public TMC2160_n::TPWMTHRS_i<TMC2160Stepper>,
+	public TMC2160_n::TCOOLTHRS_i<TMC2160Stepper>,
+	public TMC2160_n::THIGH_i<TMC2160Stepper>,
+	public TMC2160_n::XDIRECT_i<TMC2160Stepper>,
+	public TMC2160_n::VDCMIN_i<TMC2160Stepper>,
+	public TMC2160_n::MSCNT_i<TMC2160Stepper>,
+	public TMC2160_n::MSCURACT_i<TMC2160Stepper>,
+	public TMC2160_n::CHOPCONF_i<TMC2160Stepper>,
+	public TMC2160_n::COOLCONF_i<TMC2160Stepper>,
+	public TMC2160_n::DCCTRL_i<TMC2160Stepper>,
+	public TMC2160_n::DRV_STATUS_i<TMC2160Stepper>,
+	public TMC2160_n::PWMCONF_i<TMC2160Stepper>,
+	public TMC2160_n::ENCM_CTRL_i<TMC2160Stepper>,
+	public TMC2160_n::LOST_STEPS_i<TMC2130Stepper>,
+	public TMC2160_n::SHORT_CONF_i<TMC2160Stepper>,
+	public TMC2160_n::DRV_CONF_i<TMC2160Stepper>,
+	public TMC2160_n::GLOBAL_SCALER_i<TMC2160Stepper>,
+	public TMC2160_n::OFFSET_READ_i<TMC2160Stepper>,
+	public TMC2160_n::PWM_SCALE_i<TMC2160Stepper>
+	{
 	public:
 		TMC2160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC2160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -317,96 +354,14 @@ class TMC2160Stepper : public TMC2130Stepper {
 		void rms_current(uint16_t mA, float mult);
 		uint16_t rms_current();
 
-		// IOIN
-		uint32_t 	IOIN();
-		bool 			refl_step();
-		bool 			refr_dir();
-		bool 			encb_dcen_cfg4();
-		bool 			enca_dcin_cfg5();
-		bool 			drv_enn();
-		bool 			dco_cfg6();
-		uint8_t 	version();
-
-		// W: OTP_PROG
-		// R: OTP_READ
-		// RW: FACTORY_CONF
-
-		// W: SHORT_CONF
-		void SHORT_CONF(uint32_t);
-		void s2vs_level(uint8_t);
-		void s2g_level(uint8_t);
-		void shortfilter(uint8_t);
-		void shortdelay(bool);
-		uint32_t SHORT_CONF();
-		uint8_t s2vs_level();
-		uint8_t s2g_level();
-		uint8_t shortfilter();
-		bool shortdelay();
-
-		// W: DRV_CONF
-		void DRV_CONF(uint32_t);
-		void bbmtime(uint8_t);
-		void bbmclks(uint8_t);
-		void otselect(uint8_t);
-		void drvstrength(uint8_t);
-		void filt_isense(uint8_t);
-		uint32_t DRV_CONF();
-		uint8_t bbmtime();
-		uint8_t bbmclks();
-		uint8_t otselect();
-		uint8_t drvstrength();
-		uint8_t filt_isense();
-
-		// W: GLOBAL_SCALER
-		void GLOBAL_SCALER(uint8_t);
-		uint8_t GLOBAL_SCALER();
-
-		// R: OFFSET_READ
-		uint16_t OFFSET_READ();
-
-		// W: PWMCONF
-		void PWMCONF(uint32_t input);
-		void pwm_ofs(uint8_t B);
-		void pwm_grad(uint8_t B);
-		void pwm_freq(uint8_t B);
-		void pwm_autoscale(bool B);
-		void pwm_autograd(bool B);
-		void freewheel(uint8_t B);
-		void pwm_reg(uint8_t B);
-		void pwm_lim(uint8_t B);
-		uint32_t PWMCONF();
-		uint8_t pwm_ofs();
-		uint8_t pwm_grad();
-		uint8_t pwm_freq();
-		bool pwm_autoscale();
-		bool pwm_autograd();
-		uint8_t freewheel();
-		uint8_t pwm_reg();
-		uint8_t pwm_lim();
-
-		// R: PWM_SCALE
-		uint32_t PWM_SCALE();
-		uint8_t pwm_scale_sum();
-		uint16_t pwm_scale_auto();
-
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC2160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
-	protected:
-		using TMC2130Stepper::ENCM_CTRL;
-		using TMC2130Stepper::pwm_ampl;
-		using TMC2130Stepper::pwm_symmetric;
-
-		INIT_REGISTER(SHORT_CONF){{.sr=0}};
-		INIT_REGISTER(DRV_CONF){{.sr=0}};
-		INIT_REGISTER(GLOBAL_SCALER){.sr=0};
-		INIT2160_REGISTER(PWMCONF){{.sr=0}};
-
 		static constexpr float default_RS = 0.075;
 };
-
-class TMC5130Stepper : public TMC2160Stepper {
+#if 0
+class TMC5130Stepper {
 	public:
 		TMC5130Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC5130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -569,40 +524,10 @@ class TMC5130Stepper : public TMC2160Stepper {
 		// R: ENC_LATCH
 		uint32_t ENC_LATCH();
 
-		using TMC2130Stepper::ENCM_CTRL;
-
-		using TMC2130Stepper::PWMCONF;
-		using TMC2130Stepper::pwm_ampl;
-		using TMC2130Stepper::pwm_grad;
-		using TMC2130Stepper::pwm_freq;
-		using TMC2130Stepper::pwm_autoscale;
-		using TMC2130Stepper::pwm_symmetric;
-		using TMC2130Stepper::freewheel;
-
-		using TMC2130Stepper::PWM_SCALE;
-
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 	protected:
-		INIT_REGISTER(SLAVECONF){{.sr=0}};
-		INIT_REGISTER(OUTPUT){.sr=0};
-		INIT_REGISTER(X_COMPARE){.sr=0};
-		INIT_REGISTER(RAMPMODE){.sr=0};
-		INIT_REGISTER(XACTUAL){.sr=0};
-		INIT_REGISTER(VSTART){.sr=0};
-		INIT_REGISTER(A1){.sr=0};
-		INIT_REGISTER(V1){.sr=0};
-		INIT_REGISTER(AMAX){.sr=0};
-		INIT_REGISTER(VMAX){.sr=0};
-		INIT_REGISTER(DMAX){.sr=0};
-		INIT_REGISTER(D1){.sr=0};
-		INIT_REGISTER(VSTOP){.sr=0};
-		INIT_REGISTER(TZEROWAIT){.sr=0};
-		INIT_REGISTER(SW_MODE){{.sr=0}};
-		INIT_REGISTER(ENCMODE){.sr=0};
-		INIT_REGISTER(ENC_CONST){.sr=0};
-
 		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
 		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; }; // R
 		struct XTARGET_t 	{ constexpr static uint8_t address = 0x2D; }; // RW
@@ -611,48 +536,11 @@ class TMC5130Stepper : public TMC2160Stepper {
 		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; }; // R+C
 		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; }; // R
 
-		/*
-		INIT_REGISTER(MSLUT0){0};
-		INIT_REGISTER(MSLUT1){0};
-		INIT_REGISTER(MSLUT2){0};
-		INIT_REGISTER(MSLUT3){0};
-		INIT_REGISTER(MSLUT4){0};
-		INIT_REGISTER(MSLUT5){0};
-		INIT_REGISTER(MSLUT6){0};
-		INIT_REGISTER(MSLUT7){0};
-		INIT_REGISTER(MSLUTSEL){0};
-		INIT_REGISTER(MSLUTSTART){0};
-		INIT_REGISTER(MSCNT){0};
-		INIT_REGISTER(MSCURACT){0};
-		*/
-
 		static constexpr float default_RS = 0.15;
 
-	protected:
-		using TMC2160Stepper::SHORT_CONF;
-		using TMC2160Stepper::s2vs_level;
-		using TMC2160Stepper::s2g_level;
-		using TMC2160Stepper::shortfilter;
-		using TMC2160Stepper::shortdelay;
-		using TMC2160Stepper::DRV_CONF;
-		using TMC2160Stepper::bbmtime;
-		using TMC2160Stepper::bbmclks;
-		using TMC2160Stepper::otselect;
-		using TMC2160Stepper::drvstrength;
-		using TMC2160Stepper::filt_isense;
-		using TMC2160Stepper::GLOBAL_SCALER;
-		using TMC2160Stepper::OFFSET_READ;
-
-		using TMC2160Stepper::pwm_ofs;
-		using TMC2160Stepper::pwm_autograd;
-		using TMC2160Stepper::pwm_reg;
-		using TMC2160Stepper::pwm_lim;
-
-		using TMC2160Stepper::pwm_scale_sum;
-		using TMC2160Stepper::pwm_scale_auto;
 };
 
-class TMC5160Stepper : public TMC5130Stepper {
+class TMC5160Stepper : {
 	public:
 		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC5160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -716,40 +604,15 @@ class TMC5160Stepper : public TMC5130Stepper {
 		uint8_t tpfd();
 
 		// W: PWM_CONF
-		using TMC2160Stepper::PWMCONF;
-		using TMC2160Stepper::pwm_ofs;
-		using TMC2160Stepper::pwm_grad;
-		using TMC2160Stepper::pwm_freq;
-		using TMC2160Stepper::pwm_autoscale;
-		using TMC2160Stepper::pwm_autograd;
-		using TMC2160Stepper::freewheel;
-		using TMC2160Stepper::pwm_reg;
-		using TMC2160Stepper::pwm_lim;
-
-		using TMC2160Stepper::PWM_SCALE;
-		using TMC2160Stepper::pwm_scale_sum;
-		using TMC2160Stepper::pwm_scale_auto;
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
-
-	protected:
-		using TMC5130Stepper::I_scale_analog;
-		using TMC5130Stepper::internal_Rsense;
-		using TMC5130Stepper::enc_commutation;
-		using TMC5130Stepper::drv_enn_cfg6;
-		using TMC5130Stepper::enc_n_dco;
-		using TMC5130Stepper::ENCM_CTRL;
-		using TMC5130Stepper::vsense;
-		using TMC5130Stepper::rndtf;
-
-		INIT_REGISTER(ENC_DEVIATION){.sr=0};
 
 		static constexpr float default_RS = 0.075;
 };
 
 typedef TMC5160Stepper TMC5161Stepper;
-
+#endif
 class TMC2208Stepper :
 	public TMC_UART,
 	public TMCStepper<TMC2208Stepper>,

@@ -145,6 +145,8 @@ namespace TMC2208_n {
       };
     };
   };
+
+  using TMC5160_n::PWM_AUTO_t;
 }
 
 namespace TMC2224_n {

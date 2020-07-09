@@ -1,5 +1,5 @@
 #include "TMCStepper.h"
-
+#if 0
 using namespace TMCStepper_n;
 
 TMC5130Stepper::TMC5130Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
@@ -43,9 +43,9 @@ void TMC5130Stepper::push() {
     VDCMIN(VDCMIN_i::r.sr);
     COOLCONF(COOLCONF_i::r.sr);
     DCCTRL(DCCTRL_i::r.sr);
-    PWMCONF(PWMCONF_register.sr);
+    PWMCONF(TMC2130_n::PWMCONF_i<TMC2130Stepper>::r.sr);
     ENCM_CTRL(ENCM_CTRL_i::r.sr);
-    DRV_CONF(DRV_CONF_register.sr);
+    DRV_CONF(DRV_CONF_i::r.sr);
     SLAVECONF(SLAVECONF_register.sr);
     TMC_OUTPUT(OUTPUT_register.sr);
     X_COMPARE(X_COMPARE_register.sr);
@@ -217,3 +217,4 @@ bool TMC5130Stepper::ENC_STATUS() { return read(ENC_STATUS_t::address); }
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: ENC_LATCH
 uint32_t TMC5130Stepper::ENC_LATCH() { return read(ENC_LATCH_t::address); }
+#endif

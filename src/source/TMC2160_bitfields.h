@@ -49,6 +49,46 @@ namespace TMC2160_n {
       };
     };
   };
+
+  struct GLOBAL_SCALER_t {
+    constexpr static uint8_t address = 0x0B;
+    uint8_t sr;
+  };
+
+  struct OFFSET_READ_t {
+    constexpr static uint8_t address = 0x0C;
+  };
+
+  struct SHORT_CONF_t {
+    constexpr static uint8_t address = 0x09;
+    union {
+      uint32_t sr : 19;
+      struct {
+        uint8_t s2vs_level  : 4,
+                            : 4,
+                s2g_level   : 4,
+                            : 4,
+                shortfilter : 2;
+        bool shortdelay : 1;
+      };
+    };
+  };
+
+  struct DRV_CONF_t {
+    constexpr static uint8_t address = 0x0A;
+    union {
+      uint32_t sr : 22;
+      struct {
+        uint8_t bbmtime : 5,
+                        : 3,
+                bbmclks : 4,
+                        : 4,
+                otselect : 2,
+                drvstrength : 2,
+                filt_isense : 2;
+      };
+    };
+  };
 }
 
 #pragma pack(pop)

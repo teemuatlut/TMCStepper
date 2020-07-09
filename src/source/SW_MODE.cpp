@@ -2,7 +2,7 @@
 
 #define SET_REG(SETTING) SW_MODE_register.SETTING = B; write(SW_MODE_register.address, SW_MODE_register.sr)
 #define GET_REG(SETTING) SW_MODE_t r{0}; r.sr = SW_MODE(); return r.SETTING
-
+/*
 // SW_MODE
 uint32_t TMC5130Stepper::SW_MODE() {
 	return read(SW_MODE_register.address);
@@ -36,3 +36,4 @@ bool TMC5130Stepper::latch_r_inactive()			{ GET_REG(latch_r_inactive);}
 bool TMC5130Stepper::en_latch_encoder()			{ GET_REG(en_latch_encoder);}
 bool TMC5130Stepper::sg_stop()					{ GET_REG(sg_stop);			}
 bool TMC5130Stepper::en_softstop()				{ GET_REG(en_softstop);		}
+*/

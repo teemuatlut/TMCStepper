@@ -1,5 +1,5 @@
 #include "TMCStepper.h"
-
+#if 0
 using namespace TMCStepper_n;
 
 TMC5160Stepper::TMC5160Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
@@ -10,15 +10,21 @@ TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
   { defaults(); }
 
 void TMC5160Stepper::defaults() {
-  SHORT_CONF_register.s2vs_level = 6;
-  SHORT_CONF_register.s2g_level = 6;
-  SHORT_CONF_register.shortfilter = 0b01;
-  SHORT_CONF_register.shortdelay = 0;
-  DRV_CONF_register.bbmtime = 0;
-  DRV_CONF_register.bbmclks = 4;
-  DRV_CONF_register.otselect = 0b00;
-  DRV_CONF_register.drvstrength = 0b10;
-  DRV_CONF_register.filt_isense = 0b00;
+  SHORT_CONF_t short_conf{};
+  short_conf.s2vs_level = 6;
+  short_conf.s2g_level = 6;
+  short_conf.shortfilter = 0b01;
+  short_conf.shortdelay = 0;
+  SHORT_CONF(short_conf.sr);
+
+  DRV_CONF_t drv_conf{};
+  drv_conf.bbmtime = 0;
+  drv_conf.bbmclks = 4;
+  drv_conf.otselect = 0b00;
+  drv_conf.drvstrength = 0b10;
+  drv_conf.filt_isense = 0b00;
+  DRV_CONF(drv_conf.sr);
+
   TPOWERDOWN_i::r.sr = 10;
   VSTOP_register.sr = 1;
   ENC_CONST_register.sr = 65536;
@@ -46,10 +52,10 @@ void TMC5160Stepper::push() {
     VDCMIN(VDCMIN_i::r.sr);
     COOLCONF(COOLCONF_i::r.sr);
     DCCTRL(DCCTRL_i::r.sr);
-    PWMCONF(PWMCONF_register.sr);
-    SHORT_CONF(SHORT_CONF_register.sr);
-    DRV_CONF(DRV_CONF_register.sr);
-    GLOBAL_SCALER(GLOBAL_SCALER_register.sr);
+    PWMCONF(TMC2160_n::PWMCONF_i<TMC2160Stepper>::r.sr);
+    SHORT_CONF(SHORT_CONF_i::r.sr);
+    DRV_CONF(DRV_CONF_i::r.sr);
+    GLOBAL_SCALER(GLOBAL_SCALER_i::r.sr);
     SLAVECONF(SLAVECONF_register.sr);
     TMC_OUTPUT(OUTPUT_register.sr);
     X_COMPARE(X_COMPARE_register.sr);
@@ -89,3 +95,5 @@ uint32_t TMC5160Stepper::PWM_AUTO() {
 }
 uint8_t TMC5160Stepper::pwm_ofs_auto()  { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_ofs_auto; }
 uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_grad_auto; }
+
+#endif
