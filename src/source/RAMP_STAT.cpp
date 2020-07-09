@@ -1,7 +1,7 @@
 #include "TMCStepper.h"
 
 #define GET_REG(SETTING) RAMP_STAT_t r{0}; r.sr = RAMP_STAT(); return r.SETTING
-
+/*
 uint16_t TMC5130Stepper::RAMP_STAT() {
 	return read(RAMP_STAT_t::address);
 }
@@ -20,3 +20,4 @@ bool TMC5130Stepper::vzero()				{ return RAMP_STAT_t{ RAMP_STAT() }.vzero;	 			}
 bool TMC5130Stepper::t_zerowait_active()	{ return RAMP_STAT_t{ RAMP_STAT() }.t_zerowait_active;	}
 bool TMC5130Stepper::second_move()			{ return RAMP_STAT_t{ RAMP_STAT() }.second_move;		}
 bool TMC5130Stepper::status_sg()			{ return RAMP_STAT_t{ RAMP_STAT() }.status_sg;	 		}
+*/

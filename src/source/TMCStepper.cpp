@@ -1,6 +1,7 @@
 #include "TMCStepper.h"
 
 template class TMCStepper<TMC2130Stepper>;
+template class TMCStepper<TMC2160Stepper>;
 template class TMCStepper<TMC2208Stepper>;
 
 /*
@@ -61,6 +62,63 @@ uint8_t TMCStepper<TYPE>::test_connection() {
       case 0: return 2;
       default: return 0;
   }
+}
+
+/*
+  TMC2160 / 5160
+  Requested current = mA = I_rms/1000
+  Equation for current:
+  I_rms = GLOBALSCALER/256 * (CS+1)/32 * V_fs/R_sense * 1/sqrt(2)
+  Solve for GLOBALSCALER ->
+
+                 32 * 256 * sqrt(2) * I_rms * R_sense    |
+  GLOBALSCALER = ------------------------------------    |
+                           (CS + 1) * V_fs               | V_fs = 0.325
+
+*/
+
+template<>
+void TMCStepper<TMC2160Stepper>::rms_current(uint16_t mA) {
+  constexpr uint32_t V_fs = 325; // 0.325 * 1000
+  uint8_t CS = 31;
+  uint32_t scaler = 0; // = 256
+
+  const uint16_t RS_scaled = Rsense * 0xFFFF; // Scale to 16b
+  uint32_t numerator = 11585; // 32 * 256 * sqrt(2)
+  numerator *= RS_scaled;
+  numerator >>= 8;
+  numerator *= mA;
+
+  do {
+    uint32_t denominator = V_fs * 0xFFFF >> 8;
+    denominator *= CS+1;
+    scaler = numerator / denominator;
+
+    if (scaler > 255) scaler = 0; // Maximum
+    else if (scaler < 128) CS--;  // Try again with smaller CS
+  } while(0 < scaler && scaler < 128);
+
+
+  if (CS > 31)
+    CS = 31;
+
+  static_cast<TMC2160Stepper*>(this)->GLOBAL_SCALER(scaler);
+  static_cast<TMC2160Stepper*>(this)->irun(CS);
+  static_cast<TMC2160Stepper*>(this)->ihold(CS*holdMultiplier);
+}
+
+template<>
+uint16_t TMCStepper<TMC2160Stepper>::cs2rms(uint8_t CS) {
+    uint16_t scaler = static_cast<TMC2160Stepper*>(this)->GLOBAL_SCALER();
+    if (!scaler) scaler = 256;
+    uint32_t numerator = scaler * (CS+1);
+    numerator *= 325;
+    numerator >>= (8+5); // Divide by 256 and 32
+    numerator *= 1000000;
+    uint32_t denominator = Rsense*1000;
+    denominator *= 1414;
+
+    return numerator / denominator;
 }
 
 template<typename TYPE> void TMCStepper<TYPE>::hysteresis_end(int8_t value) { static_cast<TYPE*>(this)->hend(value+3); }

@@ -1,11 +1,11 @@
 #include "TMCStepper.h"
-
+/*
 // CHOPCONF
 void TMC5160Stepper::diss2vs(bool B){ TMC2130_n::CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B; CHOPCONF(r.sr);}
 void TMC5160Stepper::tpfd(uint8_t B){ TMC2130_n::CHOPCONF_t r{ CHOPCONF() }; r.tpfd = B; 	 CHOPCONF(r.sr);}
 bool TMC5160Stepper::diss2vs()		{ return TMC2130_n::CHOPCONF_t{ CHOPCONF() }.diss2vs;	}
 uint8_t TMC5160Stepper::tpfd()		{ return TMC2130_n::CHOPCONF_t{ CHOPCONF() }.tpfd;		}
-
+*/
 
 
 uint32_t TMC2660Stepper::CHOPCONF() { return CHOPCONF_register.sr; }

@@ -1,5 +1,5 @@
 #include "TMCStepper.h"
-
+/*
 // ENCMODE
 uint16_t TMC5130Stepper::ENCMODE() {
 	return read(ENCMODE_register.address);
@@ -32,3 +32,4 @@ bool TMC5130Stepper::neg_edge()			{ return ENCMODE_t{ ENCMODE() }.neg_edge;		}
 bool TMC5130Stepper::clr_enc_x()		{ return ENCMODE_t{ ENCMODE() }.clr_enc_x;		}
 bool TMC5130Stepper::latch_x_act()		{ return ENCMODE_t{ ENCMODE() }.latch_x_act;	}
 bool TMC5130Stepper::enc_sel_decimal()	{ return ENCMODE_t{ ENCMODE() }.enc_sel_decimal;}
+*/
