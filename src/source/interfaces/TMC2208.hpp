@@ -81,7 +81,7 @@ namespace TMC2208_n {
 			union {
 				uint16_t sr : 12;
 				struct {
-					uint8_t slaveaddr : 8;
+					uint8_t : 8;
 					uint8_t senddelay : 4;
 				};
 			};

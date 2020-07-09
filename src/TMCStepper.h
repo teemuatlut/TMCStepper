@@ -48,7 +48,6 @@
 
 #pragma GCC diagnostic pop
 
-#include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
 #include "source/TMC2209_bitfields.h"
 #include "source/TMC2660_bitfields.h"
@@ -56,6 +55,7 @@
 #include "source/interfaces/TMC2130.hpp"
 #include "source/interfaces/TMC2160.hpp"
 #include "source/interfaces/TMC5130.hpp"
+#include "source/interfaces/TMC5160.hpp"
 #include "source/interfaces/TMC2208.hpp"
 #include "source/interfaces/TMC2209.hpp"
 
@@ -97,6 +97,7 @@ protected:
 	template<class> friend class TMC2130_n::ENCM_CTRL_i;
 	template<class> friend class TMC2130_n::LOST_STEPS_i;
 
+	template<class> friend class TMC2160_n::CHOPCONF_i;
 	template<class> friend class TMC2160_n::IOIN_i;
 	template<class> friend class TMC2160_n::GLOBAL_SCALER_i;
 	template<class> friend class TMC2160_n::OFFSET_READ_i;
@@ -130,6 +131,12 @@ protected:
 	template<class> friend class TMC5130_n::ENC_CONST_i;
 	template<class> friend class TMC5130_n::ENC_STATUS_i;
 	template<class> friend class TMC5130_n::ENC_LATCH_i;
+
+	template<class> friend class TMC5160_n::GCONF_i;
+	template<class> friend class TMC5160_n::SLAVECONF_i;
+	template<class> friend class TMC5160_n::IOIN_i;
+	template<class> friend class TMC5160_n::ENC_DEVIATION_i;
+	template<class> friend class TMC5160_n::DRV_STATUS_i;
 
 	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
 	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
@@ -457,71 +464,80 @@ class TMC5130Stepper :
 
 		static constexpr float default_RS = 0.15;
 	};
-#if 0
-class TMC5160Stepper : {
+
+class TMC5160Stepper :
+	public TMC_SPI,
+	public TMCStepper<TMC5160Stepper>,
+	public TMC5160_n::GCONF_i<TMC5160Stepper>,
+	public TMC5160_n::GSTAT_i<TMC5160Stepper>,
+	public TMC5160_n::IFCNT_i<TMC5160Stepper>,
+	public TMC5160_n::SLAVECONF_i<TMC5160Stepper>,
+	public TMC5160_n::IOIN_i<TMC5160Stepper>,
+	public TMC5160_n::OUTPUT_i<TMC5160Stepper>,
+	public TMC5160_n::X_COMPARE_i<TMC5160Stepper>,
+	public TMC5160_n::OTP_PROG_i<TMC5160Stepper>,
+	public TMC5160_n::OTP_READ_i<TMC5160Stepper>,
+	public TMC5160_n::FACTORY_CONF_i<TMC5160Stepper>,
+	public TMC5160_n::SHORT_CONF_i<TMC5160Stepper>,
+	public TMC5160_n::DRV_CONF_i<TMC5160Stepper>,
+	public TMC5160_n::GLOBAL_SCALER_i<TMC5160Stepper>,
+	public TMC5160_n::OFFSET_READ_i<TMC5160Stepper>,
+	public TMC5160_n::IHOLD_IRUN_i<TMC5160Stepper>,
+	public TMC5160_n::TPOWERDOWN_i<TMC5160Stepper>,
+	public TMC5160_n::TSTEP_i<TMC5160Stepper>,
+	public TMC5160_n::TPWMTHRS_i<TMC5160Stepper>,
+	public TMC5160_n::TCOOLTHRS_i<TMC5160Stepper>,
+	public TMC5160_n::THIGH_i<TMC5160Stepper>,
+	public TMC5160_n::RAMPMODE_i<TMC5160Stepper>,
+	public TMC5160_n::XACTUAL_i<TMC5160Stepper>,
+	public TMC5160_n::VACTUAL_i<TMC5160Stepper>,
+	public TMC5160_n::VSTART_i<TMC5160Stepper>,
+	public TMC5160_n::A1_i<TMC5160Stepper>,
+	public TMC5160_n::V1_i<TMC5160Stepper>,
+	public TMC5160_n::AMAX_i<TMC5160Stepper>,
+	public TMC5160_n::VMAX_i<TMC5160Stepper>,
+	public TMC5160_n::DMAX_i<TMC5160Stepper>,
+	public TMC5160_n::D1_i<TMC5160Stepper>,
+	public TMC5160_n::VSTOP_i<TMC5160Stepper>,
+	public TMC5160_n::TZEROWAIT_i<TMC5160Stepper>,
+	public TMC5160_n::XTARGET_i<TMC5160Stepper>,
+	public TMC5160_n::VDCMIN_i<TMC5160Stepper>,
+	public TMC5160_n::SW_MODE_i<TMC5160Stepper>,
+	public TMC5160_n::RAMP_STAT_i<TMC5160Stepper>,
+	public TMC5160_n::XLATCH_i<TMC5160Stepper>,
+	public TMC5160_n::ENCMODE_i<TMC5160Stepper>,
+	public TMC5160_n::X_ENC_i<TMC5160Stepper>,
+	public TMC5160_n::ENC_CONST_i<TMC5160Stepper>,
+	public TMC5160_n::ENC_STATUS_i<TMC5160Stepper>,
+	public TMC5160_n::ENC_LATCH_i<TMC5160Stepper>,
+	public TMC5160_n::ENC_DEVIATION_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT0_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT1_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT2_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT3_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT4_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT5_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT6_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUT7_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUTSEL_i<TMC5160Stepper>,
+	public TMC5160_n::MSLUTSTART_i<TMC5160Stepper>,
+	public TMC5160_n::MSCNT_i<TMC5160Stepper>,
+	public TMC5160_n::MSCURACT_i<TMC5160Stepper>,
+	public TMC5160_n::CHOPCONF_i<TMC5160Stepper>,
+	public TMC5160_n::COOLCONF_i<TMC5160Stepper>,
+	public TMC5160_n::DCCTRL_i<TMC5160Stepper>,
+	public TMC5160_n::DRV_STATUS_i<TMC5160Stepper>,
+	public TMC5160_n::PWMCONF_i<TMC5160Stepper>,
+	public TMC5160_n::PWM_SCALE_i<TMC5160Stepper>,
+	public TMC5160_n::PWM_AUTO_i<TMC5160Stepper>,
+	public TMC5160_n::LOST_STEPS_i<TMC5160Stepper>
+	{
 	public:
 		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC5160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 
-		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
-		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
-		uint16_t rms_current() { return TMC2160Stepper::rms_current(); }
 		void defaults();
 		void push();
-
-		// RW: GCONF
-		void recalibrate(bool);
-		void faststandstill(bool);
-		void multistep_filt(bool);
-		bool recalibrate();
-		bool faststandstill();
-		bool multistep_filt();
-
-		// R: IOIN
-		bool drv_enn() { return drv_enn_cfg6(); }
-		bool enc_n_dco_cfg6() { return enc_n_dco(); }
-
-		// W: SHORT_CONF
-		using TMC2160Stepper::SHORT_CONF;
-		using TMC2160Stepper::s2vs_level;
-		using TMC2160Stepper::s2g_level;
-		using TMC2160Stepper::shortfilter;
-		using TMC2160Stepper::shortdelay;
-
-		// W: DRV_CONF
-		using TMC2160Stepper::DRV_CONF;
-		using TMC2160Stepper::bbmtime;
-		using TMC2160Stepper::bbmclks;
-		using TMC2160Stepper::otselect;
-		using TMC2160Stepper::drvstrength;
-		using TMC2160Stepper::filt_isense;
-
-		// W: GLOBAL_SCALER
-		using TMC2160Stepper::GLOBAL_SCALER;
-
-		// R: OFFSET_READ
-		using TMC2160Stepper::OFFSET_READ;
-
-		// R+WC: ENC_STATUS
-		void ENC_STATUS(uint8_t);
-		uint8_t ENC_STATUS();
-
-		// W: ENC_DEVIATION
-		void ENC_DEVIATION(uint32_t);
-		uint32_t ENC_DEVIATION();
-
-		// R: PWM_AUTO
-		uint32_t PWM_AUTO();
-		uint8_t pwm_ofs_auto();
-		uint8_t pwm_grad_auto();
-
-		// RW: CHOPCONF
-		void diss2vs(bool);
-		void tpfd(uint8_t);
-		bool diss2vs();
-		uint8_t tpfd();
-
-		// W: PWM_CONF
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
@@ -530,7 +546,7 @@ class TMC5160Stepper : {
 };
 
 typedef TMC5160Stepper TMC5161Stepper;
-#endif
+
 class TMC2208Stepper :
 	public TMC_UART,
 	public TMCStepper<TMC2130Stepper>,

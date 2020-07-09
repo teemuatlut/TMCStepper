@@ -1,13 +1,19 @@
 #include "TMCStepper.h"
-#if 0
+
 using namespace TMCStepper_n;
 
 TMC5160Stepper::TMC5160Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
-  TMC5130Stepper(spi, pinCS, RS, link)
-  { defaults(); }
+  TMC_SPI(spi, pinCS, link),
+  TMCStepper<TMC5160Stepper>(RS)
+  {
+    defaults();
+  }
 TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
-  TMC5130Stepper(spi, pinCS, RS, link)
-  { defaults(); }
+  TMC_SPI(spi, pinCS, link),
+  TMCStepper<TMC5160Stepper>(RS)
+  {
+    defaults();
+  }
 
 void TMC5160Stepper::defaults() {
   SHORT_CONF_t short_conf{};
@@ -26,8 +32,8 @@ void TMC5160Stepper::defaults() {
   DRV_CONF(drv_conf.sr);
 
   TPOWERDOWN_i::r.sr = 10;
-  VSTOP_register.sr = 1;
-  ENC_CONST_register.sr = 65536;
+  VSTOP_i::r.sr = 1;
+  ENC_CONST_i::r.sr = 65536;
   //MSLUT0_register.sr = ???;
   //MSLUT1_register.sr = ???;
   //MSLUT2_register.sr = ???;
@@ -52,48 +58,22 @@ void TMC5160Stepper::push() {
     VDCMIN(VDCMIN_i::r.sr);
     COOLCONF(COOLCONF_i::r.sr);
     DCCTRL(DCCTRL_i::r.sr);
-    PWMCONF(TMC2160_n::PWMCONF_i<TMC2160Stepper>::r.sr);
+    PWMCONF(PWMCONF_i::r.sr);
     SHORT_CONF(SHORT_CONF_i::r.sr);
     DRV_CONF(DRV_CONF_i::r.sr);
     GLOBAL_SCALER(GLOBAL_SCALER_i::r.sr);
-    SLAVECONF(SLAVECONF_register.sr);
-    TMC_OUTPUT(OUTPUT_register.sr);
-    X_COMPARE(X_COMPARE_register.sr);
-    RAMPMODE(RAMPMODE_register.sr);
-    XACTUAL(XACTUAL_register.sr);
-    VSTART(VSTART_register.sr);
-    a1(A1_register.sr);
-    v1(V1_register.sr);
-    AMAX(AMAX_register.sr);
-    VMAX(VMAX_register.sr);
-    DMAX(DMAX_register.sr);
-    d1(D1_register.sr);
-    VSTOP(VSTOP_register.sr);
-    TZEROWAIT(TZEROWAIT_register.sr);
-    SW_MODE(SW_MODE_register.sr);
-    ENCMODE(ENCMODE_register.sr);
-    ENC_CONST(ENC_CONST_register.sr);
-	ENC_DEVIATION(ENC_DEVIATION_register.sr);
+    SLAVECONF(SLAVECONF_i::r.sr);
+    TMC_OUTPUT(OUTPUT_i::r.sr);
+    X_COMPARE(X_COMPARE_i::r.sr);
+    VSTART(VSTART_i::r.sr);
+    A1(A1_i::r.sr);
+    V1(V1_i::r.sr);
+    AMAX(AMAX_i::r.sr);
+    VMAX(VMAX_i::r.sr);
+    DMAX(DMAX_i::r.sr);
+    D1(D1_i::r.sr);
+    VSTOP(VSTOP_i::r.sr);
+    TZEROWAIT(TZEROWAIT_i::r.sr);
+    ENC_CONST(ENC_CONST_i::r.sr);
+    ENC_DEVIATION(ENC_DEVIATION_i::r.sr);
 }
-
-// R+WC: ENC_STATUS
-uint8_t TMC5160Stepper::ENC_STATUS() { return read(ENC_STATUS_t::address); }
-void TMC5160Stepper::ENC_STATUS(uint8_t input) {
-	write(ENC_STATUS_t::address, input & 0x3);
-}
-
-// W: ENC_DEVIATION
-uint32_t TMC5160Stepper::ENC_DEVIATION() { return ENC_DEVIATION_register.sr; }
-void TMC5160Stepper::ENC_DEVIATION(uint32_t input) {
-	ENC_DEVIATION_register.sr = input;
-	write(ENC_DEVIATION_register.address, ENC_DEVIATION_register.sr);
-}
-
-// R: PWM_AUTO
-uint32_t TMC5160Stepper::PWM_AUTO() {
-	return read(PWM_AUTO_t::address);
-}
-uint8_t TMC5160Stepper::pwm_ofs_auto()  { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_ofs_auto; }
-uint8_t TMC5160Stepper::pwm_grad_auto() { PWM_AUTO_t r{0}; r.sr = PWM_AUTO(); return r.pwm_grad_auto; }
-
-#endif
