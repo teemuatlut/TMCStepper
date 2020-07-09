@@ -196,22 +196,3 @@ uint32_t TMC_UART::read(uint8_t addr) {
 
     return response.data;
 }
-
-uint32_t TMC2224Stepper::IOIN() {
-	return read(TMC2224_n::IOIN_t::address);
-}
-bool TMC2224Stepper::enn()			{ return TMC2224_n::IOIN_t{ IOIN() }.enn;		}
-bool TMC2224Stepper::ms1()			{ return TMC2224_n::IOIN_t{ IOIN() }.ms1;		}
-bool TMC2224Stepper::ms2()			{ return TMC2224_n::IOIN_t{ IOIN() }.ms2;		}
-bool TMC2224Stepper::pdn_uart()		{ return TMC2224_n::IOIN_t{ IOIN() }.pdn_uart;	}
-bool TMC2224Stepper::spread()		{ return TMC2224_n::IOIN_t{ IOIN() }.spread;	}
-bool TMC2224Stepper::step()			{ return TMC2224_n::IOIN_t{ IOIN() }.step;		}
-bool TMC2224Stepper::sel_a()		{ return TMC2224_n::IOIN_t{ IOIN() }.sel_a;		}
-bool TMC2224Stepper::dir()			{ return TMC2224_n::IOIN_t{ IOIN() }.dir;		}
-uint8_t TMC2224Stepper::version() 	{ return TMC2224_n::IOIN_t{ IOIN() }.version;	}
-
-
-
-
-
-

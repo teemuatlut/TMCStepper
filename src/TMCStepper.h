@@ -48,8 +48,6 @@
 
 #pragma GCC diagnostic pop
 
-#include "source/TMC2208_bitfields.h"
-#include "source/TMC2209_bitfields.h"
 #include "source/TMC2660_bitfields.h"
 
 #include "source/interfaces/TMC2130.hpp"
@@ -627,18 +625,8 @@ class TMC2209Stepper :
 		void push();
 };
 
-class TMC2224Stepper : public TMC2208Stepper {
-	public:
-		uint32_t IOIN();
-		bool enn();
-		bool ms1();
-		bool ms2();
-		bool pdn_uart();
-		bool spread();
-		bool step();
-		bool sel_a();
-		bool dir();
-		uint8_t version();
+class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224Stepper> {
+	using TMC2208Stepper::TMC2208Stepper;
 };
 
 class TMC2660Stepper {

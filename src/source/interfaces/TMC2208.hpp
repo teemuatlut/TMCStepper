@@ -3,7 +3,6 @@
 
 #include "TMCStepper.h"
 #include "TMC2130.hpp"
-#include "../TMC2208_bitfields.h"
 
 namespace TMC2208_n {
 	// 0x00 RW: GCONF
