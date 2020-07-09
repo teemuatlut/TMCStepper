@@ -2,7 +2,6 @@
 
 template class TMCStepper<TMC2130Stepper>;
 template class TMCStepper<TMC2160Stepper>;
-template class TMCStepper<TMC2208Stepper>;
 
 /*
   Requested current = mA = I_rms/1000
