@@ -48,9 +48,6 @@
 
 #pragma GCC diagnostic pop
 
-#include "source/TMC2130_bitfields.h"
-#include "source/TMC2160_bitfields.h"
-#include "source/TMC5130_bitfields.h"
 #include "source/TMC5160_bitfields.h"
 #include "source/TMC2208_bitfields.h"
 #include "source/TMC2209_bitfields.h"
@@ -58,6 +55,7 @@
 
 #include "source/interfaces/TMC2130.hpp"
 #include "source/interfaces/TMC2160.hpp"
+#include "source/interfaces/TMC5130.hpp"
 #include "source/interfaces/TMC2208.hpp"
 #include "source/interfaces/TMC2209.hpp"
 
@@ -106,6 +104,32 @@ protected:
 	template<class> friend class TMC2160_n::SHORT_CONF_i;
 	template<class> friend class TMC2160_n::DRV_CONF_i;
 	template<class> friend class TMC2160_n::PWMCONF_i;
+
+	template<class> friend class TMC5130_n::GCONF_i;
+	template<class> friend class TMC5130_n::IOIN_i;
+	template<class> friend class TMC5130_n::OUTPUT_i;
+	template<class> friend class TMC5130_n::X_COMPARE_i;
+	template<class> friend class TMC5130_n::RAMPMODE_i;
+	template<class> friend class TMC5130_n::XACTUAL_i;
+	template<class> friend class TMC5130_n::VACTUAL_i;
+	template<class> friend class TMC5130_n::VSTART_i;
+	template<class> friend class TMC5130_n::A1_i;
+	template<class> friend class TMC5130_n::V1_i;
+	template<class> friend class TMC5130_n::AMAX_i;
+	template<class> friend class TMC5130_n::VMAX_i;
+	template<class> friend class TMC5130_n::DMAX_i;
+	template<class> friend class TMC5130_n::D1_i;
+	template<class> friend class TMC5130_n::VSTOP_i;
+	template<class> friend class TMC5130_n::TZEROWAIT_i;
+	template<class> friend class TMC5130_n::XTARGET_i;
+	template<class> friend class TMC5130_n::SW_MODE_i;
+	template<class> friend class TMC5130_n::RAMP_STAT_i;
+	template<class> friend class TMC5130_n::XLATCH_i;
+	template<class> friend class TMC5130_n::ENCMODE_i;
+	template<class> friend class TMC5130_n::X_ENC_i;
+	template<class> friend class TMC5130_n::ENC_CONST_i;
+	template<class> friend class TMC5130_n::ENC_STATUS_i;
+	template<class> friend class TMC5130_n::ENC_LATCH_i;
 
 	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
 	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
@@ -360,8 +384,66 @@ class TMC2160Stepper :
 
 		static constexpr float default_RS = 0.075;
 };
-#if 0
-class TMC5130Stepper {
+
+class TMC5130Stepper :
+	public TMC_SPI,
+	public TMCStepper<TMC5130Stepper>,
+	public TMC5130_n::GCONF_i<TMC5130Stepper>,
+	public TMC5130_n::GSTAT_i<TMC5130Stepper>,
+	public TMC5130_n::IFCNT_i<TMC5130Stepper>,
+	public TMC5130_n::SLAVECONF_i<TMC5130Stepper>,
+	public TMC5130_n::IOIN_i<TMC5130Stepper>,
+	public TMC5130_n::OUTPUT_i<TMC5130Stepper>,
+	public TMC5130_n::X_COMPARE_i<TMC5130Stepper>,
+	public TMC5130_n::IHOLD_IRUN_i<TMC5130Stepper>,
+	public TMC5130_n::TPOWERDOWN_i<TMC5130Stepper>,
+	public TMC5130_n::TSTEP_i<TMC5130Stepper>,
+	public TMC5130_n::TPWMTHRS_i<TMC5130Stepper>,
+	public TMC5130_n::TCOOLTHRS_i<TMC5130Stepper>,
+	public TMC5130_n::THIGH_i<TMC5130Stepper>,
+	public TMC5130_n::RAMPMODE_i<TMC5130Stepper>,
+	public TMC5130_n::XACTUAL_i<TMC5130Stepper>,
+	public TMC5130_n::VACTUAL_i<TMC5130Stepper>,
+	public TMC5130_n::VSTART_i<TMC5130Stepper>,
+	public TMC5130_n::A1_i<TMC5130Stepper>,
+	public TMC5130_n::V1_i<TMC5130Stepper>,
+	public TMC5130_n::AMAX_i<TMC5130Stepper>,
+	public TMC5130_n::VMAX_i<TMC5130Stepper>,
+	public TMC5130_n::DMAX_i<TMC5130Stepper>,
+	public TMC5130_n::D1_i<TMC5130Stepper>,
+	public TMC5130_n::VSTOP_i<TMC5130Stepper>,
+	public TMC5130_n::TZEROWAIT_i<TMC5130Stepper>,
+	public TMC5130_n::XTARGET_i<TMC5130Stepper>,
+	public TMC5130_n::VDCMIN_i<TMC5130Stepper>,
+	public TMC5130_n::SW_MODE_i<TMC5130Stepper>,
+	public TMC5130_n::RAMP_STAT_i<TMC5130Stepper>,
+	public TMC5130_n::XLATCH_i<TMC5130Stepper>,
+	public TMC5130_n::ENCMODE_i<TMC5130Stepper>,
+	public TMC5130_n::X_ENC_i<TMC5130Stepper>,
+	public TMC5130_n::ENC_CONST_i<TMC5130Stepper>,
+	public TMC5130_n::ENC_STATUS_i<TMC5130Stepper>,
+	public TMC5130_n::ENC_LATCH_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT0_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT1_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT2_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT3_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT4_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT5_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT6_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUT7_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUTSEL_i<TMC5130Stepper>,
+	public TMC5130_n::MSLUTSTART_i<TMC5130Stepper>,
+	public TMC5130_n::MSCNT_i<TMC5130Stepper>,
+	public TMC5130_n::MSCURACT_i<TMC5130Stepper>,
+	public TMC5130_n::CHOPCONF_i<TMC5130Stepper>,
+	public TMC5130_n::COOLCONF_i<TMC5130Stepper>,
+	public TMC5130_n::DCCTRL_i<TMC5130Stepper>,
+	public TMC5130_n::DRV_STATUS_i<TMC5130Stepper>,
+	public TMC5130_n::PWMCONF_i<TMC5130Stepper>,
+	public TMC5130_n::PWM_SCALE_i<TMC5130Stepper>,
+	public TMC5130_n::ENCM_CTRL_i<TMC5130Stepper>,
+	public TMC5130_n::LOST_STEPS_i<TMC5130Stepper>
+	{
 	public:
 		TMC5130Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC5130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -370,176 +452,12 @@ class TMC5130Stepper {
 		void defaults();
 		void push();
 
-		void rms_current(uint16_t mA) { TMC2130Stepper::rms_current(mA); }
-		void rms_current(uint16_t mA, float mult) { TMC2130Stepper::rms_current(mA, mult); }
-		uint16_t rms_current() { return TMC2130Stepper::rms_current(); }
-
-		// R: IFCNT
-		uint8_t IFCNT();
-		// W: SLAVECONF
-		uint16_t SLAVECONF();
-		void SLAVECONF(uint16_t input);
-		// R: IOIN
-		uint32_t 	IOIN();
-		bool 			refl_step();
-		bool 			refr_dir();
-		bool 			encb_dcen_cfg4();
-		bool 			enca_dcin_cfg5();
-		bool 			drv_enn_cfg6();
-		bool 			enc_n_dco();
-		bool 			sd_mode();
-		bool 			swcomp_in();
-		uint8_t 	version();
-
-		// RW: GCONF
-		void diag1_poscomp_pushpull(bool B) { diag1_pushpull(B); }
-		bool diag1_poscomp_pushpull() { return diag1_pushpull(); }
-
-		// RW: SW_MODE
-		uint32_t SW_MODE();
-		void SW_MODE(uint32_t input);
-
-		void stop_l_enable(bool B);
-		void stop_r_enable(bool B);
-		void pol_stop_l(bool B);
-		void pol_stop_r(bool B);
-		void swap_lr(bool B);
-		void latch_l_active(bool B);
-		void latch_l_inactive(bool B);
-		void latch_r_active(bool B);
-		void latch_r_inactive(bool B);
-		void en_latch_encoder(bool B);
-		void sg_stop(bool B);
-		void en_softstop(bool B);
-
-		bool stop_r_enable();
-		bool pol_stop_l();
-		bool pol_stop_r();
-		bool swap_lr();
-		bool latch_l_active();
-		bool latch_l_inactive();
-		bool latch_r_active();
-		bool latch_r_inactive();
-		bool en_latch_encoder();
-		bool sg_stop();
-		bool en_softstop();
-
-		// R+C: RAMP_STAT
-		uint16_t RAMP_STAT();
-		bool status_stop_l();
-		bool status_stop_r();
-		bool status_latch_l();
-		bool status_latch_r();
-		bool event_stop_l();
-		bool event_stop_r();
-		bool event_stop_sg();
-		bool event_pos_reached();
-		bool velocity_reached();
-		bool position_reached();
-		bool vzero();
-		bool t_zerowait_active();
-		bool second_move();
-		bool status_sg();
-
-		// RW: ENCMODE
-		uint16_t ENCMODE();
-		void ENCMODE(uint16_t input);
-		void pol_a(bool B);
-		void pol_b(bool B);
-		void pol_n(bool B);
-		void ignore_ab(bool B);
-		void clr_cont(bool B);
-		void clr_once(bool B);
-		void pos_edge(bool B);
-		void neg_edge(bool B);
-		void clr_enc_x(bool B);
-		void latch_x_act(bool B);
-		void enc_sel_decimal(bool B);
-		bool pol_a();
-		bool pol_b();
-		bool pol_n();
-		bool ignore_ab();
-		bool clr_cont();
-		bool clr_once();
-		bool pos_edge();
-		bool neg_edge();
-		bool clr_enc_x();
-		bool latch_x_act();
-		bool enc_sel_decimal();
-
-		// W: OUTPUT
-		bool TMC_OUTPUT();
-		void TMC_OUTPUT(bool input);
-		// W: X_COMPARE
-		uint32_t X_COMPARE();
-		void X_COMPARE(uint32_t input);
-		// RW: RAMPMODE
-		uint8_t RAMPMODE();
-		void RAMPMODE(uint8_t input);
-		// RW: XACTUAL
-		int32_t XACTUAL();
-		void XACTUAL(int32_t input);
-		// R: VACTUAL
-		int32_t VACTUAL();
-		// W: VSTART
-		uint32_t VSTART();
-		void VSTART(uint32_t input);
-		// W: A1
-		uint16_t a1();
-		void a1(uint16_t input);
-		// W: V1
-		uint32_t v1();
-		void v1(uint32_t input);
-		// W: AMAX
-		uint16_t AMAX();
-		void AMAX(uint16_t input);
-		// W: VMAX
-		uint32_t VMAX();
-		void VMAX(uint32_t input);
-		// W: DMAX
-		uint16_t DMAX();
-		void DMAX(uint16_t input);
-		// W: D1
-		uint16_t d1();
-		void d1(uint16_t input);
-		// W: VSTOP
-		uint32_t VSTOP();
-		void VSTOP(uint32_t input);
-		// W: TZEROWAIT
-		uint16_t TZEROWAIT();
-		void TZEROWAIT(uint16_t input);
-		// RW: XTARGET
-		int32_t XTARGET();
-		void XTARGET(int32_t input);
-		// R: XLATCH
-		uint32_t XLATCH();
-		// RW: X_ENC
-		int32_t X_ENC();
-		void X_ENC(int32_t input);
-		// W: ENC_CONST
-		uint32_t ENC_CONST();
-		void ENC_CONST(uint32_t input);
-		// R: ENC_STATUS
-		bool ENC_STATUS();
-		// R: ENC_LATCH
-		uint32_t ENC_LATCH();
-
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
-	protected:
-		struct IFCNT_t 		{ constexpr static uint8_t address = 0x02; }; // R
-		struct VACTUAL_t 	{ constexpr static uint8_t address = 0x22; }; // R
-		struct XTARGET_t 	{ constexpr static uint8_t address = 0x2D; }; // RW
-		struct XLATCH_t 	{ constexpr static uint8_t address = 0x36; }; // R
-		struct X_ENC_t 		{ constexpr static uint8_t address = 0x39; }; // RW
-		struct ENC_STATUS_t { constexpr static uint8_t address = 0x3B; }; // R+C
-		struct ENC_LATCH_t 	{ constexpr static uint8_t address = 0x3C; }; // R
-
 		static constexpr float default_RS = 0.15;
-
-};
-
+	};
+#if 0
 class TMC5160Stepper : {
 	public:
 		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -615,7 +533,7 @@ typedef TMC5160Stepper TMC5161Stepper;
 #endif
 class TMC2208Stepper :
 	public TMC_UART,
-	public TMCStepper<TMC2208Stepper>,
+	public TMCStepper<TMC2130Stepper>,
 	public TMC2208_n::GCONF_i<TMC2208Stepper>,
 	public TMC2208_n::GSTAT_i<TMC2208Stepper>,
 	public TMC2208_n::IFCNT_i<TMC2208Stepper>,
