@@ -183,3 +183,170 @@ uint8_t TMC2660Stepper::blank_time() {
   }
   return 0;
 }
+
+uint32_t TMC2660Stepper::CHOPCONF() { return CHOPCONF_register.sr; }
+void TMC2660Stepper::CHOPCONF(uint32_t data) {
+  CHOPCONF_register.sr = data;
+  write(CHOPCONF_register.address, CHOPCONF_register.sr);
+}
+
+void TMC2660Stepper::toff(uint8_t B)  {
+  CHOPCONF_register.toff = B;
+  write(CHOPCONF_register.address, CHOPCONF_register.sr);
+
+  if (B>0)
+    _savedToff = B;
+}
+void TMC2660Stepper::hstrt(uint8_t B) { CHOPCONF_register.hstrt = B;  CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::hend(uint8_t B)  { CHOPCONF_register.hend = B;   CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::hdec(uint8_t B)  { CHOPCONF_register.hdec = B;   CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::rndtf(bool B)    { CHOPCONF_register.rndtf = B;  CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::chm(bool B)      { CHOPCONF_register.chm = B;    CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::tbl(uint8_t B)   { CHOPCONF_register.tbl = B;    CHOPCONF(CHOPCONF_register.sr); }
+
+uint8_t TMC2660Stepper::toff()  { return CHOPCONF_register.toff;  }
+uint8_t TMC2660Stepper::hstrt() { return CHOPCONF_register.hstrt; }
+uint8_t TMC2660Stepper::hend()  { return CHOPCONF_register.hend;  }
+uint8_t TMC2660Stepper::hdec()  { return CHOPCONF_register.hdec;  }
+bool  TMC2660Stepper::rndtf()   { return CHOPCONF_register.rndtf; }
+bool  TMC2660Stepper::chm()     { return CHOPCONF_register.chm;   }
+uint8_t TMC2660Stepper::tbl()   { return CHOPCONF_register.tbl;   }
+
+uint32_t TMC2660Stepper::DRVCONF() { return DRVCONF_register.sr; }
+void TMC2660Stepper::DRVCONF(uint32_t data) {
+  DRVCONF_register.sr = data;
+  write(DRVCONF_register.address, DRVCONF_register.sr);
+}
+
+void TMC2660Stepper::tst(bool B)      { DRVCONF_register.tst = B;     DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::slph(uint8_t B)  { DRVCONF_register.slph = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::slpl(uint8_t B)  { DRVCONF_register.slpl = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::diss2g(bool B)   { DRVCONF_register.diss2g = B;  DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::ts2g(uint8_t B)  { DRVCONF_register.ts2g = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::sdoff(bool B)    { DRVCONF_register.sdoff = B;   DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::vsense(bool B)   { DRVCONF_register.vsense = B;  DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::rdsel(uint8_t B) { DRVCONF_register.rdsel = B;   DRVCONF(DRVCONF_register.sr);}
+
+bool   TMC2660Stepper::tst()    { return DRVCONF_register.tst;    }
+uint8_t  TMC2660Stepper::slph()   { return DRVCONF_register.slph;   }
+uint8_t  TMC2660Stepper::slpl()   { return DRVCONF_register.slpl;   }
+bool   TMC2660Stepper::diss2g() { return DRVCONF_register.diss2g; }
+uint8_t  TMC2660Stepper::ts2g()   { return DRVCONF_register.ts2g;   }
+bool   TMC2660Stepper::sdoff()  { return DRVCONF_register.sdoff;  }
+bool   TMC2660Stepper::vsense() { return DRVCONF_register.vsense; }
+uint8_t  TMC2660Stepper::rdsel()  { return DRVCONF_register.rdsel;  }
+
+uint32_t TMC2660Stepper::DRVCTRL() {
+  if(sdoff() == 1) return DRVCTRL_1_register.sr;
+  else return DRVCTRL_0_register.sr;
+}
+void TMC2660Stepper::DRVCTRL(uint32_t data) {
+  if(sdoff() == 1) {
+    DRVCTRL_1_register.sr = data;
+    write(DRVCTRL_1_register.address, DRVCTRL_1_register.sr);
+  } else {
+    DRVCTRL_0_register.sr = data;
+    write(DRVCTRL_0_register.address, DRVCTRL_0_register.sr);
+  }
+}
+
+// DRVCTRL (SPI)
+void TMC2660Stepper::pha(bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.pha = B;  DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::ca(uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.ca = B;   DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::phb(bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.phb = B;  DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::cb(uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.cb = B;   DRVCTRL(DRVCTRL_1_register.sr); }
+
+bool TMC2660Stepper::pha()    { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.pha; }
+uint8_t TMC2660Stepper::ca()  { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.ca;  }
+bool TMC2660Stepper::phb()    { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.phb; }
+uint8_t TMC2660Stepper::cb()  { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.cb;  }
+
+// DRVCTRL (STEP/DIR)
+void TMC2660Stepper::intpol(bool B) { if(sdoff()) return; DRVCTRL_0_register.intpol = B; DRVCTRL(DRVCTRL_0_register.sr); }
+void TMC2660Stepper::dedge(bool B)  { if(sdoff()) return; DRVCTRL_0_register.dedge = B;  DRVCTRL(DRVCTRL_0_register.sr); }
+void TMC2660Stepper::mres(uint8_t B){ if(sdoff()) return; DRVCTRL_0_register.mres = B;   DRVCTRL(DRVCTRL_0_register.sr); }
+
+bool TMC2660Stepper::intpol() { if(sdoff()) sdoff(0); return DRVCTRL_0_register.intpol; }
+bool TMC2660Stepper::dedge()  { if(sdoff()) sdoff(0); return DRVCTRL_0_register.dedge;  }
+uint8_t TMC2660Stepper::mres(){ if(sdoff()) sdoff(0); return DRVCTRL_0_register.mres;   }
+
+uint32_t TMC2660Stepper::DRVSTATUS() {
+  uint32_t response = read()&0xFFCFF;
+  READ_RDSEL00_register.sr = response & 0xFF;
+  READ_RDSEL01_register.sr = response & 0xFF;
+  READ_RDSEL10_register.sr = response & 0xFF;
+  switch(rdsel()) {
+    case 0b00: READ_RDSEL00_register.sr |= response & 0xFFC00; break;
+    case 0b01: READ_RDSEL01_register.sr |= response & 0xFFC00; break;
+    case 0b10: READ_RDSEL10_register.sr |= response & 0xFFC00; break;
+    default: return 0;
+  }
+  return response;
+}
+
+uint16_t TMC2660Stepper::mstep() {
+  if(rdsel() != 0b00)
+    rdsel(0b00);
+
+  DRVSTATUS();
+  return READ_RDSEL00_register.mstep;
+}
+uint8_t TMC2660Stepper::se() {
+  if(rdsel() != 0b10)
+    rdsel(0b10);
+
+  DRVSTATUS();
+  return READ_RDSEL10_register.se;
+}
+bool TMC2660Stepper::stst() { DRVSTATUS(); return READ_RDSEL00_register.stst;  }
+bool TMC2660Stepper::olb()  { DRVSTATUS(); return READ_RDSEL00_register.olb;   }
+bool TMC2660Stepper::ola()  { DRVSTATUS(); return READ_RDSEL00_register.ola;   }
+bool TMC2660Stepper::s2gb() { DRVSTATUS(); return READ_RDSEL00_register.s2gb;  }
+bool TMC2660Stepper::s2ga() { DRVSTATUS(); return READ_RDSEL00_register.s2ga;  }
+bool TMC2660Stepper::otpw() { DRVSTATUS(); return READ_RDSEL00_register.otpw;  }
+bool TMC2660Stepper::ot()   { DRVSTATUS(); return READ_RDSEL00_register.ot;    }
+bool TMC2660Stepper::sg()   { DRVSTATUS(); return READ_RDSEL00_register.sg_value;}
+
+uint16_t TMC2660Stepper::sg_result(){
+  uint16_t out = 0;
+  if (rdsel() == 0b00) rdsel(0b01);
+  DRVSTATUS();
+  switch(rdsel()) {
+    case 0b01: out = READ_RDSEL01_register.sg_result; break;
+    case 0b10: out = READ_RDSEL10_register.sg_result; break;
+    default: break;
+  }
+  return out;
+}
+
+uint32_t TMC2660Stepper::SGCSCONF() { return SGCSCONF_register.sr; }
+void TMC2660Stepper::SGCSCONF(uint32_t data) {
+  SGCSCONF_register.sr = data;
+  write(SGCSCONF_register.address, SGCSCONF_register.sr);
+}
+
+void TMC2660Stepper::sfilt(bool B)  { SGCSCONF_register.sfilt = B;  SGCSCONF(SGCSCONF_register.sr); }
+void TMC2660Stepper::sgt(uint8_t B) { SGCSCONF_register.sgt = B;    SGCSCONF(SGCSCONF_register.sr); }
+void TMC2660Stepper::cs(uint8_t B)  { SGCSCONF_register.cs = B;     SGCSCONF(SGCSCONF_register.sr); }
+
+bool TMC2660Stepper::sfilt() { return SGCSCONF_register.sfilt; }
+uint8_t TMC2660Stepper::sgt(){ return SGCSCONF_register.sgt; }
+uint8_t TMC2660Stepper::cs() { return SGCSCONF_register.cs; }
+
+uint32_t TMC2660Stepper::SMARTEN() { return SMARTEN_register.sr; }
+void TMC2660Stepper::SMARTEN(uint32_t data) {
+  SMARTEN_register.sr = data;
+  write(SMARTEN_register.address, SMARTEN_register.sr);
+}
+
+void TMC2660Stepper::seimin(bool B)   { SMARTEN_register.seimin = B;  SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::sedn(uint8_t B)  { SMARTEN_register.sedn = B;    SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::semax(uint8_t B) { SMARTEN_register.semax = B;   SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::seup(uint8_t B)  { SMARTEN_register.seup = B;    SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::semin(uint8_t B) { SMARTEN_register.semin = B;   SMARTEN(SMARTEN_register.sr); }
+
+bool TMC2660Stepper::seimin()   { return SMARTEN_register.seimin; }
+uint8_t TMC2660Stepper::sedn()  { return SMARTEN_register.sedn;   }
+uint8_t TMC2660Stepper::semax() { return SMARTEN_register.semax;  }
+uint8_t TMC2660Stepper::seup()  { return SMARTEN_register.seup;   }
+uint8_t TMC2660Stepper::semin() { return SMARTEN_register.semin;  }
