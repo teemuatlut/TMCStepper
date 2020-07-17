@@ -17,16 +17,6 @@
 	#include <bcm2835.h>
 	#include "source/bcm2835_spi.h"
 	#include "source/bcm2835_stream.h"
-#elif __cplusplus >= 201703L
-	#if __has_include(<Arduino.h>)
-		#include <Arduino.h>
-	#endif
-	#if __has_include(<SPI.h>)
-		#include <SPI.h>
-	#endif
-	#if __has_include(<Stream.h>)
-		#include <Stream.h>
-	#endif
 #endif
 
 #if (__cplusplus == 201703L) && defined(__has_include)
@@ -56,16 +46,6 @@
 #include "source/interfaces/TMC5160.hpp"
 #include "source/interfaces/TMC2208.hpp"
 #include "source/interfaces/TMC2209.hpp"
-
-#define INIT_REGISTER(REG) REG##_t REG##_register = REG##_t
-#define INIT2130_REGISTER(REG) TMC2130_n::REG##_t REG##_register = TMC2130_n::REG##_t
-#define INIT2160_REGISTER(REG) TMC2160_n::REG##_t REG##_register = TMC2160_n::REG##_t
-#define INIT5130_REGISTER(REG) TMC5130_n::REG##_t REG##_register = TMC5130_n::REG##_t
-#define INIT5160_REGISTER(REG) TMC5160_n::REG##_t REG##_register = TMC5160_n::REG##_t
-#define INIT2660_REGISTER(REG) TMC2660_n::REG##_t REG##_register = TMC2660_n::REG##_t
-#define INIT2208_REGISTER(REG) TMC2208_n::REG##_t REG##_register = TMC2208_n::REG##_t
-#define INIT2224_REGISTER(REG) TMC2224_n::REG##_t REG##_register = TMC2224_n::REG##_t
-#define SET_ALIAS(TYPE, DRIVER, NEW, ARG, OLD) TYPE (DRIVER::*NEW)(ARG) = &DRIVER::OLD
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
@@ -827,15 +807,15 @@ class TMC2660Stepper {
 		TMC2660Stepper(TMCStepper_n::PinDef pinCS, TMCStepper_n::PinDef pinMOSI, TMCStepper_n::PinDef pinMISO, TMCStepper_n::PinDef pinSCK, int8_t link_index = -1) = delete;
 
 	private:
-		INIT_REGISTER(DRVCTRL_1){{.sr=0}};
-		INIT_REGISTER(DRVCTRL_0){{.sr=0}};
-		INIT2660_REGISTER(CHOPCONF){{.sr=0}};
-		INIT_REGISTER(SMARTEN){{.sr=0}};
-		INIT_REGISTER(SGCSCONF){{.sr=0}};
-		INIT_REGISTER(DRVCONF){{.sr=0}};
-		INIT_REGISTER(READ_RDSEL00){{.sr=0}};
-		INIT_REGISTER(READ_RDSEL01){{.sr=0}};
-		INIT_REGISTER(READ_RDSEL10){{.sr=0}};
+		DRVCTRL_1_t DRVCTRL_1_register{{.sr=0}};
+		DRVCTRL_0_t DRVCTRL_0_register{{.sr=0}};
+		TMC2660_n::CHOPCONF_t CHOPCONF_register{{.sr=0}};
+		SMARTEN_t SMARTEN_register{{.sr=0}};
+		SGCSCONF_t SGCSCONF_register{{.sr=0}};
+		DRVCONF_t DRVCONF_register{{.sr=0}};
+		READ_RDSEL00_t READ_RDSEL00_register{{.sr=0}};
+		READ_RDSEL01_t READ_RDSEL01_register{{.sr=0}};
+		READ_RDSEL10_t READ_RDSEL10_register{{.sr=0}};
 
 		const TMCStepper_n::PinDef pinCS;
 		const float Rsense;
