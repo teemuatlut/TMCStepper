@@ -125,12 +125,12 @@ struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
 #include "source/interfaces/TMCStepper.hpp"
 
 template<class T> struct TMCStepper;
-template<> struct TMCStepper<TMC2130Stepper> : TMCStepper_n::TMCcommon<TMC2130Stepper>, TMCStepper_n::TMC_RMS<TMC2130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ TMCStepper(float) : TMC_RMS(0.5) {} };
-template<> struct TMCStepper<TMC2160Stepper> : TMCStepper_n::TMCcommon<TMC2160Stepper>, TMCStepper_n::TMC_RMS<TMC2160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ TMCStepper(float) : TMC_RMS(0.5) {} };
-template<> struct TMCStepper<TMC5130Stepper> : TMCStepper_n::TMCcommon<TMC5130Stepper>, TMCStepper_n::TMC_RMS<TMC5130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ TMCStepper(float) : TMC_RMS(0.5) {} };
-template<> struct TMCStepper<TMC5160Stepper> : TMCStepper_n::TMCcommon<TMC5160Stepper>, TMCStepper_n::TMC_RMS<TMC5160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ TMCStepper(float) : TMC_RMS(0.5) {} };
-template<> struct TMCStepper<TMC2208Stepper> : TMCStepper_n::TMCcommon<TMC2208Stepper>, TMCStepper_n::TMC_RMS<TMC2208Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ TMCStepper(float) : TMC_RMS(0.5) {} };
-template<> struct TMCStepper<TMC2209Stepper> : TMCStepper_n::TMCcommon<TMC2209Stepper>, TMCStepper_n::TMC_RMS<TMC2209Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC2130Stepper> : TMCStepper_n::TMCcommon<TMC2130Stepper>, TMCStepper_n::TMC_RMS<TMC2130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC2160Stepper> : TMCStepper_n::TMCcommon<TMC2160Stepper>, TMCStepper_n::TMC_RMS<TMC2160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC5130Stepper> : TMCStepper_n::TMCcommon<TMC5130Stepper>, TMCStepper_n::TMC_RMS<TMC5130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC5160Stepper> : TMCStepper_n::TMCcommon<TMC5160Stepper>, TMCStepper_n::TMC_RMS<TMC5160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC2208Stepper> : TMCStepper_n::TMCcommon<TMC2208Stepper>, TMCStepper_n::TMC_RMS<TMC2208Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC2209Stepper> : TMCStepper_n::TMCcommon<TMC2209Stepper>, TMCStepper_n::TMC_RMS<TMC2209Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
 
 class TMC2130Stepper :
 	public TMCStepper_n::TMC_SPI,
