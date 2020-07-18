@@ -17,12 +17,12 @@
   CS = 26
 */
 template<class T>
-uint16_t TMC_RMS<T, RMS_TYPE::WITH_VSENSE>::cs2rms(uint8_t CS) {
+uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::cs2rms(uint8_t CS) {
   return (float)(CS+1)/32.0 * (static_cast<T*>(this)->vsense() ? 0.180 : 0.325)/(Rsense+0.02) / 1.41421 * 1000;
 }
 
 template<class T>
-void TMC_RMS<T, RMS_TYPE::WITH_VSENSE>::rms_current(uint16_t mA) {
+void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(uint16_t mA) {
   uint8_t CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.325 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
@@ -41,7 +41,7 @@ void TMC_RMS<T, RMS_TYPE::WITH_VSENSE>::rms_current(uint16_t mA) {
 }
 
 template<typename TYPE>
-uint8_t TMCcommon<TYPE>::test_connection() {
+uint8_t TMCStepper_n::TMCcommon<TYPE>::test_connection() {
   uint32_t drv_status = static_cast<TYPE*>(this)->DRV_STATUS();
   switch (drv_status) {
       case 0xFFFFFFFF: return 1;
@@ -64,7 +64,7 @@ uint8_t TMCcommon<TYPE>::test_connection() {
 */
 
 template<class T>
-void TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER>::rms_current(uint16_t mA) {
+void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::rms_current(uint16_t mA) {
   constexpr uint32_t V_fs = 325; // 0.325 * 1000
   uint8_t CS = 31;
   uint32_t scaler = 0; // = 256
@@ -94,7 +94,7 @@ void TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER>::rms_current(uint16_t mA) {
 }
 
 template<class T>
-uint16_t TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER>::cs2rms(uint8_t CS) {
+uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::cs2rms(uint8_t CS) {
     uint16_t scaler = static_cast<T*>(this)->GLOBAL_SCALER();
     if (!scaler) scaler = 256;
     uint32_t numerator = scaler * (CS+1);
@@ -107,14 +107,14 @@ uint16_t TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER>::cs2rms(uint8_t CS) {
     return numerator / denominator;
 }
 
-template<typename TYPE> void TMCcommon<TYPE>::hysteresis_end(int8_t value) { static_cast<TYPE*>(this)->hend(value+3); }
-template<typename TYPE> int8_t TMCcommon<TYPE>::hysteresis_end() { return static_cast<TYPE*>(this)->hend()-3; };
+template<typename TYPE> void TMCStepper_n::TMCcommon<TYPE>::hysteresis_end(int8_t value) { static_cast<TYPE*>(this)->hend(value+3); }
+template<typename TYPE> int8_t TMCStepper_n::TMCcommon<TYPE>::hysteresis_end() { return static_cast<TYPE*>(this)->hend()-3; };
 
-template<typename TYPE> void TMCcommon<TYPE>::hysteresis_start(uint8_t value) { static_cast<TYPE*>(this)->hstrt(value-1); }
-template<typename TYPE> uint8_t TMCcommon<TYPE>::hysteresis_start() { return static_cast<TYPE*>(this)->hstrt()+1; }
+template<typename TYPE> void TMCStepper_n::TMCcommon<TYPE>::hysteresis_start(uint8_t value) { static_cast<TYPE*>(this)->hstrt(value-1); }
+template<typename TYPE> uint8_t TMCStepper_n::TMCcommon<TYPE>::hysteresis_start() { return static_cast<TYPE*>(this)->hstrt()+1; }
 
 template<typename TYPE>
-void TMCcommon<TYPE>::microsteps(uint16_t ms) {
+void TMCStepper_n::TMCcommon<TYPE>::microsteps(uint16_t ms) {
   uint16_t mresValue{};
   switch(ms) {
     case 256: mresValue = 0; break;
@@ -133,7 +133,7 @@ void TMCcommon<TYPE>::microsteps(uint16_t ms) {
 }
 
 template<typename TYPE>
-uint16_t TMCcommon<TYPE>::microsteps() {
+uint16_t TMCStepper_n::TMCcommon<TYPE>::microsteps() {
   switch(static_cast<TYPE*>(this)->mres()) {
     case 0: return 256;
     case 1: return 128;
@@ -149,7 +149,7 @@ uint16_t TMCcommon<TYPE>::microsteps() {
 }
 
 template<typename TYPE>
-void TMCcommon<TYPE>::blank_time(uint8_t value) {
+void TMCStepper_n::TMCcommon<TYPE>::blank_time(uint8_t value) {
   switch (value) {
     case 16: static_cast<TYPE*>(this)->tbl(0b00); break;
     case 24: static_cast<TYPE*>(this)->tbl(0b01); break;
@@ -159,7 +159,7 @@ void TMCcommon<TYPE>::blank_time(uint8_t value) {
 }
 
 template<typename TYPE>
-uint8_t TMCcommon<TYPE>::blank_time() {
+uint8_t TMCStepper_n::TMCcommon<TYPE>::blank_time() {
   switch (static_cast<TYPE*>(this)->tbl()) {
     case 0b00: return 16;
     case 0b01: return 24;

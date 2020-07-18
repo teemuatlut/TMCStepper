@@ -1,5 +1,5 @@
 #include "TMCStepper.h"
-#include "SW_SPI.h"
+#include "TMC_SPI.hpp"
 
 using namespace TMCStepper_n;
 
