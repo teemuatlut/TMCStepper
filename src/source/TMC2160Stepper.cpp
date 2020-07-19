@@ -1,15 +1,19 @@
 #include "TMCStepper.h"
 
-TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, float RS, int8_t link) : TMC2130Stepper(pinCS, RS, link)
+using namespace TMCStepper_n;
+
+TMC2160Stepper::TMC2160Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
+  TMC2130Stepper(spi, pinCS, RS, link)
   { defaults(); }
-TMC2160Stepper::TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
-  TMC2130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link)
+TMC2160Stepper::TMC2160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
+  TMC2130Stepper(spi, pinCS, RS, link)
   { defaults(); }
 
 void TMC2160Stepper::begin() {
   //set pins
-  pinMode(_pinCS, OUTPUT);
-  switchCSpin(HIGH);
+  OutputPin cs(pinCS);
+  cs.mode(OUTPUT);
+  cs.write(HIGH);
 
   if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
 

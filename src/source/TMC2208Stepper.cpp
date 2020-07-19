@@ -1,17 +1,19 @@
 #include "TMCStepper.h"
 #include "SERIAL_SWITCH.h"
 
+using namespace TMCStepper_n;
+
 // Protected
 // addr needed for TMC2209
-TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr) :
+TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
 	TMCStepper(RS),
-	slave_address(addr)
+	slaveAddress(addr)
 	{
 		HWSerial = SerialPort;
 		defaults();
 	}
 
-TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2) :
+TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2) :
 	TMC2208Stepper(SerialPort, RS)
 	{
 		SSwitch *SMulObj = new SSwitch(mul_pin1, mul_pin2, addr);
@@ -21,10 +23,10 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 #if SW_CAPABLE_PLATFORM
 	// Protected
 	// addr needed for TMC2209
-	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
+	TMC2208Stepper::TMC2208Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
 		TMCStepper(RS),
 		RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
-		slave_address(addr)
+		slaveAddress(addr)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
 			SWSerial = SWSerialObj;
@@ -106,83 +108,6 @@ uint8_t TMC2208Stepper::calcCRC(uint8_t datagram[], uint8_t len) {
 }
 
 __attribute__((weak))
-int TMC2208Stepper::available() {
-	int out = 0;
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != nullptr) {
-			out = SWSerial->available();
-		} else
-	#endif
-		if (HWSerial != nullptr) {
-			out = HWSerial->available();
-		}
-
-	return out;
-}
-
-__attribute__((weak))
-void TMC2208Stepper::preWriteCommunication() {
-	if (HWSerial != nullptr) {
-		if (sswitch != nullptr)
-			sswitch->active();
-	}
-}
-
-__attribute__((weak))
-void TMC2208Stepper::preReadCommunication() {
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != nullptr) {
-			SWSerial->listen();
-		} else
-	#endif
-		if (HWSerial != nullptr) {
-			if (sswitch != nullptr)
-				sswitch->active();
-		}
-}
-
-__attribute__((weak))
-int16_t TMC2208Stepper::serial_read() {
-	int16_t out = 0;
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != nullptr) {
-			out = SWSerial->read();
-		} else
-	#endif
-		if (HWSerial != nullptr) {
-			out = HWSerial->read();
-		}
-
-	return out;
-}
-
-__attribute__((weak))
-uint8_t TMC2208Stepper::serial_write(const uint8_t data) {
-	int out = 0;;
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != nullptr) {
-			return SWSerial->write(data);
-		} else
-	#endif
-		if (HWSerial != nullptr) {
-			return HWSerial->write(data);
-		}
-
-	return out;
-}
-
-__attribute__((weak))
-void TMC2208Stepper::postWriteCommunication() {}
-
-__attribute__((weak))
-void TMC2208Stepper::postReadCommunication() {
-	#if SW_CAPABLE_PLATFORM
-		if (SWSerial != nullptr) {
-			SWSerial->end();
-		}
-	#endif
-}
-
 void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
     WriteDatagram datagram;
     datagram.driverAddress = slaveAddress;

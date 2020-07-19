@@ -1,6 +1,8 @@
 #pragma once
 #pragma pack(push, 1)
 
+#include <stdint.h>
+
 namespace TMC2208_n {
   struct GCONF_t {
     GCONF_t(const uint16_t data) : sr(data) {};
