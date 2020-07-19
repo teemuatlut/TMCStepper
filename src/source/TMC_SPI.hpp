@@ -8,7 +8,6 @@ class SW_SPIClass {
 		SW_SPIClass(const TMCStepper_n::PinDef mosi, const TMCStepper_n::PinDef miso, const TMCStepper_n::PinDef sck);
 		void init();
 		void begin() {};
-		uint8_t transfer(uint8_t ulVal);
 		void transfer(char *buf, uint8_t count);
 		void endTransaction() {};
 	private:
