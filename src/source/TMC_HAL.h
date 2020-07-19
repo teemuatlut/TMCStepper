@@ -10,23 +10,34 @@
         public:
             explicit TMCPin(const uint8_t _pin);
             void mode(const uint8_t mode) const;
+        protected:
+            const uint8_t port;
+            const uint8_t bitMask;
+        };
+
+        class InputPin : public TMCPin {
+        public:
+            explicit InputPin(const uint8_t _pin);
             bool read() const;
             operator bool() const {
                 return read();
             }
 
         protected:
-            volatile uint8_t* const port = nullptr;
-            uint8_t const bitMask;
+            volatile uint8_t* const inPort = nullptr;
         };
 
         class OutputPin : public TMCPin {
         public:
-            OutputPin(const uint8_t _pin);
+            explicit OutputPin(const uint8_t _pin);
             void write(const bool state) const;
-        };
+            void operator =(const bool state) const {
+                write(state);
+            }
 
-        typedef TMCPin InputPin;
+        protected:
+            volatile uint8_t* const outPort = nullptr;
+        };
     }
 
 #elif defined(ARDUINO_ARCH_SAM)
