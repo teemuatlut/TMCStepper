@@ -108,35 +108,35 @@ void SW_SPIClass::init() {
   sck.write(HIGH);
 }
 
-uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
-  uint8_t value = 0;
+void SW_SPIClass::transfer(char *buf, uint8_t count) {
 
   OutputPin mosi(mosi_pin), sck(sck_pin);
   InputPin miso(miso_pin);
 
-  sck.write(LOW);
-
-  for (uint8_t i=7 ; i>=1 ; i--) {
-    // Write bit
-    mosi.write(!!(ulVal & (1 << i)) ? HIGH : LOW);
-    // Start clock pulse
-    sck.write(HIGH);
-    // Read bit
-    value |= ( miso ? 1 : 0) << i;
-    // Stop clock pulse
+  auto tx = [&](const uint8_t ulVal){
+    uint8_t value = 0;
     sck.write(LOW);
-  }
 
-  mosi.write(!!(ulVal & (1 << 0)) ? HIGH : LOW);
-  sck.write(HIGH);
-  value |= ( miso ? 1 : 0) << 0;
+    for (uint8_t i=7 ; i>=1 ; i--) {
+      // Write bit
+      mosi.write(!!(ulVal & (1 << i)) ? HIGH : LOW);
+      // Start clock pulse
+      sck.write(HIGH);
+      // Read bit
+      value |= ( miso ? 1 : 0) << i;
+      // Stop clock pulse
+      sck.write(LOW);
+    }
 
-  return value;
-}
+    mosi.write(!!(ulVal & (1 << 0)) ? HIGH : LOW);
+    sck.write(HIGH);
+    value |= ( miso ? 1 : 0) << 0;
 
-void SW_SPIClass::transfer(char *buf, uint8_t count) {
+    return value;
+  };
+
   for (uint8_t i = 0; i<count; i++) {
-    *buf = transfer(*buf);
+    *buf = tx(*buf);
     buf++;
   }
 }
