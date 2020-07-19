@@ -18,16 +18,18 @@
 */
 template<class T>
 uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::cs2rms(uint8_t CS) {
-  return (float)(CS+1)/32.0 * (static_cast<T*>(this)->vsense() ? 0.180 : 0.325)/(Rsense+0.02) / 1.41421 * 1000;
+  const float rs = Rsense/255.0+0.02;
+  return (float)(CS+1)/32.0 * (static_cast<T*>(this)->vsense() ? 0.180 : 0.325)/rs / 1.41421 * 1000;
 }
 
 template<class T>
 void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(uint16_t mA) {
-  uint8_t CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.325 - 1;
+  const float rs = Rsense/255.0+0.02;
+  uint8_t CS = 32.0*1.41421*mA/1000.0*rs/0.325 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
     static_cast<T*>(this)->vsense(true);
-    CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.180 - 1;
+    CS = 32.0*1.41421*mA/1000.0*rs/0.180 - 1;
   } else { // If CS >= 16, turn off high_sense_r
     static_cast<T*>(this)->vsense(false);
   }
@@ -36,7 +38,7 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(
     CS = 31;
 
   static_cast<T*>(this)->irun(CS);
-  static_cast<T*>(this)->ihold(CS*holdMultiplier);
+  static_cast<T*>(this)->ihold(CS*hold_multiplier());
   //val_mA = mA;
 }
 
@@ -65,11 +67,12 @@ uint8_t TMCStepper_n::TMCcommon<TYPE>::test_connection() {
 
 template<class T>
 void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::rms_current(uint16_t mA) {
+  const float rs = Rsense/255.0;
   constexpr uint32_t V_fs = 325; // 0.325 * 1000
   uint8_t CS = 31;
   uint32_t scaler = 0; // = 256
 
-  const uint16_t RS_scaled = Rsense * 0xFFFF; // Scale to 16b
+  const uint16_t RS_scaled = rs * 0xFFFF; // Scale to 16b
   uint32_t numerator = 11585; // 32 * 256 * sqrt(2)
   numerator *= RS_scaled;
   numerator >>= 8;
@@ -90,18 +93,19 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::rms_c
 
   static_cast<T*>(this)->GLOBAL_SCALER(scaler);
   static_cast<T*>(this)->irun(CS);
-  static_cast<T*>(this)->ihold(CS*holdMultiplier);
+  static_cast<T*>(this)->ihold(CS*hold_multiplier());
 }
 
 template<class T>
 uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::cs2rms(uint8_t CS) {
+    const float rs = Rsense/255.0;
     uint16_t scaler = static_cast<T*>(this)->GLOBAL_SCALER();
     if (!scaler) scaler = 256;
     uint32_t numerator = scaler * (CS+1);
     numerator *= 325;
     numerator >>= (8+5); // Divide by 256 and 32
     numerator *= 1000000;
-    uint32_t denominator = Rsense*1000;
+    uint32_t denominator = rs*1000;
     denominator *= 1414;
 
     return numerator / denominator;

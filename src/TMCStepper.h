@@ -85,19 +85,19 @@ struct TMC_RMS<T, RMS_TYPE::WITH_VSENSE> {
     uint16_t cs2rms(uint8_t CS);
     void rms_current(uint16_t mA);
     void rms_current(uint16_t mA, float mult) {
-      holdMultiplier = mult;
+      hold_multiplier(mult);
       rms_current(mA);
     }
     uint16_t rms_current() {
       return cs2rms(static_cast<T*>(this)->irun());
     }
-    void hold_multiplier(float val) { holdMultiplier = val; }
-    float hold_multiplier() { return holdMultiplier; }
+    void hold_multiplier(float val) { holdMultiplier = val*255; }
+    float hold_multiplier() { return (holdMultiplier+0.5)/255.0; }
   protected:
-    TMC_RMS(float RS) : Rsense(RS) {};
+    TMC_RMS(float RS) : Rsense(RS*255) {};
 
-    const float Rsense;
-    float holdMultiplier = 0.5;
+    const uint8_t Rsense;
+    uint8_t holdMultiplier = 127;
 };
 
 template<class T>
@@ -105,19 +105,19 @@ struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
     uint16_t cs2rms(uint8_t CS);
     void rms_current(uint16_t mA);
     void rms_current(uint16_t mA, float mult) {
-      holdMultiplier = mult;
+      hold_multiplier(mult);
       rms_current(mA);
     }
     uint16_t rms_current() {
       return cs2rms(static_cast<T*>(this)->irun());
     }
-    void hold_multiplier(float val) { holdMultiplier = val; }
-    float hold_multiplier() { return holdMultiplier; }
+    void hold_multiplier(float val) { holdMultiplier = val*255; }
+    float hold_multiplier() { return (holdMultiplier+0.5)/255.0; }
   protected:
-    TMC_RMS(float RS) : Rsense(RS) {};
+    TMC_RMS(float RS) : Rsense(RS*255) {};
 
-    const float Rsense;
-    float holdMultiplier = 0.5;
+    const uint8_t Rsense;
+    uint8_t holdMultiplier = 127;
 };
 
 };
