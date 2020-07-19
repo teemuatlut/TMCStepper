@@ -8,8 +8,11 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>
+#endif
+
+#ifdef ARDUINO
+	#include <HardwareSerial.h>
 	#include <SPI.h>
-	#include <Stream.h>
 #elif defined(bcm2835)
 	#include <bcm2835.h>
 	#include "source/bcm2835_spi.h"
@@ -40,6 +43,8 @@
 
 #include "source/SERIAL_SWITCH.h"
 #include "source/SW_SPI.h"
+
+#include "source/TMC_HAL.h"
 
 #pragma GCC diagnostic pop
 
@@ -151,8 +156,9 @@ class TMCStepper {
 
 class TMC2130Stepper : public TMCStepper {
 	public:
-		TMC2130Stepper(uint16_t pinCS, float RS, int8_t link_index = -1);
-		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
+		TMC2130Stepper(SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
+		TMC2130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
+
 		void begin();
 		void defaults();
 		void setSPISpeed(uint32_t speed);
@@ -347,20 +353,34 @@ class TMC2130Stepper : public TMCStepper {
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2130Stepper(uint16_t, uint16_t, uint16_t, uint16_t, int8_t link_index = -1) = delete;
+		TMC2130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2130Stepper(uint16_t) = delete;
+		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
 
 	protected:
+
+		// |         8b        |       32b     |
+		// | Address or Status | Register data |
+		// |           40b data buffer         |
+        union TransferData {
+            struct {
+                union {
+                    uint8_t address;
+                    uint8_t status;
+                };
+                uint32_t data;
+            };
+            char buffer[5] = {0};
+        };
+
 		void beginTransaction();
 		void endTransaction();
-		uint8_t transfer(const uint8_t data);
-		void transferEmptyBytes(const uint8_t n);
+		void transfer(char *buf, const uint8_t count);
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read(uint8_t addressByte);
 
-		INIT_REGISTER(GCONF)		{{0}};	// 32b
+		INIT_REGISTER(GCONF)		{0};	// 32b
 		INIT_REGISTER(TCOOLTHRS) {0};		// 32b
 		INIT_REGISTER(THIGH)		 {0};		// 32b
 		INIT_REGISTER(XDIRECT)	{{0}};	// 32b
@@ -377,8 +397,9 @@ class TMC2130Stepper : public TMCStepper {
 		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
 
 		static uint32_t spi_speed; // Default 2MHz
-		const uint16_t _pinCS;
-		SW_SPIClass * TMC_SW_SPI = nullptr;
+		const TMCStepper_n::PinDef pinCS;
+		SPIClass *TMC_HW_SPI = nullptr;
+		SW_SPIClass *TMC_SW_SPI = nullptr;
 
 		int8_t link_index;
 		static int8_t chain_length;
@@ -386,8 +407,8 @@ class TMC2130Stepper : public TMCStepper {
 
 class TMC2160Stepper : public TMC2130Stepper {
 	public:
-		TMC2160Stepper(uint16_t pinCS, float RS, int8_t link_index = -1);
-		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
+		TMC2160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC2160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		void begin();
 		void defaults();
 		void push();
@@ -471,7 +492,7 @@ class TMC2160Stepper : public TMC2130Stepper {
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2160Stepper(uint16_t, uint16_t, uint16_t, uint16_t, int8_t link_index = -1) = delete;
+		TMC2160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 	protected:
 		using TMC2130Stepper::ENCM_CTRL;
@@ -488,8 +509,8 @@ class TMC2160Stepper : public TMC2130Stepper {
 
 class TMC5130Stepper : public TMC2160Stepper {
 	public:
-		TMC5130Stepper(uint16_t pinCS, float RS, int8_t link_index = -1);
-		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
+		TMC5130Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 
 		void begin();
 		void defaults();
@@ -662,7 +683,7 @@ class TMC5130Stepper : public TMC2160Stepper {
 		using TMC2130Stepper::PWM_SCALE;
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC5130Stepper(uint16_t, uint16_t, uint16_t, uint16_t, int8_t link_index = -1) = delete;
+		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 	protected:
 		INIT_REGISTER(SLAVECONF){{.sr=0}};
@@ -734,8 +755,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 
 class TMC5160Stepper : public TMC5130Stepper {
 	public:
-		TMC5160Stepper(uint16_t pinCS, float RS, int8_t link_index = -1);
-		TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
+		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 
 		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
@@ -811,7 +832,7 @@ class TMC5160Stepper : public TMC5130Stepper {
 		using TMC2160Stepper::pwm_scale_auto;
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC5160Stepper(uint16_t, uint16_t, uint16_t, uint16_t, int8_t link_index = -1) = delete;
+		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 	protected:
 		using TMC5130Stepper::I_scale_analog;
@@ -832,27 +853,27 @@ typedef TMC5160Stepper TMC5161Stepper;
 
 class TMC2208Stepper : public TMCStepper {
 	public:
-	    TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
-		TMC2208Stepper(Stream * SerialPort, float RS) :
+	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::PinDef mul_pin1, TMCStepper_n::PinDef mul_pin2);
+		TMC2208Stepper(HardwareSerial * SerialPort, float RS) :
 			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
 			{}
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS) :
+			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
 				{}
 
 			__attribute__((deprecated("Boolean argument has been deprecated and does nothing")))
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, bool) :
+			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, bool) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
 				{};
 		#else
-			TMC2208Stepper(uint16_t, uint16_t, float) = delete; // Your platform does not currently support Software Serial
+			TMC2208Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void defaults();
 		void push();
 		void begin();
 		#if SW_CAPABLE_PLATFORM
-			void beginSerial(uint32_t baudrate) __attribute__((weak));
+			void beginSerial(uint32_t baudrate);
 		#else
 			void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
 		#endif
@@ -995,7 +1016,7 @@ class TMC2208Stepper : public TMCStepper {
 		float Rsense = 0.11;
 		bool CRCerror = false;
 	protected:
-		INIT2208_REGISTER(GCONF)			{{.sr=0}};
+		INIT2208_REGISTER(GCONF)			{0};
 		INIT_REGISTER(SLAVECONF)			{{.sr=0}};
 		INIT_REGISTER(FACTORY_CONF)		{{.sr=0}};
 		INIT2208_REGISTER(VACTUAL)		{.sr=0};
@@ -1006,26 +1027,24 @@ class TMC2208Stepper : public TMCStepper {
 		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
 		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
 
-		TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr);
+		TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr);
+			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
 		#endif
 
-		Stream * HWSerial = nullptr;
+        HardwareSerial * HWSerial = nullptr;
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = nullptr;
-			const uint16_t RXTX_pin = 0; // Half duplex
+			const TMCStepper_n::PinDef RXTX_pin = 0; // Half duplex
 		#endif
 
 		SSwitch *sswitch = nullptr;
 
-		int available();
-		void preWriteCommunication();
-		void preReadCommunication();
-		int16_t serial_read();
-		uint8_t serial_write(const uint8_t data);
-		void postWriteCommunication();
-		void postReadCommunication();
+        static constexpr uint8_t  TMC2208_SYNC = 0x05,
+                                                            TMC2208_SLAVE_ADDR = 0x00;
+        static constexpr uint8_t replyDelay = 2;
+        static constexpr uint8_t abort_window = 5;
+        static constexpr uint8_t max_retries = 2;
 
         struct ReadRequest {
             static constexpr uint8_t length = 3;
@@ -1046,29 +1065,32 @@ class TMC2208Stepper : public TMCStepper {
 
         typedef WriteDatagram ReadResponse;
 
+		int available();
+		size_t getTime() const;
+		void preWriteCommunication();
+		void preReadCommunication();
+		void serial_read(uint8_t *data, int8_t length);
+		void serial_write(const uint8_t *data, int8_t length);
+		void postWriteCommunication();
+		void postReadCommunication();
 		void write(uint8_t, uint32_t);
 		uint32_t read(uint8_t);
-		const uint8_t slave_address;
+		const uint8_t slaveAddress;
 		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
-		static constexpr uint8_t  TMC2208_SYNC = 0x05,
-															TMC2208_SLAVE_ADDR = 0x00;
-		static constexpr uint8_t replyDelay = 2;
-		static constexpr uint8_t abort_window = 5;
-		static constexpr uint8_t max_retries = 2;
 
-		uint64_t _sendDatagram(uint8_t [], const uint8_t, uint16_t);
+		ReadResponse sendReadRequest(ReadRequest &datagram);
 };
 
 class TMC2209Stepper : public TMC2208Stepper {
 	public:
-		TMC2209Stepper(Stream * SerialPort, float RS, uint8_t addr) :
+		TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
 			TMC2208Stepper(SerialPort, RS, addr) {}
 
 		#if SW_CAPABLE_PLATFORM
-			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
+			TMC2209Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr) {}
 		#else
-			TMC2209Stepper(uint16_t, uint16_t, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+			TMC2209Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void push();
 
@@ -1131,11 +1153,8 @@ class TMC2224Stepper : public TMC2208Stepper {
 
 class TMC2660Stepper {
 	public:
-		TMC2660Stepper(uint16_t pinCS, float RS);
-		TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK);
-		void write(uint8_t addressByte, uint32_t config);
-		uint32_t read();
-		void switchCSpin(bool state);
+		TMC2660Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS);
+		TMC2660Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS);
 		void begin();
 		bool isEnabled();
 		uint8_t test_connection();
@@ -1272,7 +1291,7 @@ class TMC2660Stepper {
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) = delete;
+		TMC2660Stepper(TMCStepper_n::PinDef pinCS, TMCStepper_n::PinDef pinMOSI, TMCStepper_n::PinDef pinMISO, TMCStepper_n::PinDef pinSCK, int8_t link_index = -1) = delete;
 
 	private:
 		INIT_REGISTER(DRVCTRL_1){{.sr=0}};
@@ -1285,11 +1304,18 @@ class TMC2660Stepper {
 		INIT_REGISTER(READ_RDSEL01){{.sr=0}};
 		INIT_REGISTER(READ_RDSEL10){{.sr=0}};
 
-		const uint16_t _pinCS;
+		const TMCStepper_n::PinDef pinCS;
 		const float Rsense;
 		static constexpr float default_RS = 0.1;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		uint8_t _savedToff = 0;
-		SW_SPIClass * TMC_SW_SPI = nullptr;
+		SPIClass *TMC_HW_SPI = nullptr;
+		SW_SPIClass *TMC_SW_SPI = nullptr;
+
+        void write(uint8_t addressByte, uint32_t config);
+        uint32_t read();
+        void beginTransaction();
+        void endTransaction();
+        void transfer(char *buf, const uint8_t count);
 };

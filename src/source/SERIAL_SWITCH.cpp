@@ -1,15 +1,17 @@
 #include "SERIAL_SWITCH.h"
 
-SSwitch::SSwitch( const uint16_t pin1, const uint16_t pin2, const uint8_t address) :
+using namespace TMCStepper_n;
+
+SSwitch::SSwitch(const PinDef pin1, const PinDef pin2, const uint8_t address) :
   p1(pin1),
   p2(pin2),
   addr(address)
 	{
-		pinMode(pin1, OUTPUT);		
-    pinMode(pin2, OUTPUT);
+		OutputPin(p1).mode(OUTPUT);		
+    	OutputPin(p2).mode(OUTPUT);
 	}
 
 void SSwitch::active() {
-  digitalWrite(p1, addr & 0b01 ? HIGH : LOW);
-  digitalWrite(p2, addr & 0b10 ? HIGH : LOW);
+  OutputPin(p1).write(addr & 0b01 ? HIGH : LOW);
+  OutputPin(p2).write(addr & 0b10 ? HIGH : LOW);
 }
