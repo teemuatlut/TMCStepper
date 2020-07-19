@@ -9,41 +9,59 @@
 using namespace TMCStepper_n;
 
 TMCPin::TMCPin(const uint8_t _pin) :
-    port(portOutputRegister(digitalPinToPort(_pin))),
+    port(digitalPinToPort(_pin)),
     bitMask(digitalPinToBitMask(_pin))
     {}
 
 void TMCPin::mode(const uint8_t mode) const {
-    volatile uint8_t *reg = portModeRegister(*port);
-    volatile uint8_t *out = portOutputRegister(*port);
+    volatile uint8_t *reg, *out;
 
-    uint8_t oldSREG = SREG;
-    cli();
+    reg = portModeRegister(port);
+    out = portOutputRegister(port);
 
-    switch(mode) {
-        case OUTPUT:
-            *reg |= bitMask;
-            break;
-        case INPUT:
-            *reg &= ~bitMask;
-            *out &= ~bitMask;
-            break;
-        default: break;
+    if (mode == INPUT) { 
+        uint8_t oldSREG = SREG;
+                cli();
+        *reg &= ~bitMask;
+        *out &= ~bitMask;
+        SREG = oldSREG;
+    } else if (mode == INPUT_PULLUP) {
+        uint8_t oldSREG = SREG;
+                cli();
+        *reg &= ~bitMask;
+        *out |= bitMask;
+        SREG = oldSREG;
+    } else {
+        uint8_t oldSREG = SREG;
+                cli();
+        *reg |= bitMask;
+        SREG = oldSREG;
     }
-    SREG = oldSREG;
 }
 
-bool TMCPin::read() const {
-    return *port & bitMask;
+InputPin::InputPin(const uint8_t _pin) :
+    TMCPin(_pin),
+    inPort(portInputRegister(digitalPinToPort(_pin)))
+    {
+        pinMode(_pin, INPUT);
+    }
+
+bool InputPin::read() const {
+    return *inPort & bitMask;
 }
 
-OutputPin::OutputPin(const uint8_t _pin) : TMCPin(_pin) {}
+OutputPin::OutputPin(const uint8_t _pin) :
+    TMCPin(_pin),
+    outPort(portOutputRegister(digitalPinToPort(_pin)))
+    {
+        pinMode(_pin, OUTPUT);
+    }
 
 void OutputPin::write(const bool state) const {
     if (state)
-        *port |= bitMask;
+        *outPort |= bitMask;
     else
-        *port &= ~bitMask;
+        *outPort &= ~bitMask;
 }
 
 __attribute__((weak))
