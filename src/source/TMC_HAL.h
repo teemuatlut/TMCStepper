@@ -220,6 +220,8 @@
 
         typedef TMCPin PinDef;
 
+    }
+
         struct SPISettings {
             SPISettings(uint32_t, uint8_t, uint8_t) {}
         };
@@ -263,7 +265,6 @@
         private:
             UsartType * const huart;
         };
-    }
 
 #endif
 
