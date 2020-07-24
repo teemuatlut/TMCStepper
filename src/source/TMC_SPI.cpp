@@ -29,6 +29,11 @@ void TMC_SPI::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
 
+void TMC_SPI::transfer(const uint8_t count) {
+  char emptyBytes[count] = {0};
+  transfer(emptyBytes, count);
+}
+
 __attribute__((weak))
 uint32_t TMC_SPI::read(uint8_t addressByte) {
   TransferData data;
@@ -42,20 +47,19 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   // Shift the written data to the correct driver in chain
   // Default link_index = -1 and no shifting happens
   int8_t i = 1;
-  for (data.data = 0; i < link_index; i++) {
-    transfer(data.buffer, 5);
+  for (; i < link_index; i++) {
+    transfer(5);
   }
 
   cs.write(HIGH);
   cs.write(LOW);
 
   // Shift data from target link into the last one...
-  for (data.data = 0; i < chain_length; i++) {
-    transfer(data.buffer, 5);
+  for (; i < chain_length; i++) {
+    transfer(5);
   }
 
   // ...and once more to MCU
-  data.address = addressByte;
   transfer(data.buffer, 5);
 
   data.data = __builtin_bswap32(data.data);
@@ -81,9 +85,8 @@ void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
 
   // Shift the written data to the correct driver in chain
   // Default link_index = -1 and no shifting happens
-  data.data = 0;
   for (int8_t i = 1; i < chain_length; i++) {
-    transfer(data.buffer, 5);
+    transfer(5);
   }
 
   status_response = data.status;
