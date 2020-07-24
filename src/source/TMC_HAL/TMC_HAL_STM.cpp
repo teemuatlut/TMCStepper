@@ -160,6 +160,9 @@ void TMC_SPI::transfer(char *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->transfer(buf, count);
     }
+    else if(TMC_SW_SPI != nullptr) {
+        TMC_SW_SPI->transfer(buf, count);
+    }
 }
 
 __attribute__((weak))
@@ -180,6 +183,9 @@ __attribute__((weak))
 void TMC2660Stepper::transfer(char *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->transfer(buf, count);
+    }
+    else if(TMC_SW_SPI != nullptr) {
+        TMC_SW_SPI->transfer(buf, count);
     }
 }
 

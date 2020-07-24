@@ -10,10 +10,10 @@ TMCStepper_n::OutputPin enPin(ENABLE_GPIO_Port, ENABLE_Pin);
 TMCStepper_n::OutputPin step(STEP_GPIO_Port, STEP_Pin);
 
 SPIClass SPI(&hspi1);
-TMC2130Stepper driver(SPI, {CS_GPIO_Port, CS_Pin}, 0.11);
+SW_SPIClass SWSPI({SW_SPI_MOSI_GPIO_Port, SW_SPI_MOSI_Pin}, {SW_SPI_MISO_GPIO_Port, SW_SPI_MISO_Pin}, {SW_SPI_SCK_GPIO_Port, SW_SPI_SCK_Pin});
 
-//SW_SPIClass SWSPI({DRV_EN_GPIO_Port, DRV_EN_Pin}, {DRV_EN_GPIO_Port, DRV_EN_Pin}, {DRV_EN_GPIO_Port, DRV_EN_Pin});
-//TMC2130Stepper driver_sw(SWSPI, {DRV_EN_GPIO_Port, DRV_EN_Pin}, 0.5);
+//TMC2130Stepper driver(SPI, {CS_GPIO_Port, CS_Pin}, 0.11);
+TMC2130Stepper driver(SWSPI, {CS_GPIO_Port, CS_Pin}, 0.11);
 
 //HardwareSerial SerialInstance(&huart2);
 //TMC2209Stepper driver_serial(&SerialInstance, 0.5, 0);
@@ -35,6 +35,9 @@ void initDriver() {
 
 	auto drv_status = driver.DRV_STATUS();
 	(void)drv_status;
+
+	auto ioin = driver.IOIN();
+	(void)ioin;
 }
 
 bool shaft = false;

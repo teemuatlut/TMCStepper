@@ -60,12 +60,18 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOF
+#define SW_SPI_SCK_Pin GPIO_PIN_1
+#define SW_SPI_SCK_GPIO_Port GPIOF
 #define ENABLE_Pin GPIO_PIN_0
 #define ENABLE_GPIO_Port GPIOA
 #define STEP_Pin GPIO_PIN_1
 #define STEP_GPIO_Port GPIOA
 #define CS_Pin GPIO_PIN_4
 #define CS_GPIO_Port GPIOA
+#define SW_SPI_MOSI_Pin GPIO_PIN_8
+#define SW_SPI_MOSI_GPIO_Port GPIOA
+#define SW_SPI_MISO_Pin GPIO_PIN_11
+#define SW_SPI_MISO_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
