@@ -89,6 +89,7 @@ protected:
 	// |         8b        |       32b     |
 	// | Address or Status | Register data |
 	// |           40b data buffer         |
+  #pragma pack(push, 1)
 	union TransferData {
 	    struct {
 	        union {
@@ -99,12 +100,14 @@ protected:
 	    };
 	    char buffer[5] = {0};
 	};
+  #pragma pack(pop)
 
 	void setSPISpeed(uint32_t speed);
 	void switchCSpin(bool state);
 
 	void beginTransaction();
 	void endTransaction();
+	void transfer(const uint8_t count);
 	void transfer(char *buf, const uint8_t count);
 	void write(uint8_t addressByte, uint32_t config);
 	uint32_t read(uint8_t addressByte);
