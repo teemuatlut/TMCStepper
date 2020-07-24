@@ -67,6 +67,8 @@ protected:
   static constexpr uint8_t abort_window = 50;
   static constexpr uint8_t max_retries = 2;
 
+  #pragma pack(push, 1)
+
   struct ReadRequest {
     static constexpr uint8_t length = 4;
     uint8_t sync = TMC2208_SYNC;
@@ -85,6 +87,8 @@ protected:
   };
 
   typedef WriteDatagram ReadResponse;
+
+  #pragma pack(pop)
 
   int available();
   size_t getTime() const;
