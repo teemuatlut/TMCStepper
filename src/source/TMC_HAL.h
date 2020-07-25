@@ -18,7 +18,11 @@
         class InputPin : public TMCPin {
         public:
             explicit InputPin(const uint8_t _pin);
-            bool read() const;
+
+            __attribute__((always_inline))
+            bool read() const {
+              return *inPort & bitMask;
+            }
             operator bool() const {
                 return read();
             }
@@ -30,9 +34,20 @@
         class OutputPin : public TMCPin {
         public:
             explicit OutputPin(const uint8_t _pin);
-            void write(const bool state) const;
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
             void operator =(const bool state) const {
                 write(state);
+            }
+
+            __attribute__((always_inline))
+            void set() const {
+              *outPort |= bitMask;
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              *outPort &= ~bitMask;
             }
 
         protected:
@@ -60,7 +75,18 @@
         class OutputPin : public TMCPin {
         public:
             OutputPin(const uint32_t _pin);
-            void write(const bool state) const;
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
+
+            __attribute__((always_inline))
+            void set() const {
+              g_APinDescription[pin].pPort -> PIO_SODR = g_APinDescription[pin].ulPin;
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              g_APinDescription[pin].pPort -> PIO_CODR = g_APinDescription[pin].ulPin;
+            }
         };
 
         typedef TMCPin InputPin;
@@ -87,7 +113,22 @@
         class OutputPin : public TMCPin {
         public:
             OutputPin(const uint16_t _pin);
-            void write(const bool state) const;
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
+
+            __attribute__((always_inline))
+            void set() const {
+              LPC176x::delay_ns(pinDelay);
+              LPC176x::gpio_set(pin);
+              LPC176x::delay_ns(pinDelay);
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              LPC176x::delay_ns(pinDelay);
+              LPC176x::gpio_clear(pin);
+              LPC176x::delay_ns(pinDelay);
+            }
         };
 
         typedef TMCPin InputPin;
@@ -128,7 +169,11 @@
         public:
             explicit TMCPin(const uint8_t _pin);
             void mode(const uint8_t mode) const;
-            bool read() const;
+
+            __attribute__((always_inline))
+            bool read() const {
+              return digitalRead(pin);
+            }
             operator bool() const {
                 return read();
             }
@@ -140,7 +185,18 @@
         class OutputPin : public TMCPin {
         public:
             OutputPin(const uint8_t _pin);
-            void write(const bool state) const;
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
+
+            __attribute__((always_inline))
+            void set() const {
+              digitalWrite(pin, HIGH);
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              digitalWrite(pin, LOW);
+            }
         };
 
         typedef TMCPin InputPin;
