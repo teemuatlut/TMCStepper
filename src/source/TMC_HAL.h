@@ -174,9 +174,6 @@
 
     #include <cstddef>
     #include "main.h"
-    #if defined(USE_FULL_LL_DRIVER)
-        #include <stm32f4xx_ll_gpio.h>
-    #endif
 
     #include <stdint.h>
     #include <spi.h>
@@ -202,7 +199,10 @@
             InputPin(const TMCPin &_pin);
             InputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
 
-            bool read() const;
+            __attribute__((always_inline))
+            bool read() const {
+              return port->IDR & pin;
+            }
 
             operator bool() const { return read(); }
         };
@@ -212,9 +212,24 @@
             OutputPin(const TMCPin &_pin);
             OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
 
-            bool read() const;
-            void write(const bool state) const;
+            bool read() const {
+              return port->ODR & pin;
+            }
+
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
+
             void toggle() const;
+
+            __attribute__((always_inline))
+            void set() const {
+              port->BSRR = pin;
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              port->BRR = pin;
+            }
             void operator =(bool state) { write(state); }
         };
 

@@ -9,7 +9,19 @@ using namespace TMCStepper_n;
 
 TMCPin::TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin) : port(_port), pin(_pin) {}
 
-#if defined(HAL_GPIO_MODULE_ENABLED)
+#if defined(USE_FULL_LL_DRIVER)
+    void TMCPin::mode(const uint8_t mode) const {
+        switch(mode) {
+            case OUTPUT:
+                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_OUTPUT);
+                break;
+            case INPUT:
+                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_INPUT);
+                break;
+            default: break;
+        }
+    }
+#elif defined(HAL_GPIO_MODULE_ENABLED)
     void TMCPin::mode(const uint8_t mode) const {
         GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -27,62 +39,21 @@ TMCPin::TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin) : port(_port), pi
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         HAL_GPIO_Init(port, &GPIO_InitStruct);
     }
-#else
-    void TMCPin::mode(const uint8_t mode) const {
-        switch(mode) {
-            case OUTPUT:
-                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_OUTPUT);
-                break;
-            case INPUT:
-                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_INPUT);
-                break;
-            default: break;
-        }
-    }
 #endif
 
 InputPin::InputPin(const TMCPin &_pin) : TMCPin(_pin.port, _pin.pin) {}
 InputPin::InputPin(GPIO_TypeDef* const _port, uint32_t const _pin) : TMCPin(_port, _pin) {}
 
-#if defined(HAL_GPIO_MODULE_ENABLED)
-    bool InputPin::read() const {
-        return HAL_GPIO_ReadPin(port, pin);
-    }
-#else
-    bool InputPin::read() const {
-        return LL_GPIO_ReadInputPort(port) & pin;
-    }
-#endif
-
 OutputPin::OutputPin(const TMCPin &_pin) : TMCPin(_pin.port, _pin.pin) {}
 OutputPin::OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin) : TMCPin(_port, _pin) {}
 
-#if defined(HAL_GPIO_MODULE_ENABLED)
-    bool OutputPin::read() const {
-        return port->ODR & pin;
-    }
-
-    void OutputPin::write(const bool state) const {
-        HAL_GPIO_WritePin(port, pin, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    }
-
-    void OutputPin::toggle() const {
-        HAL_GPIO_TogglePin(port, pin);
-    }
-#else
-    bool OutputPin::read() const {
-        return LL_GPIO_ReadOutputPort(port) & pin;
-    }
-
-    void OutputPin::write(const bool state) const {
-        if (state)
-            LL_GPIO_SetOutputPin(port, pin);
-        else
-            LL_GPIO_ResetOutputPin(port, pin);
-    }
-
+#if defined(USE_FULL_LL_DRIVER)
     void OutputPin::toggle() const {
         LL_GPIO_TogglePin(port, pin);
+    }
+#elif defined(HAL_GPIO_MODULE_ENABLED)
+    void OutputPin::toggle() const {
+        HAL_GPIO_TogglePin(port, pin);
     }
 #endif
 
