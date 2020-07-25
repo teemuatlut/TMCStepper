@@ -29,6 +29,16 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f3xx_hal.h"
+#include "stm32f3xx.h"
+#include "stm32f3xx_ll_system.h"
+#include "stm32f3xx_ll_gpio.h"
+#include "stm32f3xx_ll_exti.h"
+#include "stm32f3xx_ll_bus.h"
+#include "stm32f3xx_ll_cortex.h"
+#include "stm32f3xx_ll_rcc.h"
+#include "stm32f3xx_ll_utils.h"
+#include "stm32f3xx_ll_pwr.h"
+#include "stm32f3xx_ll_dma.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -58,25 +68,25 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MCO_Pin GPIO_PIN_0
+#define MCO_Pin LL_GPIO_PIN_0
 #define MCO_GPIO_Port GPIOF
-#define SW_SPI_SCK_Pin GPIO_PIN_1
+#define SW_SPI_SCK_Pin LL_GPIO_PIN_1
 #define SW_SPI_SCK_GPIO_Port GPIOF
-#define ENABLE_Pin GPIO_PIN_0
+#define ENABLE_Pin LL_GPIO_PIN_0
 #define ENABLE_GPIO_Port GPIOA
-#define STEP_Pin GPIO_PIN_1
+#define STEP_Pin LL_GPIO_PIN_1
 #define STEP_GPIO_Port GPIOA
-#define CS_Pin GPIO_PIN_4
+#define CS_Pin LL_GPIO_PIN_4
 #define CS_GPIO_Port GPIOA
-#define SW_SPI_MOSI_Pin GPIO_PIN_8
+#define SW_SPI_MOSI_Pin LL_GPIO_PIN_8
 #define SW_SPI_MOSI_GPIO_Port GPIOA
-#define SW_SPI_MISO_Pin GPIO_PIN_11
+#define SW_SPI_MISO_Pin LL_GPIO_PIN_11
 #define SW_SPI_MISO_GPIO_Port GPIOA
-#define SWDIO_Pin GPIO_PIN_13
+#define SWDIO_Pin LL_GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
-#define SWCLK_Pin GPIO_PIN_14
+#define SWCLK_Pin LL_GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define LED1_Pin GPIO_PIN_3
+#define LED1_Pin LL_GPIO_PIN_3
 #define LED1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 uint32_t millis();
