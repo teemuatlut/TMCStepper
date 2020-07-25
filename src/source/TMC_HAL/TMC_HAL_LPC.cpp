@@ -33,17 +33,6 @@ bool TMCPin::read() const {
 
 OutputPin::OutputPin(const uint16_t _pin) : TMCPin(_pin) {}
 
-void OutputPin::write(const bool state) const {
-    LPC176x::delay_ns(pinDelay);
-
-    if (state)
-        LPC176x::gpio_set(pin);
-    else
-        LPC176x::gpio_clear(pin);
-
-    LPC176x::delay_ns(pinDelay);
-}
-
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {

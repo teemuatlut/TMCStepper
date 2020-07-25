@@ -46,23 +46,12 @@ InputPin::InputPin(const uint8_t _pin) :
         pinMode(_pin, INPUT);
     }
 
-bool InputPin::read() const {
-    return *inPort & bitMask;
-}
-
 OutputPin::OutputPin(const uint8_t _pin) :
     TMCPin(_pin),
     outPort(portOutputRegister(digitalPinToPort(_pin)))
     {
         pinMode(_pin, OUTPUT);
     }
-
-void OutputPin::write(const bool state) const {
-    if (state)
-        *outPort |= bitMask;
-    else
-        *outPort &= ~bitMask;
-}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {

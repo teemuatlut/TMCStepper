@@ -22,15 +22,7 @@ void TMCPin::mode(const uint8_t mode) const {
     }
 }
 
-bool TMCPin::read() const {
-    return digitalRead(pin);
-}
-
 OutputPin::OutputPin(const uint8_t _pin) : TMCPin(_pin) {}
-
-void OutputPin::write(const bool state) const {
-    digitalWrite(pin, state);
-}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {

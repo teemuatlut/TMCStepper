@@ -118,22 +118,22 @@ void SW_SPIClass::transfer(char *buf, uint8_t count) {
 
   auto tx = [&](const uint8_t ulVal){
     uint8_t value = 0;
-    sck.write(LOW);
+    sck.reset();
 
     for (uint8_t i=7 ; i>=1 ; i--) {
       // Write bit
-      mosi.write(!!(ulVal & (1 << i)) ? HIGH : LOW);
+      !!(ulVal & (1 << i)) ? mosi.set() : mosi.reset();
       // Start clock pulse
-      sck.write(HIGH);
+      sck.set();
       // Read bit
-      value |= ( miso ? 1 : 0) << i;
+      value |= ( miso.read() ? 1 : 0) << i;
       // Stop clock pulse
-      sck.write(LOW);
+      sck.reset();
     }
 
-    mosi.write(!!(ulVal & (1 << 0)) ? HIGH : LOW);
-    sck.write(HIGH);
-    value |= ( miso ? 1 : 0) << 0;
+    !!(ulVal & (1 << 0)) ? mosi.set() : mosi.reset();
+    sck.set();
+    value |= ( miso.read() ? 1 : 0) << 0;
 
     return value;
   };

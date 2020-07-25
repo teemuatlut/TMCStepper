@@ -28,13 +28,6 @@ bool TMCPin::read() const {
 
 OutputPin::OutputPin(const uint32_t _pin) : TMCPin(_pin) {}
 
-void OutputPin::write(const bool state) const {
-    if (state)
-        g_APinDescription[pin].pPort -> PIO_SODR = g_APinDescription[pin].ulPin;
-    else
-        g_APinDescription[pin].pPort -> PIO_CODR = g_APinDescription[pin].ulPin;
-}
-
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
