@@ -42,6 +42,40 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(
   //val_mA = mA;
 }
 
+/**
+  TMC2300:
+  Requested current = mA = I_rms/1000
+  Equation for current:
+  I_rms = (CS+1)/32 * V_fs/(R_sense+0.03ohm) * 1/sqrt(2)
+  Solve for CS ->
+  CS = 32*sqrt(2)*I_rms*(R_sense+0.03)/V_fs - 1
+
+  Example:
+  V_fs = 0.325V
+  mA = 1640mA = I_rms/1000 = 1.64A
+  R_sense = 0.10 Ohm
+  ->
+  CS = 32*sqrt(2)*1.64*(0.10+0.03)/0.325 - 1 = 28.687
+  CS = 28
+*/
+template<class T>
+uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>::cs2rms(uint8_t CS) {
+  const float rs = Rsense/255.0+0.03;
+  return (CS+1.0)/32.0 * 0.325/rs / 1.41421 * 1000;
+}
+
+template<class T>
+void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>::rms_current(uint16_t mA) {
+  const float rs = Rsense/255.0+0.03;
+  uint8_t CS = 32.0*1.41421*mA/1000.0*rs/0.325 - 1;
+
+  if (CS > 31)
+    CS = 31;
+
+  static_cast<T*>(this)->irun(CS);
+  static_cast<T*>(this)->ihold(CS*hold_multiplier());
+}
+
 template<typename TYPE>
 uint8_t TMCStepper_n::TMCcommon<TYPE>::test_connection() {
   uint32_t drv_status = static_cast<TYPE*>(this)->DRV_STATUS();

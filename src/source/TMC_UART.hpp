@@ -46,6 +46,26 @@ protected:
   template<class> friend class TMC2209_n::SG_RESULT_i;
   template<class> friend class TMC2209_n::COOLCONF_i;
 
+  template<class> friend class TMC2300_n::GCONF_i;
+  template<class> friend class TMC2300_n::GSTAT_i;
+  template<class> friend class TMC2300_n::IFCNT_i;
+  template<class> friend class TMC2300_n::SLAVECONF_i;
+  template<class> friend class TMC2300_n::IOIN_i;
+  template<class> friend class TMC2300_n::IHOLD_IRUN_i;
+  template<class> friend class TMC2300_n::TPOWERDOWN_i;
+  template<class> friend class TMC2300_n::TSTEP_i;
+  template<class> friend class TMC2300_n::VACTUAL_i;
+  template<class> friend class TMC2300_n::TCOOLTHRS_i;
+  template<class> friend class TMC2300_n::SGTHRS_i;
+  template<class> friend class TMC2300_n::SG_VALUE_i;
+  template<class> friend class TMC2300_n::COOLCONF_i;
+  template<class> friend class TMC2300_n::MSCNT_i;
+  template<class> friend class TMC2300_n::CHOPCONF_i;
+  template<class> friend class TMC2300_n::DRV_STATUS_i;
+  template<class> friend class TMC2300_n::PWMCONF_i;
+  template<class> friend class TMC2300_n::PWM_SCALE_i;
+  template<class> friend class TMC2300_n::PWM_AUTO_i;
+
   TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
   TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
   TMC_UART(PinDef SW_RX_pin, PinDef SW_TX_pin, uint8_t addr);
