@@ -83,10 +83,13 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   // ...and once more to MCU
   data.address = addressByte;
   transfer(data.buffer, 5);
+
+  data.data = __builtin_bswap32(data.data);
   status_response = data.status;
 
   endTransaction();
   cs.write(HIGH);
+
   return data.data;
 }
 
@@ -95,14 +98,12 @@ void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
   OutputPin cs(pinCS);
   TransferData data;
   addressByte |= TMC_WRITE;
+  data.address = addressByte;
+  data.data = __builtin_bswap32(config);
 
   beginTransaction();
   cs.write(LOW);
-
-  data.address = addressByte;
-  data.data = config;
   transfer(data.buffer, 5);
-  status_response = data.status;
 
   // Shift the written data to the correct driver in chain
   // Default link_index = -1 and no shifting happens
@@ -110,6 +111,8 @@ void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
   for (int8_t i = 1; i < chain_length; i++) {
     transfer(data.buffer, 5);
   }
+
+  status_response = data.status;
 
   endTransaction();
   cs.write(HIGH);
