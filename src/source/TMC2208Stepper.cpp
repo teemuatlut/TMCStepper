@@ -24,7 +24,6 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t ad
 	TMCStepper(RS)
 	{
 		HWSerial = SerialPort;
-		defaults();
 	}
 
 TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2) :
@@ -48,9 +47,7 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t ad
 	TMC2208Stepper::TMC2208Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
 		TMC_UART(SW_RX_pin, SW_TX_pin, addr),
 		TMCStepper(RS)
-		{
-			defaults();
-		}
+		{}
 
 	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
 		if (SWSerial != nullptr)
@@ -111,7 +108,7 @@ bool TMC2208Stepper::isEnabled() { return !enn() && toff(); }
 
 uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
 	uint8_t crc = 0;
-	for (uint8_t i = 0; i < len; i++) {
+	for (uint8_t i = 0; i < (len-1); i++) {
 		uint8_t currentByte = datagram[i];
 		for (uint8_t j = 0; j < 8; j++) {
 			if ((crc >> 7) ^ (currentByte & 0x01)) {
@@ -131,7 +128,7 @@ void TMC_UART::write(uint8_t addr, uint32_t regVal) {
     WriteDatagram datagram;
     datagram.driverAddress = slaveAddress;
     datagram.registerAddress = addr | TMC_WRITE;
-    datagram.data = regVal;
+    datagram.data = __builtin_bswap32(regVal);
 
     datagram.crc = calcCRC((uint8_t*)&datagram, datagram.length);
 
@@ -144,28 +141,30 @@ void TMC_UART::write(uint8_t addr, uint32_t regVal) {
 
 TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
     serial_write((uint8_t*)&datagram, datagram.length);
-
-    //delay(this->replyDelay);
     const uint32_t timeout = this->getTime() + this->abort_window;
 
     // scan for the rx frame and read it
     const uint32_t sync_target = static_cast<uint32_t>(datagram.sync)<<16 | 0xFF00 | datagram.registerAddress;
     uint32_t sync = 0;
 
+    ReadResponse response{};
+
     do {
-        sync <<= 8;
-        serial_read((uint8_t*)&sync, 1);
-
-        if (this->getTime() > timeout) {
-            return ReadResponse{};
+        if (available() > 0) {
+		    sync <<= 8;
+		    serial_read((uint8_t*)&sync, 1);
         }
-    } while (sync != sync_target);
+    } while (((sync&0xFFFFFF) != sync_target) && (this->getTime() < timeout));
 
-    ReadResponse response;
-    response.driverAddress = 0xFF;
-    response.registerAddress = static_cast<uint8_t>(sync);
+    while (this->getTime() < timeout) {
+		if(available() > 0) {
+	        response.driverAddress = 0xFF;
+	    	response.registerAddress = static_cast<uint8_t>(sync);
 
-    serial_read((uint8_t*)&response.data, 5);
+	    	serial_read((uint8_t*)&response.data, 5);
+	    	break;
+		}
+	};
 
     return response;
 }
@@ -186,7 +185,7 @@ uint32_t TMC_UART::read(uint8_t addr) {
 
         uint8_t crc = calcCRC((uint8_t*)&response, response.length);
 
-        if (crc == response.crc || crc != 0) {
+        if (crc == response.crc && crc != 0) {
             CRCerror = false;
             break;
         }
@@ -194,5 +193,7 @@ uint32_t TMC_UART::read(uint8_t addr) {
         response.data = 0;
     }
 
-    return response.data;
+	delay(replyDelay);
+
+    return __builtin_bswap32(response.data);
 }

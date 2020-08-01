@@ -69,6 +69,19 @@
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
+struct TMC2130Stepper;
+struct TMC2160Stepper;
+struct TMC5130Stepper;
+struct TMC5160Stepper;
+struct TMC2208Stepper;
+struct TMC2209Stepper;
+
+namespace TMCStepper_n {
+
+enum class RMS_TYPE {
+	WITH_VSENSE, WITH_GLOBAL_SCALER
+};
+
 struct TMC_SPI {
 protected:
 
@@ -224,11 +237,11 @@ protected:
     static constexpr uint8_t  TMC2208_SYNC = 0x05,
                                                         TMC2208_SLAVE_ADDR = 0x00;
     static constexpr uint8_t replyDelay = 2;
-    static constexpr uint8_t abort_window = 5;
+    static constexpr uint8_t abort_window = 50;
     static constexpr uint8_t max_retries = 2;
 
     struct ReadRequest {
-        static constexpr uint8_t length = 3;
+        static constexpr uint8_t length = 4;
         uint8_t sync = TMC2208_SYNC;
         uint8_t driverAddress;
         uint8_t registerAddress;
@@ -236,7 +249,7 @@ protected:
     };
 
     struct WriteDatagram {
-        static constexpr uint8_t length = 7;
+        static constexpr uint8_t length = 8;
         uint8_t sync = TMC2208_SYNC;
         uint8_t driverAddress;
         uint8_t registerAddress;
@@ -265,15 +278,9 @@ protected:
 	bool CRCerror = false;
 };
 
-template<typename DERIVED>
-class TMCStepper {
+template<typename TYPE>
+class TMCcommon {
 	public:
-		uint16_t cs2rms(uint8_t CS);
-		void rms_current(uint16_t mA);
-		void rms_current(uint16_t mA, float mult);
-		uint16_t rms_current();
-		void hold_multiplier(float val) { holdMultiplier = val; }
-		float hold_multiplier() { return holdMultiplier; }
 		uint8_t test_connection();
 
 		// Helper functions
@@ -285,16 +292,64 @@ class TMCStepper {
 		int8_t hysteresis_end();
 		void hysteresis_start(uint8_t value);
 		uint8_t hysteresis_start();
-
-	protected:
-		TMCStepper(float RS) : Rsense(RS) {};
-
-		const float Rsense;
-		float holdMultiplier = 0.5;
 };
 
+template<class T, RMS_TYPE I> struct TMC_RMS;
+
+template<class T>
+struct TMC_RMS<T, RMS_TYPE::WITH_VSENSE> {
+    uint16_t cs2rms(uint8_t CS);
+    void rms_current(uint16_t mA);
+    void rms_current(uint16_t mA, float mult) {
+      holdMultiplier = mult;
+      rms_current(mA);
+    }
+    uint16_t rms_current() {
+      return cs2rms(static_cast<T*>(this)->irun());
+    }
+    void hold_multiplier(float val) { holdMultiplier = val; }
+    float hold_multiplier() { return holdMultiplier; }
+  protected:
+    TMC_RMS(float RS) : Rsense(RS) {};
+
+    const float Rsense;
+    float holdMultiplier = 0.5;
+};
+
+template<class T>
+struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
+    uint16_t cs2rms(uint8_t CS);
+    void rms_current(uint16_t mA);
+    void rms_current(uint16_t mA, float mult) {
+      holdMultiplier = mult;
+      rms_current(mA);
+    }
+    uint16_t rms_current() {
+      return cs2rms(static_cast<T*>(this)->irun());
+    }
+    void hold_multiplier(float val) { holdMultiplier = val; }
+    float hold_multiplier() { return holdMultiplier; }
+  protected:
+    TMC_RMS(float RS) : Rsense(RS) {};
+
+    const float Rsense;
+    float holdMultiplier = 0.5;
+};
+
+};
+
+#include "source/interfaces/TMCStepper.hpp"
+
+template<class T> struct TMCStepper;
+template<> struct TMCStepper<TMC2130Stepper> : TMCStepper_n::TMCcommon<TMC2130Stepper>, TMCStepper_n::TMC_RMS<TMC2130Stepper, RMS_TYPE::WITH_VSENSE> 		{ TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC2160Stepper> : TMCStepper_n::TMCcommon<TMC2160Stepper>, TMCStepper_n::TMC_RMS<TMC2160Stepper, RMS_TYPE::WITH_GLOBAL_SCALER> { TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC5130Stepper> : TMCStepper_n::TMCcommon<TMC5130Stepper>, TMCStepper_n::TMC_RMS<TMC5130Stepper, RMS_TYPE::WITH_VSENSE> 		{ TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC5160Stepper> : TMCStepper_n::TMCcommon<TMC5160Stepper>, TMCStepper_n::TMC_RMS<TMC5160Stepper, RMS_TYPE::WITH_GLOBAL_SCALER> { TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC2208Stepper> : TMCStepper_n::TMCcommon<TMC2208Stepper>, TMCStepper_n::TMC_RMS<TMC2208Stepper, RMS_TYPE::WITH_VSENSE> 		{ TMCStepper(float) : TMC_RMS(0.5) {} };
+template<> struct TMCStepper<TMC2209Stepper> : TMCStepper_n::TMCcommon<TMC2209Stepper>, TMCStepper_n::TMC_RMS<TMC2209Stepper, RMS_TYPE::WITH_VSENSE> 		{ TMCStepper(float) : TMC_RMS(0.5) {} };
+
 class TMC2130Stepper :
-	public TMC_SPI,
+	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC2130Stepper>,
 	public TMC2130_n::GCONF_i<TMC2130Stepper>,
 	public TMC2130_n::GSTAT_i<TMC2130Stepper>,
@@ -343,7 +398,7 @@ class TMC2130Stepper :
 };
 
 class TMC2160Stepper :
-	public TMC_SPI,
+	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC2160Stepper>,
 	public TMC2160_n::GCONF_i<TMC2160Stepper>,
 	public TMC2160_n::GSTAT_i<TMC2160Stepper>,
@@ -391,7 +446,7 @@ class TMC2160Stepper :
 };
 
 class TMC5130Stepper :
-	public TMC_SPI,
+	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5130Stepper>,
 	public TMC5130_n::GCONF_i<TMC5130Stepper>,
 	public TMC5130_n::GSTAT_i<TMC5130Stepper>,
@@ -464,7 +519,7 @@ class TMC5130Stepper :
 	};
 
 class TMC5160Stepper :
-	public TMC_SPI,
+	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5160Stepper>,
 	public TMC5160_n::GCONF_i<TMC5160Stepper>,
 	public TMC5160_n::GSTAT_i<TMC5160Stepper>,
@@ -546,8 +601,8 @@ class TMC5160Stepper :
 typedef TMC5160Stepper TMC5161Stepper;
 
 class TMC2208Stepper :
-	public TMC_UART,
-	public TMCStepper<TMC2130Stepper>,
+	public TMCStepper_n::TMC_UART,
+	public TMCStepper<TMC2208Stepper>,
 	public TMC2208_n::GCONF_i<TMC2208Stepper>,
 	public TMC2208_n::GSTAT_i<TMC2208Stepper>,
 	public TMC2208_n::IFCNT_i<TMC2208Stepper>,
