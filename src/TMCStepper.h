@@ -43,6 +43,7 @@
 #include "source/interfaces/TMC5160.hpp"
 #include "source/interfaces/TMC2208.hpp"
 #include "source/interfaces/TMC2209.hpp"
+#include "source/interfaces/TMC2300.hpp"
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
@@ -52,6 +53,7 @@ struct TMC5130Stepper;
 struct TMC5160Stepper;
 struct TMC2208Stepper;
 struct TMC2209Stepper;
+struct TMC2300Stepper;
 
 #include "source/TMC_SPI.hpp"
 #include "source/TMC_UART.hpp"
@@ -59,7 +61,7 @@ struct TMC2209Stepper;
 namespace TMCStepper_n {
 
 enum class RMS_TYPE {
-	WITH_VSENSE, WITH_GLOBAL_SCALER
+	WITH_VSENSE, WITH_GLOBAL_SCALER, WITHOUT_VSENSE
 };
 
 template<typename TYPE>
@@ -120,6 +122,26 @@ struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
     uint8_t holdMultiplier = 127;
 };
 
+template<class T>
+struct TMC_RMS<T, RMS_TYPE::WITHOUT_VSENSE> {
+    uint16_t cs2rms(uint8_t CS);
+    void rms_current(uint16_t mA);
+    void rms_current(uint16_t mA, float mult) {
+      hold_multiplier(mult);
+      rms_current(mA);
+    }
+    uint16_t rms_current() {
+      return cs2rms(static_cast<T*>(this)->irun());
+    }
+    void hold_multiplier(float val) { holdMultiplier = val*255; }
+    float hold_multiplier() { return (holdMultiplier+0.5)/255.0; }
+  protected:
+    TMC_RMS(float RS) : Rsense(RS*255) {};
+
+    const uint8_t Rsense;
+    uint8_t holdMultiplier = 127;
+};
+
 };
 
 #include "source/interfaces/TMCStepper.hpp"
@@ -131,6 +153,7 @@ template<> struct TMCStepper<TMC5130Stepper> : TMCStepper_n::TMCcommon<TMC5130St
 template<> struct TMCStepper<TMC5160Stepper> : TMCStepper_n::TMCcommon<TMC5160Stepper>, TMCStepper_n::TMC_RMS<TMC5160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ using TMC_RMS::TMC_RMS; };
 template<> struct TMCStepper<TMC2208Stepper> : TMCStepper_n::TMCcommon<TMC2208Stepper>, TMCStepper_n::TMC_RMS<TMC2208Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
 template<> struct TMCStepper<TMC2209Stepper> : TMCStepper_n::TMCcommon<TMC2209Stepper>, TMCStepper_n::TMC_RMS<TMC2209Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
+template<> struct TMCStepper<TMC2300Stepper> : TMCStepper_n::TMCcommon<TMC2300Stepper>, TMCStepper_n::TMC_RMS<TMC2300Stepper, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>   { using TMC_RMS::TMC_RMS; };
 
 class TMC2130Stepper :
 	public TMCStepper_n::TMC_SPI,
@@ -462,6 +485,48 @@ class TMC2209Stepper :
 			TMC2209Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void push();
+};
+
+class TMC2300Stepper :
+	public TMCStepper_n::TMC_UART,
+	public TMCStepper<TMC2300Stepper>,
+	public TMC2300_n::GCONF_i<TMC2300Stepper>,
+	public TMC2300_n::GSTAT_i<TMC2300Stepper>,
+	public TMC2300_n::IFCNT_i<TMC2300Stepper>,
+	public TMC2300_n::SLAVECONF_i<TMC2300Stepper>,
+	public TMC2300_n::IOIN_i<TMC2300Stepper>,
+	public TMC2300_n::IHOLD_IRUN_i<TMC2300Stepper>,
+	public TMC2300_n::TPOWERDOWN_i<TMC2300Stepper>,
+	public TMC2300_n::TSTEP_i<TMC2300Stepper>,
+	public TMC2300_n::VACTUAL_i<TMC2300Stepper>,
+	public TMC2300_n::TCOOLTHRS_i<TMC2300Stepper>,
+	public TMC2300_n::SGTHRS_i<TMC2300Stepper>,
+	public TMC2300_n::SG_VALUE_i<TMC2300Stepper>,
+	public TMC2300_n::COOLCONF_i<TMC2300Stepper>,
+	public TMC2300_n::MSCNT_i<TMC2300Stepper>,
+	public TMC2300_n::CHOPCONF_i<TMC2300Stepper>,
+	public TMC2300_n::DRV_STATUS_i<TMC2300Stepper>,
+	public TMC2300_n::PWMCONF_i<TMC2300Stepper>,
+	public TMC2300_n::PWM_SCALE_i<TMC2300Stepper>,
+	public TMC2300_n::PWM_AUTO_i<TMC2300Stepper>
+	{
+		public:
+			TMC2300Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
+
+			#if SW_CAPABLE_PLATFORM
+				TMC2300Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
+			#else
+				TMC2300Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+			#endif
+			void defaults();
+			void push();
+			void begin();
+			#if SW_CAPABLE_PLATFORM
+				void beginSerial(uint32_t baudrate);
+			#else
+				void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
+			#endif
+			bool isEnabled();
 };
 
 class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224Stepper> {
