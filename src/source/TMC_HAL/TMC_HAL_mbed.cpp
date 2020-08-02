@@ -6,11 +6,7 @@
 
 using namespace TMCStepper_n;
 
-OutputPin::OutputPin(PinName pin) : DigitalOut(pin) {}
-
 void OutputPin::mode(uint8_t) {}
-
-InputPin::InputPin(PinName pin) : DigitalIn(pin) {}
 
 void InputPin::mode(const uint8_t inputType) {
     switch(inputType) {
@@ -70,11 +66,21 @@ void TMC2660Stepper::endTransaction() {
     }
 }
 
+__attribute__((weak, always_inline))
+int TMC_UART::available() {
+    int out = 0;
+    if (HWSerial != nullptr) {
+        out = HWSerial->readable();
+    }
+
+    return out;
+}
+
 static Timer serialTimeout;
 
 __attribute__((weak))
 size_t TMC_UART::getTime() const {
-    return serialTimeout.read_ms();
+    return 1000 * serialTimeout.elapsed_time().count();
 }
 
 __attribute__((weak))
@@ -100,14 +106,14 @@ void TMC_UART::preReadCommunication() {
 __attribute__((weak))
 void TMC_UART::serial_read(uint8_t *data, int8_t length) {
     if (HWSerial != nullptr) {
-        HWSerial->read(data, length, nullptr);
+        HWSerial->read(data, length);
     }
 }
 
 __attribute__((weak))
 void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
     if (HWSerial != nullptr) {
-        bytesWritten += HWSerial->write(data, length, nullptr);
+        bytesWritten += HWSerial->write(data, length);
     }
 }
 

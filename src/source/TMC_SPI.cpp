@@ -30,7 +30,7 @@ void TMC_SPI::setSPISpeed(uint32_t speed) {
 }
 
 void TMC_SPI::transfer(const uint8_t count) {
-  char emptyBytes[count] = {0};
+  char emptyBytes[16] = {0};
   transfer(emptyBytes, count);
 }
 
