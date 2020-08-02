@@ -210,19 +210,29 @@
         typedef PinName PinDef;
 
         struct OutputPin : public DigitalOut {
-            OutputPin(PinName pin);
+            using DigitalOut::DigitalOut;
             void mode(uint8_t);
+
+            __attribute__((always_inline))
+            void set() {
+                write(1);
+            }
+
+            __attribute__((always_inline))
+            void reset() {
+                write(0);
+            }
         };
 
         struct InputPin : public DigitalIn {
-            InputPin(PinName pin);
+            using DigitalIn::DigitalIn;
             void mode(const uint8_t inputType);
         };
 
     }
 
     typedef SPI SPIClass;
-    typedef Serial HardwareSerial;
+    typedef BufferedSerial HardwareSerial;
 
     inline void delay(size_t ms) { wait_us(1000*ms); }
 
