@@ -33,3 +33,5 @@ This donation option will allow me to purchase the hardware that I can use for t
 
 - [x] ESP-PROG for debugging ESP32 support
 - [ ] SKR Pro V1.2 for testing STM32 based boards
+
+[6 Quick start guide for the TMC 2209 with Arduino Mini Clone board.]: https://electronics.stackexchange.com/a/518984/261721
