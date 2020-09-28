@@ -45,13 +45,10 @@ void Stream::end()
 
 int Stream::available()
 {
-	if (fd != -1)
-	{
-		int result;
-		if (ioctl(fd, FIONREAD, &result) == -1)
-			return -1;
-		return result;
-	}
+	int result;
+	if (ioctl(fd, FIONREAD, &result) == -1)
+		return -1;
+	return result;
 }
 
 uint8_t Stream::write(const uint8_t data)
