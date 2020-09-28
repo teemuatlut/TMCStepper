@@ -16,9 +16,18 @@ uint32_t millis();
 class Stream
 {
 public:
-	int available();
+	Stream(const char* port);
+	void begin(unsigned long baud) { begin(baud, O_RDWR | O_NOCTTY | O_NDELAY); }
+	void begin(unsigned long, int);
+	void end();
+	int available(void);
 	uint8_t write(const uint8_t data);
 	uint8_t read();
+private:
+	int fd;                    /* Filedeskriptor */
+	const char* port;
 };
 
+extern Stream Serial;
+extern Stream Serial1;
 #endif
