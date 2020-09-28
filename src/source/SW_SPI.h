@@ -3,7 +3,7 @@
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
 #elif defined(bcm2835)
-#include <bcm2835.h>
+#include "source/rpi_bcm2835.h"
 #include "source/bcm2835_spi.h"
 #include "source/bcm2835_stream.h"
 #endif
