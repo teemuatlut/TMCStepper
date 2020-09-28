@@ -1,4 +1,6 @@
 #pragma once
+#if defined(bcm2835)
+
 #include <bcm2835.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -10,3 +12,5 @@
 #define pinMode(PIN, MODE) bcm2835_gpio_fsel(PIN, MODE); if (MODE == (uint8_t)BCM2835_GPIO_PUD_UP || MODE == (uint8_t)BCM2835_GPIO_PUD_DOWN) bcm2835_gpio_set_pud(PIN, MODE)
 #define digitalWrite(PIN, MODE) bcm2835_gpio_write(PIN, MODE)
 #define digitalRead(PIN)  bcm2835_gpio_lev(PIN)
+
+#endif
