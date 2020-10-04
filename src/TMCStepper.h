@@ -8,10 +8,13 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>
+	#include <SPI.h>
+	#include <Stream.h>
+#elif defined(bcm2835)
+	#include <bcm2835.h>
+	#include "source/bcm2835_spi.h"
+	#include "source/bcm2835_stream.h"
 #endif
-
-#include <Stream.h>
-#include <SPI.h>
 
 #if (__cplusplus == 201703L) && defined(__has_include)
 	#define SW_CAPABLE_PLATFORM __has_include(<SoftwareSerial.h>)
