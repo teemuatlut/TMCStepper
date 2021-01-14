@@ -9,7 +9,7 @@ uint32_t millis()
 {
 	struct timeval now;
 	gettimeofday(&now, NULL);
-	return (uint32_t)now.tv_usec;
+	return (uint32_t) ( now.tv_usec / 1000 );
 }
 
 Stream::Stream(const char* port)
