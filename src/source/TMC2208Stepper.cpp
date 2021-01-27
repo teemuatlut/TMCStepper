@@ -36,7 +36,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 		if (SWSerial != nullptr)
 		{
 			SWSerial->begin(baudrate);
-			SWSerial->stopListening();
+			SWSerial->end();
 		}
 		#if defined(ARDUINO_ARCH_AVR)
 			if (RXTX_pin > 0) {
@@ -179,7 +179,7 @@ __attribute__((weak))
 void TMC2208Stepper::postReadCommunication() {
 	#if SW_CAPABLE_PLATFORM
 		if (SWSerial != nullptr) {
-			SWSerial->stopListening();
+			SWSerial->end();
 		}
 	#endif
 }
