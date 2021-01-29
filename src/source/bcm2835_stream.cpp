@@ -28,9 +28,12 @@ void Stream::begin(unsigned long baud, int flags)
 	}
 	fcntl(fd, F_SETFL, O_RDWR);
 
+	// Use 8 data bit, no parity and 1 stop bit
 	tcgetattr(fd, &options);
 	options.c_cflag = CS8 | CLOCAL | CREAD | CBAUDEX;
-	options.c_cflag &= ~CBAUD;
+	options.c_cflag &= ~CBAUD;	// use the extended baud
+	options.c_cflag &= ~PARENB;	// no parity
+	options.c_cflag &= ~CSTOPB;	// 1 stop bit
 	options.c_iflag = IGNPAR;
 	options.c_oflag = baud;
 	options.c_lflag = baud;
