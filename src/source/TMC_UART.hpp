@@ -2,6 +2,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "../TMCStepper.h"
 #include "TMC_HAL.h"
 
 class SSwitch {

@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include "../TMC_HAL.h"
 #include "TMCStepper.h"
 
 using namespace TMCStepper_n;

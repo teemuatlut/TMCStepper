@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "TMCStepper.h"
+#include "../../TMCStepper.h"
 
 namespace TMC2130_n {
     // 0x00 RW: GCONF

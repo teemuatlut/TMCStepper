@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TMCStepper.h"
+#include "../../TMCStepper.h"
 #include "TMC2130.hpp"
 #include "TMC2208.hpp"
 

@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+#include "../../TMCStepper.h"
 #include "../TMC_HAL.h"
-#include "TMCStepper.h"
 
 using namespace TMCStepper_n;
 

@@ -3,7 +3,7 @@
 
 #if (defined(USE_FULL_LL_DRIVER) || defined(USE_HAL_DRIVER))
 
-#include <TMCStepper.h>
+#include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
 

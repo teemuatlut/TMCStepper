@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "../TMCStepper.h"
 #include "TMC_SPI.hpp"
 
 using namespace TMCStepper_n;

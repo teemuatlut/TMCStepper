@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TMCStepper.h"
+#include "../../TMCStepper.h"
 
 namespace TMC2160_n {
     using TMC2130_n::GCONF_i;

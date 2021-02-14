@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "TMCStepper.h"
+#include "../../TMCStepper.h"
 #include "TMC2130.hpp"
 
 namespace TMC2208_n {
