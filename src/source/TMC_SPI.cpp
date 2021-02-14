@@ -1,5 +1,5 @@
 
-#include "TMCStepper.h"
+#include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
 

@@ -1,4 +1,4 @@
-#include "TMCStepper.h"
+#include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
 using namespace TMC2300_n;

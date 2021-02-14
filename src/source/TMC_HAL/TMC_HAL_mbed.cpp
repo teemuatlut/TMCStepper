@@ -1,8 +1,8 @@
 
 #if defined(__MBED__)
 
-#include "TMC_HAL.h"
-#include "TMCStepper.h"
+#include "../TMC_HAL.h"
+#include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
 
