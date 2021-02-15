@@ -202,6 +202,28 @@ class TMC2130Stepper :
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
+
+		using GCONF_t           = TMC2130_n::GCONF_i          <TMC2130Stepper>::GCONF_t;
+		using GSTAT_t           = TMC2130_n::GSTAT_i          <TMC2130Stepper>::GSTAT_t;
+		using IOIN_t            = TMC2130_n::IOIN_i           <TMC2130Stepper>::IOIN_t;
+		using IHOLD_IRUN_t      = TMC2130_n::IHOLD_IRUN_i     <TMC2130Stepper>::IHOLD_IRUN_t;
+		using TPOWERDOWN_t      = TMC2130_n::TPOWERDOWN_i     <TMC2130Stepper>::TPOWERDOWN_t;
+		using TSTEP_t           = TMC2130_n::TSTEP_i          <TMC2130Stepper>::TSTEP_t;
+		using TPWMTHRS_t        = TMC2130_n::TPWMTHRS_i       <TMC2130Stepper>::TPWMTHRS_t;
+		using TCOOLTHRS_t       = TMC2130_n::TCOOLTHRS_i      <TMC2130Stepper>::TCOOLTHRS_t;
+		using THIGH_t           = TMC2130_n::THIGH_i          <TMC2130Stepper>::THIGH_t;
+		using XDIRECT_t         = TMC2130_n::XDIRECT_i        <TMC2130Stepper>::XDIRECT_t;
+		using VDCMIN_t          = TMC2130_n::VDCMIN_i         <TMC2130Stepper>::VDCMIN_t;
+		using MSCNT_t           = TMC2130_n::MSCNT_i          <TMC2130Stepper>::MSCNT_t;
+		using MSCURACT_t        = TMC2130_n::MSCURACT_i       <TMC2130Stepper>::MSCURACT_t;
+		using CHOPCONF_t        = TMC2130_n::CHOPCONF_i       <TMC2130Stepper>::CHOPCONF_t;
+		using COOLCONF_t        = TMC2130_n::COOLCONF_i       <TMC2130Stepper>::COOLCONF_t;
+		using DCCTRL_t          = TMC2130_n::DCCTRL_i         <TMC2130Stepper>::DCCTRL_t;
+		using DRV_STATUS_t      = TMC2130_n::DRV_STATUS_i     <TMC2130Stepper>::DRV_STATUS_t;
+		using PWMCONF_t         = TMC2130_n::PWMCONF_i        <TMC2130Stepper>::PWMCONF_t;
+		using PWM_SCALE_t       = TMC2130_n::PWM_SCALE_i      <TMC2130Stepper>::PWM_SCALE_t;
+		using ENCM_CTRL_t       = TMC2130_n::ENCM_CTRL_i      <TMC2130Stepper>::ENCM_CTRL_t;
+		using LOST_STEPS_t      = TMC2130_n::LOST_STEPS_i     <TMC2130Stepper>::LOST_STEPS_t;
 };
 
 class TMC2160Stepper :
@@ -250,66 +272,94 @@ class TMC2160Stepper :
 		TMC2160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.075;
+
+		using GCONF_t        	= TMC2160_n::GCONF_i          <TMC2160Stepper>::GCONF_t;
+		using GSTAT_t        	= TMC2160_n::GSTAT_i          <TMC2160Stepper>::GSTAT_t;
+		using IOIN_t         	= TMC2160_n::IOIN_i           <TMC2160Stepper>::IOIN_t;
+		using IHOLD_IRUN_t   	= TMC2160_n::IHOLD_IRUN_i     <TMC2160Stepper>::IHOLD_IRUN_t;
+		using TPOWERDOWN_t   	= TMC2160_n::TPOWERDOWN_i     <TMC2160Stepper>::TPOWERDOWN_t;
+		using TSTEP_t        	= TMC2160_n::TSTEP_i          <TMC2160Stepper>::TSTEP_t;
+		using TPWMTHRS_t     	= TMC2160_n::TPWMTHRS_i       <TMC2160Stepper>::TPWMTHRS_t;
+		using TCOOLTHRS_t    	= TMC2160_n::TCOOLTHRS_i      <TMC2160Stepper>::TCOOLTHRS_t;
+		using THIGH_t        	= TMC2160_n::THIGH_i          <TMC2160Stepper>::THIGH_t;
+		using XDIRECT_t      	= TMC2160_n::XDIRECT_i        <TMC2160Stepper>::XDIRECT_t;
+		using VDCMIN_t       	= TMC2160_n::VDCMIN_i         <TMC2160Stepper>::VDCMIN_t;
+		using MSLUTSEL_t     	= TMC2160_n::MSLUTSEL_i       <TMC2160Stepper>::MSLUTSEL_t;
+		using MSLUTSTART_t   	= TMC2160_n::MSLUTSTART_i     <TMC2160Stepper>::MSLUTSTART_t;
+		using MSCNT_t        	= TMC2160_n::MSCNT_i          <TMC2160Stepper>::MSCNT_t;
+		using MSCURACT_t     	= TMC2160_n::MSCURACT_i       <TMC2160Stepper>::MSCURACT_t;
+		using CHOPCONF_t     	= TMC2160_n::CHOPCONF_i       <TMC2160Stepper>::CHOPCONF_t;
+		using COOLCONF_t     	= TMC2160_n::COOLCONF_i       <TMC2160Stepper>::COOLCONF_t;
+		using DCCTRL_t       	= TMC2160_n::DCCTRL_i         <TMC2160Stepper>::DCCTRL_t;
+		using DRV_STATUS_t   	= TMC2160_n::DRV_STATUS_i     <TMC2160Stepper>::DRV_STATUS_t;
+		using PWMCONF_t      	= TMC2160_n::PWMCONF_i        <TMC2160Stepper>::PWMCONF_t;
+		using ENCM_CTRL_t    	= TMC2160_n::ENCM_CTRL_i      <TMC2160Stepper>::ENCM_CTRL_t;
+		using LOST_STEPS_t   	= TMC2160_n::LOST_STEPS_i     <TMC2160Stepper>::LOST_STEPS_t;
+		using SHORT_CONF_t   	= TMC2160_n::SHORT_CONF_i     <TMC2160Stepper>::SHORT_CONF_t;
+		using DRV_CONF_t     	= TMC2160_n::DRV_CONF_i       <TMC2160Stepper>::DRV_CONF_t;
+		using GLOBAL_SCALER_t	= TMC2160_n::GLOBAL_SCALER_i  <TMC2160Stepper>::GLOBAL_SCALER_t;
+		using OFFSET_READ_t  	= TMC2160_n::OFFSET_READ_i    <TMC2160Stepper>::OFFSET_READ_t;
+		using PWM_SCALE_t    	= TMC2160_n::PWM_SCALE_i      <TMC2160Stepper>::PWM_SCALE_t;
 };
 
 class TMC5130Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5130Stepper>,
-	public TMC5130_n::GCONF_i<TMC5130Stepper>,
-	public TMC5130_n::GSTAT_i<TMC5130Stepper>,
-	public TMC5130_n::IFCNT_i<TMC5130Stepper>,
-	public TMC5130_n::SLAVECONF_i<TMC5130Stepper>,
-	public TMC5130_n::IOIN_i<TMC5130Stepper>,
-	public TMC5130_n::OUTPUT_i<TMC5130Stepper>,
-	public TMC5130_n::X_COMPARE_i<TMC5130Stepper>,
-	public TMC5130_n::IHOLD_IRUN_i<TMC5130Stepper>,
-	public TMC5130_n::TPOWERDOWN_i<TMC5130Stepper>,
-	public TMC5130_n::TSTEP_i<TMC5130Stepper>,
-	public TMC5130_n::TPWMTHRS_i<TMC5130Stepper>,
-	public TMC5130_n::TCOOLTHRS_i<TMC5130Stepper>,
-	public TMC5130_n::THIGH_i<TMC5130Stepper>,
-	public TMC5130_n::RAMPMODE_i<TMC5130Stepper>,
-	public TMC5130_n::XACTUAL_i<TMC5130Stepper>,
-	public TMC5130_n::VACTUAL_i<TMC5130Stepper>,
-	public TMC5130_n::VSTART_i<TMC5130Stepper>,
-	public TMC5130_n::A1_i<TMC5130Stepper>,
-	public TMC5130_n::V1_i<TMC5130Stepper>,
-	public TMC5130_n::AMAX_i<TMC5130Stepper>,
-	public TMC5130_n::VMAX_i<TMC5130Stepper>,
-	public TMC5130_n::DMAX_i<TMC5130Stepper>,
-	public TMC5130_n::D1_i<TMC5130Stepper>,
-	public TMC5130_n::VSTOP_i<TMC5130Stepper>,
-	public TMC5130_n::TZEROWAIT_i<TMC5130Stepper>,
-	public TMC5130_n::XTARGET_i<TMC5130Stepper>,
-	public TMC5130_n::VDCMIN_i<TMC5130Stepper>,
-	public TMC5130_n::SW_MODE_i<TMC5130Stepper>,
-	public TMC5130_n::RAMP_STAT_i<TMC5130Stepper>,
-	public TMC5130_n::XLATCH_i<TMC5130Stepper>,
-	public TMC5130_n::ENCMODE_i<TMC5130Stepper>,
-	public TMC5130_n::X_ENC_i<TMC5130Stepper>,
-	public TMC5130_n::ENC_CONST_i<TMC5130Stepper>,
-	public TMC5130_n::ENC_STATUS_i<TMC5130Stepper>,
-	public TMC5130_n::ENC_LATCH_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT0_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT1_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT2_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT3_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT4_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT5_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT6_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUT7_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUTSEL_i<TMC5130Stepper>,
-	public TMC5130_n::MSLUTSTART_i<TMC5130Stepper>,
-	public TMC5130_n::MSCNT_i<TMC5130Stepper>,
-	public TMC5130_n::MSCURACT_i<TMC5130Stepper>,
-	public TMC5130_n::CHOPCONF_i<TMC5130Stepper>,
-	public TMC5130_n::COOLCONF_i<TMC5130Stepper>,
-	public TMC5130_n::DCCTRL_i<TMC5130Stepper>,
-	public TMC5130_n::DRV_STATUS_i<TMC5130Stepper>,
-	public TMC5130_n::PWMCONF_i<TMC5130Stepper>,
-	public TMC5130_n::PWM_SCALE_i<TMC5130Stepper>,
-	public TMC5130_n::ENCM_CTRL_i<TMC5130Stepper>,
-	public TMC5130_n::LOST_STEPS_i<TMC5130Stepper>
+	public TMC5130_n::GCONF_i         <TMC5130Stepper>,
+	public TMC5130_n::GSTAT_i         <TMC5130Stepper>,
+	public TMC5130_n::IFCNT_i         <TMC5130Stepper>,
+	public TMC5130_n::SLAVECONF_i     <TMC5130Stepper>,
+	public TMC5130_n::IOIN_i          <TMC5130Stepper>,
+	public TMC5130_n::OUTPUT_i        <TMC5130Stepper>,
+	public TMC5130_n::X_COMPARE_i     <TMC5130Stepper>,
+	public TMC5130_n::IHOLD_IRUN_i    <TMC5130Stepper>,
+	public TMC5130_n::TPOWERDOWN_i    <TMC5130Stepper>,
+	public TMC5130_n::TSTEP_i         <TMC5130Stepper>,
+	public TMC5130_n::TPWMTHRS_i      <TMC5130Stepper>,
+	public TMC5130_n::TCOOLTHRS_i     <TMC5130Stepper>,
+	public TMC5130_n::THIGH_i         <TMC5130Stepper>,
+	public TMC5130_n::RAMPMODE_i      <TMC5130Stepper>,
+	public TMC5130_n::XACTUAL_i       <TMC5130Stepper>,
+	public TMC5130_n::VACTUAL_i       <TMC5130Stepper>,
+	public TMC5130_n::VSTART_i        <TMC5130Stepper>,
+	public TMC5130_n::A1_i            <TMC5130Stepper>,
+	public TMC5130_n::V1_i            <TMC5130Stepper>,
+	public TMC5130_n::AMAX_i          <TMC5130Stepper>,
+	public TMC5130_n::VMAX_i          <TMC5130Stepper>,
+	public TMC5130_n::DMAX_i          <TMC5130Stepper>,
+	public TMC5130_n::D1_i            <TMC5130Stepper>,
+	public TMC5130_n::VSTOP_i         <TMC5130Stepper>,
+	public TMC5130_n::TZEROWAIT_i     <TMC5130Stepper>,
+	public TMC5130_n::XTARGET_i       <TMC5130Stepper>,
+	public TMC5130_n::VDCMIN_i        <TMC5130Stepper>,
+	public TMC5130_n::SW_MODE_i       <TMC5130Stepper>,
+	public TMC5130_n::RAMP_STAT_i     <TMC5130Stepper>,
+	public TMC5130_n::XLATCH_i        <TMC5130Stepper>,
+	public TMC5130_n::ENCMODE_i       <TMC5130Stepper>,
+	public TMC5130_n::X_ENC_i         <TMC5130Stepper>,
+	public TMC5130_n::ENC_CONST_i     <TMC5130Stepper>,
+	public TMC5130_n::ENC_STATUS_i    <TMC5130Stepper>,
+	public TMC5130_n::ENC_LATCH_i     <TMC5130Stepper>,
+	public TMC5130_n::MSLUT0_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT1_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT2_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT3_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT4_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT5_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT6_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUT7_i        <TMC5130Stepper>,
+	public TMC5130_n::MSLUTSEL_i      <TMC5130Stepper>,
+	public TMC5130_n::MSLUTSTART_i    <TMC5130Stepper>,
+	public TMC5130_n::MSCNT_i         <TMC5130Stepper>,
+	public TMC5130_n::MSCURACT_i      <TMC5130Stepper>,
+	public TMC5130_n::CHOPCONF_i      <TMC5130Stepper>,
+	public TMC5130_n::COOLCONF_i      <TMC5130Stepper>,
+	public TMC5130_n::DCCTRL_i        <TMC5130Stepper>,
+	public TMC5130_n::DRV_STATUS_i    <TMC5130Stepper>,
+	public TMC5130_n::PWMCONF_i       <TMC5130Stepper>,
+	public TMC5130_n::PWM_SCALE_i     <TMC5130Stepper>,
+	public TMC5130_n::ENCM_CTRL_i     <TMC5130Stepper>,
+	public TMC5130_n::LOST_STEPS_i    <TMC5130Stepper>
 	{
 	public:
 		TMC5130Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -323,74 +373,130 @@ class TMC5130Stepper :
 		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.15;
+
+		using GCONF_t     	= TMC5130_n::GCONF_i         <TMC5130Stepper>::GCONF_t;
+		using GSTAT_t     	= TMC5130_n::GSTAT_i         <TMC5130Stepper>::GSTAT_t;
+		using IFCNT_t     	= TMC5130_n::IFCNT_i         <TMC5130Stepper>::IFCNT_t;
+		using SLAVECONF_t 	= TMC5130_n::SLAVECONF_i     <TMC5130Stepper>::SLAVECONF_t;
+		using IOIN_t      	= TMC5130_n::IOIN_i          <TMC5130Stepper>::IOIN_t;
+		using OUTPUT_t    	= TMC5130_n::OUTPUT_i        <TMC5130Stepper>::OUTPUT_t;
+		using X_COMPARE_t 	= TMC5130_n::X_COMPARE_i     <TMC5130Stepper>::X_COMPARE_t;
+		using IHOLD_IRUN_t	= TMC5130_n::IHOLD_IRUN_i    <TMC5130Stepper>::IHOLD_IRUN_t;
+		using TPOWERDOWN_t	= TMC5130_n::TPOWERDOWN_i    <TMC5130Stepper>::TPOWERDOWN_t;
+		using TSTEP_t     	= TMC5130_n::TSTEP_i         <TMC5130Stepper>::TSTEP_t;
+		using TPWMTHRS_t  	= TMC5130_n::TPWMTHRS_i      <TMC5130Stepper>::TPWMTHRS_t;
+		using TCOOLTHRS_t 	= TMC5130_n::TCOOLTHRS_i     <TMC5130Stepper>::TCOOLTHRS_t;
+		using THIGH_t     	= TMC5130_n::THIGH_i         <TMC5130Stepper>::THIGH_t;
+		using RAMPMODE_t  	= TMC5130_n::RAMPMODE_i      <TMC5130Stepper>::RAMPMODE_t;
+		using XACTUAL_t   	= TMC5130_n::XACTUAL_i       <TMC5130Stepper>::XACTUAL_t;
+		using VACTUAL_t   	= TMC5130_n::VACTUAL_i       <TMC5130Stepper>::VACTUAL_t;
+		using VSTART_t    	= TMC5130_n::VSTART_i        <TMC5130Stepper>::VSTART_t;
+		using A1_t        	= TMC5130_n::A1_i            <TMC5130Stepper>::A1_t;
+		using V1_t        	= TMC5130_n::V1_i            <TMC5130Stepper>::V1_t;
+		using AMAX_t      	= TMC5130_n::AMAX_i          <TMC5130Stepper>::AMAX_t;
+		using VMAX_t      	= TMC5130_n::VMAX_i          <TMC5130Stepper>::VMAX_t;
+		using DMAX_t      	= TMC5130_n::DMAX_i          <TMC5130Stepper>::DMAX_t;
+		using D1_t        	= TMC5130_n::D1_i            <TMC5130Stepper>::D1_t;
+		using VSTOP_t     	= TMC5130_n::VSTOP_i         <TMC5130Stepper>::VSTOP_t;
+		using TZEROWAIT_t 	= TMC5130_n::TZEROWAIT_i     <TMC5130Stepper>::TZEROWAIT_t;
+		using XTARGET_t   	= TMC5130_n::XTARGET_i       <TMC5130Stepper>::XTARGET_t;
+		using VDCMIN_t    	= TMC5130_n::VDCMIN_i        <TMC5130Stepper>::VDCMIN_t;
+		using SW_MODE_t   	= TMC5130_n::SW_MODE_i       <TMC5130Stepper>::SW_MODE_t;
+		using RAMP_STAT_t 	= TMC5130_n::RAMP_STAT_i     <TMC5130Stepper>::RAMP_STAT_t;
+		using XLATCH_t    	= TMC5130_n::XLATCH_i        <TMC5130Stepper>::XLATCH_t;
+		using ENCMODE_t   	= TMC5130_n::ENCMODE_i       <TMC5130Stepper>::ENCMODE_t;
+		using X_ENC_t     	= TMC5130_n::X_ENC_i         <TMC5130Stepper>::X_ENC_t;
+		using ENC_CONST_t 	= TMC5130_n::ENC_CONST_i     <TMC5130Stepper>::ENC_CONST_t;
+		using ENC_STATUS_t	= TMC5130_n::ENC_STATUS_i    <TMC5130Stepper>::ENC_STATUS_t;
+		using ENC_LATCH_t 	= TMC5130_n::ENC_LATCH_i     <TMC5130Stepper>::ENC_LATCH_t;
+		using MSLUT0_t    	= TMC5130_n::MSLUT0_i        <TMC5130Stepper>::MSLUT0_t;
+		using MSLUT1_t    	= TMC5130_n::MSLUT1_i        <TMC5130Stepper>::MSLUT1_t;
+		using MSLUT2_t    	= TMC5130_n::MSLUT2_i        <TMC5130Stepper>::MSLUT2_t;
+		using MSLUT3_t    	= TMC5130_n::MSLUT3_i        <TMC5130Stepper>::MSLUT3_t;
+		using MSLUT4_t    	= TMC5130_n::MSLUT4_i        <TMC5130Stepper>::MSLUT4_t;
+		using MSLUT5_t    	= TMC5130_n::MSLUT5_i        <TMC5130Stepper>::MSLUT5_t;
+		using MSLUT6_t    	= TMC5130_n::MSLUT6_i        <TMC5130Stepper>::MSLUT6_t;
+		using MSLUT7_t    	= TMC5130_n::MSLUT7_i        <TMC5130Stepper>::MSLUT7_t;
+		using MSLUTSEL_t  	= TMC5130_n::MSLUTSEL_i      <TMC5130Stepper>::MSLUTSEL_t;
+		using MSLUTSTART_t	= TMC5130_n::MSLUTSTART_i    <TMC5130Stepper>::MSLUTSTART_t;
+		using MSCNT_t     	= TMC5130_n::MSCNT_i         <TMC5130Stepper>::MSCNT_t;
+		using MSCURACT_t  	= TMC5130_n::MSCURACT_i      <TMC5130Stepper>::MSCURACT_t;
+		using CHOPCONF_t  	= TMC5130_n::CHOPCONF_i      <TMC5130Stepper>::CHOPCONF_t;
+		using COOLCONF_t  	= TMC5130_n::COOLCONF_i      <TMC5130Stepper>::COOLCONF_t;
+		using DCCTRL_t    	= TMC5130_n::DCCTRL_i        <TMC5130Stepper>::DCCTRL_t;
+		using DRV_STATUS_t	= TMC5130_n::DRV_STATUS_i    <TMC5130Stepper>::DRV_STATUS_t;
+		using PWMCONF_t   	= TMC5130_n::PWMCONF_i       <TMC5130Stepper>::PWMCONF_t;
+		using PWM_SCALE_t 	= TMC5130_n::PWM_SCALE_i     <TMC5130Stepper>::PWM_SCALE_t;
+		using ENCM_CTRL_t 	= TMC5130_n::ENCM_CTRL_i     <TMC5130Stepper>::ENCM_CTRL_t;
+		using LOST_STEPS_t	= TMC5130_n::LOST_STEPS_i    <TMC5130Stepper>::LOST_STEPS_t;
 	};
 
 class TMC5160Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5160Stepper>,
-	public TMC5160_n::GCONF_i<TMC5160Stepper>,
-	public TMC5160_n::GSTAT_i<TMC5160Stepper>,
-	public TMC5160_n::IFCNT_i<TMC5160Stepper>,
-	public TMC5160_n::SLAVECONF_i<TMC5160Stepper>,
-	public TMC5160_n::IOIN_i<TMC5160Stepper>,
-	public TMC5160_n::OUTPUT_i<TMC5160Stepper>,
-	public TMC5160_n::X_COMPARE_i<TMC5160Stepper>,
-	public TMC5160_n::OTP_PROG_i<TMC5160Stepper>,
-	public TMC5160_n::OTP_READ_i<TMC5160Stepper>,
-	public TMC5160_n::FACTORY_CONF_i<TMC5160Stepper>,
-	public TMC5160_n::SHORT_CONF_i<TMC5160Stepper>,
-	public TMC5160_n::DRV_CONF_i<TMC5160Stepper>,
-	public TMC5160_n::GLOBAL_SCALER_i<TMC5160Stepper>,
-	public TMC5160_n::OFFSET_READ_i<TMC5160Stepper>,
-	public TMC5160_n::IHOLD_IRUN_i<TMC5160Stepper>,
-	public TMC5160_n::TPOWERDOWN_i<TMC5160Stepper>,
-	public TMC5160_n::TSTEP_i<TMC5160Stepper>,
-	public TMC5160_n::TPWMTHRS_i<TMC5160Stepper>,
-	public TMC5160_n::TCOOLTHRS_i<TMC5160Stepper>,
-	public TMC5160_n::THIGH_i<TMC5160Stepper>,
-	public TMC5160_n::RAMPMODE_i<TMC5160Stepper>,
-	public TMC5160_n::XACTUAL_i<TMC5160Stepper>,
-	public TMC5160_n::VACTUAL_i<TMC5160Stepper>,
-	public TMC5160_n::VSTART_i<TMC5160Stepper>,
-	public TMC5160_n::A1_i<TMC5160Stepper>,
-	public TMC5160_n::V1_i<TMC5160Stepper>,
-	public TMC5160_n::AMAX_i<TMC5160Stepper>,
-	public TMC5160_n::VMAX_i<TMC5160Stepper>,
-	public TMC5160_n::DMAX_i<TMC5160Stepper>,
-	public TMC5160_n::D1_i<TMC5160Stepper>,
-	public TMC5160_n::VSTOP_i<TMC5160Stepper>,
-	public TMC5160_n::TZEROWAIT_i<TMC5160Stepper>,
-	public TMC5160_n::XTARGET_i<TMC5160Stepper>,
-	public TMC5160_n::VDCMIN_i<TMC5160Stepper>,
-	public TMC5160_n::SW_MODE_i<TMC5160Stepper>,
-	public TMC5160_n::RAMP_STAT_i<TMC5160Stepper>,
-	public TMC5160_n::XLATCH_i<TMC5160Stepper>,
-	public TMC5160_n::ENCMODE_i<TMC5160Stepper>,
-	public TMC5160_n::X_ENC_i<TMC5160Stepper>,
-	public TMC5160_n::ENC_CONST_i<TMC5160Stepper>,
-	public TMC5160_n::ENC_STATUS_i<TMC5160Stepper>,
-	public TMC5160_n::ENC_LATCH_i<TMC5160Stepper>,
-	public TMC5160_n::ENC_DEVIATION_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT0_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT1_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT2_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT3_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT4_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT5_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT6_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUT7_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUTSEL_i<TMC5160Stepper>,
-	public TMC5160_n::MSLUTSTART_i<TMC5160Stepper>,
-	public TMC5160_n::MSCNT_i<TMC5160Stepper>,
-	public TMC5160_n::MSCURACT_i<TMC5160Stepper>,
-	public TMC5160_n::CHOPCONF_i<TMC5160Stepper>,
-	public TMC5160_n::COOLCONF_i<TMC5160Stepper>,
-	public TMC5160_n::DCCTRL_i<TMC5160Stepper>,
-	public TMC5160_n::DRV_STATUS_i<TMC5160Stepper>,
-	public TMC5160_n::PWMCONF_i<TMC5160Stepper>,
-	public TMC5160_n::PWM_SCALE_i<TMC5160Stepper>,
-	public TMC5160_n::PWM_AUTO_i<TMC5160Stepper>,
-	public TMC5160_n::LOST_STEPS_i<TMC5160Stepper>
+	public TMC5160_n::GCONF_i            <TMC5160Stepper>,
+	public TMC5160_n::GSTAT_i            <TMC5160Stepper>,
+	public TMC5160_n::IFCNT_i            <TMC5160Stepper>,
+	public TMC5160_n::SLAVECONF_i        <TMC5160Stepper>,
+	public TMC5160_n::IOIN_i             <TMC5160Stepper>,
+	public TMC5160_n::OUTPUT_i           <TMC5160Stepper>,
+	public TMC5160_n::X_COMPARE_i        <TMC5160Stepper>,
+	public TMC5160_n::OTP_PROG_i         <TMC5160Stepper>,
+	public TMC5160_n::OTP_READ_i         <TMC5160Stepper>,
+	public TMC5160_n::FACTORY_CONF_i     <TMC5160Stepper>,
+	public TMC5160_n::SHORT_CONF_i       <TMC5160Stepper>,
+	public TMC5160_n::DRV_CONF_i         <TMC5160Stepper>,
+	public TMC5160_n::GLOBAL_SCALER_i    <TMC5160Stepper>,
+	public TMC5160_n::OFFSET_READ_i      <TMC5160Stepper>,
+	public TMC5160_n::IHOLD_IRUN_i       <TMC5160Stepper>,
+	public TMC5160_n::TPOWERDOWN_i       <TMC5160Stepper>,
+	public TMC5160_n::TSTEP_i            <TMC5160Stepper>,
+	public TMC5160_n::TPWMTHRS_i         <TMC5160Stepper>,
+	public TMC5160_n::TCOOLTHRS_i        <TMC5160Stepper>,
+	public TMC5160_n::THIGH_i            <TMC5160Stepper>,
+	public TMC5160_n::RAMPMODE_i         <TMC5160Stepper>,
+	public TMC5160_n::XACTUAL_i          <TMC5160Stepper>,
+	public TMC5160_n::VACTUAL_i          <TMC5160Stepper>,
+	public TMC5160_n::VSTART_i           <TMC5160Stepper>,
+	public TMC5160_n::A1_i               <TMC5160Stepper>,
+	public TMC5160_n::V1_i               <TMC5160Stepper>,
+	public TMC5160_n::AMAX_i             <TMC5160Stepper>,
+	public TMC5160_n::VMAX_i             <TMC5160Stepper>,
+	public TMC5160_n::DMAX_i             <TMC5160Stepper>,
+	public TMC5160_n::D1_i               <TMC5160Stepper>,
+	public TMC5160_n::VSTOP_i            <TMC5160Stepper>,
+	public TMC5160_n::TZEROWAIT_i        <TMC5160Stepper>,
+	public TMC5160_n::XTARGET_i          <TMC5160Stepper>,
+	public TMC5160_n::VDCMIN_i           <TMC5160Stepper>,
+	public TMC5160_n::SW_MODE_i          <TMC5160Stepper>,
+	public TMC5160_n::RAMP_STAT_i        <TMC5160Stepper>,
+	public TMC5160_n::XLATCH_i           <TMC5160Stepper>,
+	public TMC5160_n::ENCMODE_i          <TMC5160Stepper>,
+	public TMC5160_n::X_ENC_i            <TMC5160Stepper>,
+	public TMC5160_n::ENC_CONST_i        <TMC5160Stepper>,
+	public TMC5160_n::ENC_STATUS_i       <TMC5160Stepper>,
+	public TMC5160_n::ENC_LATCH_i        <TMC5160Stepper>,
+	public TMC5160_n::ENC_DEVIATION_i    <TMC5160Stepper>,
+	public TMC5160_n::MSLUT0_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT1_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT2_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT3_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT4_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT5_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT6_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUT7_i           <TMC5160Stepper>,
+	public TMC5160_n::MSLUTSEL_i         <TMC5160Stepper>,
+	public TMC5160_n::MSLUTSTART_i       <TMC5160Stepper>,
+	public TMC5160_n::MSCNT_i            <TMC5160Stepper>,
+	public TMC5160_n::MSCURACT_i         <TMC5160Stepper>,
+	public TMC5160_n::CHOPCONF_i         <TMC5160Stepper>,
+	public TMC5160_n::COOLCONF_i         <TMC5160Stepper>,
+	public TMC5160_n::DCCTRL_i           <TMC5160Stepper>,
+	public TMC5160_n::DRV_STATUS_i       <TMC5160Stepper>,
+	public TMC5160_n::PWMCONF_i          <TMC5160Stepper>,
+	public TMC5160_n::PWM_SCALE_i        <TMC5160Stepper>,
+	public TMC5160_n::PWM_AUTO_i         <TMC5160Stepper>,
+	public TMC5160_n::LOST_STEPS_i       <TMC5160Stepper>
 	{
 	public:
 		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
@@ -403,6 +509,70 @@ class TMC5160Stepper :
 		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.075;
+
+        using GCONF_t        	= TMC5160_n::GCONF_i          <TMC5160Stepper>::GCONF_t;
+        using GSTAT_t        	= TMC5160_n::GSTAT_i          <TMC5160Stepper>::GSTAT_t;
+        using IFCNT_t        	= TMC5160_n::IFCNT_i          <TMC5160Stepper>::IFCNT_t;
+        using SLAVECONF_t    	= TMC5160_n::SLAVECONF_i      <TMC5160Stepper>::SLAVECONF_t;
+        using IOIN_t         	= TMC5160_n::IOIN_i           <TMC5160Stepper>::IOIN_t;
+        using OUTPUT_t       	= TMC5160_n::OUTPUT_i         <TMC5160Stepper>::OUTPUT_t;
+        using X_COMPARE_t    	= TMC5160_n::X_COMPARE_i      <TMC5160Stepper>::X_COMPARE_t;
+        using OTP_PROG_t     	= TMC5160_n::OTP_PROG_i       <TMC5160Stepper>::OTP_PROG_t;
+        using OTP_READ_t     	= TMC5160_n::OTP_READ_i       <TMC5160Stepper>::OTP_READ_t;
+        using FACTORY_CONF_t 	= TMC5160_n::FACTORY_CONF_i   <TMC5160Stepper>::FACTORY_CONF_t;
+        using SHORT_CONF_t   	= TMC5160_n::SHORT_CONF_i     <TMC5160Stepper>::SHORT_CONF_t;
+        using DRV_CONF_t     	= TMC5160_n::DRV_CONF_i       <TMC5160Stepper>::DRV_CONF_t;
+        using GLOBAL_SCALER_t	= TMC5160_n::GLOBAL_SCALER_i  <TMC5160Stepper>::GLOBAL_SCALER_t;
+        using OFFSET_READ_t  	= TMC5160_n::OFFSET_READ_i    <TMC5160Stepper>::OFFSET_READ_t;
+        using IHOLD_IRUN_t   	= TMC5160_n::IHOLD_IRUN_i     <TMC5160Stepper>::IHOLD_IRUN_t;
+        using TPOWERDOWN_t   	= TMC5160_n::TPOWERDOWN_i     <TMC5160Stepper>::TPOWERDOWN_t;
+        using TSTEP_t        	= TMC5160_n::TSTEP_i          <TMC5160Stepper>::TSTEP_t;
+        using TPWMTHRS_t     	= TMC5160_n::TPWMTHRS_i       <TMC5160Stepper>::TPWMTHRS_t;
+        using TCOOLTHRS_t    	= TMC5160_n::TCOOLTHRS_i      <TMC5160Stepper>::TCOOLTHRS_t;
+        using THIGH_t        	= TMC5160_n::THIGH_i          <TMC5160Stepper>::THIGH_t;
+        using RAMPMODE_t     	= TMC5160_n::RAMPMODE_i       <TMC5160Stepper>::RAMPMODE_t;
+        using XACTUAL_t      	= TMC5160_n::XACTUAL_i        <TMC5160Stepper>::XACTUAL_t;
+        using VACTUAL_t      	= TMC5160_n::VACTUAL_i        <TMC5160Stepper>::VACTUAL_t;
+        using VSTART_t       	= TMC5160_n::VSTART_i         <TMC5160Stepper>::VSTART_t;
+        using A1_t           	= TMC5160_n::A1_i             <TMC5160Stepper>::A1_t;
+        using V1_t           	= TMC5160_n::V1_i             <TMC5160Stepper>::V1_t;
+        using AMAX_t         	= TMC5160_n::AMAX_i           <TMC5160Stepper>::AMAX_t;
+        using VMAX_t         	= TMC5160_n::VMAX_i           <TMC5160Stepper>::VMAX_t;
+        using DMAX_t         	= TMC5160_n::DMAX_i           <TMC5160Stepper>::DMAX_t;
+        using D1_t           	= TMC5160_n::D1_i             <TMC5160Stepper>::D1_t;
+        using VSTOP_t        	= TMC5160_n::VSTOP_i          <TMC5160Stepper>::VSTOP_t;
+        using TZEROWAIT_t    	= TMC5160_n::TZEROWAIT_i      <TMC5160Stepper>::TZEROWAIT_t;
+        using XTARGET_t      	= TMC5160_n::XTARGET_i        <TMC5160Stepper>::XTARGET_t;
+        using VDCMIN_t       	= TMC5160_n::VDCMIN_i         <TMC5160Stepper>::VDCMIN_t;
+        using SW_MODE_t      	= TMC5160_n::SW_MODE_i        <TMC5160Stepper>::SW_MODE_t;
+        using RAMP_STAT_t    	= TMC5160_n::RAMP_STAT_i      <TMC5160Stepper>::RAMP_STAT_t;
+        using XLATCH_t       	= TMC5160_n::XLATCH_i         <TMC5160Stepper>::XLATCH_t;
+        using ENCMODE_t      	= TMC5160_n::ENCMODE_i        <TMC5160Stepper>::ENCMODE_t;
+        using X_ENC_t        	= TMC5160_n::X_ENC_i          <TMC5160Stepper>::X_ENC_t;
+        using ENC_CONST_t    	= TMC5160_n::ENC_CONST_i      <TMC5160Stepper>::ENC_CONST_t;
+        using ENC_STATUS_t   	= TMC5160_n::ENC_STATUS_i     <TMC5160Stepper>::ENC_STATUS_t;
+        using ENC_LATCH_t    	= TMC5160_n::ENC_LATCH_i      <TMC5160Stepper>::ENC_LATCH_t;
+        using ENC_DEVIATION_t	= TMC5160_n::ENC_DEVIATION_i  <TMC5160Stepper>::ENC_DEVIATION_t;
+        using MSLUT0_t       	= TMC5160_n::MSLUT0_i         <TMC5160Stepper>::MSLUT0_t;
+        using MSLUT1_t       	= TMC5160_n::MSLUT1_i         <TMC5160Stepper>::MSLUT1_t;
+        using MSLUT2_t       	= TMC5160_n::MSLUT2_i         <TMC5160Stepper>::MSLUT2_t;
+        using MSLUT3_t       	= TMC5160_n::MSLUT3_i         <TMC5160Stepper>::MSLUT3_t;
+        using MSLUT4_t       	= TMC5160_n::MSLUT4_i         <TMC5160Stepper>::MSLUT4_t;
+        using MSLUT5_t       	= TMC5160_n::MSLUT5_i         <TMC5160Stepper>::MSLUT5_t;
+        using MSLUT6_t       	= TMC5160_n::MSLUT6_i         <TMC5160Stepper>::MSLUT6_t;
+        using MSLUT7_t       	= TMC5160_n::MSLUT7_i         <TMC5160Stepper>::MSLUT7_t;
+        using MSLUTSEL_t     	= TMC5160_n::MSLUTSEL_i       <TMC5160Stepper>::MSLUTSEL_t;
+        using MSLUTSTART_t   	= TMC5160_n::MSLUTSTART_i     <TMC5160Stepper>::MSLUTSTART_t;
+        using MSCNT_t        	= TMC5160_n::MSCNT_i          <TMC5160Stepper>::MSCNT_t;
+        using MSCURACT_t     	= TMC5160_n::MSCURACT_i       <TMC5160Stepper>::MSCURACT_t;
+        using CHOPCONF_t     	= TMC5160_n::CHOPCONF_i       <TMC5160Stepper>::CHOPCONF_t;
+        using COOLCONF_t     	= TMC5160_n::COOLCONF_i       <TMC5160Stepper>::COOLCONF_t;
+        using DCCTRL_t       	= TMC5160_n::DCCTRL_i         <TMC5160Stepper>::DCCTRL_t;
+        using DRV_STATUS_t   	= TMC5160_n::DRV_STATUS_i     <TMC5160Stepper>::DRV_STATUS_t;
+        using PWMCONF_t      	= TMC5160_n::PWMCONF_i        <TMC5160Stepper>::PWMCONF_t;
+        using PWM_SCALE_t    	= TMC5160_n::PWM_SCALE_i      <TMC5160Stepper>::PWM_SCALE_t;
+        using PWM_AUTO_t     	= TMC5160_n::PWM_AUTO_i       <TMC5160Stepper>::PWM_AUTO_t;
+        using LOST_STEPS_t   	= TMC5160_n::LOST_STEPS_i     <TMC5160Stepper>::LOST_STEPS_t;
 };
 
 typedef TMC5160Stepper TMC5161Stepper;
@@ -464,6 +634,26 @@ class TMC2208Stepper :
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
 		#endif
+		using GCONF_t       	= TMC2208_n::GCONF_i       	<TMC2208Stepper>::GCONF_t;
+		using GSTAT_t       	= TMC2208_n::GSTAT_i       	<TMC2208Stepper>::GSTAT_t;
+		using IFCNT_t       	= TMC2208_n::IFCNT_i       	<TMC2208Stepper>::IFCNT_t;
+		using SLAVECONF_t   	= TMC2208_n::SLAVECONF_i   	<TMC2208Stepper>::SLAVECONF_t;
+		using OTP_PROG_t    	= TMC2208_n::OTP_PROG_i    	<TMC2208Stepper>::OTP_PROG_t;
+		using OTP_READ_t    	= TMC2208_n::OTP_READ_i    	<TMC2208Stepper>::OTP_READ_t;
+		using IOIN_t        	= TMC2208_n::IOIN_i        	<TMC2208Stepper>::IOIN_t;
+		using FACTORY_CONF_t	= TMC2208_n::FACTORY_CONF_i	<TMC2208Stepper>::FACTORY_CONF_t;
+		using IHOLD_IRUN_t  	= TMC2208_n::IHOLD_IRUN_i  	<TMC2208Stepper>::IHOLD_IRUN_t;
+		using TPOWERDOWN_t  	= TMC2208_n::TPOWERDOWN_i  	<TMC2208Stepper>::TPOWERDOWN_t;
+		using TSTEP_t       	= TMC2208_n::TSTEP_i       	<TMC2208Stepper>::TSTEP_t;
+		using TPWMTHRS_t    	= TMC2208_n::TPWMTHRS_i    	<TMC2208Stepper>::TPWMTHRS_t;
+		using VACTUAL_t     	= TMC2208_n::VACTUAL_i     	<TMC2208Stepper>::VACTUAL_t;
+		using MSCNT_t       	= TMC2208_n::MSCNT_i       	<TMC2208Stepper>::MSCNT_t;
+		using MSCURACT_t    	= TMC2208_n::MSCURACT_i    	<TMC2208Stepper>::MSCURACT_t;
+		using CHOPCONF_t    	= TMC2208_n::CHOPCONF_i    	<TMC2208Stepper>::CHOPCONF_t;
+		using DRV_STATUS_t  	= TMC2208_n::DRV_STATUS_i  	<TMC2208Stepper>::DRV_STATUS_t;
+		using PWMCONF_t     	= TMC2208_n::PWMCONF_i     	<TMC2208Stepper>::PWMCONF_t;
+		using PWM_SCALE_t   	= TMC2208_n::PWM_SCALE_i   	<TMC2208Stepper>::PWM_SCALE_t;
+		using PWM_AUTO_t    	= TMC2208_n::PWM_AUTO_i    	<TMC2208Stepper>::PWM_AUTO_t;
 };
 
 class TMC2209Stepper :
@@ -485,6 +675,31 @@ class TMC2209Stepper :
 			TMC2209Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 		void push();
+
+		using GCONF_t       	= TMC2209_n::GCONF_i       	<TMC2209Stepper>::GCONF_t;
+		using GSTAT_t       	= TMC2209_n::GSTAT_i       	<TMC2209Stepper>::GSTAT_t;
+		using IFCNT_t       	= TMC2209_n::IFCNT_i       	<TMC2209Stepper>::IFCNT_t;
+		using SLAVECONF_t   	= TMC2209_n::SLAVECONF_i   	<TMC2209Stepper>::SLAVECONF_t;
+		using OTP_PROG_t    	= TMC2209_n::OTP_PROG_i    	<TMC2209Stepper>::OTP_PROG_t;
+		using OTP_READ_t    	= TMC2209_n::OTP_READ_i    	<TMC2209Stepper>::OTP_READ_t;
+		using IOIN_t        	= TMC2209_n::IOIN_i        	<TMC2209Stepper>::IOIN_t;
+		using FACTORY_CONF_t	= TMC2209_n::FACTORY_CONF_i	<TMC2209Stepper>::FACTORY_CONF_t;
+		using IHOLD_IRUN_t  	= TMC2209_n::IHOLD_IRUN_i  	<TMC2209Stepper>::IHOLD_IRUN_t;
+		using TPOWERDOWN_t  	= TMC2209_n::TPOWERDOWN_i  	<TMC2209Stepper>::TPOWERDOWN_t;
+		using TSTEP_t       	= TMC2209_n::TSTEP_i       	<TMC2209Stepper>::TSTEP_t;
+		using TPWMTHRS_t    	= TMC2209_n::TPWMTHRS_i    	<TMC2209Stepper>::TPWMTHRS_t;
+		using TCOOLTHRS_t   	= TMC2209_n::TCOOLTHRS_i   	<TMC2209Stepper>::TCOOLTHRS_t;
+		using VACTUAL_t     	= TMC2209_n::VACTUAL_i     	<TMC2209Stepper>::VACTUAL_t;
+		using SGTHRS_t      	= TMC2209_n::SGTHRS_i      	<TMC2209Stepper>::SGTHRS_t;
+		using SG_RESULT_t   	= TMC2209_n::SG_RESULT_i   	<TMC2209Stepper>::SG_RESULT_t;
+		using COOLCONF_t    	= TMC2209_n::COOLCONF_i    	<TMC2209Stepper>::COOLCONF_t;
+		using MSCNT_t       	= TMC2209_n::MSCNT_i       	<TMC2209Stepper>::MSCNT_t;
+		using MSCURACT_t    	= TMC2209_n::MSCURACT_i    	<TMC2209Stepper>::MSCURACT_t;
+		using CHOPCONF_t    	= TMC2209_n::CHOPCONF_i    	<TMC2209Stepper>::CHOPCONF_t;
+		using DRV_STATUS_t  	= TMC2209_n::DRV_STATUS_i  	<TMC2209Stepper>::DRV_STATUS_t;
+		using PWMCONF_t     	= TMC2209_n::PWMCONF_i     	<TMC2209Stepper>::PWMCONF_t;
+		using PWM_SCALE_t   	= TMC2209_n::PWM_SCALE_i   	<TMC2209Stepper>::PWM_SCALE_t;
+		using PWM_AUTO_t    	= TMC2209_n::PWM_AUTO_i    	<TMC2209Stepper>::PWM_AUTO_t;
 };
 
 class TMC2300Stepper :
@@ -527,6 +742,26 @@ class TMC2300Stepper :
 				void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
 			#endif
 			bool isEnabled();
+
+			using GCONF_t       = TMC2300_n::GCONF_i       <TMC2300Stepper>::GCONF_t;
+			using GSTAT_t       = TMC2300_n::GSTAT_i       <TMC2300Stepper>::GSTAT_t;
+			using IFCNT_t       = TMC2300_n::IFCNT_i       <TMC2300Stepper>::IFCNT_t;
+			using SLAVECONF_t   = TMC2300_n::SLAVECONF_i   <TMC2300Stepper>::SLAVECONF_t;
+			using IOIN_t        = TMC2300_n::IOIN_i        <TMC2300Stepper>::IOIN_t;
+			using IHOLD_IRUN_t  = TMC2300_n::IHOLD_IRUN_i  <TMC2300Stepper>::IHOLD_IRUN_t;
+			using TPOWERDOWN_t  = TMC2300_n::TPOWERDOWN_i  <TMC2300Stepper>::TPOWERDOWN_t;
+			using TSTEP_t       = TMC2300_n::TSTEP_i       <TMC2300Stepper>::TSTEP_t;
+			using VACTUAL_t     = TMC2300_n::VACTUAL_i     <TMC2300Stepper>::VACTUAL_t;
+			using TCOOLTHRS_t   = TMC2300_n::TCOOLTHRS_i   <TMC2300Stepper>::TCOOLTHRS_t;
+			using SGTHRS_t      = TMC2300_n::SGTHRS_i      <TMC2300Stepper>::SGTHRS_t;
+			using SG_VALUE_t    = TMC2300_n::SG_VALUE_i    <TMC2300Stepper>::SG_VALUE_t;
+			using COOLCONF_t    = TMC2300_n::COOLCONF_i    <TMC2300Stepper>::COOLCONF_t;
+			using MSCNT_t       = TMC2300_n::MSCNT_i       <TMC2300Stepper>::MSCNT_t;
+			using CHOPCONF_t    = TMC2300_n::CHOPCONF_i    <TMC2300Stepper>::CHOPCONF_t;
+			using DRV_STATUS_t  = TMC2300_n::DRV_STATUS_i  <TMC2300Stepper>::DRV_STATUS_t;
+			using PWMCONF_t     = TMC2300_n::PWMCONF_i     <TMC2300Stepper>::PWMCONF_t;
+			using PWM_SCALE_t   = TMC2300_n::PWM_SCALE_i   <TMC2300Stepper>::PWM_SCALE_t;
+			using PWM_AUTO_t    = TMC2300_n::PWM_AUTO_i    <TMC2300Stepper>::PWM_AUTO_t;
 };
 
 class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224Stepper> {
