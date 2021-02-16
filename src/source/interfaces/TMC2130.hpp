@@ -410,6 +410,7 @@ namespace TMC2130_n {
       }
     };
 
+    // 0x68 W: MSLUTSEL
     template<typename TYPE>
     struct MSLUTSEL_i {
       #pragma pack(push, 1)
@@ -440,6 +441,7 @@ namespace TMC2130_n {
         MSLUTSEL_t r{};
     };
 
+    // 0x69 W: MSLUTSTART
     template<typename TYPE>
     struct MSLUTSTART_i {
       #pragma pack(push, 1)
@@ -697,7 +699,7 @@ namespace TMC2130_n {
                     bool fsactive : 1;
                     uint8_t cs_actual : 5,
                             : 3;
-                    bool    stallGuard : 1,
+                    bool    stallguard : 1,
                             ot : 1,
                             otpw : 1,
                             s2ga : 1,
@@ -717,7 +719,7 @@ namespace TMC2130_n {
         uint16_t sg_result(){ return DRV_STATUS_t{ DRV_STATUS() }.sg_result; }
         bool fsactive()     { return DRV_STATUS_t{ DRV_STATUS() }.fsactive;  }
         uint8_t cs_actual() { return DRV_STATUS_t{ DRV_STATUS() }.cs_actual; }
-        bool stallguard()   { return DRV_STATUS_t{ DRV_STATUS() }.stallGuard;}
+        bool stallguard()   { return DRV_STATUS_t{ DRV_STATUS() }.stallguard;}
         bool ot()           { return DRV_STATUS_t{ DRV_STATUS() }.ot;        }
         bool otpw()         { return DRV_STATUS_t{ DRV_STATUS() }.otpw;      }
         bool s2ga()         { return DRV_STATUS_t{ DRV_STATUS() }.s2ga;      }
