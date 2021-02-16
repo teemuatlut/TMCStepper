@@ -188,6 +188,7 @@ class TMC2130Stepper :
 
 		void begin();
 		void defaults();
+		void resetLibCache();
 		bool isEnabled();
 		void push();
 
@@ -264,6 +265,7 @@ class TMC2160Stepper :
 		TMC2160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 		void begin();
 		void defaults();
+		void resetLibCache();
 		void push();
 
 		uint16_t cs2rms(uint8_t CS);
@@ -371,6 +373,7 @@ class TMC5130Stepper :
 
 		void begin();
 		void defaults();
+		void resetLibCache();
 		void push();
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
@@ -507,6 +510,7 @@ class TMC5160Stepper :
 		TMC5160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
 
 		void defaults();
+		void resetLibCache();
 		void push();
 
 		__attribute__((deprecated("Please provide a sense resistor value")))

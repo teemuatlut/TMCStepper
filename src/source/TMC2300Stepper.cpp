@@ -26,14 +26,27 @@ void TMC2300Stepper::begin() {
 }
 
 void TMC2300Stepper::defaults() {
-	GCONF_t gconf{0};
-	gconf.multistep_filt = 1; // OTP
-	GCONF(gconf.sr);
-
-	IHOLD_IRUN(0x11F08);
+	GCONF(1 << 6);
+	GSTAT(0);
+	SLAVECONF(0);
+	IHOLD_IRUN((8) | (31<<8) | (1ul<<16));
 	TPOWERDOWN(20);
-	CHOPCONF(0x13008001);
-	PWMCONF(0xC40D1024);
+	VACTUAL(0);
+	TCOOLTHRS(0);
+	SGTHRS(0);
+	COOLCONF(0);
+	CHOPCONF(0x13008001u);
+	PWMCONF(0xC40D1024u);
+}
+
+void TMC2300Stepper::resetLibCache() {
+	SLAVECONF_i::r.sr = 0;
+	IHOLD_IRUN_i::r.sr = (8) | (31<<8) | (1ul<<16);
+	TPOWERDOWN_i::r.sr = 20;
+	VACTUAL_i::r.sr = 0;
+	TCOOLTHRS_i::r.sr = 0;
+	SGTHRS_i::r.sr = 0;
+	COOLCONF_i::r.sr = 0;
 }
 
 void TMC2300Stepper::push() {
