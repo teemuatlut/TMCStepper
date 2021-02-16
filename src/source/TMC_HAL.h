@@ -53,6 +53,38 @@
         protected:
             volatile uint8_t* const outPort = nullptr;
         };
+
+        class SWSerial : public SoftwareSerial {
+            public:
+                SWSerial(uint8_t receivePin, uint8_t transmitPin, bool inverse_logic = false) :
+                    SoftwareSerial(receivePin, transmitPin, inverse_logic),
+                    RXTX_pin(receivePin == transmitPin ? receivePin : 0)
+                    {}
+
+                void begin(long speed) {
+                    SoftwareSerial::begin(speed);
+                    if (RXTX_pin > 0) {
+                        digitalWrite(RXTX_pin, HIGH);
+                        pinMode(RXTX_pin, OUTPUT);
+                    }
+                }
+
+                size_t write(const uint8_t *buffer, size_t size) {
+                    if (RXTX_pin > 0) {
+                        digitalWrite(RXTX_pin, HIGH);
+                        pinMode(RXTX_pin, OUTPUT);
+                    }
+                    return SoftwareSerial::write(buffer, size);
+                }
+                size_t readBytes( char *buffer, size_t length) {
+                    if (RXTX_pin > 0) {
+                        pinMode(RXTX_pin, INPUT_PULLUP);
+                    }
+                    return SoftwareSerial::readBytes(buffer, length);
+                }
+            private:
+                const TMCStepper_n::PinDef RXTX_pin; // Half duplex
+        };
     }
 
 #elif defined(ARDUINO_ARCH_SAM)

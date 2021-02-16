@@ -137,10 +137,6 @@ void TMC_UART::preReadCommunication() {
 
 __attribute__((weak))
 void TMC_UART::serial_read(uint8_t *data, int8_t length) {
-    if (RXTX_pin > 0) {
-        pinMode(RXTX_pin, INPUT_PULLUP);
-    }
-
     if (SWSerial != nullptr && SWSerial->available() > 0) {
         SWSerial->readBytes(data, length);
     } else if (HWSerial != nullptr && HWSerial->available() > 0) {
@@ -150,11 +146,6 @@ void TMC_UART::serial_read(uint8_t *data, int8_t length) {
 
 __attribute__((weak))
 void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
-    if (RXTX_pin > 0) {
-        digitalWrite(RXTX_pin, HIGH);
-        pinMode(RXTX_pin, OUTPUT);
-    }
-
     if (SWSerial != nullptr) {
         SWSerial->write(data, length);
     }
