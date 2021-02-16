@@ -30,7 +30,18 @@ protected:
 	template<class> friend class TMC2130_n::TPWMTHRS_i;
 	template<class> friend class TMC2130_n::TCOOLTHRS_i;
 	template<class> friend class TMC2130_n::THIGH_i;
+	template<class> friend class TMC2130_n::XDIRECT_i;
 	template<class> friend class TMC2130_n::VDCMIN_i;
+	template<class> friend class TMC2130_n::MSLUT0_i;
+	template<class> friend class TMC2130_n::MSLUT1_i;
+	template<class> friend class TMC2130_n::MSLUT2_i;
+	template<class> friend class TMC2130_n::MSLUT3_i;
+	template<class> friend class TMC2130_n::MSLUT4_i;
+	template<class> friend class TMC2130_n::MSLUT5_i;
+	template<class> friend class TMC2130_n::MSLUT6_i;
+	template<class> friend class TMC2130_n::MSLUT7_i;
+	template<class> friend class TMC2130_n::MSLUTSEL_i;
+	template<class> friend class TMC2130_n::MSLUTSTART_i;
 	template<class> friend class TMC2130_n::MSCNT_i;
 	template<class> friend class TMC2130_n::MSCURACT_i;
 	template<class> friend class TMC2130_n::CHOPCONF_i;
@@ -82,6 +93,11 @@ protected:
 	template<class> friend class TMC5160_n::IOIN_i;
 	template<class> friend class TMC5160_n::ENC_DEVIATION_i;
 	template<class> friend class TMC5160_n::DRV_STATUS_i;
+
+	template<class> friend class TMC2208_n::SLAVECONF_i; // For TMC5130
+	template<class> friend class TMC2208_n::OTP_PROG_i; // For TMC5160
+	template<class> friend class TMC2208_n::FACTORY_CONF_i;
+	template<class> friend class TMC2208_n::PWM_AUTO_i; // Used by TMC5160
 
 	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
 	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);

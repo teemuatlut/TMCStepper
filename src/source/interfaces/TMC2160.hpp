@@ -13,6 +13,8 @@ namespace TMC2160_n {
     using TMC2130_n::THIGH_i;
     using TMC2130_n::XDIRECT_i;
     using TMC2130_n::VDCMIN_i;
+    using TMC2130_n::MSLUTSEL_i;
+    using TMC2130_n::MSLUTSTART_i;
     using TMC2130_n::MSCNT_i;
     using TMC2130_n::MSCURACT_i;
 
