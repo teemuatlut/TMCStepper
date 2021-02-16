@@ -73,7 +73,7 @@ namespace TMC5130_n {
       static_cast<TYPE*>(this)->write(OUTPUT_t::address, input);
     }
     protected:
-      OUTPUT_t r{};
+      OUTPUT_t r{1};
   };
 
   template<typename TYPE>
