@@ -661,24 +661,47 @@ class TMC2208Stepper :
 };
 
 class TMC2209Stepper :
-	public TMC2208Stepper,
-	public TMC2209_n::IOIN_i<TMC2209Stepper>,
-	public TMC2209_n::TCOOLTHRS_i<TMC2209Stepper>,
-	public TMC2209_n::SGTHRS_i<TMC2209Stepper>,
-	public TMC2209_n::SG_RESULT_i<TMC2209Stepper>,
-	public TMC2209_n::COOLCONF_i<TMC2209Stepper>
+	public TMCStepper_n::TMC_UART,
+	public TMCStepper					<TMC2209Stepper>,
+	public TMC2209_n::GCONF_i       	<TMC2209Stepper>,
+	public TMC2209_n::GSTAT_i       	<TMC2209Stepper>,
+	public TMC2209_n::IFCNT_i       	<TMC2209Stepper>,
+	public TMC2209_n::SLAVECONF_i   	<TMC2209Stepper>,
+	public TMC2209_n::OTP_PROG_i    	<TMC2209Stepper>,
+	public TMC2209_n::OTP_READ_i    	<TMC2209Stepper>,
+	public TMC2209_n::IOIN_i        	<TMC2209Stepper>,
+	public TMC2209_n::FACTORY_CONF_i	<TMC2209Stepper>,
+	public TMC2209_n::IHOLD_IRUN_i  	<TMC2209Stepper>,
+	public TMC2209_n::TPOWERDOWN_i  	<TMC2209Stepper>,
+	public TMC2209_n::TSTEP_i       	<TMC2209Stepper>,
+	public TMC2209_n::TPWMTHRS_i    	<TMC2209Stepper>,
+	public TMC2209_n::TCOOLTHRS_i   	<TMC2209Stepper>,
+	public TMC2209_n::VACTUAL_i     	<TMC2209Stepper>,
+	public TMC2209_n::SGTHRS_i      	<TMC2209Stepper>,
+	public TMC2209_n::SG_RESULT_i   	<TMC2209Stepper>,
+	public TMC2209_n::COOLCONF_i    	<TMC2209Stepper>,
+	public TMC2209_n::MSCNT_i       	<TMC2209Stepper>,
+	public TMC2209_n::MSCURACT_i    	<TMC2209Stepper>,
+	public TMC2209_n::CHOPCONF_i    	<TMC2209Stepper>,
+	public TMC2209_n::DRV_STATUS_i  	<TMC2209Stepper>,
+	public TMC2209_n::PWMCONF_i     	<TMC2209Stepper>,
+	public TMC2209_n::PWM_SCALE_i   	<TMC2209Stepper>,
+	public TMC2209_n::PWM_AUTO_i    	<TMC2209Stepper>
 	{
 	public:
-		TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
-			TMC2208Stepper(SerialPort, RS, addr) {}
+		TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
 
 		#if SW_CAPABLE_PLATFORM
-			TMC2209Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, addr) {}
+			TMC2209Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr);
 		#else
-			TMC2209Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+			TMC2209Stepper(SoftwareSerial*, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
+
+		void defaults();
+		void resetLibCache();
 		void push();
+		void begin();
+		bool isEnabled();
 
 		using GCONF_t       	= TMC2209_n::GCONF_i       	<TMC2209Stepper>::GCONF_t;
 		using GSTAT_t       	= TMC2209_n::GSTAT_i       	<TMC2209Stepper>::GSTAT_t;
@@ -705,6 +728,8 @@ class TMC2209Stepper :
 		using PWM_SCALE_t   	= TMC2209_n::PWM_SCALE_i   	<TMC2209Stepper>::PWM_SCALE_t;
 		using PWM_AUTO_t    	= TMC2209_n::PWM_AUTO_i    	<TMC2209Stepper>::PWM_AUTO_t;
 };
+
+using TMC2226Stepper = TMC2209Stepper;
 
 class TMC2300Stepper :
 	public TMCStepper_n::TMC_UART,
