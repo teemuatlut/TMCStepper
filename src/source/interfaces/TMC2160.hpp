@@ -59,34 +59,32 @@ namespace TMC2160_n {
         void hend(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
         //void fd(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.fd = B;         CHOPCONF(r.sr); }
         void disfdcc(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.disfdcc = B;    CHOPCONF(r.sr); }
-        void rndtf(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.rndtf = B;      CHOPCONF(r.sr); }
         void chm(       bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.chm = B;        CHOPCONF(r.sr); }
         void tbl(       uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
-        void vsense(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vsense = B;     CHOPCONF(r.sr); }
         void vhighfs(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighfs = B;    CHOPCONF(r.sr); }
         void vhighchm(  bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighchm = B;   CHOPCONF(r.sr); }
-        void sync(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.sync = B;       CHOPCONF(r.sr); }
+        void tpfd(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tpfd = B;       CHOPCONF(r.sr); }
         void mres(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
         void intpol(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
         void dedge(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
         void diss2g(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
+        void diss2vs(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B;    CHOPCONF(r.sr); }
 
-        uint8_t toff()      { return CHOPCONF_t{ CHOPCONF() }.toff;     }
-        uint8_t hstrt()     { return CHOPCONF_t{ CHOPCONF() }.hstrt;    }
-        uint8_t hend()      { return CHOPCONF_t{ CHOPCONF() }.hend;     }
-        //uint8_t fd()      { return CHOPCONF_t{ CHOPCONF() }.fd;       }
-        bool    disfdcc()   { return CHOPCONF_t{ CHOPCONF() }.disfdcc;  }
-        bool    rndtf()     { return CHOPCONF_t{ CHOPCONF() }.rndtf;    }
-        bool    chm()       { return CHOPCONF_t{ CHOPCONF() }.chm;      }
-        uint8_t tbl()       { return CHOPCONF_t{ CHOPCONF() }.tbl;      }
-        bool    vsense()    { return CHOPCONF_t{ CHOPCONF() }.vsense;   }
-        bool    vhighfs()   { return CHOPCONF_t{ CHOPCONF() }.vhighfs;  }
-        bool    vhighchm()  { return CHOPCONF_t{ CHOPCONF() }.vhighchm; }
-        uint8_t sync()      { return CHOPCONF_t{ CHOPCONF() }.sync;     }
-        uint8_t mres()      { return CHOPCONF_t{ CHOPCONF() }.mres;     }
-        bool    intpol()    { return CHOPCONF_t{ CHOPCONF() }.intpol;   }
-        bool    dedge()     { return CHOPCONF_t{ CHOPCONF() }.dedge;    }
-        bool    diss2g()    { return CHOPCONF_t{ CHOPCONF() }.diss2g;   }
+        uint8_t toff    () { return CHOPCONF_t{ CHOPCONF() }.toff;     }
+        uint8_t hstrt   () { return CHOPCONF_t{ CHOPCONF() }.hstrt;    }
+        uint8_t hend    () { return CHOPCONF_t{ CHOPCONF() }.hend;     }
+        //uint8_t fd    () { return CHOPCONF_t{ CHOPCONF() }.fd;       }
+        bool disfdcc    () { return CHOPCONF_t{ CHOPCONF() }.disfdcc;  }
+        bool chm        () { return CHOPCONF_t{ CHOPCONF() }.chm;      }
+        uint8_t tbl     () { return CHOPCONF_t{ CHOPCONF() }.tbl;      }
+        bool vhighfs    () { return CHOPCONF_t{ CHOPCONF() }.vhighfs;  }
+        bool vhighchm   () { return CHOPCONF_t{ CHOPCONF() }.vhighchm; }
+        uint8_t tpfd    () { return CHOPCONF_t{ CHOPCONF() }.tpfd;     }
+        uint8_t mres    () { return CHOPCONF_t{ CHOPCONF() }.mres;     }
+        bool intpol     () { return CHOPCONF_t{ CHOPCONF() }.intpol;   }
+        bool dedge      () { return CHOPCONF_t{ CHOPCONF() }.dedge;    }
+        bool diss2g     () { return CHOPCONF_t{ CHOPCONF() }.diss2g;   }
+        bool diss2vs    () { return CHOPCONF_t{ CHOPCONF() }.diss2vs;  }
     };
 
     using TMC2130_n::COOLCONF_i;
