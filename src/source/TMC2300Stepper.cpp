@@ -6,27 +6,17 @@ using namespace TMC2300_n;
 TMC2300Stepper::TMC2300Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
 	TMC_UART(SerialPort, addr),
 	TMCStepper(RS)
-	{}
+	{
+		resetLibCache();
+	}
 
 #if SW_CAPABLE_PLATFORM
-	TMC2300Stepper::TMC2300Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
-		TMC_UART(SW_RX_pin, SW_TX_pin, addr),
+	TMC2300Stepper::TMC2300Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr) :
+		TMC_UART(SWSerial, addr),
 		TMCStepper(RS)
-		{}
-
-	void TMC2300Stepper::beginSerial(uint32_t baudrate) {
-		if (SWSerial != nullptr)
 		{
-			SWSerial->begin(baudrate);
-			SWSerial->stopListening();
+			resetLibCache();
 		}
-		#if defined(ARDUINO_ARCH_AVR)
-			if (RXTX_pin > 0) {
-				digitalWrite(RXTX_pin, HIGH);
-				pinMode(RXTX_pin, OUTPUT);
-			}
-		#endif
-	}
 #endif
 
 void TMC2300Stepper::begin() {
