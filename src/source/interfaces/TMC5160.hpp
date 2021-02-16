@@ -108,6 +108,13 @@ namespace TMC5160_n {
         uint16_t SLAVECONF() {
             return r.sr;
         }
+        void slaveaddr(uint8_t B) {
+            r.slaveaddr = B;
+            SLAVECONF(r.sr);
+        }
+        uint8_t slaveaddr() {
+            return r.slaveaddr;
+        }        
         void senddelay(uint8_t B) {
             r.senddelay = B; SLAVECONF(r.sr);
         }
