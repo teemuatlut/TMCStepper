@@ -33,13 +33,6 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t ad
 			SWSerial->begin(baudrate);
 			SWSerial->end();
 		}
-		#if defined(ARDUINO_ARCH_AVR)
-			if (RXTX_pin > 0) {
-				digitalWrite(RXTX_pin, HIGH);
-				pinMode(RXTX_pin, OUTPUT);
-			}
-		#endif
-	}
 #endif
 
 void TMC2208Stepper::begin() {
