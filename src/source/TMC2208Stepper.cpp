@@ -32,26 +32,25 @@ void TMC2208Stepper::begin() {
 }
 
 void TMC2208Stepper::defaults() {
-	GCONF_t gconf{0};
-	gconf.i_scale_analog = 1;
-	gconf.internal_rsense = 0; // OTP
-	gconf.en_spreadcycle = 0; // OTP
-	gconf.multistep_filt = 1; // OTP
-	GCONF(gconf.sr);
+	GCONF(1 | (1<<8));
+	GSTAT(0);
+	SLAVECONF(0);
+	OTP_PROG(0);
+	FACTORY_CONF(0);
+	IHOLD_IRUN(31<<8);
+	TPOWERDOWN(20);
+	TPWMTHRS(0);
+	VACTUAL(0);
+	CHOPCONF(0x10000053u);
+	PWMCONF(0xC10D0024u);
+}
 
-	IHOLD_IRUN_i::r.iholddelay = 1; // OTP
+void TMC2208Stepper::resetLibCache() {
+	SLAVECONF_i::r.sr = 0;
+	IHOLD_IRUN_i::r.sr = 31<<8;
 	TPOWERDOWN_i::r.sr = 20;
-	CHOPCONF(0x10000053);
-	PWMCONF(0xC10D0024);
-  //MSLUT0_register.sr = ???;
-  //MSLUT1_register.sr = ???;
-  //MSLUT2_register.sr = ???;
-  //MSLUT3_register.sr = ???;
-  //MSLUT4_register.sr = ???;
-  //MSLUT5_register.sr = ???;
-  //MSLUT6_register.sr = ???;
-  //MSLUT7_register.sr = ???;
-  //MSLUTSTART_register.start_sin90 = 247;
+	TPWMTHRS_i::r.sr = 0;
+	VACTUAL_i::r.sr = 0;
 }
 
 void TMC2208Stepper::push() {

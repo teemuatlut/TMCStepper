@@ -6,27 +6,46 @@ TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, float RS, int8_t link) 
   TMC_SPI(spi, cs, link),
   TMCStepper<TMC2130Stepper>(RS)
   {
-    defaults();
+    resetLibCache();
   }
 
 TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, float RS, int8_t link) :
   TMC_SPI(spi, cs, link),
   TMCStepper<TMC2130Stepper>(RS)
   {
-    defaults();
+    resetLibCache();
   }
 
 void TMC2130Stepper::defaults() {
-  //MSLUT0_register.sr = ???;
-  //MSLUT1_register.sr = ???;
-  //MSLUT2_register.sr = ???;
-  //MSLUT3_register.sr = ???;
-  //MSLUT4_register.sr = ???;
-  //MSLUT5_register.sr = ???;
-  //MSLUT6_register.sr = ???;
-  //MSLUT7_register.sr = ???;
-  //MSLUTSTART_register.start_sin90 = 247;
-  PWMCONF_i::r.sr = 0x00050480;
+  GCONF(0);
+  GSTAT(0);
+  IHOLD_IRUN(0);
+  TPOWERDOWN(0);
+  TPWMTHRS(0);
+  TCOOLTHRS(0);
+  THIGH(0);
+  XDIRECT(0);
+  VDCMIN(0);
+  MSLUTSTART(247ul << 16);
+  CHOPCONF(0);
+  COOLCONF(0);
+  DCCTRL(0);
+  PWMCONF(0x00050480u);
+  ENCM_CTRL(0);
+}
+
+void TMC2130Stepper::resetLibCache() {
+  IHOLD_IRUN_i::r.sr = 0;
+  TPOWERDOWN_i::r.sr = 0;
+  TPWMTHRS_i::r.sr = 0;
+  TCOOLTHRS_i::r.sr = 0;
+  THIGH_i::r.sr = 0;
+  VDCMIN_i::r.sr = 0;
+  MSLUTSTART_i::r.sr = 247ul << 16;
+  COOLCONF_i::r.sr = 0;
+  DCCTRL_i::r.sr = 0;
+  PWMCONF_i::r.sr = 0x00050480u;
+  ENCM_CTRL_i::r.sr = 0;
 }
 
 void TMC2130Stepper::begin() {
