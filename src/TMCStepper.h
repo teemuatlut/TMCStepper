@@ -606,38 +606,21 @@ class TMC2208Stepper :
 	public TMC2208_n::PWM_AUTO_i<TMC2208Stepper>
 	{
 	public:
-	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::PinDef mul_pin1, TMCStepper_n::PinDef mul_pin2);
+	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch *sswitch);
 		TMC2208Stepper(HardwareSerial * SerialPort, float RS) :
-			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
-			{}
+			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR, nullptr) {}
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
-				{}
-
-			__attribute__((deprecated("Boolean argument has been deprecated and does nothing")))
-			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, bool) :
-				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
-				{};
+			TMC2208Stepper(SoftwareSerial *ser, float RS);
 		#else
-			TMC2208Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float) = delete; // Your platform does not currently support Software Serial
+			TMC2208Stepper(SoftwareSerial*, float) = delete; // Your platform does not currently support Software Serial
 		#endif
+
 		void defaults();
+		void resetLibCache();
 		void push();
 		void begin();
-		#if SW_CAPABLE_PLATFORM
-			void beginSerial(uint32_t baudrate);
-		#else
-			void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
-		#endif
 		bool isEnabled();
 
-	protected:
-
-		TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
-		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
-		#endif
 		using GCONF_t       	= TMC2208_n::GCONF_i       	<TMC2208Stepper>::GCONF_t;
 		using GSTAT_t       	= TMC2208_n::GSTAT_i       	<TMC2208Stepper>::GSTAT_t;
 		using IFCNT_t       	= TMC2208_n::IFCNT_i       	<TMC2208Stepper>::IFCNT_t;
@@ -758,18 +741,14 @@ class TMC2300Stepper :
 			TMC2300Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
 
 			#if SW_CAPABLE_PLATFORM
-				TMC2300Stepper(TMCStepper_n::PinDef SW_RX_pin, TMCStepper_n::PinDef SW_TX_pin, float RS, uint8_t addr);
+				TMC2300Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr);
 			#else
-				TMC2300Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+				TMC2300Stepper(SoftwareSerial*, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 			#endif
 			void defaults();
+			void resetLibCache();
 			void push();
 			void begin();
-			#if SW_CAPABLE_PLATFORM
-				void beginSerial(uint32_t baudrate);
-			#else
-				void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
-			#endif
 			bool isEnabled();
 
 			using GCONF_t       = TMC2300_n::GCONF_i       <TMC2300Stepper>::GCONF_t;

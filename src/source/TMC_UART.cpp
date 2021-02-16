@@ -3,27 +3,17 @@
 
 using namespace TMCStepper_n;
 
-TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr = TMC2208_SLAVE_ADDR) :
+TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, SSwitch *sw) :
+	HWSerial(SerialPort),
+	sswitch(sw),
 	slaveAddress(addr)
-	{
-		HWSerial = SerialPort;
-	}
-
-TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2) :
-	TMC_UART(SerialPort)
-	{
-		SSwitch *SMulObj = new SSwitch(mul_pin1, mul_pin2, addr);
-		sswitch = SMulObj;
-	}
+	{}
 
 #if SW_CAPABLE_PLATFORM
-	TMC_UART::TMC_UART(PinDef SW_RX_pin, PinDef SW_TX_pin, uint8_t addr) :
-		RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
+	TMC_UART::TMC_UART(SoftwareSerial *ser, uint8_t addr) :
+		SWSerial(ser),
 		slaveAddress(addr)
-		{
-			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
-			SWSerial = SWSerialObj;
-		}
+		{}
 #endif
 
 uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
@@ -117,6 +107,16 @@ uint32_t TMC_UART::read(uint8_t addr) {
 
     return __builtin_bswap32(response.data);
 }
+
+#if SW_CAPABLE_PLATFORM
+	void TMC_UART::beginSerial(uint32_t baudrate) {
+		if (SWSerial != nullptr)
+		{
+			SWSerial->begin(baudrate);
+			SWSerial->end();
+		}
+	}
+#endif
 
 SSwitch::SSwitch(const PinDef pin1, const PinDef pin2) :
 	p1(pin1),

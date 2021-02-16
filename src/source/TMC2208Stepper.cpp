@@ -3,35 +3,22 @@
 using namespace TMCStepper_n;
 using namespace TMC2208_n;
 
-// Protected
-// addr needed for TMC2209
-TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
+TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch *sswitch) :
 	TMC_UART(SerialPort, addr),
 	TMCStepper(RS)
 	{
 		HWSerial = SerialPort;
-	}
-
-TMC2208Stepper::TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2) :
-	TMC2208Stepper(SerialPort, RS)
-	{
-		SSwitch *SMulObj = new SSwitch(mul_pin1, mul_pin2, addr);
-		sswitch = SMulObj;
+		resetLibCache();
 	}
 
 #if SW_CAPABLE_PLATFORM
 	// Protected
 	// addr needed for TMC2209
-	TMC2208Stepper::TMC2208Stepper(PinDef SW_RX_pin, PinDef SW_TX_pin, float RS, uint8_t addr) :
-		TMC_UART(SW_RX_pin, SW_TX_pin, addr),
+	TMC2208Stepper::TMC2208Stepper(SoftwareSerial *ser, float RS) :
+		TMC_UART(SWSerial, TMC2208_SLAVE_ADDR),
 		TMCStepper(RS)
-		{}
-
-	void TMC2208Stepper::beginSerial(uint32_t baudrate) {
-		if (SWSerial != nullptr)
 		{
-			SWSerial->begin(baudrate);
-			SWSerial->end();
+			resetLibCache();
 		}
 #endif
 

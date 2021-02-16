@@ -5,19 +5,23 @@
 #include "../TMCStepper.h"
 #include "TMC_HAL.h"
 
+namespace TMCStepper_n {
+
 class SSwitch {
   public:
-    SSwitch(const TMCStepper_n::PinDef pin1, const TMCStepper_n::PinDef pin2, const uint8_t address);
-    void active();
+    SSwitch(const TMCStepper_n::PinDef pin1, const TMCStepper_n::PinDef pin2);
+    void active(const uint8_t addr);
   private:
     TMCStepper_n::PinDef p1;
     TMCStepper_n::PinDef p2;
-    const uint8_t addr;
 };
 
-namespace TMCStepper_n {
-
 struct TMC_UART {
+  #if SW_CAPABLE_PLATFORM
+    void beginSerial(uint32_t baudrate);
+  #else
+    void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
+  #endif
 protected:
 
   template<class> friend class TMCStepper;
@@ -67,9 +71,8 @@ protected:
   template<class> friend class TMC2300_n::PWM_SCALE_i;
   template<class> friend class TMC2300_n::PWM_AUTO_i;
 
-  TMC_UART(HardwareSerial * SerialPort, uint8_t addr);
-  TMC_UART(HardwareSerial * SerialPort, uint8_t addr, PinDef mul_pin1, PinDef mul_pin2);
-  TMC_UART(PinDef SW_RX_pin, PinDef SW_TX_pin, uint8_t addr);
+  TMC_UART(HardwareSerial * SerialPort, uint8_t addr = TMC2208_SLAVE_ADDR, SSwitch *sw = nullptr);
+  TMC_UART(SoftwareSerial *ser, uint8_t addr);
 
   static constexpr uint8_t TMC_READ = 0x00,
                           TMC_WRITE = 0x80;
@@ -77,13 +80,12 @@ protected:
   HardwareSerial * HWSerial = nullptr;
   #if SW_CAPABLE_PLATFORM
     SoftwareSerial * SWSerial = nullptr;
-    const TMCStepper_n::PinDef RXTX_pin = 0; // Half duplex
   #endif
 
   SSwitch *sswitch = nullptr;
 
   static constexpr uint8_t  TMC2208_SYNC = 0x05,
-                                                      TMC2208_SLAVE_ADDR = 0x00;
+                            TMC2208_SLAVE_ADDR = 0x00;
   static constexpr uint8_t replyDelay = 2;
   static constexpr uint8_t abort_window = 50;
   static constexpr uint8_t max_retries = 2;
