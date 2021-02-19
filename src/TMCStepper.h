@@ -607,13 +607,12 @@ class TMC2208Stepper :
 	public TMC2208_n::PWM_AUTO_i<TMC2208Stepper>
 	{
 	public:
-	    TMC2208Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch *sswitch);
-		TMC2208Stepper(HardwareSerial * SerialPort, float RS) :
-			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR, nullptr) {}
+	    TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch &sswitch);
+		TMC2208Stepper(HardwareSerial &SerialPort, float RS);
 		#if SW_CAPABLE_PLATFORM
-			TMC2208Stepper(SoftwareSerial *ser, float RS);
+			TMC2208Stepper(SoftwareSerial &ser, float RS);
 		#else
-			TMC2208Stepper(SoftwareSerial*, float) = delete; // Your platform does not currently support Software Serial
+			TMC2208Stepper(SoftwareSerial&, float) = delete; // Your platform does not currently support Software Serial
 		#endif
 
 		void defaults();
@@ -673,12 +672,12 @@ class TMC2209Stepper :
 	public TMC2209_n::PWM_AUTO_i    	<TMC2209Stepper>
 	{
 	public:
-		TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
+		TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr);
 
 		#if SW_CAPABLE_PLATFORM
-			TMC2209Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr);
+			TMC2209Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr);
 		#else
-			TMC2209Stepper(SoftwareSerial*, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+			TMC2209Stepper(SoftwareSerial&, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 
 		void defaults();
@@ -739,12 +738,12 @@ class TMC2300Stepper :
 	public TMC2300_n::PWM_AUTO_i<TMC2300Stepper>
 	{
 		public:
-			TMC2300Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr);
+			TMC2300Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr);
 
 			#if SW_CAPABLE_PLATFORM
-				TMC2300Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr);
+				TMC2300Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr);
 			#else
-				TMC2300Stepper(SoftwareSerial*, float, uint8_t) = delete; // Your platform does not currently support Software Serial
+				TMC2300Stepper(SoftwareSerial&, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 			#endif
 			void defaults();
 			void resetLibCache();

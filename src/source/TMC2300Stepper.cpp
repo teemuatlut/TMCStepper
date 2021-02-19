@@ -3,16 +3,16 @@
 using namespace TMCStepper_n;
 using namespace TMC2300_n;
 
-TMC2300Stepper::TMC2300Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
-	TMC_UART(SerialPort, addr),
+TMC2300Stepper::TMC2300Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr) :
+	TMC_UART(&SerialPort, addr),
 	TMCStepper(RS)
 	{
 		resetLibCache();
 	}
 
 #if SW_CAPABLE_PLATFORM
-	TMC2300Stepper::TMC2300Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr) :
-		TMC_UART(SWSerial, addr),
+	TMC2300Stepper::TMC2300Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr) :
+		TMC_UART(&SWSerial, addr),
 		TMCStepper(RS)
 		{
 			resetLibCache();
