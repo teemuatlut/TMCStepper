@@ -1,16 +1,15 @@
 #include "../TMCStepper.h"
 
-TMC2209Stepper::TMC2209Stepper(HardwareSerial * SerialPort, float RS, uint8_t addr) :
-	TMC_UART(SerialPort, addr),
+TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr) :
+	TMC_UART(&SerialPort, addr),
 	TMCStepper(RS)
 	{
-		HWSerial = SerialPort;
 		resetLibCache();
 	}
 
 #if SW_CAPABLE_PLATFORM
-	TMC2209Stepper::TMC2209Stepper(SoftwareSerial *SWSerial, float RS, uint8_t addr) :
-		TMC_UART(SWSerial, addr),
+	TMC2209Stepper::TMC2209Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr) :
+		TMC_UART(&SWSerial, addr),
 		TMCStepper(RS)
 		{
 			resetLibCache();
