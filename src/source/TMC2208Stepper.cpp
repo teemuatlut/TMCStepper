@@ -66,5 +66,3 @@ void TMC2208Stepper::push() {
 	TPWMTHRS(TPWMTHRS_i::r.sr);
 	VACTUAL(VACTUAL_i::r.sr);
 }
-
-bool TMC2208Stepper::isEnabled() { return !enn() && toff(); }
