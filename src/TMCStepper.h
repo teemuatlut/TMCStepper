@@ -773,7 +773,19 @@ class TMC2300Stepper :
 };
 
 class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224Stepper> {
+	public:
 	using TMC2208Stepper::TMC2208Stepper;
+
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::IOIN;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::enn;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::ms1;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::ms2;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::pdn_uart;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::spread;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::step;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::sel_a;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::dir;
+	using TMC2224_n::IOIN_i<TMC2224Stepper>::version;
 };
 
 class TMC2660Stepper {
