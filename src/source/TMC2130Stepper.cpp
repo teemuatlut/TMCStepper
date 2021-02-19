@@ -64,12 +64,6 @@ void TMC2130Stepper::begin() {
   tbl(1); //blank_time(24);
 }
 
-/**
- *  Helper functions
- */
-
-bool TMC2130Stepper::isEnabled() { return !drv_enn_cfg6() && toff(); }
-
 void TMC2130Stepper::push() {
   IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
   TPOWERDOWN(TPOWERDOWN_i::r.sr);

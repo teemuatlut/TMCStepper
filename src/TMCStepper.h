@@ -186,7 +186,7 @@ class TMC2130Stepper :
 		void begin();
 		void defaults();
 		void resetLibCache();
-		bool isEnabled();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn_cfg6(); }
 		void push();
 
 		// Helper functions
@@ -264,6 +264,7 @@ class TMC2160Stepper :
 		void defaults();
 		void resetLibCache();
 		void push();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn(); }
 
 		uint16_t cs2rms(uint8_t CS);
 		void rms_current(uint16_t mA);
@@ -372,6 +373,7 @@ class TMC5130Stepper :
 		void defaults();
 		void resetLibCache();
 		void push();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn_cfg6(); }
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
@@ -509,6 +511,7 @@ class TMC5160Stepper :
 		void defaults();
 		void resetLibCache();
 		void push();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn(); }
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
@@ -619,7 +622,7 @@ class TMC2208Stepper :
 		void resetLibCache();
 		void push();
 		void begin();
-		bool isEnabled();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::enn(); }
 
 		using GCONF_t       	= TMC2208_n::GCONF_i       	<TMC2208Stepper>::GCONF_t;
 		using GSTAT_t       	= TMC2208_n::GSTAT_i       	<TMC2208Stepper>::GSTAT_t;
@@ -684,7 +687,7 @@ class TMC2209Stepper :
 		void resetLibCache();
 		void push();
 		void begin();
-		bool isEnabled();
+		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::enn(); }
 
 		using GCONF_t       	= TMC2209_n::GCONF_i       	<TMC2209Stepper>::GCONF_t;
 		using GSTAT_t       	= TMC2209_n::GSTAT_i       	<TMC2209Stepper>::GSTAT_t;
@@ -749,7 +752,7 @@ class TMC2300Stepper :
 			void resetLibCache();
 			void push();
 			void begin();
-			bool isEnabled();
+			bool isEnabled() { return CHOPCONF_i::enable_drv() && IOIN_i::en(); }
 
 			using GCONF_t       = TMC2300_n::GCONF_i       <TMC2300Stepper>::GCONF_t;
 			using GSTAT_t       = TMC2300_n::GSTAT_i       <TMC2300Stepper>::GSTAT_t;

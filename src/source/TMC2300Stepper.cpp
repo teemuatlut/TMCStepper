@@ -55,5 +55,3 @@ void TMC2300Stepper::push() {
 	TPOWERDOWN(TPOWERDOWN_i::r.sr);
 	VACTUAL(VACTUAL_i::r.sr);
 }
-
-bool TMC2300Stepper::isEnabled() { return !en() && enable_drv(); }
