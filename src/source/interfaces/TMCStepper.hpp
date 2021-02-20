@@ -17,28 +17,28 @@
   CS = 26
 */
 template<class T>
-uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::cs2rms(uint8_t CS) {
+uint16_t TMC2130_n::TMC_RMS<T>::cs2rms(uint8_t CS) {
   const float rs = Rsense/255.0+0.02;
-  return (float)(CS+1)/32.0 * (static_cast<T*>(this)->vsense() ? 0.180 : 0.325)/rs / 1.41421 * 1000;
+  return (float)(CS+1)/32.0 * (self().vsense() ? 0.180 : 0.325)/rs / 1.41421 * 1000;
 }
 
 template<class T>
-void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(uint16_t mA) {
+void TMC2130_n::TMC_RMS<T>::rms_current(uint16_t mA) {
   const float rs = Rsense/255.0+0.02;
   uint8_t CS = 32.0*1.41421*mA/1000.0*rs/0.325 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
-    static_cast<T*>(this)->vsense(true);
+    self().vsense(true);
     CS = 32.0*1.41421*mA/1000.0*rs/0.180 - 1;
   } else { // If CS >= 16, turn off high_sense_r
-    static_cast<T*>(this)->vsense(false);
+    self().vsense(false);
   }
 
   if (CS > 31)
     CS = 31;
 
-  static_cast<T*>(this)->irun(CS);
-  static_cast<T*>(this)->ihold(CS*hold_multiplier());
+  self().irun(CS);
+  self().ihold(CS*hold_multiplier());
   //val_mA = mA;
 }
 
@@ -59,13 +59,13 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_VSENSE>::rms_current(
   CS = 28
 */
 template<class T>
-uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>::cs2rms(uint8_t CS) {
+uint16_t TMC2300_n::TMC_RMS<T>::cs2rms(uint8_t CS) {
   const float rs = Rsense/255.0+0.03;
   return (CS+1.0)/32.0 * 0.325/rs / 1.41421 * 1000;
 }
 
 template<class T>
-void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>::rms_current(uint16_t mA) {
+void TMC2300_n::TMC_RMS<T>::rms_current(uint16_t mA) {
   const float rs = Rsense/255.0+0.03;
   uint8_t CS = 32.0*1.41421*mA/1000.0*rs/0.325 - 1;
 
@@ -77,7 +77,7 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>::rms_curre
 }
 
 template<typename TYPE>
-uint8_t TMCStepper_n::TMCcommon<TYPE>::test_connection() {
+uint8_t TMCStepper<TYPE>::test_connection() {
   uint32_t drv_status = static_cast<TYPE*>(this)->DRV_STATUS();
   switch (drv_status) {
       case 0xFFFFFFFF: return 1;
@@ -100,7 +100,7 @@ uint8_t TMCStepper_n::TMCcommon<TYPE>::test_connection() {
 */
 
 template<class T>
-void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::rms_current(uint16_t mA) {
+void TMC2160_n::TMC_RMS<T>::rms_current(uint16_t mA) {
   const float rs = Rsense/255.0;
   constexpr uint32_t V_fs = 325; // 0.325 * 1000
   uint8_t CS = 31;
@@ -131,7 +131,7 @@ void TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::rms_c
 }
 
 template<class T>
-uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::cs2rms(uint8_t CS) {
+uint16_t TMC2160_n::TMC_RMS<T>::cs2rms(uint8_t CS) {
     const float rs = Rsense/255.0;
     uint16_t scaler = static_cast<T*>(this)->GLOBAL_SCALER();
     if (!scaler) scaler = 256;
@@ -145,14 +145,8 @@ uint16_t TMCStepper_n::TMC_RMS<T, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER>::c
     return numerator / denominator;
 }
 
-template<typename TYPE> void TMCStepper_n::TMCcommon<TYPE>::hysteresis_end(int8_t value) { static_cast<TYPE*>(this)->hend(value+3); }
-template<typename TYPE> int8_t TMCStepper_n::TMCcommon<TYPE>::hysteresis_end() { return static_cast<TYPE*>(this)->hend()-3; };
-
-template<typename TYPE> void TMCStepper_n::TMCcommon<TYPE>::hysteresis_start(uint8_t value) { static_cast<TYPE*>(this)->hstrt(value-1); }
-template<typename TYPE> uint8_t TMCStepper_n::TMCcommon<TYPE>::hysteresis_start() { return static_cast<TYPE*>(this)->hstrt()+1; }
-
 template<typename TYPE>
-void TMCStepper_n::TMCcommon<TYPE>::microsteps(uint16_t ms) {
+void TMCStepper<TYPE>::microsteps(uint16_t ms) {
   uint16_t mresValue{};
   switch(ms) {
     case 256: mresValue = 0; break;
@@ -167,12 +161,12 @@ void TMCStepper_n::TMCcommon<TYPE>::microsteps(uint16_t ms) {
     default: return;
   }
 
-  static_cast<TYPE*>(this)->mres(mresValue);
+  self().mres(mresValue);
 }
 
 template<typename TYPE>
-uint16_t TMCStepper_n::TMCcommon<TYPE>::microsteps() {
-  switch(static_cast<TYPE*>(this)->mres()) {
+uint16_t TMCStepper<TYPE>::microsteps() {
+  switch(self().mres()) {
     case 0: return 256;
     case 1: return 128;
     case 2: return  64;
@@ -187,18 +181,18 @@ uint16_t TMCStepper_n::TMCcommon<TYPE>::microsteps() {
 }
 
 template<typename TYPE>
-void TMCStepper_n::TMCcommon<TYPE>::blank_time(uint8_t value) {
+void TMCStepper<TYPE>::blank_time(uint8_t value) {
   switch (value) {
-    case 16: static_cast<TYPE*>(this)->tbl(0b00); break;
-    case 24: static_cast<TYPE*>(this)->tbl(0b01); break;
-    case 36: static_cast<TYPE*>(this)->tbl(0b10); break;
-    case 54: static_cast<TYPE*>(this)->tbl(0b11); break;
+    case 16: self().tbl(0b00); break;
+    case 24: self().tbl(0b01); break;
+    case 36: self().tbl(0b10); break;
+    case 54: self().tbl(0b11); break;
   }
 }
 
 template<typename TYPE>
-uint8_t TMCStepper_n::TMCcommon<TYPE>::blank_time() {
-  switch (static_cast<TYPE*>(this)->tbl()) {
+uint8_t TMCStepper<TYPE>::blank_time() {
+  switch (self().tbl()) {
     case 0b00: return 16;
     case 0b01: return 24;
     case 0b10: return 36;

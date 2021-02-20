@@ -5,14 +5,14 @@ using namespace TMC2208_n;
 
 TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch &sswitch) :
 	TMC_UART(&SerialPort, addr),
-	TMCStepper(RS)
+	TMC_RMS(RS)
 	{
 		resetLibCache();
 	}
 
 TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS) :
 	TMC_UART(&SerialPort, TMC2208_SLAVE_ADDR, nullptr),
-	TMCStepper(RS)
+	TMC_RMS(RS)
 	{
 		resetLibCache();
 	}
@@ -22,7 +22,7 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS) :
 	// addr needed for TMC2209
 	TMC2208Stepper::TMC2208Stepper(SoftwareSerial &ser, float RS) :
 		TMC_UART(SWSerial, TMC2208_SLAVE_ADDR),
-		TMCStepper(RS)
+		TMC_RMS(RS)
 		{
 			resetLibCache();
 		}
