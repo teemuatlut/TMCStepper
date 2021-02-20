@@ -3,6 +3,12 @@
 
 #if defined(ARDUINO_ARCH_AVR)
 
+    #include <Arduino.h>
+	#include <SoftwareSerial.h>
+    #include <SPI.h>
+
+    #define SW_CAPABLE_PLATFORM true
+
     namespace TMCStepper_n {
         typedef uint8_t PinDef;
 
@@ -83,6 +89,12 @@
 
 #elif defined(ARDUINO_ARCH_SAM)
 
+    #include <Arduino.h>
+	#include <HardwareSerial.h>
+	#include <SPI.h>
+
+    #define SW_CAPABLE_PLATFORM false
+
     namespace TMCStepper_n {
 
         typedef uint32_t PinDef;
@@ -119,6 +131,13 @@
     }
 
 #elif defined(TARGET_LPC1768)
+
+    #include <Arduino.h>
+    #include <SPI.h>
+	#include <HardwareSerial.h>
+	#include <SoftwareSerial.h>
+	
+    #define SW_CAPABLE_PLATFORM true
 
     namespace TMCStepper_n {
 
@@ -186,6 +205,13 @@
     #endif
 
 #elif defined(ARDUINO)
+
+    #include <Arduino.h>
+    #include <SPI.h>
+    #include <HardwareSerial.h>
+    #include <SoftwareSerial.h>
+
+    #define SW_CAPABLE_PLATFORM true
 
     namespace TMCStepper_n {
 
@@ -270,8 +296,6 @@
     #include <stdint.h>
     #include <spi.h>
     #include <usart.h>
-
-    #include "TMC_HAL.h"
 
     namespace TMCStepper_n {
 
@@ -373,6 +397,137 @@
             UsartType * const huart;
         };
 
+#elif defined(bcm2835)
+
+    #include <bcm2835.h>
+    #include <stdio.h>
+    #include <stdint.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <errno.h>
+    #include <sys/time.h>
+
+    #define INPUT BCM2835_GPIO_FSEL_INPT
+    #define INPUT_PULLUP BCM2835_GPIO_PUD_UP
+    #define INPUT_PULLDOWN BCM2835_GPIO_PUD_DOWN
+    #define OUTPUT BCM2835_GPIO_FSEL_OUTP
+
+    #define MSBFIRST BCM2835_SPI_BIT_ORDER_MSBFIRST
+    #define SPI_MODE0 BCM2835_SPI_MODE0
+    #define SPI_MODE1 BCM2835_SPI_MODE1
+    #define SPI_MODE2 BCM2835_SPI_MODE2
+    #define SPI_MODE3 BCM2835_SPI_MODE3
+
+    namespace TMCStepper_n {
+
+        struct TMCPin {
+            TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+            void mode(const uint8_t mode) const {
+                bcm2835_gpio_fsel(pin, mode);
+                if (mode == (uint8_t)BCM2835_GPIO_PUD_UP || mode == (uint8_t)BCM2835_GPIO_PUD_DOWN)
+                    bcm2835_gpio_set_pud(pin, mode)
+            }
+            bool operator ==(const TMCPin &p2) {
+                return (p2.port == port) && (p2.pin == pin);
+            }
+
+            GPIO_TypeDef* const port = nullptr;
+            uint32_t const pin;
+        };
+
+        class InputPin : public TMCPin {
+        public:
+            InputPin(const TMCPin &_pin);
+            InputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+
+            __attribute__((always_inline))
+            bool read() const {
+              return bcm2835_gpio_lev(pin);
+            }
+
+            operator bool() const { return read(); }
+        };
+
+        class OutputPin : public TMCPin {
+        public:
+            OutputPin(const TMCPin &_pin);
+            OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+
+            bool read() const {
+              return port->ODR & pin;
+            }
+
+            void write(const bool state) const {
+              state ? set() : reset();
+            }
+
+            void toggle() const;
+
+            __attribute__((always_inline))
+            void set() const {
+              bcm2835_gpio_write(pin, 1);
+            }
+            __attribute__((always_inline))
+            void reset() const {
+              pbcm2835_gpio_write(pin, 0);
+            }
+            void operator =(bool state) { write(state); }
+        };
+
+        typedef TMCPin PinDef;
+
+    }
+
+    struct SPISettings;
+
+    class SPIClass
+    {
+    public:
+        void beginTransaction(SPISettings settings);
+        void endTransaction() {
+            bcm2835_spi_end();
+        }
+        uint8_t transfer(uint8_t value) {
+            return bcm2835_spi_transfer(value);
+        }
+    };
+
+    struct SPISettings
+    {
+        friend class SPIClass;
+        SPISettings(uint32_t s, bcm2835SPIBitOrder o, bcm2835SPIMode m) :
+            speed(s), order(o), mode(m)
+            {}
+
+        const uint32_t speed;
+        const bcm2835SPIBitOrder order;
+        const bcm2835SPIMode mode;
+    };
+
+    extern SPIClass SPI;
+
+    uint32_t millis();
+
+    class HardwareSerial
+    {
+    public:
+        HardwareSerial(const char* p) : port(p) {}
+        void begin(unsigned long baud) { begin(baud, O_RDWR | O_NOCTTY | O_NDELAY); }
+        void begin(unsigned long, int);
+        void end() { ::close(port); }
+        int available(void);
+        uint8_t write(const uint8_t data);
+        uint8_t read();
+    private:
+        int fd;                    /* Filedeskriptor */
+        const char* port;
+    };
+
+    extern HardwareSerial Serial;
+    extern HardwareSerial Serial1;
+
 #endif
 
 #ifndef HIGH
@@ -395,4 +550,7 @@
 #endif
 #ifndef SPI_MODE3
     #define SPI_MODE3 0
+#endif
+#ifndef SW_CAPABLE_PLATFORM
+    #define SW_CAPABLE_PLATFORM false
 #endif
