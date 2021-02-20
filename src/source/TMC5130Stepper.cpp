@@ -4,13 +4,13 @@ using namespace TMCStepper_n;
 
 TMC5130Stepper::TMC5130Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
   TMC_SPI(spi, pinCS, link),
-  TMCStepper<TMC5130Stepper>(RS)
+  TMC_RMS(RS)
   {
     resetLibCache();
   }
 TMC5130Stepper::TMC5130Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
   TMC_SPI(spi, pinCS, link),
-  TMCStepper<TMC5130Stepper>(RS)
+  TMC_RMS(RS)
   {
     resetLibCache();
   }

@@ -55,14 +55,8 @@ struct TMC2300Stepper;
 #include "source/TMC_SPI.hpp"
 #include "source/TMC_UART.hpp"
 
-namespace TMCStepper_n {
-
-enum class RMS_TYPE {
-	WITH_VSENSE, WITH_GLOBAL_SCALER, WITHOUT_VSENSE
-};
-
 template<typename TYPE>
-class TMCcommon {
+class TMCStepper {
 	public:
 		uint8_t test_connection();
 
@@ -71,16 +65,56 @@ class TMCcommon {
 		uint16_t microsteps();
 		void blank_time(uint8_t value);
 		uint8_t blank_time();
-		void hysteresis_end(int8_t value);
-		int8_t hysteresis_end();
-		void hysteresis_start(uint8_t value);
-		uint8_t hysteresis_start();
+
+		void hysteresis_end(int8_t value) {
+			self().hend(value+3);
+		}
+
+		int8_t hysteresis_end() {
+			return self().hend()-3;
+		}
+
+		void hysteresis_start(uint8_t value) {
+			self().hstrt(value-1);
+		}
+
+		uint8_t hysteresis_start() {
+			return self().hstrt()+1;
+		}
+
+	private:
+		TYPE& self() { return *static_cast<TYPE*>(this); } 
 };
 
-template<class T, RMS_TYPE I> struct TMC_RMS;
+namespace TMC2130_n {
 
 template<class T>
-struct TMC_RMS<T, RMS_TYPE::WITH_VSENSE> {
+struct TMC_RMS {
+    uint16_t cs2rms(uint8_t CS);
+    void rms_current(uint16_t mA);
+    void rms_current(uint16_t mA, float mult) {
+      hold_multiplier(mult);
+      rms_current(mA);
+    }
+    uint16_t rms_current() {
+      return cs2rms(self().irun());
+    }
+    void hold_multiplier(float val) { holdMultiplier = val*255; }
+    float hold_multiplier() { return (holdMultiplier+0.5)/255.0; }
+  protected:
+    TMC_RMS(float RS) : Rsense(RS*255) {};
+    T& self() { return *static_cast<T*>(this); }
+
+    const uint8_t Rsense;
+    uint8_t holdMultiplier = 127;
+};
+
+}
+
+namespace TMC2160_n {
+
+template<class T>
+struct TMC_RMS {
     uint16_t cs2rms(uint8_t CS);
     void rms_current(uint16_t mA);
     void rms_current(uint16_t mA, float mult) {
@@ -99,8 +133,12 @@ struct TMC_RMS<T, RMS_TYPE::WITH_VSENSE> {
     uint8_t holdMultiplier = 127;
 };
 
+}
+
+namespace TMC2300_n {
+
 template<class T>
-struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
+struct TMC_RMS {
     uint16_t cs2rms(uint8_t CS);
     void rms_current(uint16_t mA);
     void rms_current(uint16_t mA, float mult) {
@@ -119,42 +157,19 @@ struct TMC_RMS<T, RMS_TYPE::WITH_GLOBAL_SCALER> {
     uint8_t holdMultiplier = 127;
 };
 
-template<class T>
-struct TMC_RMS<T, RMS_TYPE::WITHOUT_VSENSE> {
-    uint16_t cs2rms(uint8_t CS);
-    void rms_current(uint16_t mA);
-    void rms_current(uint16_t mA, float mult) {
-      hold_multiplier(mult);
-      rms_current(mA);
-    }
-    uint16_t rms_current() {
-      return cs2rms(static_cast<T*>(this)->irun());
-    }
-    void hold_multiplier(float val) { holdMultiplier = val*255; }
-    float hold_multiplier() { return (holdMultiplier+0.5)/255.0; }
-  protected:
-    TMC_RMS(float RS) : Rsense(RS*255) {};
+}
 
-    const uint8_t Rsense;
-    uint8_t holdMultiplier = 127;
-};
-
-};
+namespace TMC5130_n { using TMC2130_n::TMC_RMS; }
+namespace TMC5160_n { using TMC2160_n::TMC_RMS; }
+namespace TMC2208_n { using TMC2130_n::TMC_RMS; }
+namespace TMC2209_n { using TMC2130_n::TMC_RMS; }
 
 #include "source/interfaces/TMCStepper.hpp"
-
-template<class T> struct TMCStepper;
-template<> struct TMCStepper<TMC2130Stepper> : TMCStepper_n::TMCcommon<TMC2130Stepper>, TMCStepper_n::TMC_RMS<TMC2130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC2160Stepper> : TMCStepper_n::TMCcommon<TMC2160Stepper>, TMCStepper_n::TMC_RMS<TMC2160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC5130Stepper> : TMCStepper_n::TMCcommon<TMC5130Stepper>, TMCStepper_n::TMC_RMS<TMC5130Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC5160Stepper> : TMCStepper_n::TMCcommon<TMC5160Stepper>, TMCStepper_n::TMC_RMS<TMC5160Stepper, TMCStepper_n::RMS_TYPE::WITH_GLOBAL_SCALER> 	{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC2208Stepper> : TMCStepper_n::TMCcommon<TMC2208Stepper>, TMCStepper_n::TMC_RMS<TMC2208Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC2209Stepper> : TMCStepper_n::TMCcommon<TMC2209Stepper>, TMCStepper_n::TMC_RMS<TMC2209Stepper, TMCStepper_n::RMS_TYPE::WITH_VSENSE> 			{ using TMC_RMS::TMC_RMS; };
-template<> struct TMCStepper<TMC2300Stepper> : TMCStepper_n::TMCcommon<TMC2300Stepper>, TMCStepper_n::TMC_RMS<TMC2300Stepper, TMCStepper_n::RMS_TYPE::WITHOUT_VSENSE>   { using TMC_RMS::TMC_RMS; };
 
 class TMC2130Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC2130Stepper>,
+	public TMC2130_n::TMC_RMS<TMC2130Stepper>,
 	public TMC2130_n::GCONF_i<TMC2130Stepper>,
 	public TMC2130_n::GSTAT_i<TMC2130Stepper>,
 	public TMC2130_n::IOIN_i<TMC2130Stepper>,
@@ -229,6 +244,7 @@ class TMC2130Stepper :
 class TMC2160Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC2160Stepper>,
+	public TMC2160_n::TMC_RMS<TMC2160Stepper>,
 	public TMC2160_n::GCONF_i<TMC2160Stepper>,
 	public TMC2160_n::GSTAT_i<TMC2160Stepper>,
 	public TMC2160_n::IOIN_i<TMC2160Stepper>,
@@ -309,6 +325,7 @@ class TMC2160Stepper :
 class TMC5130Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5130Stepper>,
+	public TMC5130_n::TMC_RMS		  <TMC5130Stepper>,
 	public TMC5130_n::GCONF_i         <TMC5130Stepper>,
 	public TMC5130_n::GSTAT_i         <TMC5130Stepper>,
 	public TMC5130_n::IFCNT_i         <TMC5130Stepper>,
@@ -440,6 +457,7 @@ class TMC5130Stepper :
 class TMC5160Stepper :
 	public TMCStepper_n::TMC_SPI,
 	public TMCStepper<TMC5160Stepper>,
+	public TMC5160_n::TMC_RMS			 <TMC5160Stepper>,
 	public TMC5160_n::GCONF_i            <TMC5160Stepper>,
 	public TMC5160_n::GSTAT_i            <TMC5160Stepper>,
 	public TMC5160_n::IFCNT_i            <TMC5160Stepper>,
@@ -588,6 +606,7 @@ typedef TMC5160Stepper TMC5161Stepper;
 class TMC2208Stepper :
 	public TMCStepper_n::TMC_UART,
 	public TMCStepper<TMC2208Stepper>,
+	public TMC2208_n::TMC_RMS<TMC2208Stepper>,
 	public TMC2208_n::GCONF_i<TMC2208Stepper>,
 	public TMC2208_n::GSTAT_i<TMC2208Stepper>,
 	public TMC2208_n::IFCNT_i<TMC2208Stepper>,
@@ -649,6 +668,7 @@ class TMC2208Stepper :
 class TMC2209Stepper :
 	public TMCStepper_n::TMC_UART,
 	public TMCStepper					<TMC2209Stepper>,
+	public TMC2209_n::TMC_RMS			<TMC2209Stepper>,
 	public TMC2209_n::GCONF_i       	<TMC2209Stepper>,
 	public TMC2209_n::GSTAT_i       	<TMC2209Stepper>,
 	public TMC2209_n::IFCNT_i       	<TMC2209Stepper>,
@@ -720,6 +740,7 @@ using TMC2226Stepper = TMC2209Stepper;
 class TMC2300Stepper :
 	public TMCStepper_n::TMC_UART,
 	public TMCStepper<TMC2300Stepper>,
+	public TMC2300_n::TMC_RMS<TMC2300Stepper>,
 	public TMC2300_n::GCONF_i<TMC2300Stepper>,
 	public TMC2300_n::GSTAT_i<TMC2300Stepper>,
 	public TMC2300_n::IFCNT_i<TMC2300Stepper>,
