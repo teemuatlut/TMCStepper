@@ -2,11 +2,12 @@
 #include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
 int8_t TMC_SPI::chain_length = 0;
 uint32_t TMC_SPI::spi_speed = 16000000/8;
 
-TMC_SPI::TMC_SPI(SPIClass &spi, PinDef cs, int8_t link) :
+TMC_SPI::TMC_SPI(SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link) :
   pinCS(cs),
   TMC_HW_SPI(&spi),
   link_index(link)
@@ -15,7 +16,7 @@ TMC_SPI::TMC_SPI(SPIClass &spi, PinDef cs, int8_t link) :
       chain_length = link;
   }
 
-TMC_SPI::TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link) :
+TMC_SPI::TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link) :
   pinCS(cs),
   TMC_SW_SPI(&spi),
   link_index(link)
@@ -105,9 +106,9 @@ void SW_SPIClass::init() {
   OutputPin mosi(mosi_pin), sck(sck_pin);
   InputPin miso(miso_pin);
 
-  mosi.mode(OUTPUT);
-  sck.mode(OUTPUT);
-  miso.mode(INPUT);
+  mosi.setMode();
+  sck.setMode();
+  miso.setMode();
   sck.write(HIGH);
 }
 

@@ -1,56 +1,61 @@
 
 #if defined(ARDUINO_ARCH_AVR)
 
-#include <Arduino.h>
-#include <SPI.h>
-#include "TMCStepper.h"
+#include "../../TMCStepper.h"
 
+using namespace TMC_HAL;
 using namespace TMCStepper_n;
 
-TMCPin::TMCPin(const uint8_t _pin) :
-    port(digitalPinToPort(_pin)),
-    bitMask(digitalPinToBitMask(_pin))
-    {}
+PinCache::PinCache(const uint8_t p, const uint8_t bm, volatile uint8_t* const ptr) :
+    port(p), bitMask(bm), pPort(ptr) {}
 
-void TMCPin::mode(const uint8_t mode) const {
-    volatile uint8_t *reg, *out;
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(
+        digitalPinToPort(_pin),
+        digitalPinToBitMask(_pin),
+        portInputRegister(digitalPinToPort(_pin))
+    ) {}
 
-    reg = portModeRegister(port);
-    out = portOutputRegister(port);
+void InputPin::setMode() const {
+    volatile uint8_t *reg = portModeRegister(port);
+    volatile uint8_t *out = portOutputRegister(port);
 
-    if (mode == INPUT) { 
-        uint8_t oldSREG = SREG;
-                cli();
-        *reg &= ~bitMask;
-        *out &= ~bitMask;
-        SREG = oldSREG;
-    } else if (mode == INPUT_PULLUP) {
-        uint8_t oldSREG = SREG;
-                cli();
-        *reg &= ~bitMask;
-        *out |= bitMask;
-        SREG = oldSREG;
-    } else {
-        uint8_t oldSREG = SREG;
-                cli();
-        *reg |= bitMask;
-        SREG = oldSREG;
-    }
+    // INPUT_PULLUP
+    uint8_t oldSREG = SREG;
+    cli();
+    *reg &= ~bitMask;
+    *out |= bitMask;
+    SREG = oldSREG;
 }
 
-InputPin::InputPin(const uint8_t _pin) :
-    TMCPin(_pin),
-    inPort(portInputRegister(digitalPinToPort(_pin)))
-    {
-        pinMode(_pin, INPUT);
-    }
+bool InputPin::read() const {
+    return *pPort & bitMask;
+}
 
-OutputPin::OutputPin(const uint8_t _pin) :
-    TMCPin(_pin),
-    outPort(portOutputRegister(digitalPinToPort(_pin)))
-    {
-        pinMode(_pin, OUTPUT);
-    }
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(
+        digitalPinToPort(_pin),
+        digitalPinToBitMask(_pin),
+        portOutputRegister(digitalPinToPort(_pin))
+    ) {}
+
+void OutputPin::setMode() const {
+    volatile uint8_t *reg = portModeRegister(port);
+
+    // OUTPUT
+    uint8_t oldSREG = SREG;
+    cli();
+    *reg |= bitMask;
+    SREG = oldSREG;
+}
+
+void OutputPin::set() const {
+    *pPort |= bitMask;
+}
+
+void OutputPin::reset() const {
+    *pPort &= ~bitMask;
+}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {

@@ -6,56 +6,53 @@
 #include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
-TMCPin::TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin) : port(_port), pin(_pin) {}
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
 
 #if defined(USE_FULL_LL_DRIVER)
-    void TMCPin::mode(const uint8_t mode) const {
-        switch(mode) {
-            case OUTPUT:
-                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_OUTPUT);
-                break;
-            case INPUT:
-                LL_GPIO_SetPinMode(port, pin, LL_GPIO_MODE_INPUT);
-                break;
-            default: break;
-        }
+    void InputPin::setMode() const {
+        LL_GPIO_SetPinMode(pin.port, pin.bm, LL_GPIO_MODE_INPUT);
+    }
+
+    void OutputPin::setMode() const {
+        LL_GPIO_SetPinMode(pin.port, pin.bm, LL_GPIO_MODE_OUTPUT);
     }
 #elif defined(HAL_GPIO_MODULE_ENABLED)
-    void TMCPin::mode(const uint8_t mode) const {
+    void InputPin::setMode() const {
         GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-        switch(mode) {
-            case OUTPUT:
-                GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-                break;
-            case INPUT:
-                GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-                break;
-            default: break;
-        }
-
-        GPIO_InitStruct.Pin = pin;
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pin = pin.bm;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
-        HAL_GPIO_Init(port, &GPIO_InitStruct);
+        HAL_GPIO_Init(pin.port, &GPIO_InitStruct);
+    }
+
+    void OutputPin::setMode() const {
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+        GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+        GPIO_InitStruct.Pin = pin.bm;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        HAL_GPIO_Init(pin.port, &GPIO_InitStruct);
     }
 #endif
 
-InputPin::InputPin(const TMCPin &_pin) : TMCPin(_pin.port, _pin.pin) {}
-InputPin::InputPin(GPIO_TypeDef* const _port, uint32_t const _pin) : TMCPin(_port, _pin) {}
+bool InputPin::read() const {
+    return pin.port->IDR & pin.bm;
+}
 
-OutputPin::OutputPin(const TMCPin &_pin) : TMCPin(_pin.port, _pin.pin) {}
-OutputPin::OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin) : TMCPin(_port, _pin) {}
+void OutputPin::set() const {
+    pin.port->BSRR = pin.bm;
+}
 
-#if defined(USE_FULL_LL_DRIVER)
-    void OutputPin::toggle() const {
-        LL_GPIO_TogglePin(port, pin);
-    }
-#elif defined(HAL_GPIO_MODULE_ENABLED)
-    void OutputPin::toggle() const {
-        HAL_GPIO_TogglePin(port, pin);
-    }
-#endif
+void OutputPin::reset() const {
+    pin.port->BRR = pin.bm;
+}
 
 #if defined(HAL_SPI_MODULE_ENABLED)
     SPIClass::SPIClass(SPI_HandleTypeDef * spi) : hspi(spi) {}

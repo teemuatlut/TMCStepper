@@ -2,6 +2,7 @@
 #include "TMC_SPI.hpp"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
 TMC2660Stepper::TMC2660Stepper(SPIClass &spi, PinDef cs, float RS) :
   pinCS(cs),
@@ -61,7 +62,7 @@ void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
 void TMC2660Stepper::begin() {
   //set pins
   OutputPin cs(pinCS);
-  cs.mode(OUTPUT);
+  cs.setMode();
   cs.write(HIGH);
 
   //TODO: Push shadow registers

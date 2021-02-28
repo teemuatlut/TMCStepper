@@ -2,6 +2,7 @@
 #include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
 TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, SSwitch *sw) :
 	HWSerial(SerialPort),
@@ -122,8 +123,8 @@ SSwitch::SSwitch(const PinDef pin1, const PinDef pin2) :
 	p1(pin1),
 	p2(pin2)
 	{
-	OutputPin(p1).mode(OUTPUT);
-	OutputPin(p2).mode(OUTPUT);
+	OutputPin(p1).setMode();
+	OutputPin(p2).setMode();
 	}
 
 void SSwitch::active(const uint8_t addr) {

@@ -3,7 +3,7 @@
 using namespace TMCStepper_n;
 using namespace TMC2208_n;
 
-TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch &sswitch) :
+TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMC_HAL::SSwitch &sswitch) :
 	TMC_UART(&SerialPort, addr),
 	TMC_RMS(RS)
 	{

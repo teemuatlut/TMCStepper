@@ -7,26 +7,35 @@
 #include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
-TMCPin::TMCPin(const uint32_t _pin) : pin(_pin) {}
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
 
-void TMCPin::mode(const uint8_t mode) const {
-    switch(mode) {
-        case OUTPUT:
-            pinMode(pin, OUTPUT);
-            break;
-        case INPUT:
-            pinMode(pin, INPUT);
-            break;
-        default: break;
-    }
+void InputPin::setMode() const {
+    pinMode(pin, INPUT);
 }
 
-bool TMCPin::read() const {
+bool InputPin::read() const {
     return PIO_Get( g_APinDescription[pin].pPort, PIO_INPUT, g_APinDescription[pin].ulPin );
 }
 
-OutputPin::OutputPin(const uint32_t _pin) : TMCPin(_pin) {}
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void OutputPin::setMode() const {
+    pinMode(pin, OUTPUT);
+}
+
+void OutputPin::set() const {
+    g_APinDescription[pin].pPort -> PIO_SODR = g_APinDescription[pin].ulPin;
+}
+
+void OutputPin::reset() const {
+    g_APinDescription[pin].pPort -> PIO_CODR = g_APinDescription[pin].ulPin;
+}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
