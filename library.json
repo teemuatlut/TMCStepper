@@ -8,7 +8,7 @@
 		"type": "git",
 		"url": "https://github.com/teemuatlut/TMCStepper.git"
 	},
-	"frameworks": "arduino",
+	"frameworks": ["arduino", "stm32cube", "mbed"],
 	"platforms": "*",
 	"dependencies":
     {

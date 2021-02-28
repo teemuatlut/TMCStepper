@@ -1,18 +1,18 @@
 
 #include <TMCStepper.h>
-#include <source/TMC_HAL.h>
 
 extern "C" {
 	#include "main.h"
+	#include "spi.h"
 }
 
-TMCStepper_n::OutputPin enPin(ENABLE_GPIO_Port, ENABLE_Pin);
-TMCStepper_n::OutputPin step(STEP_GPIO_Port, STEP_Pin);
+TMC_HAL::OutputPin enPin({ENABLE_GPIO_Port, ENABLE_Pin});
+TMC_HAL::OutputPin step({STEP_GPIO_Port, STEP_Pin});
 
-//SPIClass SPI(&hspi1);
+SPIClass SPI(&hspi1);
 //SW_SPIClass SWSPI({SW_SPI_MOSI_GPIO_Port, SW_SPI_MOSI_Pin}, {SW_SPI_MISO_GPIO_Port, SW_SPI_MISO_Pin}, {SW_SPI_SCK_GPIO_Port, SW_SPI_SCK_Pin});
 
-//TMC2130Stepper driver(SPI, {CS_GPIO_Port, CS_Pin}, 0.11);
+TMC2130Stepper driver(SPI, {CS_GPIO_Port, CS_Pin}, 0.11);
 //TMC2130Stepper driver(SWSPI, {CS_GPIO_Port, CS_Pin}, 0.11);
 
 //HardwareSerial SerialInstance(&huart2);
