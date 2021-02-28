@@ -611,8 +611,6 @@ class TMC2208Stepper :
 		TMC2208Stepper(HardwareSerial &SerialPort, float RS);
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(SoftwareSerial &ser, float RS);
-		#else
-			TMC2208Stepper(SoftwareSerial&, float) = delete; // Your platform does not currently support Software Serial
 		#endif
 
 		void defaults();
@@ -677,8 +675,6 @@ class TMC2209Stepper :
 
 		#if SW_CAPABLE_PLATFORM
 			TMC2209Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr);
-		#else
-			TMC2209Stepper(SoftwareSerial&, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
 
 		void defaults();
@@ -744,8 +740,6 @@ class TMC2300Stepper :
 
 			#if SW_CAPABLE_PLATFORM
 				TMC2300Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr);
-			#else
-				TMC2300Stepper(SoftwareSerial&, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 			#endif
 			void defaults();
 			void resetLibCache();

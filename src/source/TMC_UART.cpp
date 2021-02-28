@@ -89,7 +89,7 @@ uint32_t TMC_UART::read(uint8_t addr) {
     datagram.crc = calcCRC((uint8_t*)&datagram, datagram.length);
     CRCerror = true;
 
-    for (uint8_t i = 0; i < max_retries; i++) {
+    for (uint_fast8_t i = 0; i < max_retries; i++) {
         preReadCommunication();
         response = sendReadRequest(datagram);
         postReadCommunication();

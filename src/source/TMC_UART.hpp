@@ -72,7 +72,9 @@ protected:
   template<class> friend class TMC2300_n::PWM_AUTO_i;
 
   TMC_UART(HardwareSerial * SerialPort, uint8_t addr = TMC2208_SLAVE_ADDR, SSwitch *sw = nullptr);
-  TMC_UART(SoftwareSerial *ser, uint8_t addr);
+  #if SW_CAPABLE_PLATFORM
+    TMC_UART(SoftwareSerial *ser, uint8_t addr);
+  #endif
 
   static constexpr uint8_t TMC_READ = 0x00,
                           TMC_WRITE = 0x80;
