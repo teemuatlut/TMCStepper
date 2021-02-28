@@ -86,7 +86,7 @@ void TMC2660Stepper::endTransaction() {
     }
 }
 
-__attribute__((weak, always_inline))
+__attribute__((weak))
 int TMC_UART::available() {
     int out = 0;
     if (HWSerial != nullptr) {
@@ -100,7 +100,8 @@ static Timer serialTimeout;
 
 __attribute__((weak))
 size_t TMC_UART::getTime() const {
-    return 1000 * serialTimeout.elapsed_time().count();
+    using namespace std::chrono;
+    return duration_cast<milliseconds>(serialTimeout.elapsed_time()).count();
 }
 
 __attribute__((weak))
