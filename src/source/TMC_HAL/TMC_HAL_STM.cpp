@@ -179,7 +179,7 @@ __attribute__((weak))
 void TMC_UART::preWriteCommunication() {
     if (HWSerial != nullptr) {
         if (sswitch != nullptr)
-            sswitch->active();
+            sswitch->active(slaveAddress);
     }
 }
 
@@ -187,7 +187,7 @@ __attribute__((weak))
 void TMC_UART::preReadCommunication() {
     if (HWSerial != nullptr) {
         if (sswitch != nullptr)
-            sswitch->active();
+            sswitch->active(slaveAddress);
     }
 }
 
