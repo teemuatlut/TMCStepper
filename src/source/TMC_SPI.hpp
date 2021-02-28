@@ -5,13 +5,13 @@
 
 class SW_SPIClass {
 	public:
-		SW_SPIClass(const TMCStepper_n::PinDef mosi, const TMCStepper_n::PinDef miso, const TMCStepper_n::PinDef sck);
+		SW_SPIClass(const TMC_HAL::PinDef mosi, const TMC_HAL::PinDef miso, const TMC_HAL::PinDef sck);
 		void init();
 		void begin() {};
 		void transfer(char *buf, uint8_t count);
 		void endTransaction() {};
 	private:
-		const TMCStepper_n::PinDef mosi_pin, sck_pin, miso_pin;
+		const TMC_HAL::PinDef mosi_pin, sck_pin, miso_pin;
 };
 
 namespace TMCStepper_n {
@@ -99,8 +99,8 @@ protected:
 	template<class> friend class TMC2208_n::FACTORY_CONF_i;
 	template<class> friend class TMC2208_n::PWM_AUTO_i; // Used by TMC5160
 
-	TMC_SPI(SPIClass &spi, PinDef cs, int8_t link);
-	TMC_SPI(SW_SPIClass &spi, PinDef cs, int8_t link);
+	TMC_SPI(SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link);
+	TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link);
 
 	// |         8b        |       32b     |
 	// | Address or Status | Register data |
@@ -134,7 +134,7 @@ protected:
 													TMC_WRITE = 0x80;
 
 	static uint32_t spi_speed; // Default 2MHz
-	const TMCStepper_n::PinDef pinCS;
+	const TMC_HAL::PinDef pinCS;
 	SPIClass *TMC_HW_SPI = nullptr;
 	SW_SPIClass *TMC_SW_SPI = nullptr;
 

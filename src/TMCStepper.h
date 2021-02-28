@@ -173,8 +173,8 @@ class TMC2130Stepper :
 	public TMC2130_n::LOST_STEPS_i<TMC2130Stepper>
 	{
 	public:
-		TMC2130Stepper(SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
-		TMC2130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef cs, float RS, int8_t link_index = -1);
+		TMC2130Stepper(SPIClass &spi, TMC_HAL::PinDef cs, float RS, int8_t link_index = -1);
+		TMC2130Stepper(SW_SPIClass &spi, TMC_HAL::PinDef cs, float RS, int8_t link_index = -1);
 
 		void begin();
 		void defaults();
@@ -191,10 +191,10 @@ class TMC2130Stepper :
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
+		TMC2130Stepper(TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, int8_t link_index = -1) = delete;
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2130Stepper(TMCStepper_n::PinDef) = delete;
+		TMC2130Stepper(TMC_HAL::PinDef) = delete;
 
 		using GCONF_t           = TMC2130_n::GCONF_i          <TMC2130Stepper>::GCONF_t;
 		using GSTAT_t           = TMC2130_n::GSTAT_i          <TMC2130Stepper>::GSTAT_t;
@@ -252,8 +252,8 @@ class TMC2160Stepper :
 	public TMC2160_n::PWM_SCALE_i<TMC2160Stepper>
 	{
 	public:
-		TMC2160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
-		TMC2160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC2160Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC2160Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
 		void begin();
 		void defaults();
 		void resetLibCache();
@@ -267,7 +267,7 @@ class TMC2160Stepper :
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
+		TMC2160Stepper(TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.075;
 
@@ -361,8 +361,8 @@ class TMC5130Stepper :
 	public TMC5130_n::LOST_STEPS_i    <TMC5130Stepper>
 	{
 	public:
-		TMC5130Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
-		TMC5130Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5130Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5130Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
 
 		void begin();
 		void defaults();
@@ -371,7 +371,7 @@ class TMC5130Stepper :
 		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn_cfg6(); }
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC5130Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
+		TMC5130Stepper(TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.15;
 
@@ -501,8 +501,8 @@ class TMC5160Stepper :
 	public TMC5160_n::LOST_STEPS_i       <TMC5160Stepper>
 	{
 	public:
-		TMC5160Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
-		TMC5160Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5160Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
+		TMC5160Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
 
 		void defaults();
 		void resetLibCache();
@@ -510,7 +510,7 @@ class TMC5160Stepper :
 		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn(); }
 
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC5160Stepper(TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, TMCStepper_n::PinDef, int8_t link_index = -1) = delete;
+		TMC5160Stepper(TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, int8_t link_index = -1) = delete;
 
 		static constexpr float default_RS = 0.075;
 
@@ -582,7 +582,7 @@ class TMC5160Stepper :
 typedef TMC5160Stepper TMC5161Stepper;
 
 class TMC2208Stepper :
-	public TMCStepper_n::TMC_UART,
+	public TMC_HAL::TMC_UART,
 	public TMCStepper<TMC2208Stepper>,
 	public TMC2208_n::TMC_RMS<TMC2208Stepper>,
 	public TMC2208_n::GCONF_i<TMC2208Stepper>,
@@ -607,7 +607,7 @@ class TMC2208Stepper :
 	public TMC2208_n::PWM_AUTO_i<TMC2208Stepper>
 	{
 	public:
-	    TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMCStepper_n::SSwitch &sswitch);
+	    TMC2208Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr, TMC_HAL::SSwitch &sswitch);
 		TMC2208Stepper(HardwareSerial &SerialPort, float RS);
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(SoftwareSerial &ser, float RS);
@@ -644,7 +644,7 @@ class TMC2208Stepper :
 };
 
 class TMC2209Stepper :
-	public TMCStepper_n::TMC_UART,
+	public TMC_HAL::TMC_UART,
 	public TMCStepper					<TMC2209Stepper>,
 	public TMC2209_n::TMC_RMS			<TMC2209Stepper>,
 	public TMC2209_n::GCONF_i       	<TMC2209Stepper>,
@@ -716,7 +716,7 @@ class TMC2209Stepper :
 using TMC2226Stepper = TMC2209Stepper;
 
 class TMC2300Stepper :
-	public TMCStepper_n::TMC_UART,
+	public TMC_HAL::TMC_UART,
 	public TMCStepper<TMC2300Stepper>,
 	public TMC2300_n::TMC_RMS<TMC2300Stepper>,
 	public TMC2300_n::GCONF_i<TMC2300Stepper>,
@@ -792,8 +792,8 @@ class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224St
 
 class TMC2660Stepper {
 	public:
-		TMC2660Stepper(SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS);
-		TMC2660Stepper(SW_SPIClass &spi, TMCStepper_n::PinDef pinCS, float RS);
+		TMC2660Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS);
+		TMC2660Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS);
 		void begin();
 		bool isEnabled();
 		uint8_t test_connection();
@@ -930,7 +930,7 @@ class TMC2660Stepper {
 
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
-		TMC2660Stepper(TMCStepper_n::PinDef pinCS, TMCStepper_n::PinDef pinMOSI, TMCStepper_n::PinDef pinMISO, TMCStepper_n::PinDef pinSCK, int8_t link_index = -1) = delete;
+		TMC2660Stepper(TMC_HAL::PinDef pinCS, TMC_HAL::PinDef pinMOSI, TMC_HAL::PinDef pinMISO, TMC_HAL::PinDef pinSCK, int8_t link_index = -1) = delete;
 
 	private:
 		DRVCTRL_1_t DRVCTRL_1_register{{.sr=0}};
@@ -943,7 +943,7 @@ class TMC2660Stepper {
 		READ_RDSEL01_t READ_RDSEL01_register{{.sr=0}};
 		READ_RDSEL10_t READ_RDSEL10_register{{.sr=0}};
 
-		const TMCStepper_n::PinDef pinCS;
+		const TMC_HAL::PinDef pinCS;
 		const float Rsense;
 		static constexpr float default_RS = 0.1;
 		float holdMultiplier = 0.5;

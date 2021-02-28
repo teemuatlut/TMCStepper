@@ -9,55 +9,14 @@
 
     #define SW_CAPABLE_PLATFORM true
 
-    namespace TMCStepper_n {
-        typedef uint8_t PinDef;
+    namespace TMC_HAL {
+        using PinDef = uint8_t;
 
-        class TMCPin {
-        public:
-            explicit TMCPin(const uint8_t _pin);
-            void mode(const uint8_t mode) const;
-        protected:
+        struct PinCache {
+            PinCache(const uint8_t p, const uint8_t bm, volatile uint8_t* const ptr);
             const uint8_t port;
             const uint8_t bitMask;
-        };
-
-        class InputPin : public TMCPin {
-        public:
-            explicit InputPin(const uint8_t _pin);
-
-            __attribute__((always_inline))
-            bool read() const {
-              return *inPort & bitMask;
-            }
-            operator bool() const {
-                return read();
-            }
-
-        protected:
-            volatile uint8_t* const inPort = nullptr;
-        };
-
-        class OutputPin : public TMCPin {
-        public:
-            explicit OutputPin(const uint8_t _pin);
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-            void operator =(const bool state) const {
-                write(state);
-            }
-
-            __attribute__((always_inline))
-            void set() const {
-              *outPort |= bitMask;
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              *outPort &= ~bitMask;
-            }
-
-        protected:
-            volatile uint8_t* const outPort = nullptr;
+            volatile uint8_t* const pPort = nullptr;
         };
 
         class SWSerial : public SoftwareSerial {
@@ -83,7 +42,7 @@
                 }
 
             private:
-                const TMCStepper_n::PinDef RXTX_pin; // Half duplex
+                const PinDef RXTX_pin; // Half duplex
         };
     }
 
@@ -95,88 +54,34 @@
 
     #define SW_CAPABLE_PLATFORM false
 
-    namespace TMCStepper_n {
+    namespace TMC_HAL {
+        using PinDef = uint32_t;
 
-        typedef uint32_t PinDef;
-
-        class TMCPin {
-        public:
-            explicit TMCPin(const uint32_t _pin);
-            void mode(const uint8_t mode) const;
-            bool read() const;
-            operator bool() const { return read(); }
-            operator uint32_t() const { return pin; }
-        protected:
-            uint32_t const pin;
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin) {}
+            const PinDef pin;
         };
-
-        class OutputPin : public TMCPin {
-        public:
-            OutputPin(const uint32_t _pin);
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-
-            __attribute__((always_inline))
-            void set() const {
-              g_APinDescription[pin].pPort -> PIO_SODR = g_APinDescription[pin].ulPin;
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              g_APinDescription[pin].pPort -> PIO_CODR = g_APinDescription[pin].ulPin;
-            }
-        };
-
-        typedef TMCPin InputPin;
     }
 
 #elif defined(TARGET_LPC1768)
 
     #include <Arduino.h>
-    #include <SPI.h>
 	#include <HardwareSerial.h>
 	#include <SoftwareSerial.h>
 	
     #define SW_CAPABLE_PLATFORM true
 
-    namespace TMCStepper_n {
+    namespace TMC_HAL {
+        using PinDef = uint16_t;
 
-        typedef uint16_t PinDef;
-
-        class TMCPin {
-        public:
-            explicit TMCPin(const uint16_t _pin);
-            void mode(const uint8_t mode) const;
-            bool read() const;
-            operator bool() const { return read(); }
-            operator uint16_t() const { return pin; }
-        protected:
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
             uint16_t const pin;
-            static constexpr uint8_t pinDelay = 60;
+            static constexpr uint_fast8_t pinDelay = 60;
         };
-
-        class OutputPin : public TMCPin {
-        public:
-            OutputPin(const uint16_t _pin);
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-
-            __attribute__((always_inline))
-            void set() const {
-              LPC176x::delay_ns(pinDelay);
-              LPC176x::gpio_set(pin);
-              LPC176x::delay_ns(pinDelay);
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              LPC176x::delay_ns(pinDelay);
-              LPC176x::gpio_clear(pin);
-              LPC176x::delay_ns(pinDelay);
-            }
-        };
-
-        typedef TMCPin InputPin;
     }
 
     #define HardwareSerial HardwareSerial<>
@@ -209,148 +114,73 @@
     #include <Arduino.h>
     #include <SPI.h>
     #include <HardwareSerial.h>
-    #include <SoftwareSerial.h>
 
-    #define SW_CAPABLE_PLATFORM true
+    #define SW_CAPABLE_PLATFORM false
 
-    namespace TMCStepper_n {
+    namespace TMC_HAL {
+        using PinDef = uint8_t;
 
-        typedef uint8_t PinDef;
-
-        class TMCPin {
-        public:
-            explicit TMCPin(const uint8_t _pin);
-            void mode(const uint8_t mode) const;
-
-            __attribute__((always_inline))
-            bool read() const {
-              return digitalRead(pin);
-            }
-            operator bool() const {
-                return read();
-            }
-
-        protected:
-            uint8_t const pin;
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
+            const PinDef pin;
         };
-
-        class OutputPin : public TMCPin {
-        public:
-            OutputPin(const uint8_t _pin);
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-
-            __attribute__((always_inline))
-            void set() const {
-              digitalWrite(pin, HIGH);
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              digitalWrite(pin, LOW);
-            }
-        };
-
-        typedef TMCPin InputPin;
     }
 
 #elif defined(__MBED__)
 
     #include <mbed.h>
 
-    namespace TMCStepper_n {
-        typedef PinName PinDef;
+    namespace TMC_HAL {
+        using PinDef = PinName;
 
-        struct OutputPin : public DigitalOut {
-            using DigitalOut::DigitalOut;
-            void mode(uint8_t);
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
 
-            __attribute__((always_inline))
-            void set() {
-                write(1);
-            }
-
-            __attribute__((always_inline))
-            void reset() {
-                write(0);
-            }
+            /// All other HALs can treat the object as const
+            mutable DigitalInOut pin;
         };
-
-        struct InputPin : public DigitalIn {
-            using DigitalIn::DigitalIn;
-            void mode(const uint8_t inputType);
-        };
-
     }
 
-    typedef SPI SPIClass;
-    typedef BufferedSerial HardwareSerial;
+    using SPIClass = SPI;
+    using HardwareSerial = BufferedSerial;
 
     inline void delay(size_t ms) { wait_us(1000*ms); }
 
 #elif (defined(USE_FULL_LL_DRIVER) || defined(USE_HAL_DRIVER))
 
     #include <cstddef>
-    #include "main.h"
-
     #include <stdint.h>
-    #include <spi.h>
-    #include <usart.h>
 
-    namespace TMCStepper_n {
+    #if defined(STM32F3xx)
+        #include <stm32f3xx_hal_conf.h>
+    #elif defined(STM32F4xx)
+        #include <stm32f4xx_hal_conf.h>
+    #else
+        #include "main.h"
+    #endif
 
-        struct TMCPin {
-            TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin);
-            void mode(const uint8_t mode) const;
-            bool operator ==(const TMCPin &p2) {
-                return (p2.port == port) && (p2.pin == pin);
-            }
+    namespace TMC_HAL {
 
-            GPIO_TypeDef* const port = nullptr;
-            uint32_t const pin;
+        struct PinDef {
+            GPIO_TypeDef* const port;
+            uint32_t const bm;
         };
 
-        class InputPin : public TMCPin {
-        public:
-            InputPin(const TMCPin &_pin);
-            InputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
 
-            __attribute__((always_inline))
-            bool read() const {
-              return port->IDR & pin;
+            const PinDef pin;
+
+            bool operator ==(const PinDef &p2) {
+                return (p2.port == pin.port) && (p2.bm == pin.bm);
             }
-
-            operator bool() const { return read(); }
         };
-
-        class OutputPin : public TMCPin {
-        public:
-            OutputPin(const TMCPin &_pin);
-            OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
-
-            bool read() const {
-              return port->ODR & pin;
-            }
-
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-
-            void toggle() const;
-
-            __attribute__((always_inline))
-            void set() const {
-              port->BSRR = pin;
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              port->BRR = pin;
-            }
-            void operator =(bool state) { write(state); }
-        };
-
-        typedef TMCPin PinDef;
-
     }
 
         struct SPISettings {
@@ -409,75 +239,26 @@
     #include <errno.h>
     #include <sys/time.h>
 
-    #define INPUT BCM2835_GPIO_FSEL_INPT
-    #define INPUT_PULLUP BCM2835_GPIO_PUD_UP
-    #define INPUT_PULLDOWN BCM2835_GPIO_PUD_DOWN
-    #define OUTPUT BCM2835_GPIO_FSEL_OUTP
-
     #define MSBFIRST BCM2835_SPI_BIT_ORDER_MSBFIRST
     #define SPI_MODE0 BCM2835_SPI_MODE0
     #define SPI_MODE1 BCM2835_SPI_MODE1
     #define SPI_MODE2 BCM2835_SPI_MODE2
     #define SPI_MODE3 BCM2835_SPI_MODE3
 
-    namespace TMCStepper_n {
+    namespace TMC_HAL {
+        using PinDef = uint8_t;
 
-        struct TMCPin {
-            TMCPin(GPIO_TypeDef* const _port, uint32_t const _pin);
-            void mode(const uint8_t mode) const {
-                bcm2835_gpio_fsel(pin, mode);
-                if (mode == (uint8_t)BCM2835_GPIO_PUD_UP || mode == (uint8_t)BCM2835_GPIO_PUD_DOWN)
-                    bcm2835_gpio_set_pud(pin, mode)
-            }
-            bool operator ==(const TMCPin &p2) {
-                return (p2.port == port) && (p2.pin == pin);
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
+
+            bool operator ==(const PinCache &p2) {
+                return p2.pin == pin;
             }
 
-            GPIO_TypeDef* const port = nullptr;
-            uint32_t const pin;
+            const PinDef pin;
         };
-
-        class InputPin : public TMCPin {
-        public:
-            InputPin(const TMCPin &_pin);
-            InputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
-
-            __attribute__((always_inline))
-            bool read() const {
-              return bcm2835_gpio_lev(pin);
-            }
-
-            operator bool() const { return read(); }
-        };
-
-        class OutputPin : public TMCPin {
-        public:
-            OutputPin(const TMCPin &_pin);
-            OutputPin(GPIO_TypeDef* const _port, uint32_t const _pin);
-
-            bool read() const {
-              return port->ODR & pin;
-            }
-
-            void write(const bool state) const {
-              state ? set() : reset();
-            }
-
-            void toggle() const;
-
-            __attribute__((always_inline))
-            void set() const {
-              bcm2835_gpio_write(pin, 1);
-            }
-            __attribute__((always_inline))
-            void reset() const {
-              pbcm2835_gpio_write(pin, 0);
-            }
-            void operator =(bool state) { write(state); }
-        };
-
-        typedef TMCPin PinDef;
-
     }
 
     struct SPISettings;
@@ -529,6 +310,39 @@
     extern HardwareSerial Serial1;
 
 #endif
+
+namespace TMC_HAL {
+
+    class InputPin : PinCache {
+    public:
+        InputPin(const PinDef _pin);
+
+        void setMode() const;
+
+        bool read() const;
+
+        operator bool() const {
+            return read();
+        }
+    };
+
+    class OutputPin : PinCache {
+    public:
+        OutputPin(const PinDef _pin);
+
+        void setMode() const;
+
+        void write(const bool state) const {
+            state ? set() : reset();
+        }
+        void operator =(const bool state) const {
+            write(state);
+        }
+
+        void set() const;
+        void reset() const;
+    };
+}
 
 #ifndef HIGH
     #define HIGH 1

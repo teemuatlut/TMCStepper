@@ -1,6 +1,7 @@
 #include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
 TMC5130Stepper::TMC5130Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
   TMC_SPI(spi, pinCS, link),

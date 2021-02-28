@@ -5,15 +5,35 @@
 #include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
-void OutputPin::mode(uint8_t) {}
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
 
-void InputPin::mode(const uint8_t inputType) {
-    switch(inputType) {
-        case INPUT: mode(PullDefault); break;
-        case INPUT_PULLUP: mode(PullUp); break;
-        default: break;
-    }
+void InputPin::setMode() const {
+    pin.input();
+    pin.mode(PullUp);
+}
+
+bool InputPin::read() const {
+    return pin.read();
+}
+
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void OutputPin::setMode() const {
+    pin.output();
+}
+
+void OutputPin::set() const {
+    pin.write(1);
+}
+
+void OutputPin::reset() const {
+    pin.write(0);
 }
 
 __attribute__((weak))

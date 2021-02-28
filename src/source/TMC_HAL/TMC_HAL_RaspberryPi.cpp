@@ -8,6 +8,37 @@
 
 #include "../../TMCStepper.h"
 
+using namespace TMC_HAL
+
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void InputPin::setMode() const {
+	bcm2835_gpio_fsel(pin, BCM2835_GPIO_PUD_UP);
+	bcm2835_gpio_set_pud(pin, BCM2835_GPIO_PUD_UP)
+}
+
+bool InputPin::read() const {
+    return bcm2835_gpio_lev(pin);
+}
+
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void OutputPin::setMode() const {
+	bcm2835_gpio_fsel(pin, BCM2835_GPIO_FSEL_OUTP);
+}
+
+void OutputPin::set() const {
+	bcm2835_gpio_write(pin, 1);
+}
+
+void OutputPin::reset() const {
+	bcm2835_gpio_write(pin, 0);
+}
+
 void SPIClass::beginTransaction(SPISettings settings)
 {
 	bcm2835_spi_begin();

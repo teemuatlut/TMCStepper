@@ -2,36 +2,50 @@
 #if defined(TARGET_LPC1768)
 
 #include <Arduino.h>
-#include <SoftwareSPI.h>
 #include <time.h>
 #include <gpio.h>
 #include "../TMC_HAL.h"
 #include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
-TMCPin::TMCPin(const uint16_t _pin) : pin(_pin) {}
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
 
-void TMCPin::mode(const uint8_t mode) const {
-    switch(mode) {
-        case OUTPUT:
-            LPC176x::gpio_set_output(pin);
-            break;
-        case INPUT:
-            LPC176x::gpio_set_input(pin);
-            break;
-        default: break;
-    }
+void InputPin::setMode() const {
+    LPC176x::gpio_set_input(pin);
+
 }
 
-bool TMCPin::read() const {
+bool InputPin::read() const {
     LPC176x::delay_ns(pinDelay);
     auto out = LPC176x::gpio_get(pin);
     LPC176x::delay_ns(pinDelay);
     return out;
 }
 
-OutputPin::OutputPin(const uint16_t _pin) : TMCPin(_pin) {}
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void OutputPin::setMode() const {
+    LPC176x::gpio_set_output(pin);
+
+}
+
+void OutputPin::set() const {
+    LPC176x::delay_ns(pinDelay);
+    LPC176x::gpio_set(pin);
+    LPC176x::delay_ns(pinDelay);
+}
+
+void OutputPin::reset() const {
+    LPC176x::delay_ns(pinDelay);
+    LPC176x::gpio_clear(pin);
+    LPC176x::delay_ns(pinDelay);
+}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {

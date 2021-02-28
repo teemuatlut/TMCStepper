@@ -5,15 +5,15 @@
 #include "../TMCStepper.h"
 #include "TMC_HAL.h"
 
-namespace TMCStepper_n {
+namespace TMC_HAL {
 
 class SSwitch {
   public:
-    SSwitch(const TMCStepper_n::PinDef pin1, const TMCStepper_n::PinDef pin2);
+    SSwitch(const TMC_HAL::PinDef pin1, const TMC_HAL::PinDef pin2);
     void active(const uint8_t addr);
   private:
-    TMCStepper_n::PinDef p1;
-    TMCStepper_n::PinDef p2;
+    TMC_HAL::PinDef p1;
+    TMC_HAL::PinDef p2;
 };
 
 struct TMC_UART {

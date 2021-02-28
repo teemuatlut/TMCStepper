@@ -1,6 +1,7 @@
 #include "../TMCStepper.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
 TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, float RS, int8_t link) :
   TMC_SPI(spi, cs, link),
@@ -51,7 +52,7 @@ void TMC2130Stepper::resetLibCache() {
 void TMC2130Stepper::begin() {
   //set pins
   OutputPin cs(pinCS);
-  cs.mode(OUTPUT);
+  cs.setMode();
   cs.write(HIGH);
 
   if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();

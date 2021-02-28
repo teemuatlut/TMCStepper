@@ -1,28 +1,38 @@
 
 #if defined(ARDUINO) && !(defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_SAM) || defined(TARGET_LPC1768))
 
-#include <Arduino.h>
-#include <SPI.h>
 #include "../../TMCStepper.h"
-#include "../TMC_HAL.h"
 
 using namespace TMCStepper_n;
+using namespace TMC_HAL;
 
-TMCPin::TMCPin(const uint8_t _pin) : pin(_pin) {}
+InputPin::InputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
 
-void TMCPin::mode(const uint8_t mode) const {
-    switch(mode) {
-        case OUTPUT:
-            pinMode(pin, OUTPUT);
-            break;
-        case INPUT:
-            pinMode(pin, INPUT);
-            break;
-        default: break;
-    }
+void InputPin::setMode() const {
+    pinMode(pin, INPUT);
 }
 
-OutputPin::OutputPin(const uint8_t _pin) : TMCPin(_pin) {}
+bool InputPin::read() const {
+    return digitalRead(pin);
+}
+
+OutputPin::OutputPin(const PinDef _pin) :
+    PinCache(_pin)
+    {}
+
+void OutputPin::setMode() const {
+    pinMode(pin, OUTPUT);
+}
+
+void OutputPin::set() const {
+    digitalWrite(pin, HIGH);
+}
+
+void OutputPin::reset() const {
+    digitalWrite(pin, LOW);
+}
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
