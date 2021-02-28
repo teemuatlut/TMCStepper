@@ -109,7 +109,7 @@ void TMC_UART::preWriteCommunication() {
         serialTimeout.start();
 
         if (sswitch != nullptr)
-            sswitch->active();
+            sswitch->active(slaveAddress);
     }
 }
 
@@ -119,7 +119,7 @@ void TMC_UART::preReadCommunication() {
         serialTimeout.start();
 
         if (sswitch != nullptr)
-            sswitch->active();
+            sswitch->active(slaveAddress);
     }
 }
 
