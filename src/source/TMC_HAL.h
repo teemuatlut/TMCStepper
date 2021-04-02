@@ -309,6 +309,10 @@
     extern HardwareSerial Serial;
     extern HardwareSerial Serial1;
 
+#else //if defined(UNIT_TEST)
+
+    #include "../examples/UnitTests/include/Mocks.h"
+
 #endif
 
 namespace TMC_HAL {
