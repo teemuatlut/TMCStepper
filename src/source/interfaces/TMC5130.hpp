@@ -178,10 +178,10 @@ namespace TMC5130_n {
     };
     #pragma pack(pop)
   
-    uint16_t A1() {
+    uint16_t a1() {
       return r.sr;
     }
-    void A1(uint16_t input) {
+    void a1(uint16_t input) {
       static_cast<TYPE*>(this)->write(A1_t::address, input);
     }
     protected:
@@ -197,10 +197,10 @@ namespace TMC5130_n {
     };
     #pragma pack(pop)
   
-    uint32_t V1() {
+    uint32_t v1() {
       return r.sr;
     }
-    void V1(uint32_t input) {
+    void v1(uint32_t input) {
       static_cast<TYPE*>(this)->write(V1_t::address, input);
     }
     protected:
@@ -273,10 +273,10 @@ namespace TMC5130_n {
     };
     #pragma pack(pop)
   
-    uint16_t D1() {
+    uint16_t d1() {
       return r.sr;
     }
-    void D1(uint16_t input) {
+    void d1(uint16_t input) {
       static_cast<TYPE*>(this)->write(D1_t::address, input);
     }
     protected:
