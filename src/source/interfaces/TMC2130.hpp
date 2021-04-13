@@ -56,7 +56,7 @@ namespace TMC2130_n {
         void diag1_onstate(bool B)          { GCONF_t r{ GCONF() }; r.diag1_onstate = B;          GCONF(r.sr); }
         void diag1_steps_skipped(bool B)    { GCONF_t r{ GCONF() }; r.diag1_steps_skipped = B;    GCONF(r.sr); }
         void diag0_int_pushpull(bool B)     { GCONF_t r{ GCONF() }; r.diag0_int_pushpull = B;     GCONF(r.sr); }
-        void diag1_pushpull(bool B)         { GCONF_t r{ GCONF() }; r.diag1_poscomp_pushpull = B; GCONF(r.sr); }
+        void diag1_pushpull(bool B)         { GCONF_t r{ GCONF() }; r.diag1_pushpull = B;         GCONF(r.sr); }
         void small_hysteresis(bool B)       { GCONF_t r{ GCONF() }; r.small_hysteresis = B;       GCONF(r.sr); }
         void stop_enable(bool B)            { GCONF_t r{ GCONF() }; r.stop_enable = B;            GCONF(r.sr); }
         void direct_mode(bool B)            { GCONF_t r{ GCONF() }; r.direct_mode = B;            GCONF(r.sr); }
