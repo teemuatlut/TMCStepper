@@ -590,11 +590,11 @@ class TMC5130Stepper : public TMC2160Stepper {
 		uint32_t VSTART();
 		void VSTART(uint32_t input);
 		// W: A1
-		uint16_t A1();
-		void A1(uint16_t input);
+		uint16_t a1();
+		void a1(uint16_t input);
 		// W: V1
-		uint32_t V1();
-		void V1(uint32_t input);
+		uint32_t v1();
+		void v1(uint32_t input);
 		// W: AMAX
 		uint16_t AMAX();
 		void AMAX(uint16_t input);
@@ -605,8 +605,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 		uint16_t DMAX();
 		void DMAX(uint16_t input);
 		// W: D1
-		uint16_t D1();
-		void D1(uint16_t input);
+		uint16_t d1();
+		void d1(uint16_t input);
 		// W: VSTOP
 		uint32_t VSTOP();
 		void VSTOP(uint32_t input);
