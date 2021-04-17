@@ -48,9 +48,7 @@ struct SPIClass {
         int_least16_t n = 0;
 
         for (auto cmd : sentCommands) {
-            n += sprintf(&printout[n], "{0x%02X,0x%08X} ", cmd.address, cmd.data);
-
-            if (n > sizeof(printout)-20) break;
+            n += snprintf(&printout[n], sizeof(printout)-n, "{0x%02X,0x%08X} ", cmd.address, cmd.data);
         }
 
         return printout;
