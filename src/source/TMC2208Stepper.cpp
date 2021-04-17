@@ -39,7 +39,6 @@ void TMC2208Stepper::begin() {
 
 void TMC2208Stepper::defaults() {
 	GCONF(1 | (1<<8));
-	GSTAT(0);
 	SLAVECONF(0);
 	OTP_PROG(0);
 	FACTORY_CONF(0);
