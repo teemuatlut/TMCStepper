@@ -1,6 +1,7 @@
 
 #include <unity.h>
 #include "gconf.h"
+#include "gstat.h"
 
 int main(int argc, char **argv) {
     UNITY_BEGIN();
@@ -41,6 +42,9 @@ int main(int argc, char **argv) {
     RUN_TEST(test_TMC2130_reset_small_hysteresis);
     RUN_TEST(test_TMC2130_reset_stop_enable);
     RUN_TEST(test_TMC2130_reset_direct_mode);
+
+    RUN_TEST(test_TMC2130_get_reset);
+    RUN_TEST(test_TMC2130_get_drv_err);
 
     UNITY_END();
     return 0;
