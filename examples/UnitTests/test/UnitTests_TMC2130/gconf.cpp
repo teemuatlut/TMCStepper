@@ -4,7 +4,6 @@
 #include <TMCStepper.h>
 #include "Mocks.h"
 
-//#include <iostream>
 static constexpr uint32_t MAX_17bit = 0x1FFFF;
 
 struct test_fixture_set_gconf {
