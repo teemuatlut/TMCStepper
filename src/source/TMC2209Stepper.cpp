@@ -18,7 +18,6 @@ TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t add
 
 void TMC2209Stepper::defaults() {
 	GCONF(1 | (1<<8));
-	GSTAT(0);
 	SLAVECONF(0);
 	OTP_PROG(0);
 	FACTORY_CONF(0);

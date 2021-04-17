@@ -18,7 +18,6 @@ TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
 
 void TMC5160Stepper::defaults() {
 	GCONF(1<<3);
-	GSTAT(0);
 	SLAVECONF(0);
 	TMC_OUTPUT(0);
 	X_COMPARE(0);

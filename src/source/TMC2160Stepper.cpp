@@ -30,7 +30,6 @@ void TMC2160Stepper::begin() {
 
 void TMC2160Stepper::defaults() {
   GCONF(1u<<3);
-  GSTAT(0);
   IHOLD_IRUN(0);
   TPOWERDOWN(10);
   TPWMTHRS(0);

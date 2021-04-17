@@ -19,7 +19,6 @@ TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, float RS, int8_t lin
 
 void TMC2130Stepper::defaults() {
   GCONF(0);
-  GSTAT(0);
   IHOLD_IRUN(0);
   TPOWERDOWN(0);
   TPWMTHRS(0);

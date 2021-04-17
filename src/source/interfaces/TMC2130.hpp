@@ -98,7 +98,6 @@ namespace TMC2130_n {
         #pragma pack(pop)
 
         uint8_t GSTAT()     { return static_cast<TYPE*>(this)->read(GSTAT_t::address); }
-        void GSTAT(uint8_t) { static_cast<TYPE*>(this)->write(GSTAT_t::address, 0b111); }
         bool reset()        { GSTAT_t r; r.sr = GSTAT(); return r.reset; }
         bool drv_err()      { GSTAT_t r; r.sr = GSTAT(); return r.drv_err; }
         bool uv_cp()        { GSTAT_t r; r.sr = GSTAT(); return r.uv_cp; }

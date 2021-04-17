@@ -24,7 +24,6 @@ void TMC5130Stepper::begin() {
 
 void TMC5130Stepper::defaults() {
 	GCONF(0);
-	GSTAT(0);
 	SLAVECONF(0);
 	TMC_OUTPUT(1);
 	X_COMPARE(0);
