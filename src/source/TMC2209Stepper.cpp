@@ -16,6 +16,14 @@ TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t add
 		}
 #endif
 
+void TMC2209Stepper::begin() {
+	#if SW_CAPABLE_PLATFORM
+		beginSerial(19200);
+	#endif
+	pdn_disable(true);
+	mstep_reg_select(true);
+}
+
 void TMC2209Stepper::defaults() {
 	GCONF(1 | (1<<8));
 	SLAVECONF(0);
