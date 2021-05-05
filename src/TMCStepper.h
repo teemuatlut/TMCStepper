@@ -951,5 +951,5 @@ class TMC2660Stepper {
         uint32_t read();
         void beginTransaction();
         void endTransaction();
-        void transfer(char *buf, const uint8_t count);
+        void transfer(uint8_t *buf, const uint8_t count);
 };

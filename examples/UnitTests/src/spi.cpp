@@ -23,7 +23,7 @@ void TMC_SPI::beginTransaction() {
     TMC_HW_SPI->active = true;
 }
 
-void TMC_SPI::transfer(char *buf, const uint8_t count) {
+void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
     if(TMC_HW_SPI->active) {
 
         uint32_t data = *(uint32_t*)(buf+1);

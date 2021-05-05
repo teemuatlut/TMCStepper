@@ -55,7 +55,7 @@ void TMC_SPI::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC_SPI::transfer(char *buf, const uint8_t count) {
+void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         for (auto i = 0; i>count; i++) {
             *buf = TMC_HW_SPI->transfer(*buf);
@@ -78,7 +78,7 @@ void TMC2660Stepper::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC2660Stepper::transfer(char *buf, const uint8_t count) {
+void TMC2660Stepper::transfer(uint8_t *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         for (auto i = 0; i>count; i++) {
             *buf = TMC_HW_SPI->transfer(*buf);

@@ -57,19 +57,19 @@ void OutputPin::reset() const {
 #if defined(HAL_SPI_MODULE_ENABLED)
     SPIClass::SPIClass(SPI_HandleTypeDef * spi) : hspi(spi) {}
 
-    void SPIClass::transfer(char *buf, uint8_t count) const {
-        HAL_SPI_TransmitReceive(hspi, (uint8_t*)buf, (uint8_t*)buf, count, timeout);
+    void SPIClass::transfer(uint8_t *buf, uint8_t count) const {
+        HAL_SPI_TransmitReceive(hspi, buf, buf, count, timeout);
     }
 
     void delay(uint32_t ms) { HAL_Delay(ms); }
 #elif defined(USE_FULL_LL_DRIVER)
     SPIClass::SPIClass(SPI_TypeDef * spi) : hspi(spi) {}
 
-    uint8_t SPIClass::transfer(const char data) const {
+    uint8_t SPIClass::transfer(const uint8_t data) const {
         LL_SPI_TransmitData8(hspi, data);
         return LL_SPI_ReceiveData8(hspi);
     }
-    void SPIClass::transfer(char *buf, uint8_t count) const {
+    void SPIClass::transfer(uint8_t *buf, uint8_t count) const {
         while(count --> 0) {
             transfer(*buf);
         }
@@ -124,7 +124,7 @@ void TMC_SPI::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC_SPI::transfer(char *buf, const uint8_t count) {
+void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->transfer(buf, count);
     }
@@ -148,7 +148,7 @@ void TMC2660Stepper::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC2660Stepper::transfer(char *buf, const uint8_t count) {
+void TMC2660Stepper::transfer(uint8_t *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->transfer(buf, count);
     }

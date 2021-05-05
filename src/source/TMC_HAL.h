@@ -196,8 +196,8 @@
         struct SPIClass {
             explicit SPIClass(SPIType * spi);
 
-            uint8_t transfer(const char data) const;
-            void transfer(char *buf, uint8_t count) const;
+            uint8_t transfer(const uint8_t data) const;
+            void transfer(uint8_t *buf, uint8_t count) const;
             static void beginTransaction(SPISettings) {}
             static void endTransaction() {}
 

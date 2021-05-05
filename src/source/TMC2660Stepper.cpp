@@ -22,7 +22,7 @@ TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, float RS) :
 namespace TMC2660_n {
   union TransferData {
     uint32_t data : 24;
-    char buffer[3];
+    uint8_t buffer[3];
   };
 }
 using namespace TMC2660_n;
