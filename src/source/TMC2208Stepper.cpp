@@ -21,7 +21,7 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS) :
 	// Protected
 	// addr needed for TMC2209
 	TMC2208Stepper::TMC2208Stepper(SoftwareSerial &ser, float RS) :
-		TMC_UART(SWSerial, TMC2208_SLAVE_ADDR),
+		TMC_UART(&ser, TMC2208_SLAVE_ADDR),
 		TMC_RMS(RS)
 		{
 			resetLibCache();
