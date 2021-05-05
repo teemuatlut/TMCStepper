@@ -279,12 +279,13 @@ namespace TMC2130_n {
     struct XDIRECT_i {
         #pragma pack(push, 1)
         struct XDIRECT_t {
+            XDIRECT_t(const uint32_t data) : sr(data) {};
             constexpr static uint8_t address = 0x2D;
             union {
                 uint32_t sr : 25;
                 struct {
-                    int16_t coil_A : 9;
-                    int8_t         : 7;
+                    int16_t coil_A : 9,
+                                   : 7;
                     int16_t coil_B : 9;
                 };
             };
@@ -297,8 +298,8 @@ namespace TMC2130_n {
         void XDIRECT(uint32_t input) {
             static_cast<TYPE*>(this)->write(XDIRECT_t::address, input);
         }
-        void coil_A(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_A = B; XDIRECT(r.address, r.sr); }
-        void coil_B(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_B = B; XDIRECT(r.address, r.sr); }
+        void coil_A(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_A = B; XDIRECT(r.sr); }
+        void coil_B(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_B = B; XDIRECT(r.sr); }
         int16_t coil_A()        { return XDIRECT_t{ XDIRECT() }.coil_A; }
         int16_t coil_B()        { return XDIRECT_t{ XDIRECT() }.coil_B; }
     };
