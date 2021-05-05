@@ -504,6 +504,7 @@ class TMC5160Stepper :
 		TMC5160Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
 		TMC5160Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, int8_t link_index = -1);
 
+		void begin();
 		void defaults();
 		void resetLibCache();
 		void push();

@@ -16,6 +16,22 @@ TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
     resetLibCache();
   }
 
+void TMC5160Stepper::begin() {
+  //set pins
+  OutputPin cs(pinCS);
+  cs.setMode();
+  cs.write(HIGH);
+
+  if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+
+  COOLCONF(COOLCONF_i::r.sr);
+  PWMCONF(PWMCONF_i::r.sr);
+  IHOLD_IRUN(IHOLD_IRUN_i::r.sr);
+
+  toff(8); //off_time(8);
+  tbl(1); //blank_time(24);
+}
+
 void TMC5160Stepper::defaults() {
 	GCONF(1<<3);
 	SLAVECONF(0);
