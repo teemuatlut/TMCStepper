@@ -31,7 +31,7 @@ void TMC_SPI::setSPISpeed(uint32_t speed) {
 }
 
 void TMC_SPI::transfer(const uint8_t count) {
-  char emptyBytes[16] = {0};
+  uint8_t emptyBytes[16] = {0};
   transfer(emptyBytes, count);
 }
 
@@ -112,7 +112,7 @@ void SW_SPIClass::init() {
   sck.write(HIGH);
 }
 
-void SW_SPIClass::transfer(char *buf, uint8_t count) {
+void SW_SPIClass::transfer(uint8_t *buf, uint8_t count) {
 
   OutputPin mosi(mosi_pin), sck(sck_pin);
   InputPin miso(miso_pin);

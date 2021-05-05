@@ -8,7 +8,7 @@ class SW_SPIClass {
 		SW_SPIClass(const TMC_HAL::PinDef mosi, const TMC_HAL::PinDef miso, const TMC_HAL::PinDef sck);
 		void init();
 		void begin() {};
-		void transfer(char *buf, uint8_t count);
+		void transfer(uint8_t *buf, uint8_t count);
 		void endTransaction() {};
 	private:
 		const TMC_HAL::PinDef mosi_pin, sck_pin, miso_pin;
@@ -114,7 +114,7 @@ protected:
 	        };
 	        uint32_t data;
 	    };
-	    char buffer[5] = {0};
+	    uint8_t buffer[5] = {0};
 	};
   #pragma pack(pop)
 
@@ -124,7 +124,7 @@ protected:
 	void beginTransaction();
 	void endTransaction();
 	void transfer(const uint8_t count);
-	void transfer(char *buf, const uint8_t count);
+	void transfer(uint8_t *buf, const uint8_t count);
 	void write(uint8_t addressByte, uint32_t config);
 	uint32_t read(uint8_t addressByte);
 
