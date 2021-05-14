@@ -4,16 +4,18 @@
 int8_t TMC2130Stepper::chain_length = 0;
 uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
-  TMCStepper(RS),
-  _pinCS(pinCS),
-  link_index(link)
+#if !defined(ESP_PLATFORM)
+  TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
+    TMCStepper(RS),
+    _pinCS(pinCS),
+    link_index(link)
   {
     defaults();
 
     if (link > chain_length)
       chain_length = link;
   }
+#endif
 
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
   TMCStepper(default_RS),

@@ -1,3 +1,5 @@
+#include "ESP32_Adapter.h"
+
 #if defined(ARDUINO_ARCH_AVR) // 125kHz
   typedef volatile uint8_t* fastio_reg;
   typedef uint8_t fastio_bm;
