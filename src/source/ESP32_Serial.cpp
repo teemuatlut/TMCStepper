@@ -1,7 +1,7 @@
 #include "ESP32_Serial.h"
 
 #if defined(ESP_PLATFORM)
-    #define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+    #define LOG_LOCAL_LEVEL ESP_LOG_INFO
     #define TAG_EPS32_SERIAL "ESP32_UART"
     #include <esp_log.h>
     #include <hal/gpio_types.h>
@@ -37,24 +37,42 @@
     }
 
     int16_t ESP32_Serial::read() {
-        if( !ready ) return -1;
-        uint8_t data;
+        if( !ready ) {
+            ESP_LOGE( TAG_EPS32_SERIAL, "Trying to read from not ready UART." );
+            return -1;
+        }
+        uint8_t data = 0;
         int len = uart_read_bytes( uart_num, &data, 1, 0 );
+        ESP_LOGD( TAG_EPS32_SERIAL, "Read data: %X (length %d)", data, len );
         if( len < 1 ) return -1;
         else return data;
     }
 
     uint8_t ESP32_Serial::write( const uint8_t data ) {
-        if( !ready ) return 0;
+        if( !ready ) {
+            ESP_LOGE( TAG_EPS32_SERIAL, "Trying to write to not ready UART." );
+            return 0;
+        }
+        ESP_LOGD( TAG_EPS32_SERIAL, "Write data: %X", data );
         int len = uart_write_bytes( uart_num, (const char*)&data, 1);
+        ESP_LOGD( TAG_EPS32_SERIAL, "Number of bytes written: %d", len );
         if( len < 1 ) return 0;
         else return len;
     }
 
     size_t ESP32_Serial::available() {
-        if( !ready ) return 0;
+        if( !ready ) {
+            ESP_LOGE( TAG_EPS32_SERIAL, "Trying to get available bytes from not ready UART." );
+            return 0;
+        }
         size_t len = 0;
-        if( ESP_OK == uart_get_buffered_data_len( uart_num, &len ) ) return len;
-        else return 0;
+        if( ESP_OK == uart_get_buffered_data_len( uart_num, &len ) ) {
+            ESP_LOGD( TAG_EPS32_SERIAL, "Number of bytes available: %d", len );
+            return len;
+        }
+        else {
+            ESP_LOGE( TAG_EPS32_SERIAL, "Error getting available bytes." );
+            return 0;
+        }
     }
 #endif
