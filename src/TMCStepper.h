@@ -14,6 +14,9 @@
 	#include <bcm2835.h>
 	#include "source/bcm2835_spi.h"
 	#include "source/bcm2835_stream.h"
+#elif defined(ESP_PLATFORM)
+	#include "source/ESP32_Serial.h"
+	#include "source/ESP32_SPI.h"
 #endif
 
 #if (__cplusplus == 201703L) && defined(__has_include)
@@ -141,7 +144,9 @@ class TMCStepper {
 
 class TMC2130Stepper : public TMCStepper {
 	public:
-		TMC2130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#if !defined(ESP_PLATFORM)
+			TMC2130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#endif
 		TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		void begin();
@@ -368,7 +373,9 @@ class TMC2130Stepper : public TMCStepper {
 
 class TMC2160Stepper : public TMC2130Stepper {
 	public:
-		TMC2160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#if !defined(ESP_PLATFORM)
+			TMC2160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#endif
 		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		void begin();
@@ -467,7 +474,9 @@ class TMC2160Stepper : public TMC2130Stepper {
 
 class TMC5130Stepper : public TMC2160Stepper {
 	public:
-		TMC5130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#if !defined(ESP_PLATFORM)
+			TMC5130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#endif
 		TMC5130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 
@@ -711,7 +720,9 @@ class TMC5130Stepper : public TMC2160Stepper {
 
 class TMC5160Stepper : public TMC5130Stepper {
 	public:
-		TMC5160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#if !defined(ESP_PLATFORM)
+			TMC5160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
+		#endif
 		TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 		TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 
@@ -805,19 +816,28 @@ class TMC5160Stepper : public TMC5130Stepper {
 
 class TMC5161Stepper : public TMC5160Stepper {
 	public:
-    TMC5161Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1) : TMC5160Stepper(pinCS, RS, link_index) {}
-		TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
-			TMC5160Stepper(pinCS, pinMOSI, pinMISO, pinSCK, link_index) {}
-		TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
-			TMC5160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link_index) {}
+	#if !defined(ESP_PLATFORM)
+    	TMC5161Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1) : TMC5160Stepper(pinCS, RS, link_index) {}
+	#endif
+	TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
+		TMC5160Stepper(pinCS, pinMOSI, pinMISO, pinSCK, link_index) {}
+	TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1) :
+		TMC5160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link_index) {}
 };
 
 class TMC2208Stepper : public TMCStepper {
 	public:
-	    TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
-		TMC2208Stepper(Stream * SerialPort, float RS) :
-			TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
-			{}
+		#if defined(ESP_PLATFORM)
+			TMC2208Stepper( ESP32_Serial * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
+			TMC2208Stepper( ESP32_Serial * SerialPort, float RS) :
+				TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
+				{}
+		#else
+			TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
+			TMC2208Stepper(Stream * SerialPort, float RS) :
+				TMC2208Stepper(SerialPort, RS, TMC2208_SLAVE_ADDR)
+				{}
+		#endif
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS) :
 				TMC2208Stepper(SW_RX_pin, SW_TX_pin, RS, TMC2208_SLAVE_ADDR)
@@ -988,12 +1008,17 @@ class TMC2208Stepper : public TMCStepper {
 		struct OTP_PROG_t 	{ constexpr static uint8_t address = 0x04; };
 		struct OTP_READ_t 	{ constexpr static uint8_t address = 0x05; };
 
-		TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr);
+		#if defined(ESP_PLATFORM)
+			TMC2208Stepper(ESP32_Serial * SerialPort, float RS, uint8_t addr);
+			ESP32_Serial * HWSerial = nullptr;
+		#else
+			TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr);
+			Stream * HWSerial = nullptr;
+		#endif
 		#if SW_CAPABLE_PLATFORM
 			TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr);
 		#endif
 
-		Stream * HWSerial = nullptr;
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = nullptr;
 			const uint16_t RXTX_pin = 0; // Half duplex
@@ -1020,11 +1045,15 @@ class TMC2208Stepper : public TMCStepper {
 
 		uint64_t _sendDatagram(uint8_t [], const uint8_t, uint16_t);
 };
-
 class TMC2209Stepper : public TMC2208Stepper {
 	public:
-		TMC2209Stepper(Stream * SerialPort, float RS, uint8_t addr) :
-			TMC2208Stepper(SerialPort, RS, addr) {}
+		#if defined(ESP_PLATFORM)
+			TMC2209Stepper(ESP32_Serial * SerialPort, float RS, uint8_t addr);
+			ESP32_Serial * HWSerial = nullptr;
+		#else
+			TMC2209Stepper(Stream * SerialPort, float RS, uint8_t addr) :
+				TMC2208Stepper(SerialPort, RS, addr) {}
+		#endif
 
 		#if SW_CAPABLE_PLATFORM
 			TMC2209Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :

@@ -1,8 +1,10 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS, int8_t link) : TMC2160Stepper(pinCS, RS, link)
-  { defaults(); }
+#if !defined(ESP_PLATFORM)
+  TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS, int8_t link) : TMC2160Stepper(pinCS, RS, link)
+    { defaults(); }
+#endif
 TMC5130Stepper::TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link):
   TMC2160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link)
   { defaults(); }
