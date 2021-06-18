@@ -106,7 +106,7 @@ namespace TMC2300_n {
             comp_a1a2 : 1,      // 10
             comp_b1b2 : 1;      // 11
           uint16_t : 12;
-          uint8_t version : 1;  // 24
+          uint8_t version : 8;  // 24..31
         };
       };
     };
