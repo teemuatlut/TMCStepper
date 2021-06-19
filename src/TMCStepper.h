@@ -617,7 +617,7 @@ class TMC2208Stepper :
 		void defaults();
 		void resetLibCache();
 		void push();
-		void begin();
+		void begin(const uint32_t baud = 19200);
 		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::enn(); }
 
 		using GCONF_t       	= TMC2208_n::GCONF_i       	<TMC2208Stepper>::GCONF_t;
@@ -681,7 +681,7 @@ class TMC2209Stepper :
 		void defaults();
 		void resetLibCache();
 		void push();
-		void begin();
+		void begin(const uint32_t baud = 19200);
 		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::enn(); }
 
 		using GCONF_t       	= TMC2209_n::GCONF_i       	<TMC2209Stepper>::GCONF_t;
@@ -745,7 +745,7 @@ class TMC2300Stepper :
 			void defaults();
 			void resetLibCache();
 			void push();
-			void begin();
+			void begin(const uint32_t baud = 19200);
 			bool isEnabled() { return CHOPCONF_i::enable_drv() && IOIN_i::en(); }
 
 			using GCONF_t       = TMC2300_n::GCONF_i       <TMC2300Stepper>::GCONF_t;
