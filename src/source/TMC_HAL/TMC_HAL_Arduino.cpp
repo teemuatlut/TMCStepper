@@ -121,27 +121,29 @@ void TMC_UART::preReadCommunication() {
 }
 
 __attribute__((weak))
-void TMC_UART::serial_read(uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_read(uint8_t *data, int8_t length) {
     if (HWSerial != nullptr && HWSerial->available() > 0) {
-        HWSerial->readBytes(data, length);
+        return HWSerial->readBytes(data, length);
     }
     #if SW_CAPABLE_PLATFORM
         else if (SWSerial != nullptr && SWSerial->available() > 0) {
-            SWSerial->readBytes(data, length);
+            return SWSerial->readBytes(data, length);
         };
     #endif
+    return 0;
 }
 
 __attribute__((weak))
-void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_write(const uint8_t *data, int8_t length) {
     if (HWSerial != nullptr) {
-        HWSerial->write(data, length);
+        return HWSerial->write(data, length);
     }
     #if SW_CAPABLE_PLATFORM
         else if (SWSerial != nullptr) {
-            SWSerial->write(data, length);
+            return SWSerial->write(data, length);
         }
     #endif
+    return 0;
 }
 
 __attribute__((weak))

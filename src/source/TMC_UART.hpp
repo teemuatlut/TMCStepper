@@ -119,8 +119,8 @@ protected:
   uint32_t getTime() const;
   void preWriteCommunication();
   void preReadCommunication();
-  void serial_read(uint8_t *data, int8_t length);
-  void serial_write(const uint8_t *data, int8_t length);
+  size_t serial_read(uint8_t *data, int8_t length);
+  size_t serial_write(const uint8_t *data, int8_t length);
   void postWriteCommunication();
   void postReadCommunication();
   void write(uint8_t, uint32_t);
