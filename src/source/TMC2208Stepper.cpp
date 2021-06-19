@@ -28,9 +28,9 @@ TMC2208Stepper::TMC2208Stepper(HardwareSerial &SerialPort, float RS) :
 		}
 #endif
 
-void TMC2208Stepper::begin() {
+void TMC2208Stepper::begin(const uint32_t baud) {
 	#if SW_CAPABLE_PLATFORM
-		beginSerial(115200);
+		beginSerial(baud);
 	#endif
 	pdn_disable(true);
 	mstep_reg_select(true);

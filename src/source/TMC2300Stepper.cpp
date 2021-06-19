@@ -19,9 +19,9 @@ TMC2300Stepper::TMC2300Stepper(HardwareSerial &SerialPort, float RS, uint8_t add
 		}
 #endif
 
-void TMC2300Stepper::begin() {
+void TMC2300Stepper::begin(const uint32_t baud) {
 	#if SW_CAPABLE_PLATFORM
-		beginSerial(115200);
+		beginSerial(baud);
 	#endif
 }
 
