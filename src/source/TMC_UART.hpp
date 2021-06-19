@@ -89,8 +89,8 @@ protected:
   static constexpr uint8_t  TMC2208_SYNC = 0x05,
                             TMC2208_SLAVE_ADDR = 0x00;
   static constexpr uint8_t replyDelay = 2;
-  static constexpr uint8_t abort_window = 50;
-  static constexpr uint8_t max_retries = 2;
+  static constexpr uint8_t abort_window = 20;
+  static constexpr uint8_t max_retries = 5;
 
   #pragma pack(push, 1)
 
