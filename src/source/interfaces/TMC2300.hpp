@@ -162,7 +162,7 @@ namespace TMC2300_n {
       union {
         uint32_t sr;
         struct {
-          bool enable_drv : 4;  // 0
+          bool enable_drv : 1;  // 0
           uint16_t : 14;
           uint8_t
             tbl : 2,            // 15
