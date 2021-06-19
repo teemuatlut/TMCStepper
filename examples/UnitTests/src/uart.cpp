@@ -8,7 +8,7 @@ int TMC_UART::available() {
     return 0;
 }
 
-size_t TMC_UART::getTime() const {
+uint32_t TMC_UART::getTime() const {
     return 0;
 }
 

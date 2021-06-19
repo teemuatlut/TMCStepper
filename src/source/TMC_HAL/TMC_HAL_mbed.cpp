@@ -99,7 +99,7 @@ int TMC_UART::available() {
 static Timer serialTimeout;
 
 __attribute__((weak))
-size_t TMC_UART::getTime() const {
+uint32_t TMC_UART::getTime() const {
     using namespace std::chrono;
     return duration_cast<milliseconds>(serialTimeout.elapsed_time()).count();
 }
