@@ -116,7 +116,7 @@ protected:
   #pragma pack(pop)
 
   int available();
-  size_t getTime() const;
+  uint32_t getTime() const;
   void preWriteCommunication();
   void preReadCommunication();
   void serial_read(uint8_t *data, int8_t length);
