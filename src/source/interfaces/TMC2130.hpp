@@ -550,6 +550,10 @@ namespace TMC2130_n {
             static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
         }
 
+        /**
+         * @brief Enable driver and set off time for spreadcycle
+         * @param B Off time value
+         */
         void toff(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;       CHOPCONF(r.sr); }
         void hstrt(     uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;      CHOPCONF(r.sr); }
         void hend(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
@@ -567,6 +571,10 @@ namespace TMC2130_n {
         void dedge(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
         void diss2g(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
 
+        /**
+         * @brief Get off time value
+         * @returns Off time value
+         */
         uint8_t toff()      { return CHOPCONF_t{ CHOPCONF() }.toff;     }
         uint8_t hstrt()     { return CHOPCONF_t{ CHOPCONF() }.hstrt;    }
         uint8_t hend()      { return CHOPCONF_t{ CHOPCONF() }.hend;     }
