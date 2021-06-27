@@ -521,7 +521,7 @@ namespace TMC2130_n {
             constexpr static uint8_t address = 0x6C;
             union {
                 uint32_t sr : 32;
-                struct __attribute__((gcc_struct)) {
+                struct {
                     uint8_t toff : 4,
                             hstrt : 3,
                             hend : 4,
