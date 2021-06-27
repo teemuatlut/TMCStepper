@@ -32,7 +32,16 @@ void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
 
         TMC_HW_SPI->sentCommands.emplace_back(*buf, data);
 
-        auto reg = TMC_HW_SPI->registerValue;
+        const auto reg = [&] {
+            if (TMC_HW_SPI->responses.size() > 0) {
+                auto val = TMC_HW_SPI->responses.front();
+                TMC_HW_SPI->responses.pop_front();
+                return val;
+            }
+            else {
+                return 0u;
+            }
+        }();
 
         *(uint32_t*)(buf+1) = __builtin_bswap32(reg);
 

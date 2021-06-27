@@ -338,7 +338,7 @@
         ets_delay_us( ms * 1000 );
     }
 
-#else //if defined(UNIT_TEST)
+#elif defined(UNIT_TEST)
 
     #include "../examples/UnitTests/include/Mocks.h"
 

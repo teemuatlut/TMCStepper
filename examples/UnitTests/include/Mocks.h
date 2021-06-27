@@ -25,8 +25,6 @@ namespace TMC_HAL {
 #include <cstdio>
 
 struct SPIClass {
-    explicit SPIClass(uint32_t initValue = 0) : registerValue(initValue) {  }
-
     struct Payload {
         Payload(const uint_least8_t a, const uint_least32_t d) : address(a), data(d) {}
         uint_fast8_t address;
@@ -55,10 +53,9 @@ struct SPIClass {
     }
 
     std::deque<Payload> sentCommands;
+    std::deque<uint32_t> responses{};
     bool active = false;
     int transferCalls = 0;
-
-    uint32_t registerValue;
 
     char printout[256] = {0};
 };
@@ -72,3 +69,12 @@ struct HardwareSerial {
 };
 
 inline void delay(int) {}
+
+template<class TMC, typename INTERFACE>
+struct MockInterface : TMC {
+    using TMC::TMC;
+
+    void set_register(const uint32_t new_value) {
+        INTERFACE::r.sr = new_value;
+    }
+};

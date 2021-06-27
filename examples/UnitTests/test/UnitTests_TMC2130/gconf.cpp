@@ -7,20 +7,22 @@
 static constexpr uint32_t MAX_17bit = 0x1FFFF;
 
 struct test_fixture_set_gconf {
-    test_fixture_set_gconf() : driver(SPI, 0, 1.0) {
+    test_fixture_set_gconf() {
         expectedCommands.emplace_back(0x00, 0); // Read
         expectedCommands.emplace_back(0x00, 0); // Read
     }
 
-    SPIClass SPI;
-    TMC2130Stepper driver;
-    std::deque<SPIClass::Payload> expectedCommands;
+    SPIClass SPI{};
+    TMC2130Stepper driver{SPI, 0, 1.0};
+    std::deque<SPIClass::Payload> expectedCommands{};
 };
 
 struct test_fixture_reset_gconf {
-    test_fixture_reset_gconf() : SPI(0x1FFFF), driver(SPI, 0, 1.0) {
+    test_fixture_reset_gconf() : driver(SPI, 0, 1.0) {
         expectedCommands.emplace_back(0x00, 0); // Read
-        expectedCommands.emplace_back(0x00, MAX_17bit); // Read
+        expectedCommands.emplace_back(0x00, 0); // Read
+        SPI.responses.emplace_back(0);
+        SPI.responses.emplace_back(MAX_17bit);
     }
 
     SPIClass SPI;
