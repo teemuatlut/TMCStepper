@@ -4,60 +4,17 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
-TMC2660Stepper::TMC2660Stepper(SPIClass &spi, PinDef cs, float RS) :
-  pinCS(cs),
-  Rsense(RS),
-  TMC_HW_SPI(&spi)
+TMC2660Stepper::TMC2660Stepper(SPIClass &spi, PinDef cs, float RS, const int8_t link_index) :
+  TMC_SPI(spi, cs, link_index),
+  Rsense(RS)
   {}
 
-TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, float RS) :
-  pinCS(cs),
-  Rsense(RS),
-  TMC_SW_SPI(&spi)
+TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, float RS, const int8_t link_index) :
+  TMC_SPI(spi, cs, link_index),
+  Rsense(RS)
   {}
 
-// |    3b   |       17b     |
-// | Address | Register data |
-// |     24b data buffer     |
-namespace TMC2660_n {
-  union TransferData {
-    uint32_t data : 24;
-    uint8_t buffer[3];
-  };
-}
 using namespace TMC2660_n;
-
-uint32_t TMC2660Stepper::read() {
-  TransferData data;
-  OutputPin cs(pinCS);
-
-  data.data = ((uint32_t)DRVCONF_register.address<<17) | DRVCONF_register.sr;
-
-  beginTransaction();
-  cs.write(LOW);
-
-  transfer(data.buffer, 3);
-
-  endTransaction();
-  cs.write(HIGH);
-
-  return data.data >> 4;
-}
-
-void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
-  TransferData data;
-  OutputPin cs(pinCS);
-
-  data.data = (uint32_t)addressByte<<17 | config;
-
-  beginTransaction();
-  cs.write(LOW);
-
-  transfer(data.buffer, 3);
-
-  endTransaction();
-  cs.write(HIGH);
-}
 
 void TMC2660Stepper::begin() {
   //set pins

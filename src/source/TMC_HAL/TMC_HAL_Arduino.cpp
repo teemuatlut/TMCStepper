@@ -59,27 +59,6 @@ void TMC_SPI::endTransaction() {
 }
 
 __attribute__((weak))
-void TMC2660Stepper::beginTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::transfer(uint8_t *buf, const uint8_t count) {
-    if(TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->transfer(buf, count);
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::endTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->endTransaction();
-    }
-}
-
-__attribute__((weak))
 int TMC_UART::available() {
     int out = 0;
     if (HWSerial != nullptr) {

@@ -785,10 +785,10 @@ class TMC2224Stepper : public TMC2208Stepper, public TMC2224_n::IOIN_i<TMC2224St
 	using TMC2224_n::IOIN_i<TMC2224Stepper>::version;
 };
 
-class TMC2660Stepper {
+class TMC2660Stepper : TMC2660_n::TMC_SPI {
 	public:
-		TMC2660Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS);
-		TMC2660Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS);
+		TMC2660Stepper(SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, const int8_t link_index = -1);
+		TMC2660Stepper(SW_SPIClass &spi, TMC_HAL::PinDef pinCS, float RS, const int8_t link_index = -1);
 		void begin();
 		bool isEnabled();
 		uint8_t test_connection();
@@ -938,18 +938,13 @@ class TMC2660Stepper {
 		READ_RDSEL01_t READ_RDSEL01_register{{.sr=0}};
 		READ_RDSEL10_t READ_RDSEL10_register{{.sr=0}};
 
-		const TMC_HAL::PinDef pinCS;
 		const float Rsense;
 		static constexpr float default_RS = 0.1;
 		float holdMultiplier = 0.5;
 		uint32_t spi_speed = 16000000/8; // Default 2MHz
 		uint8_t _savedToff = 0;
-		SPIClass *TMC_HW_SPI = nullptr;
-		SW_SPIClass *TMC_SW_SPI = nullptr;
 
-        void write(uint8_t addressByte, uint32_t config);
-        uint32_t read();
-        void beginTransaction();
-        void endTransaction();
-        void transfer(uint8_t *buf, const uint8_t count);
+		uint32_t read() {
+			return TMC2660_n::TMC_SPI::read(DRVCONF_register.sr);
+		}
 };

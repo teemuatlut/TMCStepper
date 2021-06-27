@@ -144,3 +144,35 @@ void SW_SPIClass::transfer(uint8_t *buf, uint8_t count) {
     buf++;
   }
 }
+
+uint32_t TMC2660_n::TMC_SPI::read(const uint32_t dummy) {
+  TransferData data;
+  OutputPin cs(pinCS);
+
+  data.data = ((uint32_t)DRVCONF_t::address<<17) | dummy;
+
+  beginTransaction();
+  cs.write(LOW);
+
+  transfer(data.buffer, 3);
+
+  endTransaction();
+  cs.write(HIGH);
+
+  return data.data >> 4;
+}
+
+void TMC2660_n::TMC_SPI::write(uint8_t addressByte, uint32_t config) {
+  TransferData data;
+  OutputPin cs(pinCS);
+
+  data.data = (uint32_t)addressByte<<17 | config;
+
+  beginTransaction();
+  cs.write(LOW);
+
+  transfer(data.buffer, 3);
+
+  endTransaction();
+  cs.write(HIGH);
+}

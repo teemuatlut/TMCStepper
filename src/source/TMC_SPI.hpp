@@ -143,3 +143,23 @@ protected:
 };
 
 };
+
+namespace TMC2660_n {
+
+class TMC_SPI : public ::TMCStepper_n::TMC_SPI {
+	public:
+	using ::TMCStepper_n::TMC_SPI::TMC_SPI;
+
+	// |    3b   |       17b     |
+	// | Address | Register data |
+	// |     24b data buffer     |
+	union TransferData {
+		uint32_t data : 24;
+		uint8_t buffer[3];
+	};
+
+	void write(uint8_t addressByte, uint32_t config);
+	uint32_t read(const uint32_t dummy);
+};
+
+}

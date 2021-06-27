@@ -71,29 +71,6 @@ __attribute__((weak))
 void TMC_SPI::endTransaction() {}
 
 __attribute__((weak))
-void TMC2660Stepper::beginTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->beginTransaction();
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::transfer(uint8_t *buf, const uint8_t count) {
-    if(TMC_HW_SPI != nullptr) {
-        for (auto i = 0; i>count; i++) {
-            *buf = TMC_HW_SPI->transfer(*buf);
-            buf++;
-        }
-    }
-    else if(TMC_SW_SPI != nullptr) {
-        TMC_SW_SPI->transfer(buf, count);
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::endTransaction() {}
-
-__attribute__((weak))
 int TMC_UART::available() {
     int out = 0;
     if (SWSerial != nullptr) {

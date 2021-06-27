@@ -62,31 +62,6 @@ void TMC_SPI::endTransaction() {
 }
 
 __attribute__((weak))
-void TMC2660Stepper::beginTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->frequency(spi_speed);
-        constexpr int bitsPerFrame = 8;
-        constexpr int mode = 3;
-        TMC_HW_SPI->format(bitsPerFrame, mode);
-        TMC_HW_SPI->lock();
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::transfer(uint8_t *buf, const uint8_t count) {
-    if(TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->write(static_cast<char*>(buf), count, static_cast<char*>(buf), count);
-    }
-}
-
-__attribute__((weak))
-void TMC2660Stepper::endTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->unlock();
-    }
-}
-
-__attribute__((weak))
 int TMC_UART::available() {
     int out = 0;
     if (HWSerial != nullptr) {
