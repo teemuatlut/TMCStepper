@@ -483,6 +483,7 @@ namespace TMC2130_n {
     struct MSCURACT_i {
         #pragma pack(push, 1)
         struct MSCURACT_t {
+            MSCURACT_t(const uint32_t initValue) : sr(initValue) {}
             constexpr static uint8_t address = 0x6B;
             union {
                 uint32_t sr : 25;
@@ -520,7 +521,7 @@ namespace TMC2130_n {
             constexpr static uint8_t address = 0x6C;
             union {
                 uint32_t sr : 32;
-                struct {
+                struct __attribute__((gcc_struct)) {
                     uint8_t toff : 4,
                             hstrt : 3,
                             hend : 4,
