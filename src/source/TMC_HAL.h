@@ -309,6 +309,35 @@
     extern HardwareSerial Serial;
     extern HardwareSerial Serial1;
 
+#elif defined(IDF_VER)
+
+    #include <cstdint>
+    #include <driver/gpio.h>
+    #include <driver/spi_master.h>
+    #include <driver/uart.h>
+
+    #define SW_CAPABLE_PLATFORM false
+
+    namespace TMC_HAL {
+        using PinDef = gpio_num_t;
+
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
+            const PinDef pin;
+            static constexpr bool LOW = 0;
+            static constexpr bool HIGH = 1;
+        };
+    }
+
+    using SPIClass = spi_device_handle_t;
+    using HardwareSerial = uart_port_t;
+
+    inline void delay(const uint16_t ms) {
+        ets_delay_us( ms * 1000 );
+    }
+
 #else //if defined(UNIT_TEST)
 
     #include "../examples/UnitTests/include/Mocks.h"

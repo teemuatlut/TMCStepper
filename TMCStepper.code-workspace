@@ -5,12 +5,23 @@
 		},
 		{
 			"path": "examples\\UnitTests"
+		},
+		{
+			"path": "examples\\Simple"
+		},
+		{
+			"name": "TMCStepper_ESP_IDF",
+			"path": "examples\\TMCStepper_ESP_IDF"
+		},
+		{
+			"path": "..\\..\\..\\..\\.platformio\\packages\\framework-espidf"
 		}
 	],
 	"settings": {
 		"files.associations": {
 			"*.tcc": "cpp",
-			"deque": "cpp"
+			"deque": "cpp",
+			"cstdint": "cpp"
 		}
 	}
 }
