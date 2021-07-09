@@ -26,6 +26,15 @@ TMC_SPI::TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link) :
   }
 
 __attribute__((weak))
+void TMC_SPI::begin() {
+  //set pins
+  OutputPin cs(pinCS);
+  cs.setMode();
+  cs.write(HIGH);
+
+  if (TMC_HW_SPI != nullptr) TMC_HW_SPI->begin();
+  else if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+}
 void TMC_SPI::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }

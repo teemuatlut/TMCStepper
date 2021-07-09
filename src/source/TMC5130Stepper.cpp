@@ -17,6 +17,8 @@ TMC5130Stepper::TMC5130Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
   }
 
 void TMC5130Stepper::begin() {
+  TMC_SPI::begin();
+
   XTARGET(0);
   XACTUAL(0);
   //while (( RAMP_STAT() & cfg.VZERO_bm) != cfg.VZERO_bm) {}

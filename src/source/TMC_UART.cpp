@@ -115,15 +115,17 @@ uint32_t TMC_UART::read(uint8_t addr) {
     return __builtin_bswap32(response.data);
 }
 
-#if SW_CAPABLE_PLATFORM
-	void TMC_UART::beginSerial(uint32_t baudrate) {
-		if (SWSerial != nullptr)
-		{
+void TMC_UART::begin(uint32_t baudrate) {
+	if (HWSerial != nullptr) {
+		HWSerial->begin(baudrate);
+	}
+	#if SW_CAPABLE_PLATFORM
+		else if (SWSerial != nullptr) {
 			SWSerial->begin(baudrate);
 			SWSerial->end();
 		}
-	}
-#endif
+	#endif
+}
 
 SSwitch::SSwitch(const PinDef pin1, const PinDef pin2) :
 	p1(pin1),

@@ -49,12 +49,7 @@ void TMC2130Stepper::resetLibCache() {
 }
 
 void TMC2130Stepper::begin() {
-  //set pins
-  OutputPin cs(pinCS);
-  cs.setMode();
-  cs.write(HIGH);
-
-  if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+  TMC_SPI::begin();
 
   COOLCONF(COOLCONF_i::r.sr);
   PWMCONF(PWMCONF_i::r.sr);

@@ -17,12 +17,7 @@ TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
   }
 
 void TMC5160Stepper::begin() {
-  //set pins
-  OutputPin cs(pinCS);
-  cs.setMode();
-  cs.write(HIGH);
-
-  if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+  TMC_SPI::begin();
 
   COOLCONF(COOLCONF_i::r.sr);
   PWMCONF(PWMCONF_i::r.sr);

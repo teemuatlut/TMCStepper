@@ -14,12 +14,7 @@ TMC2160Stepper::TMC2160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t 
   { resetLibCache(); }
 
 void TMC2160Stepper::begin() {
-  //set pins
-  OutputPin cs(pinCS);
-  cs.setMode();
-  cs.write(HIGH);
-
-  if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+  TMC_SPI::begin();
 
   TMC2160_n::PWMCONF_i<TMC2160Stepper>::PWMCONF(TMC2160_n::PWMCONF_i<TMC2160Stepper>::r.sr);
   IHOLD_IRUN(IHOLD_IRUN_i::r.sr);

@@ -118,6 +118,8 @@ protected:
 	};
   #pragma pack(pop)
 
+	void begin();
+
 	void setSPISpeed(uint32_t speed);
 	void switchCSpin(bool state);
 

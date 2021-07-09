@@ -17,10 +17,7 @@ TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, float RS, const int8
 using namespace TMC2660_n;
 
 void TMC2660Stepper::begin() {
-  //set pins
-  OutputPin cs(pinCS);
-  cs.setMode();
-  cs.write(HIGH);
+  TMC_SPI::begin();
 
   //TODO: Push shadow registers
 

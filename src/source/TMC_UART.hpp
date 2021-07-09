@@ -17,11 +17,8 @@ class SSwitch {
 };
 
 struct TMC_UART {
-  #if SW_CAPABLE_PLATFORM
-    void beginSerial(uint32_t baudrate);
-  #else
-    void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
-  #endif
+  void begin(uint32_t baudrate);
+
 protected:
 
   template<class> friend class TMCStepper;
