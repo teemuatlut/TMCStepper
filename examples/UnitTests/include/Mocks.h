@@ -52,6 +52,7 @@ struct SPIClass {
         return printout;
     }
 
+    void begin() {}
     std::deque<Payload> sentCommands;
     std::deque<uint32_t> responses{};
     bool active = false;
@@ -63,6 +64,7 @@ struct SPIClass {
 struct HardwareSerial {
     HardwareSerial(void *const handle) {}
 
+    void begin(...) {}
     void write(const uint8_t *data, uint8_t length) {}
     void read(uint8_t *buf, uint8_t length) {}
     uint8_t available() { return 0; }
