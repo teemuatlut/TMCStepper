@@ -25,7 +25,7 @@ TMC_SPI::TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link) :
       chain_length = link;
   }
 
-__attribute__((weak))
+TMC_WEAK_FUNCTION
 void TMC_SPI::begin() {
   //set pins
   OutputPin cs(pinCS);
@@ -35,6 +35,8 @@ void TMC_SPI::begin() {
   if (TMC_HW_SPI != nullptr) TMC_HW_SPI->begin();
   else if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
 }
+
+TMC_WEAK_FUNCTION
 void TMC_SPI::setSPISpeed(uint32_t speed) {
   spi_speed = speed;
 }
@@ -44,7 +46,7 @@ void TMC_SPI::transfer(const uint8_t count) {
   transfer(emptyBytes, count);
 }
 
-__attribute__((weak))
+TMC_WEAK_FUNCTION
 uint32_t TMC_SPI::read(uint8_t addressByte) {
   TransferData data;
   OutputPin cs(pinCS);
@@ -81,7 +83,7 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   return data.data;
 }
 
-__attribute__((weak))
+TMC_WEAK_FUNCTION
 void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
   OutputPin cs(pinCS);
   TransferData data;

@@ -34,7 +34,7 @@ uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
 	return crc;
 }
 
-__attribute__((weak))
+TMC_WEAK_FUNCTION
 void TMC_UART::write(uint8_t addr, uint32_t regVal) {
     WriteDatagram datagram;
     datagram.driverAddress = slaveAddress;

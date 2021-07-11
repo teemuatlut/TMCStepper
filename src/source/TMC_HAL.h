@@ -401,3 +401,9 @@ namespace TMC_HAL {
 #ifndef SW_CAPABLE_PLATFORM
     #define SW_CAPABLE_PLATFORM false
 #endif
+
+#ifdef UNIT_TEST
+	#define TMC_WEAK_FUNCTION
+#else
+	#define TMC_WEAK_FUNCTION __attribute__((weak))
+#endif
