@@ -95,6 +95,8 @@
                     swSpiInit(spi_speed, sck_pin, mosi_pin);
                 }
 
+            void begin(...) {}
+
             void beginTransaction() const {
                 swSpiBegin(sck, miso, mosi);
             }
