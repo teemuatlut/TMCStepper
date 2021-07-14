@@ -77,11 +77,6 @@ int TMC_UART::available() {
     if (HWSerial != nullptr) {
         out = HWSerial->available();
     }
-    #if SW_CAPABLE_PLATFORM
-        else if (SWSerial != nullptr) {
-            out = SWSerial->available();
-        }
-    #endif
 
     return out;
 }
@@ -105,11 +100,6 @@ void TMC_UART::preReadCommunication() {
         if (sswitch != nullptr)
             sswitch->active(slaveAddress);
     }
-    #if SW_CAPABLE_PLATFORM
-        else if (SWSerial != nullptr) {
-            SWSerial->listen();
-        }
-    #endif
 }
 
 __attribute__((weak))
@@ -117,11 +107,6 @@ size_t TMC_UART::serial_read(void *data, int8_t length) {
     if (HWSerial != nullptr && HWSerial->available() > 0) {
         return HWSerial->readBytes((uint8_t*)data, length);
     }
-    #if SW_CAPABLE_PLATFORM
-        else if (SWSerial != nullptr && SWSerial->available() > 0) {
-            return SWSerial->readBytes((uint8_t*)data, length);
-        };
-    #endif
     return 0;
 }
 
@@ -130,11 +115,6 @@ size_t TMC_UART::serial_write(const void *data, int8_t length) {
     if (HWSerial != nullptr) {
         return HWSerial->write((const uint8_t*)data, length);
     }
-    #if SW_CAPABLE_PLATFORM
-        else if (SWSerial != nullptr) {
-            return SWSerial->write((const uint8_t*)data, length);
-        }
-    #endif
     return 0;
 }
 
@@ -142,12 +122,6 @@ __attribute__((weak))
 void TMC_UART::postWriteCommunication() {}
 
 __attribute__((weak))
-void TMC_UART::postReadCommunication() {
-    #if SW_CAPABLE_PLATFORM
-        if (SWSerial != nullptr) {
-            SWSerial->end();
-        }
-    #endif
-}
+void TMC_UART::postReadCommunication() {}
 
 #endif

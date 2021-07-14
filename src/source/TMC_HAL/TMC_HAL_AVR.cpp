@@ -125,15 +125,13 @@ void TMC_UART::preWriteCommunication() {
 
 __attribute__((weak))
 void TMC_UART::preReadCommunication() {
-    #if SW_CAPABLE_PLATFORM
-        if (SWSerial != nullptr) {
-            SWSerial->listen();
-        } else
-    #endif
-        if (HWSerial != nullptr) {
-            if (sswitch != nullptr)
-                sswitch->active(slaveAddress);
-        }
+    if (SWSerial != nullptr) {
+        SWSerial->listen();
+    } else
+    if (HWSerial != nullptr) {
+        if (sswitch != nullptr)
+            sswitch->active(slaveAddress);
+    }
 }
 
 __attribute__((weak))
