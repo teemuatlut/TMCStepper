@@ -14,14 +14,18 @@
 			"path": "examples\\TMCStepper_ESP_IDF"
 		},
 		{
-			"path": "..\\..\\..\\..\\.platformio\\packages\\framework-espidf"
+			"path": "examples\\TMCStepper_CubeMX"
 		}
 	],
 	"settings": {
 		"files.associations": {
 			"*.tcc": "cpp",
 			"deque": "cpp",
-			"cstdint": "cpp"
+			"cstdint": "cpp",
+			"*.ipp": "cpp",
+			"array": "cpp",
+			"string": "cpp",
+			"string_view": "cpp"
 		}
 	}
 }
