@@ -119,6 +119,7 @@ protected:
   #pragma pack(pop)
 
 	void begin();
+	void initPeripheral();
 
 	void setSPISpeed(uint32_t speed);
 	void switchCSpin(bool state);

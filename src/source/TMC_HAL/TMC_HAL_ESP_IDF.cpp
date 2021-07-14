@@ -39,6 +39,11 @@ void OutputPin::reset() const {
 }
 
 __attribute__((weak))
+void TMC_SPI::initPeripheral() {
+    if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+}
+
+__attribute__((weak))
 void TMC_SPI::beginTransaction() {
     spi_device_acquire_bus(*TMC_HW_SPI, 100);
 }

@@ -4,6 +4,8 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
+void TMC_UART::begin(uint32_t) {}
+
 int TMC_UART::available() {
     return 0;
 }

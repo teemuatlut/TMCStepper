@@ -58,6 +58,12 @@ void OutputPin::reset() const {
 }
 
 __attribute__((weak))
+void TMC_SPI::initPeripheral() {
+    if (TMC_HW_SPI != nullptr) TMC_HW_SPI->begin();
+    else if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+}
+
+__attribute__((weak))
 void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
@@ -78,6 +84,17 @@ __attribute__((weak))
 void TMC_SPI::endTransaction() {
     if (TMC_HW_SPI != nullptr) {
         TMC_HW_SPI->endTransaction();
+    }
+}
+
+__attribute__((weak))
+void TMC_UART::begin(uint32_t baudrate) {
+	if (HWSerial != nullptr) {
+		HWSerial->begin(baudrate);
+	}
+    else if (SWSerial != nullptr) {
+        SWSerial->begin(baudrate);
+        SWSerial->end();
     }
 }
 

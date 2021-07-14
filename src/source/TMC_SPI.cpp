@@ -25,15 +25,13 @@ TMC_SPI::TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link) :
       chain_length = link;
   }
 
-TMC_WEAK_FUNCTION
 void TMC_SPI::begin() {
   //set pins
   OutputPin cs(pinCS);
   cs.setMode();
   cs.write(HIGH);
 
-  if (TMC_HW_SPI != nullptr) TMC_HW_SPI->begin();
-  else if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+  initPeripheral();
 }
 
 TMC_WEAK_FUNCTION

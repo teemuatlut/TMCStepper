@@ -19,6 +19,8 @@ std::ostream& operator<< (std::ostream &out, const SPIClass &cmdList) {
     return out;
 }
 
+void TMC_SPI::initPeripheral() {}
+
 void TMC_SPI::beginTransaction() {
     TMC_HW_SPI->active = true;
 }
