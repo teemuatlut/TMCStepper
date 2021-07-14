@@ -1,5 +1,6 @@
 #MicroXplorer Configuration settings - do not modify
 File.Version=6
+GPIO.groupedBy=Group By Peripherals
 KeepUserPlacement=false
 Mcu.Family=STM32F3
 Mcu.IP0=NVIC
@@ -68,9 +69,10 @@ PA14.Signal=SYS_JTCK-SWCLK
 PA2.Locked=true
 PA2.Mode=Asynchronous
 PA2.Signal=USART2_TX
-PA4.GPIOParameters=GPIO_Label
+PA4.GPIOParameters=PinState,GPIO_Label
 PA4.GPIO_Label=CS
 PA4.Locked=true
+PA4.PinState=GPIO_PIN_SET
 PA4.Signal=GPIO_Output
 PA5.Mode=Full_Duplex_Master
 PA5.Signal=SPI1_SCK
