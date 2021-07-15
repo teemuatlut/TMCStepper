@@ -1,4 +1,6 @@
 
+#if defined(UNIT_TEST)
+
 #include <TMCStepper.h>
 
 using namespace TMCStepper_n;
@@ -34,5 +36,4 @@ void TMC_UART::postWriteCommunication() {}
 void TMC_UART::postReadCommunication() {
 }
 
-
-
+#endif

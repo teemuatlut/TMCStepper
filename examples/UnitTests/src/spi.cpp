@@ -1,4 +1,6 @@
 
+#if defined(UNIT_TEST)
+
 #include <TMCStepper.h>
 
 #include <iostream>
@@ -55,3 +57,4 @@ void TMC_SPI::endTransaction() {
     TMC_HW_SPI->active = false;
 }
 
+#endif

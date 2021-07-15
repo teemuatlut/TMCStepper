@@ -1,4 +1,6 @@
 
+#if defined(UNIT_TEST)
+
 #include <TMCStepper.h>
 
 using namespace TMCStepper_n;
@@ -31,3 +33,5 @@ void OutputPin::set() const {
 void OutputPin::reset() const {
     //digitalWrite(pin, LOW);
 }
+
+#endif
