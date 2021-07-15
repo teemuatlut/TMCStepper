@@ -102,8 +102,7 @@ void loop() {
   if((ms-last_time) > 100) { //run every 0.1s
     last_time = ms;
 
-    TMC2130Stepper::DRV_STATUS_t drv_status{0};
-    drv_status.sr = driver.DRV_STATUS();
+    decltype(driver)::DRV_STATUS_t drv_status = driver.DRV_STATUS();
 
     Serial.print("0 ");
     Serial.print(drv_status.sg_result, DEC);
