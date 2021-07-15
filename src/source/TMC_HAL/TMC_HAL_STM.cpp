@@ -57,8 +57,8 @@ void OutputPin::reset() const {
 #if defined(HAL_SPI_MODULE_ENABLED)
     SPIClass::SPIClass(SPI_HandleTypeDef * spi) : hspi(spi) {}
 
-    void SPIClass::transfer(uint8_t *buf, uint8_t count) const {
-        HAL_SPI_TransmitReceive(hspi, buf, buf, count, timeout);
+    void SPIClass::transfer(void *buf, uint8_t count) const {
+        HAL_SPI_TransmitReceive(hspi, (uint8_t*)buf, buf, count, timeout);
     }
 
     void delay(uint32_t ms) { HAL_Delay(ms); }
@@ -69,9 +69,9 @@ void OutputPin::reset() const {
         LL_SPI_TransmitData8(hspi, data);
         return LL_SPI_ReceiveData8(hspi);
     }
-    void SPIClass::transfer(uint8_t *buf, uint8_t count) const {
+    void SPIClass::transfer(void *buf, uint8_t count) const {
         while(count --> 0) {
-            transfer(*buf);
+            transfer(*(uint8_t*)buf);
         }
     }
 
@@ -168,16 +168,16 @@ void TMC_UART::preReadCommunication() {
 }
 
 __attribute__((weak))
-size_t TMC_UART::serial_read(uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_read(void *data, int8_t length) {
     if (HWSerial != nullptr) {
-        return HWSerial->read(data, length);
+        return HWSerial->read((uint8_t*)data, length);
     }
 }
 
 __attribute__((weak))
-size_t TMC_UART::serial_write(const uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_write(const void *data, int8_t length) {
     if (HWSerial != nullptr) {
-        return HWSerial->write(data, length);
+        return HWSerial->write((const uint8_t*)data, length);
     }
 }
 

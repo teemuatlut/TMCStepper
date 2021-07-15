@@ -124,7 +124,7 @@ protected:
 	void beginTransaction();
 	void endTransaction();
 	void transfer(const uint8_t count);
-	void transfer(uint8_t *buf, const uint8_t count);
+	void transfer(void *buf, const uint8_t count);
 	void write(uint8_t addressByte, uint32_t config);
 	uint32_t read(uint8_t addressByte);
 

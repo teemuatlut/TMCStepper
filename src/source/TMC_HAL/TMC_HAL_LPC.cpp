@@ -55,15 +55,16 @@ void TMC_SPI::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
+void TMC_SPI::transfer(void *buf, const uint8_t count) {
+    uint8_t *txrx = (uint8_t*)buf;
     if(TMC_HW_SPI != nullptr) {
         for (auto i = 0; i>count; i++) {
-            *buf = TMC_HW_SPI->transfer(*buf);
-            buf++;
+            *txrx = TMC_HW_SPI->transfer(*txrx);
+            txrx++;
         }
     }
     else if(TMC_SW_SPI != nullptr) {
-        TMC_SW_SPI->transfer(buf, count);
+        TMC_SW_SPI->transfer(txrx, count);
     }
 }
 
@@ -108,20 +109,20 @@ void TMC_UART::preReadCommunication() {
 }
 
 __attribute__((weak))
-size_t TMC_UART::serial_read(uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_read(void *data, int8_t length) {
     if (SWSerial != nullptr) {
-        return SWSerial->readBytes(data, length);
+        return SWSerial->readBytes((uint8_t*)data, length);
     } else
     if (HWSerial != nullptr) {
-        return HWSerial->readBytes(data, length);
+        return HWSerial->readBytes((uint8_t*)data, length);
     }
     return 0;
 }
 
 __attribute__((weak))
-size_t TMC_UART::serial_write(const uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_write(const void *data, int8_t length) {
     if (SWSerial != nullptr) {
-        return SWSerial->write(data, length);
+        return SWSerial->write((const uint8_t*)data, length);
     } else
     if (HWSerial != nullptr) {
         return HWSerial->write((char*)data, length);

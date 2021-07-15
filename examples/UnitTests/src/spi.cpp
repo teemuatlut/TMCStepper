@@ -23,9 +23,9 @@ void TMC_SPI::beginTransaction() {
     TMC_HW_SPI->active = true;
 }
 
-void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
+void TMC_SPI::transfer(void *dataBuffer, const uint8_t count) {
     if(TMC_HW_SPI->active) {
-
+        uint8_t *buf = static_cast<uint8_t*>(dataBuffer);
         uint32_t data = *(uint32_t*)(buf+1);
 
         data = __builtin_bswap32(data);

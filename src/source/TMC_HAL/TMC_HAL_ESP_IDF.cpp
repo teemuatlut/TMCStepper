@@ -44,7 +44,7 @@ void TMC_SPI::beginTransaction() {
 }
 
 __attribute__((weak))
-void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
+void TMC_SPI::transfer(void *buf, const uint8_t count) {
     spi_transaction_t t{};
     t.length = count * 8u;
     t.rxlength = count * 8u;
@@ -82,15 +82,15 @@ __attribute__((weak))
 void TMC_UART::preReadCommunication() {}
 
 __attribute__((weak))
-size_t TMC_UART::serial_read(uint8_t *data, int8_t length) {
-    int len = uart_read_bytes(*HWSerial, data, 1, 0);
-    ESP_LOGD( TAG_EPS32_SERIAL, "Read data: %X (length %d)", *data, len);
+size_t TMC_UART::serial_read(void *data, int8_t length) {
+    int len = uart_read_bytes(*HWSerial, (uint8_t*)data, 1, 0);
+    ESP_LOGD( TAG_EPS32_SERIAL, "Read data: %X (length %d)", *(uint8_t*)data, len);
     return len;
 }
 
 __attribute__((weak))
-size_t TMC_UART::serial_write(const uint8_t *data, int8_t length) {
-    ESP_LOGD( TAG_EPS32_SERIAL, "Write data: %X", *data );
+size_t TMC_UART::serial_write(const void *data, int8_t length) {
+    ESP_LOGD( TAG_EPS32_SERIAL, "Write data: %X", *(uint8_t*)data );
     const int len = uart_write_bytes(*HWSerial, (const char*)data, 1);
     ESP_LOGD( TAG_EPS32_SERIAL, "Number of bytes written: %d", len );
     return len;
