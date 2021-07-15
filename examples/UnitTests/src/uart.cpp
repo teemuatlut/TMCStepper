@@ -19,10 +19,12 @@ void TMC_UART::preWriteCommunication() {
 void TMC_UART::preReadCommunication() {
 }
 
-void TMC_UART::serial_read(uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_read(uint8_t *data, int8_t length) {
+    return length;
 }
 
-void TMC_UART::serial_write(const uint8_t *data, int8_t length) {
+size_t TMC_UART::serial_write(const uint8_t *data, int8_t length) {
+    return length;
 }
 
 void TMC_UART::postWriteCommunication() {}
