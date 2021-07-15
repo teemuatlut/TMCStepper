@@ -46,13 +46,19 @@ void TMC_UART::write(uint8_t addr, uint32_t regVal) {
 	preWriteCommunication();
 	serial_write((uint8_t*)&datagram, datagram.length);
 	postWriteCommunication();
-
-	delay(replyDelay);
 }
 
 TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
-    serial_write((uint8_t*)&datagram, datagram.length);
-    const uint32_t timeout = this->getTime() + this->abort_window;
+	const uint32_t startTime = getTime();
+	auto Timeout = [&] {
+		return this->getTime() - startTime < this->abort_window;
+	};
+
+	auto byteCount = serial_write((uint8_t*)&datagram, datagram.length);
+
+	while (byteCount != datagram.length && Timeout()) {
+		byteCount = serial_write((uint8_t*)&datagram, datagram.length);
+	}
 
     // scan for the rx frame and read it
     const uint32_t sync_target = static_cast<uint32_t>(datagram.sync)<<16 | 0xFF00 | datagram.registerAddress;
@@ -65,10 +71,10 @@ TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
 		    sync <<= 8;
 		    serial_read((uint8_t*)&sync, 1);
         }
-    } while (((sync&0xFFFFFF) != sync_target) && (this->getTime() < timeout));
+    } while ((sync != sync_target) && Timeout());
 
-    while (this->getTime() < timeout) {
-		if(available() > 0) {
+    while (Timeout()) {
+		if(available() >= 5) {
 	        response.driverAddress = 0xFF;
 	    	response.registerAddress = static_cast<uint8_t>(sync);
 
@@ -102,9 +108,9 @@ uint32_t TMC_UART::read(uint8_t addr) {
         }
 
         response.data = 0;
-    }
 
-	delay(replyDelay);
+		delay(10);
+    }
 
     return __builtin_bswap32(response.data);
 }
