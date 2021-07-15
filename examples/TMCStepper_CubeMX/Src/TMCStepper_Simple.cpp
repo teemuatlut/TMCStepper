@@ -1,10 +1,9 @@
 
 #include <TMCStepper.h>
 
-extern "C" {
-	#include "main.h"
-	#include "spi.h"
-}
+#include "main.h"
+#include "spi.h"
+#include "usart.h"
 
 TMC_HAL::OutputPin enPin({ENABLE_GPIO_Port, ENABLE_Pin});
 TMC_HAL::OutputPin step({STEP_GPIO_Port, STEP_Pin});
@@ -27,7 +26,7 @@ void initDriver() {
 							  // UART: Init SW UART (if selected) with default 115200 baudrate
 	driver.toff(5);                 // Enables driver in software
 	driver.rms_current(600);        // Set motor RMS current
-	driver.microsteps(4);          // Set microsteps to 1/16th
+	driver.microsteps(16);          // Set microsteps to 1/16th
 	driver.intpol(true);
 
 	driver.en_pwm_mode(true);       // Toggle stealthChop on TMC2130/2160/5130/5160

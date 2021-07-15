@@ -114,7 +114,7 @@ void OutputPin::reset() const {
 #endif
 
 __attribute__((weak))
-uint32_t TMC_UART::getTime() const { return millis(); }
+uint32_t TMC_UART::getTime() const { return HAL_GetTick(); }
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
