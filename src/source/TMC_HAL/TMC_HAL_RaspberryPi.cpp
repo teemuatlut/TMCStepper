@@ -39,23 +39,49 @@ void OutputPin::reset() const {
 	bcm2835_gpio_write(pin, 0);
 }
 
-void SPIClass::beginTransaction(SPISettings settings)
-{
-	bcm2835_spi_begin();
-	bcm2835_spi_setBitOrder(settings.order);
-	bcm2835_spi_setDataMode(settings.mode);
-	bcm2835_spi_set_speed_hz(settings.speed);
-	bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+__attribute__((weak))
+void TMC_SPI::initPeripheral() {
+	if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
 }
 
-uint32_t millis()
+void SPIClass::beginTransaction()
+{
+	if(TMC_HW_SPI != nullptr) {
+		bcm2835_spi_begin();
+		bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
+		bcm2835_spi_setDataMode(BCM2835_SPI_MODE3);
+		bcm2835_spi_set_speed_hz(spi_speed);
+		bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+	}
+}
+
+__attribute__((weak))
+void TMC_SPI::transfer(void *buf, const uint8_t count) {
+    if(TMC_HW_SPI != nullptr) {
+		bcm2835_spi_transfern((char*)buf, count);
+    }
+    else if(TMC_SW_SPI != nullptr) {
+        TMC_SW_SPI->transfer((uint8_t*)buf, count);
+    }
+}
+
+__attribute__((weak))
+void TMC_SPI::endTransaction() {
+    if (TMC_HW_SPI != nullptr) {
+        bcm2835_spi_end();
+    }
+}
+
+__attribute__((weak))
+size_t TMC_UART::getTime() const
 {
 	struct timeval now;
 	gettimeofday(&now, NULL);
 	return (uint32_t) ( now.tv_usec / 1000 );
 }
 
-void HardwareSerial::begin(unsigned long baud, int flags)
+__attribute__((weak))
+void TMC_UART::begin(uint32_t baud)
 {
 	speed_t myBaud;
 	switch(baud)
@@ -76,6 +102,8 @@ void HardwareSerial::begin(unsigned long baud, int flags)
 			printf("[ERROR] UART invalid baud: %ld for port: %s\n", baud, port);
 			return;
 	}
+
+	const int flags = O_RDWR | O_NOCTTY | O_NDELAY;
 
 	fd = open(port, flags);
 	if (fd == -1) {
@@ -133,18 +161,31 @@ int HardwareSerial::available()
 	return result;
 }
 
-uint8_t HardwareSerial::write(const uint8_t data)
-{
-    return (uint8_t)::write(fd, &data, 1);
+__attribute__((weak))
+void TMC_UART::preWriteCommunication() {}
+
+__attribute__((weak))
+void TMC_UART::preReadCommunication() {}
+
+__attribute__((weak))
+size_t TMC_UART::serial_write(const void *data, int8_t length) {
+    if (HWSerial != nullptr) {
+        HWSerial->write(fd, (const uint8_t*)data, length);
+    }
 }
 
-uint8_t HardwareSerial::read()
-{
-	uint8_t data = -1;
-	if (::read(fd, &data, 1) == -1)
-		return -1;
-	return data;
+__attribute__((weak))
+size_t TMC_UART::serial_read(void *data, int8_t length) {
+    if (HWSerial != nullptr && HWSerial->available() > 0) {
+        HWSerial->readBytes(fd, (uint8_t*)data, length);
+    }
 }
+
+__attribute__((weak))
+void TMC_UART::postWriteCommunication() {}
+
+__attribute__((weak))
+void TMC_UART::postReadCommunication() {}
 
 HardwareSerial Serial("/dev/serial0");
 HardwareSerial Serial1("/dev/serial1");

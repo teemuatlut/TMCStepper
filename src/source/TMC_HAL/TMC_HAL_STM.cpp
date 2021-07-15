@@ -51,105 +51,109 @@ void OutputPin::set() const {
 }
 
 void OutputPin::reset() const {
-    pin.port->BRR = pin.bm;
+    #if defined(STM32F4xx)
+        pin.port->BSRR = pin.bm << 16U;
+    #else
+        pin.port->BRR = pin.bm;
+    #endif
 }
 
-#if defined(HAL_SPI_MODULE_ENABLED)
-    SPIClass::SPIClass(SPI_HandleTypeDef * spi) : hspi(spi) {}
+__attribute__((weak))
+void TMC_SPI::initPeripheral() {
+    if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+}
 
-    void SPIClass::transfer(void *buf, uint8_t count) const {
-        HAL_SPI_TransmitReceive(hspi, (uint8_t*)buf, buf, count, timeout);
+__attribute__((weak))
+void TMC_SPI::beginTransaction() {}
+
+#if defined(STM_HAS_LL_SPI)
+
+    __attribute__((weak))
+    void TMC_SPI::transfer(void *buf, const uint8_t count) {
+        if(TMC_HW_SPI != nullptr) {
+            uint8_t *data = (uint8_t*)buf;
+            uint8_t bytes = count;
+            while(bytes --> 0) {
+                transfer(*data);
+                LL_SPI_TransmitData8(TMC_HW_SPI, *data);
+                *data = LL_SPI_ReceiveData8(TMC_HW_SPI);
+                data++;
+            }
+        }
+        else if(TMC_SW_SPI != nullptr) {
+            TMC_SW_SPI->transfer((uint8_t*)buf, count);
+        }
+    }
+
+#elif defined(HAL_SPI_MODULE_ENABLED)
+
+    __attribute__((weak))
+    void TMC_SPI::transfer(void *buf, const uint8_t count) {
+        if(TMC_HW_SPI != nullptr) {
+            HAL_SPI_TransmitReceive(TMC_HW_SPI, (uint8_t*)buf, (uint8_t*)buf, count, timeout);
+        }
+        else if(TMC_SW_SPI != nullptr) {
+            TMC_SW_SPI->transfer((uint8_t*)buf, count);
+        }
+    }
+
+#endif
+
+__attribute__((weak))
+void TMC_SPI::endTransaction() {}
+
+__attribute__((weak))
+void TMC_UART::begin(uint32_t) {}
+
+#if defined(STM_HAS_LL_UART)
+
+    int TMC_UART::available() {
+        return LL_USART_IsActiveFlag_RXNE(HWSerial);
+    }
+
+    size_t TMC_UART::serial_write(const void *buf, int8_t length) {
+        uint8_t *data = (uint8_t*)buf;
+        while (length --> 0) {
+            LL_USART_TransmitData8(HWSerial, *(const uint8_t *)data);
+            data++;
+        }
+        return length;
+    }
+
+    size_t TMC_UART::serial_read(void *buf, int8_t length) {
+        uint8_t *data = (uint8_t*)buf;
+        while (length --> 0) {
+            *data = LL_USART_ReceiveData8(HWSerial);
+            data++;
+        }
+        return length;
+    }
+
+    void delay(uint32_t ms) { LL_mDelay(ms); }
+
+#elif defined(HAL_UART_MODULE_ENABLED)
+
+    __attribute__((weak))
+    uint32_t TMC_UART::getTime() const { return HAL_GetTick(); }
+
+    __attribute__((weak))
+    int TMC_UART::available() {
+        return __HAL_UART_GET_FLAG(HWSerial, UART_FLAG_RXNE);
+    }
+
+    size_t TMC_UART::serial_write(const void *data, int8_t length) {
+        HAL_UART_Transmit(HWSerial, (uint8_t*)data, length, timeout);
+        return length;
+    }
+
+    size_t TMC_UART::serial_read(void *buf, int8_t length) {
+        HAL_UART_Receive(HWSerial, (uint8_t*)buf, length, timeout);
+        return length;
     }
 
     void delay(uint32_t ms) { HAL_Delay(ms); }
-#elif defined(USE_FULL_LL_DRIVER)
-    SPIClass::SPIClass(SPI_TypeDef * spi) : hspi(spi) {}
 
-    uint8_t SPIClass::transfer(const uint8_t data) const {
-        LL_SPI_TransmitData8(hspi, data);
-        return LL_SPI_ReceiveData8(hspi);
-    }
-    void SPIClass::transfer(void *buf, uint8_t count) const {
-        while(count --> 0) {
-            transfer(*(uint8_t*)buf);
-        }
-    }
-
-#endif
-
-#if defined(HAL_UART_MODULE_ENABLED)
-
-    HardwareSerial::HardwareSerial(UART_HandleTypeDef *const handle) : huart(handle) {}
-
-    void HardwareSerial::write(const uint8_t *data, uint8_t length) {
-        HAL_UART_Transmit(huart, const_cast<uint8_t*>(data), length, timeout);
-    }
-    void HardwareSerial::read(uint8_t *buf, uint8_t length) {
-        HAL_UART_Receive(huart, buf, length, timeout);
-    }
-    uint8_t HardwareSerial::available() {
-        return __HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE);
-    }
-
-#elif defined(USE_FULL_LL_DRIVER)
-
-    HardwareSerial::HardwareSerial(USART_TypeDef *const handle) : huart(handle) {}
-
-    void HardwareSerial::write(const uint8_t *data, uint8_t length) {
-        while (length --> 0) {
-            LL_USART_TransmitData8(huart, *data);
-            data++;
-        }
-    }
-    void HardwareSerial::read(uint8_t *buf, uint8_t length) {
-        while (length --> 0) {
-            *buf = LL_USART_ReceiveData8(huart);
-            buf++;
-        }
-    }
-    uint8_t HardwareSerial::available() {
-        return LL_USART_IsActiveFlag_RXNE(huart);
-    }
-
-#endif
-
-__attribute__((weak))
-uint32_t TMC_UART::getTime() const { return HAL_GetTick(); }
-
-__attribute__((weak))
-void TMC_SPI::beginTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
-    }
-}
-
-__attribute__((weak))
-void TMC_SPI::transfer(uint8_t *buf, const uint8_t count) {
-    if(TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->transfer(buf, count);
-    }
-    else if(TMC_SW_SPI != nullptr) {
-        TMC_SW_SPI->transfer(buf, count);
-    }
-}
-
-__attribute__((weak))
-void TMC_SPI::endTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->endTransaction();
-    }
-}
-
-__attribute__((weak))
-int TMC_UART::available() {
-    int out = 0;
-
-    if (HWSerial != nullptr) {
-        out = HWSerial->available();
-    }
-
-    return out;
-}
+    #endif
 
 __attribute__((weak))
 void TMC_UART::preWriteCommunication() {
@@ -164,20 +168,6 @@ void TMC_UART::preReadCommunication() {
     if (HWSerial != nullptr) {
         if (sswitch != nullptr)
             sswitch->active(slaveAddress);
-    }
-}
-
-__attribute__((weak))
-size_t TMC_UART::serial_read(void *data, int8_t length) {
-    if (HWSerial != nullptr) {
-        return HWSerial->read((uint8_t*)data, length);
-    }
-}
-
-__attribute__((weak))
-size_t TMC_UART::serial_write(const void *data, int8_t length) {
-    if (HWSerial != nullptr) {
-        return HWSerial->write((const uint8_t*)data, length);
     }
 }
 

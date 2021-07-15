@@ -157,10 +157,26 @@
     #include <cstddef>
     #include <stdint.h>
 
-    #if defined(STM32F3xx)
-        #include <stm32f3xx_hal_conf.h>
-    #elif defined(STM32F4xx)
-        #include <stm32f4xx_hal_conf.h>
+    #if defined(USE_FULL_LL_DRIVER)
+        extern "C" {
+          #include "main.h"
+        }
+
+        #if defined(STM32F0xx_LL_USART_H) || defined(__STM32F1xx_LL_USART_H) || defined(STM32F3xx_LL_USART_H) || defined(__STM32F4xx_LL_USART_H) || defined(STM32F7xx_LL_USART_H)
+            #define STM_HAS_LL_UART
+        #endif
+        #if defined(STM32F0xx_LL_SPI_H) || defined(STM32F1xx_LL_SPI_H) || defined(STM32F3xx_LL_SPI_H) || defined(STM32F4xx_LL_SPI_H) || defined(STM32F7xx_LL_SPI_H)
+            #define STM_HAS_LL_SPI
+        #endif
+
+    #elif defined(USE_HAL_DRIVER)
+        #if defined(STM32F3xx)
+            #include <stm32f3xx_hal.h>
+        #elif defined(STM32F4xx)
+            #include <stm32f4xx_hal.h>
+        #else
+            #include "main.h"
+        #endif
     #else
         #include "main.h"
     #endif
@@ -185,49 +201,25 @@
         };
     }
 
-        struct SPISettings {
-            SPISettings(uint32_t, uint8_t, uint8_t) {}
-        };
-
-        #if defined(HAL_SPI_MODULE_ENABLED)
-            typedef SPI_HandleTypeDef SPIType;
-        #elif defined(USE_FULL_LL_DRIVER)
-            typedef SPI_TypeDef SPIType;
+        #if defined(STM_HAS_LL_SPI)
+            using SPIClass = SPI_TypeDef;
+        #elif defined(HAL_SPI_MODULE_ENABLED)
+            using SPIClass = SPI_HandleTypeDef;
+        #else
+            using SPIClass = void*;
         #endif
 
-        struct SPIClass {
-            explicit SPIClass(SPIType * spi);
+        #if defined(STM_HAS_LL_UART)
+            using HardwareSerial = USART_TypeDef;
+        #elif defined(HAL_UART_MODULE_ENABLED)
+            using HardwareSerial = UART_HandleTypeDef;
+        #else
+            using HardwareSerial = void*;
+        #endif
 
-            uint8_t transfer(const uint8_t data) const;
-            void transfer(uint8_t *buf, uint8_t count) const;
-            static void beginTransaction(SPISettings) {}
-            static void endTransaction() {}
-
-            operator bool() const { return hspi; }
-
-        private:
-            SPIType * const hspi;
-            static constexpr uint32_t timeout = 1000;
-        };
+        static constexpr uint32_t timeout = 1000;
 
         void delay(uint32_t ms);
-
-        #if defined(HAL_UART_MODULE_ENABLED)
-            typedef UART_HandleTypeDef UsartType;
-        #elif defined(USE_FULL_LL_DRIVER)
-            typedef USART_TypeDef UsartType;
-        #endif
-
-        struct HardwareSerial {
-            HardwareSerial(UsartType *const handle);
-
-            void write(const uint8_t *data, uint8_t length);
-            void read(uint8_t *buf, uint8_t length);
-            uint8_t available();
-            static constexpr uint32_t timeout = 1000;
-        private:
-            UsartType * const huart;
-        };
 
 #elif defined(bcm2835)
 
@@ -263,47 +255,16 @@
         };
     }
 
-    struct SPISettings;
-
-    class SPIClass
-    {
-    public:
-        void beginTransaction(SPISettings settings);
-        void endTransaction() {
-            bcm2835_spi_end();
-        }
-        uint8_t transfer(uint8_t value) {
-            return bcm2835_spi_transfer(value);
-        }
-    };
-
-    struct SPISettings
-    {
-        friend class SPIClass;
-        SPISettings(uint32_t s, bcm2835SPIBitOrder o, bcm2835SPIMode m) :
-            speed(s), order(o), mode(m)
-            {}
-
-        const uint32_t speed;
-        const bcm2835SPIBitOrder order;
-        const bcm2835SPIMode mode;
-    };
-
-    extern SPIClass SPI;
-
     uint32_t millis();
 
     class HardwareSerial
     {
     public:
         HardwareSerial(const char* p) : port(p) {}
-        void begin(unsigned long baud) { begin(baud, O_RDWR | O_NOCTTY | O_NDELAY); }
         void begin(unsigned long, int);
         void end() { ::close(port); }
         int available(void);
-        uint8_t write(const uint8_t data);
-        uint8_t read();
-    private:
+
         int fd;                    /* Filedeskriptor */
         const char* port;
     };
