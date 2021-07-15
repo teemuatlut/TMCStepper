@@ -15,6 +15,9 @@
 		},
 		{
 			"path": "examples\\TMCStepper_CubeMX"
+		},
+		{
+			"path": "examples\\Simple_mbed"
 		}
 	],
 	"settings": {

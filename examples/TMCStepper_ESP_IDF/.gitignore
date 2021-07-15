@@ -4,4 +4,4 @@
 .vscode/launch.json
 .vscode/ipch
 CMakeLists.txt
-sdkconfig
+sdkconfig*

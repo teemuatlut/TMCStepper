@@ -16,34 +16,34 @@
  */
 #include <TMCStepper.h>
 
-#define MAX_SPEED        40 // In timer value
-#define MIN_SPEED      1000
+constexpr uint32_t MAX_SPEED = 40; // In timer value
+constexpr uint32_t MIN_SPEED = 1000;
 
-#define STALL_VALUE     100 // [0..255]
+constexpr int16_t STALL_VALUE = 15; // [-64..63]
 
-#define EN_PIN           38 // Enable
-#define DIR_PIN          55 // Direction
-#define STEP_PIN         54 // Step
-#define SW_RX            63 // TMC2208/TMC2224 SoftwareSerial receive pin
-#define SW_TX            40 // TMC2208/TMC2224 SoftwareSerial transmit pin
-#define SERIAL_PORT Serial1 // TMC2208/TMC2224 HardwareSerial port
-#define DRIVER_ADDRESS 0b00 // TMC2209 Driver address according to MS1 and MS2
+constexpr TMC_HAL::PinDef
+  EN_PIN   = 38, // Enable
+  DIR_PIN  = 55, // Direction
+  STEP_PIN = 54, // Step
+  SW_RX    = 63, // SoftwareSerial receive pin
+  SW_TX    = 40; // SoftwareSerial transmit pin
 
-#define R_SENSE 0.11f // Match to your driver
-                      // SilentStepStick series use 0.11
-                      // UltiMachine Einsy and Archim2 boards use 0.2
-                      // Panucatt BSD2660 uses 0.1
-                      // Watterott TMC5160 uses 0.075
+auto SERIAL_PORT = Serial1;              // HardwareSerial port
+constexpr uint8_t DRIVER_ADDRESS = 0b00; // Driver address according to MS1 and MS2
+
+constexpr float R_SENSE = 0.11; // Match to your driver
+
+TMC_HAL::SWSerial SW_SERIAL(SW_RX, SW_TX);
 
 // Select your stepper driver type
-//TMC2209Stepper driver(&SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
-//TMC2209Stepper driver(SW_RX, SW_TX, R_SENSE, DRIVER_ADDRESS);
-
-using namespace TMC2208_n;
+//TMC2209Stepper driver(SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
+//TMC2209Stepper driver(  SW_SERIAL, R_SENSE, DRIVER_ADDRESS);
+//TMC2300Stepper driver(SERIAL_PORT, R_SENSE, DRIVER_ADDRESS);
+//TMC2300Stepper driver(  SW_SERIAL, R_SENSE, DRIVER_ADDRESS);
 
 // Using direct register manipulation can reach faster stepping times
-#define STEP_PORT     PORTF // Match with STEP_PIN
-#define STEP_BIT_POS      0 // Match with STEP_PIN
+auto STEP_PORT = PORTF; // Match with STEP_PIN
+auto STEP_BIT_POS = 0;  // Match with STEP_PIN
 
 ISR(TIMER1_COMPA_vect){
   //STEP_PORT ^= 1 << STEP_BIT_POS;
@@ -54,9 +54,6 @@ void setup() {
   Serial.begin(250000);         // Init serial port and set baudrate
   while(!Serial);               // Wait for serial port to connect
   Serial.println("\nStart...");
-
-  SERIAL_PORT.begin(115200);
-  driver.beginSerial(115200);
 
   pinMode(EN_PIN, OUTPUT);
   pinMode(STEP_PIN, OUTPUT);
@@ -97,13 +94,8 @@ void loop() {
 
   while(Serial.available() > 0) {
     int8_t read_byte = Serial.read();
-    #ifdef USING_TMC2660
-      if (read_byte == '0')      { TIMSK1 &= ~(1 << OCIE1A); driver.toff(0); }
-      else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); driver.toff(driver.savedToff()); }
-    #else
-      if (read_byte == '0')      { TIMSK1 &= ~(1 << OCIE1A); digitalWrite( EN_PIN, HIGH ); }
-      else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); digitalWrite( EN_PIN,  LOW ); }
-    #endif
+    if (read_byte == '0')      { TIMSK1 &= ~(1 << OCIE1A); digitalWrite( EN_PIN, HIGH ); }
+    else if (read_byte == '1') { TIMSK1 |=  (1 << OCIE1A); digitalWrite( EN_PIN,  LOW ); }
     else if (read_byte == '+') { if (OCR1A > MAX_SPEED) OCR1A -= 20; }
     else if (read_byte == '-') { if (OCR1A < MIN_SPEED) OCR1A += 20; }
   }

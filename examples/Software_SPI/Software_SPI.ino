@@ -5,27 +5,25 @@
 
 #include <TMCStepper.h>
 
-#define EN_PIN           38 // Enable
-#define DIR_PIN          55 // Direction
-#define STEP_PIN         54 // Step
-#define CS_PIN           42 // Chip select
-#define SW_MOSI          66 // Software Master Out Slave In (MOSI)
-#define SW_MISO          44 // Software Master In Slave Out (MISO)
-#define SW_SCK           64 // Software Slave Clock (SCK)
+constexpr TMC_HAL::PinDef
+	EN_PIN   = 38, // Enable
+	DIR_PIN  = 55, // Direction
+	STEP_PIN = 54, // Step
+	CS_PIN   = 42, // Chip select
+	SW_MOSI  = 66, // Software Master Out Slave In (MOSI)
+	SW_MISO  = 44, // Software Master In Slave Out (MISO)
+	SW_SCK   = 64; // Software Slave Clock (SCK)
 
-#define R_SENSE 0.11f // Match to your driver
-                     // SilentStepStick series use 0.11
-                     // UltiMachine Einsy and Archim2 boards use 0.2
-                     // Panucatt BSD2660 uses 0.1
-                     // Watterott TMC5160 uses 0.075
+constexpr float R_SENSE = 0.11; // Match to your driver
+
+// Software SPI is bitbanged by the library without artificial delays
+SW_SPIClass SW_SPI(SW_MOSI, SW_MISO, SW_SCK);
 
 // Select your stepper driver type
-//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE); // Hardware SPI
-//TMC2130Stepper driver = TMC2130Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK); // Software SPI
-//TMC2660Stepper driver = TMC2660Stepper(CS_PIN, R_SENSE); // Hardware SPI
-//TMC2660Stepper driver = TMC2660Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
-//TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE);
-//TMC5160Stepper driver = TMC5160Stepper(CS_PIN, R_SENSE, SW_MOSI, SW_MISO, SW_SCK);
+//TMC2130Stepper driver(SW_SPI, CS_PIN, R_SENSE);
+//TMC2160Stepper driver(SW_SPI, CS_PIN, R_SENSE);
+//TMC2660Stepper driver(SW_SPI, CS_PIN, R_SENSE);
+//TMC5160Stepper driver(SW_SPI, CS_PIN, R_SENSE);
 
 bool dir = true;
 
@@ -34,7 +32,7 @@ void setup() {
 	while(!Serial);
 	Serial.println("Start...");
 	driver.begin(); 			// Initiate pins and registeries
-	driver.rms_current(600); 	// Set stepper current to 600mA. The command is the same as command TMC2130.setCurrent(600, 0.11, 0.5);
+	driver.rms_current(600); 	// Set stepper current to 600mA
 	driver.en_pwm_mode(1);  	// Enable extremely quiet stepping
 
 	pinMode(EN_PIN, OUTPUT);
