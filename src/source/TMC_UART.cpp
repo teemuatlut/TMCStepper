@@ -71,7 +71,7 @@ TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
 		    sync <<= 8;
 		    serial_read((uint8_t*)&sync, 1);
         }
-    } while ((sync != sync_target) && Timeout());
+    } while (((sync&0xFFFFFF) != sync_target) && Timeout());
 
     while (Timeout()) {
 		if(available() >= 5) {
