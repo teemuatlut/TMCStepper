@@ -39,6 +39,8 @@ class TMCStepper {
 		uint8_t test_connection();
 
 		// Helper functions
+		uint8_t microsteps2mres(const uint16_t ms);
+		uint16_t mres2microsteps(const uint8_t mres);
 		void microsteps(uint16_t ms);
 		uint16_t microsteps();
 		void blank_time(uint8_t value);

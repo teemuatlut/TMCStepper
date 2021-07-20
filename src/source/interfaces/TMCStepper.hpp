@@ -146,7 +146,7 @@ uint16_t TMC2160_n::TMC_RMS<T>::cs2rms(uint8_t CS) {
 }
 
 template<typename TYPE>
-void TMCStepper<TYPE>::microsteps(uint16_t ms) {
+uint8_t TMCStepper<TYPE>::microsteps2mres(const uint16_t ms) {
   uint16_t mresValue{};
   switch(ms) {
     case 256: mresValue = 0; break;
@@ -158,15 +158,19 @@ void TMCStepper<TYPE>::microsteps(uint16_t ms) {
     case   4: mresValue = 6; break;
     case   2: mresValue = 7; break;
     case   0: mresValue = 8; break;
-    default: return;
+    default: return mresValue;
   }
-
-  self().mres(mresValue);
+  return mresValue;
 }
 
 template<typename TYPE>
-uint16_t TMCStepper<TYPE>::microsteps() {
-  switch(self().mres()) {
+void TMCStepper<TYPE>::microsteps(uint16_t ms) {
+  self().mres(microsteps2mres(ms));
+}
+
+template<typename TYPE>
+uint16_t TMCStepper<TYPE>::mres2microsteps(const uint8_t mres) {
+  switch(mres) {
     case 0: return 256;
     case 1: return 128;
     case 2: return  64;
@@ -178,6 +182,11 @@ uint16_t TMCStepper<TYPE>::microsteps() {
     case 8: return   0;
   }
   return 0;
+}
+
+template<typename TYPE>
+uint16_t TMCStepper<TYPE>::microsteps() {
+  return mres2microsteps(self().mres());
 }
 
 template<typename TYPE>
