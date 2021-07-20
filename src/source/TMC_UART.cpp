@@ -34,8 +34,14 @@ uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
 	return crc;
 }
 
+void TMC_UART::WaitForInhibitTime() {
+	while(getTime() - lastWriteTime < WriteInhibitTime);
+}
+
 TMC_WEAK_FUNCTION
 void TMC_UART::write(uint8_t addr, uint32_t regVal) {
+	WaitForInhibitTime();
+
     WriteDatagram datagram;
     datagram.driverAddress = slaveAddress;
     datagram.registerAddress = addr | TMC_WRITE;
@@ -46,9 +52,13 @@ void TMC_UART::write(uint8_t addr, uint32_t regVal) {
 	preWriteCommunication();
 	serial_write((uint8_t*)&datagram, datagram.length);
 	postWriteCommunication();
+
+	lastWriteTime = getTime();
 }
 
 TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
+	WaitForInhibitTime();
+
 	const uint32_t startTime = getTime();
 	auto Timeout = [&] {
 		return this->getTime() - startTime < this->abort_window;
@@ -83,6 +93,8 @@ TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
 		}
 	};
 
+	lastWriteTime = getTime();
+
     return response;
 }
 
@@ -109,7 +121,7 @@ uint32_t TMC_UART::read(uint8_t addr) {
 
         response.data = 0;
 
-		delay(10);
+		delay(20);
     }
 
     return __builtin_bswap32(response.data);

@@ -129,6 +129,11 @@ protected:
 
   uint16_t bytesWritten = 0;
   bool CRCerror = false;
+
+  void WaitForInhibitTime();
+
+  static constexpr uint8_t WriteInhibitTime = 4; // Prevent too fast communication attempts
+  uint32_t lastWriteTime = 0;
 };
 
 };
