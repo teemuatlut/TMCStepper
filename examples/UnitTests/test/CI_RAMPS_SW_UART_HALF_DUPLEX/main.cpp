@@ -55,6 +55,25 @@ void TestEnablePinIsLow() {
     TEST_ASSERT_FALSE(driver.enn());
 }
 
+void TestGconfWrite() {
+    driver.GCONF(0x44);
+    TEST_ASSERT_EQUAL_HEX32_MESSAGE(0x44, driver.GCONF(), "Failed to modify gconf register");
+
+    decltype(driver)::GCONF_t gconf = 0;
+    gconf.mstep_reg_select = true;
+
+    driver.GCONF(gconf.sr); // Reset to just mstep_reg_select enabled
+    TEST_ASSERT_EQUAL_HEX32_MESSAGE(1u<<7, driver.GCONF(), "Failed to reset gconf register");
+}
+
+void TestChopconfWrite() {
+    driver.CHOPCONF(8);
+    TEST_ASSERT_EQUAL_HEX32_MESSAGE(8, driver.CHOPCONF(), "Failed to modify chopconf register");
+
+    driver.CHOPCONF(0x10000053); // Reset to default
+    TEST_ASSERT_EQUAL_HEX32_MESSAGE(0x10000053, driver.CHOPCONF(), "Failed to reset chopconf register");
+}
+
 void setup() {
     delay(2000);
 
@@ -62,8 +81,7 @@ void setup() {
     pinMode(DirPin, OUTPUT);
     pinMode(StepPin, OUTPUT);
 
-    swSerial.begin(115200);
-    driver.begin();
+    driver.begin(19200);
 
     UNITY_BEGIN();
 
@@ -75,6 +93,8 @@ void setup() {
     RUN_TEST(TestStepPinIsLow);
     RUN_TEST(TestEnablePinIsHigh);
     RUN_TEST(TestEnablePinIsLow);
+    RUN_TEST(TestGconfWrite);
+    RUN_TEST(TestChopconfWrite);
 
     UNITY_END();
 }
