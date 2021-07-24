@@ -118,12 +118,14 @@ protected:
 	};
   #pragma pack(pop)
 
+public:
 	void begin();
 	void initPeripheral();
 
 	void setSPISpeed(uint32_t speed);
 	void switchCSpin(bool state);
 
+protected:
 	void beginTransaction();
 	void endTransaction();
 	void transfer(const uint8_t count);

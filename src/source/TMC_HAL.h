@@ -73,6 +73,7 @@
     #define SW_CAPABLE_PLATFORM true
 
     namespace TMC_HAL {
+        using SWSerial = SoftwareSerial;
         using PinDef = uint16_t;
 
         struct PinCache {
@@ -86,8 +87,14 @@
 
     #define HardwareSerial HardwareSerial<>
 
-    #ifndef __MARLIN_FIRMWARE__
+    #ifdef __MARLIN_FIRMWARE__
+        #include <SPI.h>
+    #else
         #include <SoftwareSPI.h>
+
+        struct SPISettings {
+            SPISettings(...) {}
+        };
 
         struct SPIClass { // Should be removed when LPC core gets full SPI class implementation
             SPIClass(const uint8_t spi_speed, const pin_t sck_pin, const pin_t miso_pin, const pin_t mosi_pin) :
@@ -97,7 +104,7 @@
 
             void begin(...) {}
 
-            void beginTransaction() const {
+            void beginTransaction(...) const {
                 swSpiBegin(sck, miso, mosi);
             }
 

@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <time.h>
 #include <gpio.h>
+#include <lpc17xx_ssp.h>
 #include "../TMC_HAL.h"
 #include "../../TMCStepper.h"
 
@@ -56,7 +57,7 @@ void TMC_SPI::initPeripheral() {
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->beginTransaction();
+        TMC_HW_SPI->beginTransaction(SPISettings(2000000, MSBFIRST, 3, SSP_DATABIT_8));
     }
 }
 
