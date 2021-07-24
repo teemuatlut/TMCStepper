@@ -1,5 +1,5 @@
 
-#if defined(USE_FULL_LL_DRIVER) && !defined(__MBED__)
+#if defined(USE_FULL_LL_DRIVER) && !(defined(__MBED__) || defined(ARDUINO))
 
 #include <TMCStepper.h>
 
