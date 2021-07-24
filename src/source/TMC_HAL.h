@@ -117,7 +117,16 @@
     #include <SPI.h>
     #include <HardwareSerial.h>
 
-    #define SW_CAPABLE_PLATFORM false
+    #if defined(ARDUINO_ARCH_STM32)
+        #include <SoftwareSerial.h>
+	    #define SW_CAPABLE_PLATFORM true
+
+        namespace TMC_HAL {
+            using SWSerial = SoftwareSerial;
+        }
+    #else
+        #define SW_CAPABLE_PLATFORM false
+    #endif
 
     namespace TMC_HAL {
         using PinDef = uint8_t;
