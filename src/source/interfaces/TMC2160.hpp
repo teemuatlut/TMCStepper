@@ -21,6 +21,7 @@ namespace TMC2160_n {
     // 0x6C RW: CHOPCONF
     template<typename TYPE>
     struct CHOPCONF_i {
+        #pragma pack(push, 1)
         struct CHOPCONF_t {
             constexpr static uint8_t address = 0x6C;
             union {
@@ -46,6 +47,7 @@ namespace TMC2160_n {
                 };
             };
         };
+        #pragma pack(pop)
 
         uint32_t CHOPCONF() {
             return static_cast<TYPE*>(this)->read(CHOPCONF_t::address);

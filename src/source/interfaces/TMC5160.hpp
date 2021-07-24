@@ -6,6 +6,7 @@ namespace TMC5160_n {
     // 0x00 RW: GCONF
     template<typename TYPE>
     struct GCONF_i {
+        #pragma pack(push, 1)
         struct GCONF_t {
             GCONF_t(const uint32_t data) : sr(data) {};
             constexpr static uint8_t address = 0x00;
@@ -38,6 +39,8 @@ namespace TMC5160_n {
                 };
             };
         };
+        #pragma pack(pop)
+
 
         void GCONF(uint32_t input) {
             static_cast<TYPE*>(this)->write(GCONF_t::address, input);
