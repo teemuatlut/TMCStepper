@@ -362,21 +362,6 @@ namespace TMC_HAL {
 #ifndef LOW
     #define LOW 0
 #endif
-#ifndef INPUT
-    #define INPUT  0x00
-#endif
-#ifndef INPUT_PULLUP
-    #define INPUT_PULLUP  0x01
-#endif
-#ifndef OUTPUT
-    #define OUTPUT 0x01
-#endif
-#if !defined(MSBFIRST) && !(defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
-    #define MSBFIRST 1
-#endif
-#ifndef SPI_MODE3
-    #define SPI_MODE3 0
-#endif
 #ifndef SW_CAPABLE_PLATFORM
     #define SW_CAPABLE_PLATFORM false
 #endif
