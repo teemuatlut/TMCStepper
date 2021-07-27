@@ -121,7 +121,8 @@ uint32_t TMC_UART::read(uint8_t addr) {
 
         response.data = 0;
 
-		delay(20);
+		const uint32_t startTime = getTime();
+		while(getTime() - startTime < 20);
     }
 
     return __builtin_bswap32(response.data);
