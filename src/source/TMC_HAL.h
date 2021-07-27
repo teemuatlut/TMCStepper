@@ -118,6 +118,10 @@
         };
     #endif
 
+    namespace TMC_HAL {
+        using LPC176x::delay_ns;
+    }
+
 #elif defined(ARDUINO)
 
     #include <Arduino.h>
@@ -167,6 +171,9 @@
     using HardwareSerial = BufferedSerial;
 
     inline void delay(size_t ms) { wait_us(1000*ms); }
+    namespace TMC_HAL {
+        inline void delay_ns(unsigned int ns) { wait_ns(ns); }
+    }
 
 #elif (defined(USE_FULL_LL_DRIVER) || defined(USE_HAL_DRIVER))
 
@@ -294,6 +301,8 @@
     #include <driver/gpio.h>
     #include <driver/spi_master.h>
     #include <driver/uart.h>
+    #include <esp32/clk.h>
+    #include <hal/cpu_ll.h>
 
     #define SW_CAPABLE_PLATFORM false
 
@@ -315,6 +324,17 @@
 
     inline void delay(const uint16_t ms) {
         ets_delay_us( ms * 1000 );
+    }
+
+    namespace TMC_HAL {
+        // Ensure CS pin timings requirements
+        inline void delay_ns(unsigned int ns) {
+            uint_fast16_t cycles = ((esp_clk_cpu_freq()>>16) * ns) / (1000000000UL>>16) + 1;
+
+            uint32_t start = cpu_ll_get_cycle_count();
+
+            while(cpu_ll_get_cycle_count() - start < cycles);
+        }
     }
 
 #elif defined(UNIT_TEST)
@@ -370,4 +390,26 @@ namespace TMC_HAL {
 	#define TMC_WEAK_FUNCTION
 #else
 	#define TMC_WEAK_FUNCTION __attribute__((weak))
+#endif
+
+#if defined(F_CPU) && !defined(TARGET_LPC1768)
+
+    namespace TMC_HAL {
+        // Ensure CS pin timings requirements
+        inline void delay_ns(unsigned int ns) {
+            uint_fast16_t cycles = ((F_CPU>>16) * ns) / (1000000000UL>>14) + 1;
+
+            while(--cycles) {
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+            }
+        }
+    }
+
 #endif

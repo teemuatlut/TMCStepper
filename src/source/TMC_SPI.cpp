@@ -50,7 +50,11 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   OutputPin cs(pinCS);
 
   beginTransaction();
+
+  delay_ns(20);
   cs.write(LOW);
+  delay_ns(200);
+
   data.address = addressByte;
   transfer(data.buffer, 5);
 
@@ -62,6 +66,7 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   }
 
   cs.write(HIGH);
+  delay_ns(200);
   cs.write(LOW);
 
   // Shift data from target link into the last one...
@@ -76,7 +81,10 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
   status_response = data.status;
 
   endTransaction();
+
+  delay_ns(200);
   cs.write(HIGH);
+  delay_ns(20);
 
   return data.data;
 }
