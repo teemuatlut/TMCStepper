@@ -20,6 +20,8 @@ namespace TMC_HAL {
             {}
         const PinDef pin;
     };
+
+    inline void delay_ns(...) {}
 }
 
 #include <cstdio>
