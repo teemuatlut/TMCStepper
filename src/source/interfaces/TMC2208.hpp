@@ -5,31 +5,31 @@
 #include "TMC2130.hpp"
 
 namespace TMC2208_n {
+	#pragma pack(push, 1)
+	struct GCONF_t {
+		GCONF_t(const uint16_t data) : sr(data) {};
+		constexpr static uint8_t address = 0x00;
+		union {
+			uint16_t sr : 10;
+			struct {
+				bool i_scale_analog : 1,
+						internal_rsense : 1,
+						en_spreadcycle : 1,
+						shaft : 1,
+						index_otpw : 1,
+						index_step : 1,
+						pdn_disable : 1,
+						mstep_reg_select : 1,
+						multistep_filt : 1,
+						test_mode : 1;
+			};
+		};
+	};
+	#pragma pack(pop)
+
 	// 0x00 RW: GCONF
 	template<typename TYPE>
 	struct GCONF_i {
-		#pragma pack(push, 1)
-		struct GCONF_t {
-			GCONF_t(const uint16_t data) : sr(data) {};
-			constexpr static uint8_t address = 0x00;
-			union {
-				uint16_t sr : 10;
-				struct {
-					bool i_scale_analog : 1,
-						 internal_rsense : 1,
-						 en_spreadcycle : 1,
-						 shaft : 1,
-						 index_otpw : 1,
-						 index_step : 1,
-						 pdn_disable : 1,
-						 mstep_reg_select : 1,
-						 multistep_filt : 1,
-						 test_mode : 1;
-				};
-			};
-		};
-		#pragma pack(pop)
-
 		uint16_t GCONF() {
 			return static_cast<TYPE*>(this)->read(GCONF_t::address);
 		}
@@ -58,35 +58,37 @@ namespace TMC2208_n {
 		bool multistep_filt()   { return GCONF_t{ GCONF() }.multistep_filt;  }
 	};
 
+	using TMC2130_n::GSTAT_t;
 	using TMC2130_n::GSTAT_i;
 
 	// 0x02 R: IFCNT
+	struct IFCNT_t {
+		constexpr static uint8_t address = 0x02;
+	};
+	
 	template<typename TYPE>
 	struct IFCNT_i {
-		struct IFCNT_t {
-            constexpr static uint8_t address = 0x02;
-        };
 		uint8_t IFCNT() {
 			return static_cast<TYPE*>(this)->read(IFCNT_t::address);
 		}
 	};
 
 	// 0x03 W: SLAVECONF
-	template<typename TYPE>
-	struct SLAVECONF_i {
-		#pragma pack(push, 1)
-		struct SLAVECONF_t {
-			constexpr static uint8_t address = 0x03;
-			union {
-				uint16_t sr : 12;
-				struct {
-					uint8_t : 8;
-					uint8_t senddelay : 4;
-				};
+	#pragma pack(push, 1)
+	struct SLAVECONF_t {
+		constexpr static uint8_t address = 0x03;
+		union {
+			uint16_t sr : 12;
+			struct {
+				uint8_t : 8;
+				uint8_t senddelay : 4;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct SLAVECONF_i {
 		void SLAVECONF(uint16_t input) {
 			r.sr = input&0xF00;
 			static_cast<TYPE*>(this)->write(r.address, r.sr);
@@ -105,49 +107,51 @@ namespace TMC2208_n {
 	};
 
 	// 0x04 W: OTP_PROG
+	struct OTP_PROG_t { constexpr static uint8_t address = 0x04; };
+
 	template<typename TYPE>
 	struct OTP_PROG_i {
-		struct OTP_PROG_t { constexpr static uint8_t address = 0x04; };
 		void OTP_PROG(uint16_t input) {
 			static_cast<TYPE*>(this)->write(OTP_PROG_t::address, input);
 		}
 	};
 
 	// 0x05 R: OTP_READ
+	struct OTP_READ_t { constexpr static uint8_t address = 0x05; };
+
 	template<typename TYPE>
 	struct OTP_READ_i {
-		struct OTP_READ_t { constexpr static uint8_t address = 0x05; };
 		uint32_t OTP_READ() {
 			return static_cast<TYPE*>(this)->read(OTP_READ_t::address);
 		}
 	};
 	
 	// 0x06 R: IOIN
-	template<typename TYPE>
-	struct IOIN_i {
-		#pragma pack(push, 1)
-		struct IOIN_t {
-			constexpr static uint8_t address = 0x06;
-			union {
-				uint32_t sr;
-				struct {
-					bool enn : 1,
-						 : 1,
-						 ms1 : 1,
-						 ms2 : 1,
-						 diag : 1,
-						 : 1,
-						 pdn_uart : 1,
-						 step : 1,
-						 sel_a : 1,
-						 dir : 1;
-					uint16_t : 14;
-					uint8_t version : 8;
-				};
+	#pragma pack(push, 1)
+	struct IOIN_t {
+		constexpr static uint8_t address = 0x06;
+		union {
+			uint32_t sr;
+			struct {
+				bool enn : 1,
+						: 1,
+						ms1 : 1,
+						ms2 : 1,
+						diag : 1,
+						: 1,
+						pdn_uart : 1,
+						step : 1,
+						sel_a : 1,
+						dir : 1;
+				uint16_t : 14;
+				uint8_t version : 8;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct IOIN_i {
 		uint32_t IOIN()     { return static_cast<TYPE*>(this)->read(IOIN_t::address); }
 		bool enn()          { return IOIN_t{ IOIN() }.enn;       }
 		bool ms1()          { return IOIN_t{ IOIN() }.ms1;       }
@@ -161,22 +165,22 @@ namespace TMC2208_n {
 	};
 
 	// 0x07 RW: FACTORY_CONF
-	template<typename TYPE>
-	struct FACTORY_CONF_i {
-		#pragma pack(push, 1)
-		struct FACTORY_CONF_t {
-			constexpr static uint8_t address = 0x07;
-			union {
-				uint16_t sr;
-				struct {
-						uint8_t fclktrim : 5,
-								: 3,
-								ottrim : 2;
-				};
+	#pragma pack(push, 1)
+	struct FACTORY_CONF_t {
+		constexpr static uint8_t address = 0x07;
+		union {
+			uint16_t sr;
+			struct {
+					uint8_t fclktrim : 5,
+							: 3,
+							ottrim : 2;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct FACTORY_CONF_i {
 		uint16_t FACTORY_CONF() {
 			return static_cast<TYPE*>(this)->read(FACTORY_CONF_t::address);
 		}
@@ -189,19 +193,23 @@ namespace TMC2208_n {
 		uint8_t ottrim()        { return FACTORY_CONF_t{ FACTORY_CONF() }.ottrim; }
 	};
 
+	using TMC2130_n::IHOLD_IRUN_t;
+	using TMC2130_n::TPOWERDOWN_t;
+	using TMC2130_n::TSTEP_t;
+	using TMC2130_n::TPWMTHRS_t;
 	using TMC2130_n::IHOLD_IRUN_i;
 	using TMC2130_n::TPOWERDOWN_i;
 	using TMC2130_n::TSTEP_i;
 	using TMC2130_n::TPWMTHRS_i;
 
 	// 0x22 W: VACTUAL
+	struct VACTUAL_t {
+		constexpr static uint8_t address = 0x22;
+		uint32_t sr;
+	};
+
 	template<typename TYPE>
 	struct VACTUAL_i {
-		struct VACTUAL_t {
-			constexpr static uint8_t address = 0x22;
-			uint32_t sr;
-		};
-
 		void VACTUAL(uint32_t input) {
 			r.sr = input;
 			static_cast<TYPE*>(this)->write(r.address, input);
@@ -213,36 +221,38 @@ namespace TMC2208_n {
 		VACTUAL_t r{};
 	};
 
+	using TMC2130_n::MSCNT_t;
+	using TMC2130_n::MSCURACT_t;
 	using TMC2130_n::MSCNT_i;
 	using TMC2130_n::MSCURACT_i;
 
 	// 0x6C RW: CHOPCONF
-	template<typename TYPE>
-	struct CHOPCONF_i {
-		#pragma pack(push, 1)
-		struct CHOPCONF_t {
-			CHOPCONF_t(const uint32_t initValue) : sr(initValue) {}
-			constexpr static uint8_t address = 0x6C;
-			union {
-				uint32_t sr;
-				struct {
-					uint8_t toff : 4,
-							hstrt : 3,
-							hend : 4,
-							: 4,
-							tbl : 2;
-					bool    vsense : 1;
-					uint8_t : 6,
-							mres : 4;
-					bool    intpol : 1,
-							dedge : 1,
-							diss2g : 1,
-							diss2vs : 1;
-				};
+	#pragma pack(push, 1)
+	struct CHOPCONF_t {
+		CHOPCONF_t(const uint32_t initValue) : sr(initValue) {}
+		constexpr static uint8_t address = 0x6C;
+		union {
+			uint32_t sr;
+			struct {
+				uint8_t toff : 4,
+						hstrt : 3,
+						hend : 4,
+						: 4,
+						tbl : 2;
+				bool    vsense : 1;
+				uint8_t : 6,
+						mres : 4;
+				bool    intpol : 1,
+						dedge : 1,
+						diss2g : 1,
+						diss2vs : 1;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct CHOPCONF_i {
 		void CHOPCONF(uint32_t input) {
 			static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
 		}
@@ -273,38 +283,38 @@ namespace TMC2208_n {
 	};
 
 	// 0x6F R: DRV_STATUS
-	template<typename TYPE>
-	struct DRV_STATUS_i {
-		#pragma pack(push, 1)
-		struct DRV_STATUS_t {
-			DRV_STATUS_t(const uint32_t data) : sr(data) {};
-			constexpr static uint8_t address = 0x6F;
-			union {
-				uint32_t sr;
-				struct {
-					bool otpw : 1,
-						 ot : 1,
-						 s2ga : 1,
-						 s2gb : 1,
-						 s2vsa : 1,
-						 s2vsb : 1,
-						 ola : 1,
-						 olb : 1,
-						 t120 : 1,
-						 t143 : 1,
-						 t150 : 1,
-						 t157 : 1;
-					uint8_t : 4,
-							cs_actual : 5,
-							: 3,
-							: 6;
-					bool stealth : 1,
-						 stst : 1;
-				};
+	#pragma pack(push, 1)
+	struct DRV_STATUS_t {
+		DRV_STATUS_t(const uint32_t data) : sr(data) {};
+		constexpr static uint8_t address = 0x6F;
+		union {
+			uint32_t sr;
+			struct {
+				bool otpw : 1,
+						ot : 1,
+						s2ga : 1,
+						s2gb : 1,
+						s2vsa : 1,
+						s2vsb : 1,
+						ola : 1,
+						olb : 1,
+						t120 : 1,
+						t143 : 1,
+						t150 : 1,
+						t157 : 1;
+				uint8_t : 4,
+						cs_actual : 5,
+						: 3,
+						: 6;
+				bool stealth : 1,
+						stst : 1;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct DRV_STATUS_i {
 		uint32_t DRV_STATUS() {
 			return static_cast<TYPE*>(this)->read(DRV_STATUS_t::address);
 		}
@@ -327,28 +337,28 @@ namespace TMC2208_n {
 	};
 
 	// 0x70 RW: PWMCONF
-	template<typename TYPE>
-	struct PWMCONF_i {
-		#pragma pack(push, 1)
-		struct PWMCONF_t {
-			constexpr static uint8_t address = 0x70;
-			union {
-				uint32_t sr;
-				struct {
-					uint8_t pwm_ofs : 8,
-							pwm_grad : 8,
-							pwm_freq : 2;
-					bool pwm_autoscale : 1,
-						 pwm_autograd : 1;
-					uint8_t freewheel : 2,
-							: 2,
-							pwm_reg : 4,
-							pwm_lim : 4;
-				};
+	#pragma pack(push, 1)
+	struct PWMCONF_t {
+		constexpr static uint8_t address = 0x70;
+		union {
+			uint32_t sr;
+			struct {
+				uint8_t pwm_ofs : 8,
+						pwm_grad : 8,
+						pwm_freq : 2;
+				bool pwm_autoscale : 1,
+						pwm_autograd : 1;
+				uint8_t freewheel : 2,
+						: 2,
+						pwm_reg : 4,
+						pwm_lim : 4;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct PWMCONF_i {
 		uint32_t PWMCONF() {
 			return static_cast<TYPE*>(this)->read(PWMCONF_t::address);
 		}
@@ -376,22 +386,22 @@ namespace TMC2208_n {
 	};
 
 	// 0x71 R: PWM_SCALE
-	template<typename TYPE>
-	struct PWM_SCALE_i {
-		#pragma pack(push, 1)
-		struct PWM_SCALE_t {
-			constexpr static uint8_t address = 0x71;
-			union {
-				uint32_t sr;
-				struct {
-					uint8_t pwm_scale_sum : 8,
-							: 8;
-					int16_t pwm_scale_auto : 9;
-				};
+	#pragma pack(push, 1)
+	struct PWM_SCALE_t {
+		constexpr static uint8_t address = 0x71;
+		union {
+			uint32_t sr;
+			struct {
+				uint8_t pwm_scale_sum : 8,
+						: 8;
+				int16_t pwm_scale_auto : 9;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct PWM_SCALE_i {
 		uint32_t PWM_SCALE() {
 			return static_cast<TYPE*>(this)->read(PWM_SCALE_t::address);
 		}
@@ -412,22 +422,22 @@ namespace TMC2208_n {
 	};
 
 	// 0x72 R: PWM_AUTO
-	template<typename TYPE>
-	struct PWM_AUTO_i {
-		#pragma pack(push, 1)
-		struct PWM_AUTO_t {
-			constexpr static uint8_t address = 0x72;
-			union {
-				uint32_t sr;
-				struct {
-					uint8_t pwm_ofs_auto : 8,
-							: 8,
-							pwm_grad_auto : 8;
-				};
+	#pragma pack(push, 1)
+	struct PWM_AUTO_t {
+		constexpr static uint8_t address = 0x72;
+		union {
+			uint32_t sr;
+			struct {
+				uint8_t pwm_ofs_auto : 8,
+						: 8,
+						pwm_grad_auto : 8;
 			};
 		};
-		#pragma pack(pop)
+	};
+	#pragma pack(pop)
 
+	template<typename TYPE>
+	struct PWM_AUTO_i {
 		uint32_t PWM_AUTO() {
 			return static_cast<TYPE*>(this)->read(PWM_AUTO_t::address);
 		}

@@ -3,6 +3,21 @@
 #include "../../TMCStepper.h"
 
 namespace TMC2160_n {
+    using TMC2130_n::GCONF_t;
+    using TMC2130_n::GSTAT_t;
+    using TMC2130_n::IHOLD_IRUN_t;
+    using TMC2130_n::TPOWERDOWN_t;
+    using TMC2130_n::TSTEP_t;
+    using TMC2130_n::TPWMTHRS_t;
+    using TMC2130_n::TCOOLTHRS_t;
+    using TMC2130_n::THIGH_t;
+    using TMC2130_n::XDIRECT_t;
+    using TMC2130_n::VDCMIN_t;
+    using TMC2130_n::MSLUTSEL_t;
+    using TMC2130_n::MSLUTSTART_t;
+    using TMC2130_n::MSCNT_t;
+    using TMC2130_n::MSCURACT_t;
+
     using TMC2130_n::GCONF_i;
     using TMC2130_n::GSTAT_i;
     using TMC2130_n::IHOLD_IRUN_i;
@@ -19,36 +34,36 @@ namespace TMC2160_n {
     using TMC2130_n::MSCURACT_i;
 
     // 0x6C RW: CHOPCONF
-    template<typename TYPE>
-    struct CHOPCONF_i {
-        #pragma pack(push, 1)
-        struct CHOPCONF_t {
-            constexpr static uint8_t address = 0x6C;
-            union {
-                uint32_t sr : 32;
-                struct {
-                    uint8_t toff : 4,     // 0..3
-                            hstrt : 3,    // 4..6
-                            hend : 4;     // 7..10
-                    bool fd3 : 1,         // 11
-                        disfdcc : 1,      // 12
-                        : 1,              // 13
-                        chm : 1;          // 14
-                    uint8_t tbl : 2;      // 15..16
-                    bool    : 1,          // 17
-                            vhighfs : 1,  // 18
-                            vhighchm : 1; // 19
-                    uint8_t tpfd : 4,     // 20..23
-                            mres : 4;     // 24..27
-                    bool    intpol : 1,   // 28
-                            dedge : 1,    // 29
-                            diss2g : 1,   // 30
-                            diss2vs : 1;  // 31
-                };
+    #pragma pack(push, 1)
+    struct CHOPCONF_t {
+        constexpr static uint8_t address = 0x6C;
+        union {
+            uint32_t sr : 32;
+            struct {
+                uint8_t toff : 4,     // 0..3
+                        hstrt : 3,    // 4..6
+                        hend : 4;     // 7..10
+                bool fd3 : 1,         // 11
+                    disfdcc : 1,      // 12
+                    : 1,              // 13
+                    chm : 1;          // 14
+                uint8_t tbl : 2;      // 15..16
+                bool    : 1,          // 17
+                        vhighfs : 1,  // 18
+                        vhighchm : 1; // 19
+                uint8_t tpfd : 4,     // 20..23
+                        mres : 4;     // 24..27
+                bool    intpol : 1,   // 28
+                        dedge : 1,    // 29
+                        diss2g : 1,   // 30
+                        diss2vs : 1;  // 31
             };
         };
-        #pragma pack(pop)
+    };
+    #pragma pack(pop)
 
+    template<typename TYPE>
+    struct CHOPCONF_i {
         uint32_t CHOPCONF() {
             return static_cast<TYPE*>(this)->read(CHOPCONF_t::address);
         }
@@ -89,6 +104,11 @@ namespace TMC2160_n {
         bool diss2vs    () { return CHOPCONF_t{ CHOPCONF() }.diss2vs;  }
     };
 
+    using TMC2130_n::COOLCONF_t;
+    using TMC2130_n::DCCTRL_t;
+    using TMC2130_n::DRV_STATUS_t;
+    using TMC2130_n::ENCM_CTRL_t;
+    using TMC2130_n::LOST_STEPS_t;
     using TMC2130_n::COOLCONF_i;
     using TMC2130_n::DCCTRL_i;
     using TMC2130_n::DRV_STATUS_i;
@@ -96,28 +116,28 @@ namespace TMC2160_n {
     using TMC2130_n::LOST_STEPS_i;
 
     // 0x04 R: IOIN
-    template<typename TYPE>
-    struct IOIN_i {
-        #pragma pack(push, 1)
-        struct IOIN_t {
-            constexpr static uint8_t address = 0x04;
-            union {
-                uint32_t sr;
-                struct {
-                    bool refl_step : 1,
-                         refr_dir : 1,
-                         encb_dcen_cfg4 : 1,
-                         enca_dcin_cfg5 : 1,
-                         drv_enn : 1,
-                         dco_cfg6 : 1,
-                         : 2;
-                    uint16_t : 16;
-                    uint8_t version : 8;
-                };
+    #pragma pack(push, 1)
+    struct IOIN_t {
+        constexpr static uint8_t address = 0x04;
+        union {
+            uint32_t sr;
+            struct {
+                bool refl_step : 1,
+                        refr_dir : 1,
+                        encb_dcen_cfg4 : 1,
+                        enca_dcin_cfg5 : 1,
+                        drv_enn : 1,
+                        dco_cfg6 : 1,
+                        : 2;
+                uint16_t : 16;
+                uint8_t version : 8;
             };
         };
-        #pragma pack(pop)
-        
+    };
+    #pragma pack(pop)
+
+    template<typename TYPE>
+    struct IOIN_i {
         uint32_t  IOIN() {
             return static_cast<TYPE*>(this)->read(IOIN_t::address);
         }
@@ -131,13 +151,13 @@ namespace TMC2160_n {
     };
 
     // 0x0B W: GLOBAL_SCALER
+    struct GLOBAL_SCALER_t {
+        constexpr static uint8_t address = 0x0B;
+        uint8_t sr;
+    };
+
     template<typename TYPE>
     struct GLOBAL_SCALER_i {
-        struct GLOBAL_SCALER_t {
-            constexpr static uint8_t address = 0x0B;
-            uint8_t sr;
-        };
-
         uint8_t GLOBAL_SCALER() {
             return r.sr;
         }
@@ -150,35 +170,34 @@ namespace TMC2160_n {
     };
 
     // 0x0C R: OFFSET_READ
+    struct OFFSET_READ_t {
+        constexpr static uint8_t address = 0x0C;
+    };
+
     template<typename TYPE>
     struct OFFSET_READ_i {
-
-        struct OFFSET_READ_t {
-            constexpr static uint8_t address = 0x0C;
-        };
-
         uint16_t OFFSET_READ() {
             return static_cast<TYPE*>(this)->read(OFFSET_READ_t::address);
         }
     };
 
     // 0x71 R: PWM_SCALE
-    template<typename TYPE>
-    struct PWM_SCALE_i {
-        #pragma pack(push, 1)
-        struct PWM_SCALE_t {
-            constexpr static uint8_t address = 0x71;
-            union {
-                uint32_t sr;
-                struct {
-                    uint8_t pwm_scale_sum : 8,
-                            : 8;
-                    uint16_t pwm_scale_auto : 9;
-                };
+    #pragma pack(push, 1)
+    struct PWM_SCALE_t {
+        constexpr static uint8_t address = 0x71;
+        union {
+            uint32_t sr;
+            struct {
+                uint8_t pwm_scale_sum : 8,
+                        : 8;
+                uint16_t pwm_scale_auto : 9;
             };
         };
-        #pragma pack(pop)
+    };
+    #pragma pack(pop)
 
+    template<typename TYPE>
+    struct PWM_SCALE_i {
         uint32_t PWM_SCALE() {
             return static_cast<TYPE*>(this)->read(PWM_SCALE_t::address);
         }
@@ -187,25 +206,25 @@ namespace TMC2160_n {
     };
 
     // 0x09 W: SHORT_CONF
-    template<typename TYPE>
-    struct SHORT_CONF_i {
-        #pragma pack(push, 1)
-        struct SHORT_CONF_t {
-            constexpr static uint8_t address = 0x09;
-            union {
-                uint32_t sr : 19;
-                struct {
-                    uint8_t s2vs_level  : 4,
-                            : 4,
-                            s2g_level   : 4,
-                            : 4,
-                            shortfilter : 2;
-                    bool shortdelay : 1;
-                };
+    #pragma pack(push, 1)
+    struct SHORT_CONF_t {
+        constexpr static uint8_t address = 0x09;
+        union {
+            uint32_t sr : 19;
+            struct {
+                uint8_t s2vs_level  : 4,
+                        : 4,
+                        s2g_level   : 4,
+                        : 4,
+                        shortfilter : 2;
+                bool shortdelay : 1;
             };
         };
-        #pragma pack(pop)
+    };
+    #pragma pack(pop)
 
+    template<typename TYPE>
+    struct SHORT_CONF_i {
         uint32_t SHORT_CONF() { return r.sr; }
         void SHORT_CONF(uint32_t input) {
             r.sr = input;
@@ -225,26 +244,26 @@ namespace TMC2160_n {
     };
 
     // 0x0A W: DRV_CONF
-    template<typename TYPE>
-    struct DRV_CONF_i {
-        #pragma pack(push, 1)
-        struct DRV_CONF_t {
-            constexpr static uint8_t address = 0x0A;
-            union {
-                uint32_t sr : 22;
-                struct {
-                    uint8_t bbmtime : 5,
-                            : 3,
-                            bbmclks : 4,
-                            : 4,
-                            otselect : 2,
-                            drvstrength : 2,
-                            filt_isense : 2;
-                };
+    #pragma pack(push, 1)
+    struct DRV_CONF_t {
+        constexpr static uint8_t address = 0x0A;
+        union {
+            uint32_t sr : 22;
+            struct {
+                uint8_t bbmtime : 5,
+                        : 3,
+                        bbmclks : 4,
+                        : 4,
+                        otselect : 2,
+                        drvstrength : 2,
+                        filt_isense : 2;
             };
         };
-        #pragma pack(pop)
+    };
+    #pragma pack(pop)
 
+    template<typename TYPE>
+    struct DRV_CONF_i {
         uint32_t DRV_CONF() { return r.sr; }
         void DRV_CONF(uint32_t input) {
             r.sr = input;
@@ -266,28 +285,28 @@ namespace TMC2160_n {
     };
 
     // 0x70 W: PWMCONF
-    template<typename TYPE>
-    struct PWMCONF_i {
-        #pragma pack(push, 1)
-        struct PWMCONF_t {
-            constexpr static uint8_t address = 0x70;
-            union {
-                uint32_t sr;
-                struct {
-                    uint8_t pwm_ofs : 8,
-                            pwm_grad : 8,
-                            pwm_freq : 2;
-                    bool pwm_autoscale : 1,
-                         pwm_autograd : 1;
-                    uint8_t freewheel : 2,
-                            : 2,
-                            pwm_reg : 4,
-                            pwm_lim : 4;
-                };
+    #pragma pack(push, 1)
+    struct PWMCONF_t {
+        constexpr static uint8_t address = 0x70;
+        union {
+            uint32_t sr;
+            struct {
+                uint8_t pwm_ofs : 8,
+                        pwm_grad : 8,
+                        pwm_freq : 2;
+                bool pwm_autoscale : 1,
+                        pwm_autograd : 1;
+                uint8_t freewheel : 2,
+                        : 2,
+                        pwm_reg : 4,
+                        pwm_lim : 4;
             };
         };
-        #pragma pack(pop)
+    };
+    #pragma pack(pop)
 
+    template<typename TYPE>
+    struct PWMCONF_i {
         uint32_t PWMCONF() {
             return r.sr;
         }

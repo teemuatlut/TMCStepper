@@ -7,6 +7,8 @@
 namespace TMC5130_n {
 
   // 0x00 RW: GCONF
+  using TMC2130_n::GCONF_t;
+
   template<typename TYPE>
   struct GCONF_i : public TMC2130_n::GCONF_i<TYPE> {
     void diag1_poscomp_pushpull(bool B) __attribute__((alias("TMC2130_n::GCONF_i<TYPE>::diag1_pushpull(bool B)")));
@@ -14,35 +16,38 @@ namespace TMC5130_n {
 
   };
   // 0x01 R+c: GSTAT
+  using TMC2130_n::GSTAT_t;
   using TMC2130_n::GSTAT_i;
   // 0x02 R: IFCNT
+  using TMC2208_n::IFCNT_t;
   using TMC2208_n::IFCNT_i;
   // 0x03 W: SLAVECONF
+  using TMC2208_n::SLAVECONF_t;
   using TMC2208_n::SLAVECONF_i;
   // 0x04 R: IOIN
-  template<typename TYPE>
-  struct IOIN_i {
-    #pragma pack(push, 1)
-    struct IOIN_t {
-      constexpr static uint8_t address = 0x04;
-      union {
-        uint32_t sr;
-        struct {
-          bool  refl_step : 1,
-                refr_dir : 1,
-                encb_dcen_cfg4 : 1,
-                enca_dcin_cfg5 : 1,
-                drv_enn_cfg6 : 1,
-                enc_n_dco : 1,
-                sd_mode : 1,
-                swcomp_in : 1;
-          uint16_t : 16;
-          uint8_t version : 8;
-        };
+  #pragma pack(push, 1)
+  struct IOIN_t {
+    constexpr static uint8_t address = 0x04;
+    union {
+      uint32_t sr;
+      struct {
+        bool  refl_step : 1,
+              refr_dir : 1,
+              encb_dcen_cfg4 : 1,
+              enca_dcin_cfg5 : 1,
+              drv_enn_cfg6 : 1,
+              enc_n_dco : 1,
+              sd_mode : 1,
+              swcomp_in : 1;
+        uint16_t : 16;
+        uint8_t version : 8;
       };
     };
-    #pragma pack(pop)
+  };
+  #pragma pack(pop)
 
+  template<typename TYPE>
+  struct IOIN_i {
     uint32_t  IOIN() {
       return static_cast<TYPE*>(this)->read(IOIN_t::address);
     }
@@ -57,15 +62,15 @@ namespace TMC5130_n {
     uint8_t version()        { return IOIN_t{ IOIN() }.version; }
   };
 
+  #pragma pack(push, 1)
+  struct OUTPUT_t {
+    constexpr static uint8_t address = 0x04;
+    bool sr : 1;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct OUTPUT_i {
-    #pragma pack(push, 1)
-    struct OUTPUT_t {
-      constexpr static uint8_t address = 0x04;
-      bool sr : 1;
-    };
-    #pragma pack(pop)
-  
     bool TMC_OUTPUT() {
       return r.sr;
     }
@@ -76,15 +81,15 @@ namespace TMC5130_n {
       OUTPUT_t r{1};
   };
 
+  #pragma pack(push, 1)
+  struct X_COMPARE_t {
+    constexpr static uint8_t address = 0x05;
+    uint32_t sr;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct X_COMPARE_i {
-    #pragma pack(push, 1)
-    struct X_COMPARE_t {
-      constexpr static uint8_t address = 0x05;
-      uint32_t sr;
-    };
-    #pragma pack(pop)
-  
     uint32_t X_COMPARE() {
       return r.sr;
     }
@@ -95,6 +100,12 @@ namespace TMC5130_n {
       X_COMPARE_t r{};
   };
 
+  using TMC2130_n::IHOLD_IRUN_t;
+  using TMC2130_n::TPOWERDOWN_t;
+  using TMC2130_n::TSTEP_t;
+  using TMC2130_n::TPWMTHRS_t;
+  using TMC2130_n::TCOOLTHRS_t;
+  using TMC2130_n::THIGH_t;
   using TMC2130_n::IHOLD_IRUN_i;
   using TMC2130_n::TPOWERDOWN_i;
   using TMC2130_n::TSTEP_i;
@@ -102,15 +113,15 @@ namespace TMC5130_n {
   using TMC2130_n::TCOOLTHRS_i;
   using TMC2130_n::THIGH_i;
 
+  #pragma pack(push, 1)
+  struct RAMPMODE_t {
+    constexpr static uint8_t address = 0x20;
+    uint8_t sr : 2;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct RAMPMODE_i {
-    #pragma pack(push, 1)
-    struct RAMPMODE_t {
-      constexpr static uint8_t address = 0x20;
-      uint8_t sr : 2;
-    };
-    #pragma pack(pop)
-  
     uint8_t RAMPMODE() {
       return static_cast<TYPE*>(this)->read(RAMPMODE_t::address);
     }
@@ -119,14 +130,14 @@ namespace TMC5130_n {
     }
   };
 
+  #pragma pack(push, 1)
+  struct XACTUAL_t {
+    constexpr static uint8_t address = 0x21;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct XACTUAL_i {
-    #pragma pack(push, 1)
-    struct XACTUAL_t {
-      constexpr static uint8_t address = 0x21;
-    };
-    #pragma pack(pop)
-  
     int32_t XACTUAL() {
       return (int32_t)static_cast<TYPE*>(this)->read(XACTUAL_t::address);
     }
@@ -135,14 +146,14 @@ namespace TMC5130_n {
     }
   };
 
+  #pragma pack(push, 1)
+  struct VACTUAL_t  { constexpr static uint8_t address = 0x22; };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct VACTUAL_i {
-    #pragma pack(push, 1)
-    struct VACTUAL_t  { constexpr static uint8_t address = 0x22; };
-    #pragma pack(pop)
-  
     int32_t VACTUAL() {
-      uint32_t int24 = read(VACTUAL_t::address);
+      uint32_t int24 = static_cast<TYPE*>(this)->read(VACTUAL_t::address);
       if((int24 >> 23) & 0x01) {
         int24 |= 0xFF000000;
       }
@@ -150,15 +161,15 @@ namespace TMC5130_n {
     }
   };
 
+  #pragma pack(push, 1)
+  struct VSTART_t {
+    constexpr static uint8_t address = 0x23;
+    uint32_t sr : 18;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct VSTART_i {
-    #pragma pack(push, 1)
-    struct VSTART_t {
-      constexpr static uint8_t address = 0x23;
-      uint32_t sr : 18;
-    };
-    #pragma pack(pop)
-  
     uint32_t VSTART() {
       return r.sr;
     }
@@ -169,15 +180,15 @@ namespace TMC5130_n {
       VSTART_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct A1_t {
+    constexpr static uint8_t address = 0x24;
+    uint16_t sr : 16;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct A1_i {
-    #pragma pack(push, 1)
-    struct A1_t {
-      constexpr static uint8_t address = 0x24;
-      uint16_t sr : 16;
-    };
-    #pragma pack(pop)
-  
     uint16_t a1() {
       return r.sr;
     }
@@ -188,15 +199,15 @@ namespace TMC5130_n {
       A1_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct V1_t {
+    constexpr static uint8_t address = 0x25;
+    uint32_t sr : 20;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct V1_i {
-    #pragma pack(push, 1)
-    struct V1_t {
-      constexpr static uint8_t address = 0x25;
-      uint32_t sr : 20;
-    };
-    #pragma pack(pop)
-  
     uint32_t v1() {
       return r.sr;
     }
@@ -207,14 +218,15 @@ namespace TMC5130_n {
       V1_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct AMAX_t {
+    constexpr static uint8_t address = 0x26;
+    uint16_t sr : 16;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct AMAX_i {
-    #pragma pack(push, 1)
-    struct AMAX_t {
-      constexpr static uint8_t address = 0x26;
-      uint16_t sr : 16;
-    };
-    #pragma pack(pop)
   
     uint16_t AMAX() {
       return r.sr;
@@ -226,15 +238,15 @@ namespace TMC5130_n {
       AMAX_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct VMAX_t {
+    constexpr static uint8_t address = 0x27;
+    uint32_t sr : 23;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct VMAX_i {
-    #pragma pack(push, 1)
-    struct VMAX_t {
-      constexpr static uint8_t address = 0x27;
-      uint32_t sr : 23;
-    };
-    #pragma pack(pop)
-  
     uint32_t VMAX() {
       return r.sr;
     }
@@ -245,15 +257,15 @@ namespace TMC5130_n {
       VMAX_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct DMAX_t {
+    constexpr static uint8_t address = 0x28;
+    uint16_t sr : 16;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct DMAX_i {
-    #pragma pack(push, 1)
-    struct DMAX_t {
-      constexpr static uint8_t address = 0x28;
-      uint16_t sr : 16;
-    };
-    #pragma pack(pop)
-  
     uint16_t DMAX() {
       return r.sr;
     }
@@ -264,15 +276,15 @@ namespace TMC5130_n {
       DMAX_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct D1_t {
+    constexpr static uint8_t address = 0x2A;
+    uint16_t sr : 16;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct D1_i {
-    #pragma pack(push, 1)
-    struct D1_t {
-      constexpr static uint8_t address = 0x2A;
-      uint16_t sr : 16;
-    };
-    #pragma pack(pop)
-  
     uint16_t d1() {
       return r.sr;
     }
@@ -283,15 +295,15 @@ namespace TMC5130_n {
       D1_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct VSTOP_t {
+    constexpr static uint8_t address = 0x2B;
+    uint32_t sr : 18;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct VSTOP_i {
-    #pragma pack(push, 1)
-    struct VSTOP_t {
-      constexpr static uint8_t address = 0x2B;
-      uint32_t sr : 18;
-    };
-    #pragma pack(pop)
-  
     uint32_t VSTOP() {
       return r.sr;
     }
@@ -304,15 +316,15 @@ namespace TMC5130_n {
       VSTOP_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct TZEROWAIT_t {
+    constexpr static uint8_t address = 0x2C;
+    uint16_t sr : 16;
+  };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct TZEROWAIT_i {
-    #pragma pack(push, 1)
-    struct TZEROWAIT_t {
-      constexpr static uint8_t address = 0x2C;
-      uint16_t sr : 16;
-    };
-    #pragma pack(pop)
-  
     uint16_t TZEROWAIT() {
       return r.sr;
     }
@@ -323,12 +335,12 @@ namespace TMC5130_n {
       TZEROWAIT_t r{};
   };
 
+  #pragma pack(push, 1)
+  struct XTARGET_t  { constexpr static uint8_t address = 0x2D; };
+  #pragma pack(pop)
+
   template<typename TYPE>
   struct XTARGET_i {
-    #pragma pack(push, 1)
-    struct XTARGET_t  { constexpr static uint8_t address = 0x2D; };
-    #pragma pack(pop)
-  
     int32_t XTARGET() {
       return static_cast<TYPE*>(this)->read(XTARGET_t::address);
     }
@@ -337,14 +349,13 @@ namespace TMC5130_n {
     }
   };
 
+  using TMC2130_n::VDCMIN_t;
   using TMC2130_n::VDCMIN_i;
 
-  template<typename TYPE>
-    struct SW_MODE_i {
-      #pragma pack(push, 1)
-      struct SW_MODE_t {
-        constexpr static uint8_t address = 0x34;
-        union {
+  #pragma pack(push, 1)
+  struct SW_MODE_t {
+      constexpr static uint8_t address = 0x34;
+      union {
           uint16_t sr : 12;
           struct {
             bool  stop_l_enable : 1,
@@ -360,10 +371,12 @@ namespace TMC5130_n {
                   sg_stop : 1,
                   en_softstop : 1;
           };
-        };
       };
-      #pragma pack(pop)
-    
+  };
+  #pragma pack(pop)
+
+  template<typename TYPE>
+    struct SW_MODE_i {
       uint16_t SW_MODE() {
         return static_cast<TYPE*>(this)->read(SW_MODE_t::address);
       }
@@ -398,34 +411,34 @@ namespace TMC5130_n {
       bool en_softstop()            { return SW_MODE_t{ SW_MODE() }.en_softstop;      }
     };
 
-    template<typename TYPE>
-    struct RAMP_STAT_i {
-      #pragma pack(push, 1)
-      struct RAMP_STAT_t {
-        RAMP_STAT_t(const uint16_t data) : sr(data) {};
-        constexpr static uint8_t address = 0x35;
-        union {
-          uint16_t sr : 14;
-          struct {
-            bool  status_stop_l : 1,
-                  status_stop_r : 1,
-                  status_latch_l : 1,
-                  status_latch_r : 1,
-                  event_stop_l : 1,
-                  event_stop_r : 1,
-                  event_stop_sg : 1,
-                  event_pos_reached : 1,
-                  velocity_reached : 1,
-                  position_reached : 1,
-                  vzero : 1,
-                  t_zerowait_active : 1,
-                  second_move : 1,
-                  status_sg : 1;
-          };
+    #pragma pack(push, 1)
+    struct RAMP_STAT_t {
+      RAMP_STAT_t(const uint16_t data) : sr(data) {};
+      constexpr static uint8_t address = 0x35;
+      union {
+        uint16_t sr : 14;
+        struct {
+          bool  status_stop_l : 1,
+                status_stop_r : 1,
+                status_latch_l : 1,
+                status_latch_r : 1,
+                event_stop_l : 1,
+                event_stop_r : 1,
+                event_stop_sg : 1,
+                event_pos_reached : 1,
+                velocity_reached : 1,
+                position_reached : 1,
+                vzero : 1,
+                t_zerowait_active : 1,
+                second_move : 1,
+                status_sg : 1;
         };
       };
-      #pragma pack(pop)
-    
+    };
+    #pragma pack(pop)
+
+    template<typename TYPE>
+    struct RAMP_STAT_i {
       uint16_t RAMP_STAT() {
         return static_cast<TYPE*>(this)->read(RAMP_STAT_t::address);
       }
@@ -449,44 +462,44 @@ namespace TMC5130_n {
       bool status_sg()          { return RAMP_STAT_t{ RAMP_STAT() }.status_sg;          }
     };
 
+    #pragma pack(push, 1)
+    struct XLATCH_t {
+      constexpr static uint8_t address = 0x36;
+    };
+    #pragma pack(pop)
+
     template<typename TYPE>
     struct XLATCH_i {
-      #pragma pack(push, 1)
-      struct XLATCH_t {
-        constexpr static uint8_t address = 0x36;
-      };
-      #pragma pack(pop)
-    
       uint32_t XLATCH() {
         return static_cast<TYPE*>(this)->read(XLATCH_t::address);
       }
     };
 
-    template<typename TYPE>
-    struct ENCMODE_i {
-      #pragma pack(push, 1)
-      struct ENCMODE_t {
-        ENCMODE_t(const uint16_t data) : sr(data) {};
-        constexpr static uint8_t address = 0x38;
-        union {
-          uint16_t sr : 11;
-          struct {
-            bool  pol_a : 1,
-                  pol_b : 1,
-                  pol_n : 1,
-                  ignore_ab : 1,
-                  clr_cont : 1,
-                  clr_once : 1,
-                  pos_edge : 1,
-                  neg_edge : 1,
-                  clr_enc_x : 1,
-                  latch_x_act : 1,
-                  enc_sel_decimal : 1;
-          };
+    #pragma pack(push, 1)
+    struct ENCMODE_t {
+      ENCMODE_t(const uint16_t data) : sr(data) {};
+      constexpr static uint8_t address = 0x38;
+      union {
+        uint16_t sr : 11;
+        struct {
+          bool  pol_a : 1,
+                pol_b : 1,
+                pol_n : 1,
+                ignore_ab : 1,
+                clr_cont : 1,
+                clr_once : 1,
+                pos_edge : 1,
+                neg_edge : 1,
+                clr_enc_x : 1,
+                latch_x_act : 1,
+                enc_sel_decimal : 1;
         };
       };
-      #pragma pack(pop)
-    
+    };
+    #pragma pack(pop)
+
+    template<typename TYPE>
+    struct ENCMODE_i {
       uint16_t ENCMODE() {
         return static_cast<TYPE*>(this)->read(ENCMODE_t::address);
       }
@@ -519,14 +532,14 @@ namespace TMC5130_n {
       bool enc_sel_decimal()  { return ENCMODE_t{ ENCMODE() }.enc_sel_decimal;  }
     };
 
+    #pragma pack(push, 1)
+    struct X_ENC_t {
+      constexpr static uint8_t address = 0x39; 
+    };
+    #pragma pack(pop)
+
     template<typename TYPE>
     struct X_ENC_i {
-      #pragma pack(push, 1)
-      struct X_ENC_t {
-        constexpr static uint8_t address = 0x39; 
-      };
-      #pragma pack(pop)
-    
       int32_t XENC() {
         return static_cast<TYPE*>(this)->read(X_ENC_t::address);
       }
@@ -535,15 +548,15 @@ namespace TMC5130_n {
       }
     };
 
+    #pragma pack(push, 1)
+    struct ENC_CONST_t {
+      constexpr static uint8_t address = 0x3A;
+      uint32_t sr;
+    };
+    #pragma pack(pop)
+
     template<typename TYPE>
     struct ENC_CONST_i {
-      #pragma pack(push, 1)
-      struct ENC_CONST_t {
-        constexpr static uint8_t address = 0x3A;
-        uint32_t sr;
-      };
-      #pragma pack(pop)
-    
       uint32_t ENC_CONST() {
         return r.sr;
       }
@@ -554,14 +567,14 @@ namespace TMC5130_n {
         ENC_CONST_t r{};
     };
 
+    #pragma pack(push, 1)
+    struct ENC_STATUS_t {
+      constexpr static uint8_t address = 0x3B;
+    };
+    #pragma pack(pop)
+
     template<typename TYPE>
     struct ENC_STATUS_i {
-      #pragma pack(push, 1)
-      struct ENC_STATUS_t {
-        constexpr static uint8_t address = 0x3B;
-      };
-      #pragma pack(pop)
-    
       bool ENC_STATUS() {
         return static_cast<TYPE*>(this)->read(ENC_STATUS_t::address);
       }
@@ -570,19 +583,39 @@ namespace TMC5130_n {
       }
     };
 
+    #pragma pack(push, 1)
+    struct ENC_LATCH_t {
+      constexpr static uint8_t address = 0x3C;
+    };
+    #pragma pack(pop)
+
     template<typename TYPE>
     struct ENC_LATCH_i {
-      #pragma pack(push, 1)
-      struct ENC_LATCH_t {
-        constexpr static uint8_t address = 0x3C;
-      };
-      #pragma pack(pop)
-    
       uint32_t ENC_LATCH() {
         return static_cast<TYPE*>(this)->read(ENC_LATCH_t::address);
       }
     };
 
+    using TMC2130_n::MSLUT0_t;
+    using TMC2130_n::MSLUT1_t;
+    using TMC2130_n::MSLUT2_t;
+    using TMC2130_n::MSLUT3_t;
+    using TMC2130_n::MSLUT4_t;
+    using TMC2130_n::MSLUT5_t;
+    using TMC2130_n::MSLUT6_t;
+    using TMC2130_n::MSLUT7_t;
+    using TMC2130_n::MSLUTSEL_t;
+    using TMC2130_n::MSLUTSTART_t;
+    using TMC2130_n::MSCNT_t;
+    using TMC2130_n::MSCURACT_t;
+    using TMC2130_n::CHOPCONF_t;
+    using TMC2130_n::COOLCONF_t;
+    using TMC2130_n::DCCTRL_t;
+    using TMC2130_n::DRV_STATUS_t;
+    using TMC2130_n::PWMCONF_t;
+    using TMC2130_n::PWM_SCALE_t;
+    using TMC2130_n::ENCM_CTRL_t;
+    using TMC2130_n::LOST_STEPS_t;
     using TMC2130_n::MSLUT0_i;
     using TMC2130_n::MSLUT1_i;
     using TMC2130_n::MSLUT2_i;
