@@ -215,7 +215,6 @@ namespace TMC2300_n {
   // 0x6F R: DRV_STATUS
   #pragma pack(push, 1)
   struct DRV_STATUS_t {
-    DRV_STATUS_t(const uint32_t data) : sr(data) {};
     constexpr static uint8_t address = 0x6F;
     union {
       uint32_t sr;

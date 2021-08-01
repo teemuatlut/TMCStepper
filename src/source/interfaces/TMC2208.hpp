@@ -229,7 +229,6 @@ namespace TMC2208_n {
 	// 0x6C RW: CHOPCONF
 	#pragma pack(push, 1)
 	struct CHOPCONF_t {
-		CHOPCONF_t(const uint32_t initValue) : sr(initValue) {}
 		constexpr static uint8_t address = 0x6C;
 		union {
 			uint32_t sr;
@@ -285,7 +284,6 @@ namespace TMC2208_n {
 	// 0x6F R: DRV_STATUS
 	#pragma pack(push, 1)
 	struct DRV_STATUS_t {
-		DRV_STATUS_t(const uint32_t data) : sr(data) {};
 		constexpr static uint8_t address = 0x6F;
 		union {
 			uint32_t sr;
