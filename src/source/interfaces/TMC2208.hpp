@@ -386,40 +386,8 @@ namespace TMC2208_n {
 	};
 
 	// 0x71 R: PWM_SCALE
-	#pragma pack(push, 1)
-	struct PWM_SCALE_t {
-		constexpr static uint8_t address = 0x71;
-		union {
-			uint32_t sr;
-			struct {
-				uint8_t pwm_scale_sum : 8,
-						: 8;
-				int16_t pwm_scale_auto : 9;
-			};
-		};
-	};
-	#pragma pack(pop)
-
-	template<typename TYPE>
-	struct PWM_SCALE_i {
-		uint32_t PWM_SCALE() {
-			return static_cast<TYPE*>(this)->read(PWM_SCALE_t::address);
-		}
-		uint8_t pwm_scale_sum() {
-			return PWM_SCALE_t{ PWM_SCALE() }.pwm_scale_sum;
-		}
-
-		int16_t pwm_scale_auto() {
-			return PWM_SCALE_t{ PWM_SCALE() }.pwm_scale_auto;
-			// Not two's complement? 9nth bit determines sign
-			/*
-			uint32_t d = PWM_SCALE();
-			int16_t response = (d>>PWM_SCALE_AUTO_bp)&0xFF;
-			if (((d&PWM_SCALE_AUTO_bm) >> 24) & 0x1) return -response;
-			else return response;
-			*/
-		}
-	};
+	using TMC2160_n::PWM_SCALE_t;
+	using TMC2160_n::PWM_SCALE_i;
 
 	// 0x72 R: PWM_AUTO
 	#pragma pack(push, 1)
