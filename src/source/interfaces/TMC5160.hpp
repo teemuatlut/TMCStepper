@@ -307,7 +307,7 @@ namespace TMC5160_n {
                 bool fsactive : 1;
                 uint8_t cs_actual : 5,
                         : 3;
-                bool    stallGuard : 1,
+                bool    stallguard : 1,
                         ot : 1,
                         otpw : 1,
                         s2ga : 1,
@@ -332,7 +332,7 @@ namespace TMC5160_n {
         bool stealth()      { return DRV_STATUS_t{ DRV_STATUS() }.stealth;   }
         bool fsactive()     { return DRV_STATUS_t{ DRV_STATUS() }.fsactive;  }
         uint8_t cs_actual() { return DRV_STATUS_t{ DRV_STATUS() }.cs_actual; }
-        bool stallguard()   { return DRV_STATUS_t{ DRV_STATUS() }.stallGuard;}
+        bool stallguard()   { return DRV_STATUS_t{ DRV_STATUS() }.stallguard;}
         bool ot()           { return DRV_STATUS_t{ DRV_STATUS() }.ot;        }
         bool otpw()         { return DRV_STATUS_t{ DRV_STATUS() }.otpw;      }
         bool s2ga()         { return DRV_STATUS_t{ DRV_STATUS() }.s2ga;      }
