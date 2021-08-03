@@ -6,6 +6,7 @@
 	#include "source/bcm2835_spi.h"
 	#include "source/bcm2835_stream.h"
 #endif
+#include <cstdint>
 
 #include "TMC_platforms.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
 #elif defined(bcm2835)
