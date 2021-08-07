@@ -272,11 +272,6 @@ class TMC2160Stepper :
 		void push();
 		bool isEnabled() { return CHOPCONF_i::toff() && !IOIN_i::drv_enn(); }
 
-		uint16_t cs2rms(uint8_t CS);
-		void rms_current(uint16_t mA);
-		void rms_current(uint16_t mA, float mult);
-		uint16_t rms_current();
-
 		// Deleted functions
 		__attribute__((deprecated("Please provide a sense resistor value")))
 		TMC2160Stepper(TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, TMC_HAL::PinDef, const int8_t link_index = -1) = delete;
