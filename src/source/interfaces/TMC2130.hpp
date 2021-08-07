@@ -140,6 +140,7 @@ namespace TMC2130_n {
     // 0x10 W: IHOLD_IRUN
     #pragma pack(push, 1)
     struct IHOLD_IRUN_t {
+        IHOLD_IRUN_t(const uint32_t data) : sr(data) {}
         constexpr static uint8_t address = 0x10;
         union {
             uint32_t sr : 20;
@@ -188,7 +189,7 @@ namespace TMC2130_n {
         }
 
         protected:
-            IHOLD_IRUN_t r{};
+            IHOLD_IRUN_t r{0};
     };
 
     // 0x11 W: TPOWERDOWN
