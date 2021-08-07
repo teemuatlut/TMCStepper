@@ -83,6 +83,7 @@ namespace TMC2130_n {
     // 0x01 R+C: GSTAT
     #pragma pack(push, 1)
     struct GSTAT_t {
+        GSTAT_t(const uint8_t data) : sr(data) {};
         constexpr static uint8_t address = 0x01;
         union {
             uint8_t sr : 3;
