@@ -674,15 +674,9 @@ namespace TMC2130_n {
             DCCTRL(r.sr);
         }
 
-        uint32_t DCCTRL() {
-            return static_cast<TYPE*>(this)->read(r.address);
-        }
-        uint16_t dc_time() {
-            return DCCTRL_t{ DCCTRL() }.dc_time;
-        }
-        uint8_t dc_sg() {
-            return DCCTRL_t{ DCCTRL() }.dc_sg;
-        }
+        uint32_t DCCTRL()  const { return r.sr; }
+        uint16_t dc_time() const { return r.dc_time; }
+        uint8_t  dc_sg()   const { return r.dc_sg; }
 
     protected:
         DCCTRL_t r{};
