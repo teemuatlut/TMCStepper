@@ -37,8 +37,10 @@ void TMC2130_n::TMC_RMS<T>::rms_current(const uint16_t mA) {
   if (CS > 31)
     CS = 31;
 
-  self().irun(CS);
-  self().ihold(CS*hold_multiplier());
+  typename T::IHOLD_IRUN_t r{ self().IHOLD_IRUN() };
+  r.irun = CS;
+  r.ihold = CS*hold_multiplier();
+  self().IHOLD_IRUN(r.sr);
   //val_mA = mA;
 }
 
@@ -72,13 +74,15 @@ void TMC2300_n::TMC_RMS<T>::rms_current(const uint16_t mA) {
   if (CS > 31)
     CS = 31;
 
-  static_cast<T*>(this)->irun(CS);
-  static_cast<T*>(this)->ihold(CS*hold_multiplier());
+  typename T::IHOLD_IRUN_t r{ self().IHOLD_IRUN() };
+  r.irun = CS;
+  r.ihold = CS*hold_multiplier();
+  self().IHOLD_IRUN(r.sr);
 }
 
 template<typename TYPE>
 uint8_t TMCStepper<TYPE>::test_connection() {
-  uint32_t drv_status = static_cast<TYPE*>(this)->DRV_STATUS();
+  const uint32_t drv_status = self().DRV_STATUS();
   switch (drv_status) {
       case 0xFFFFFFFF: return 1;
       case 0: return 2;
@@ -125,15 +129,17 @@ void TMC2160_n::TMC_RMS<T>::rms_current(const uint16_t mA) {
   if (CS > 31)
     CS = 31;
 
-  static_cast<T*>(this)->GLOBAL_SCALER(scaler);
-  static_cast<T*>(this)->irun(CS);
-  static_cast<T*>(this)->ihold(CS*hold_multiplier());
+  typename T::IHOLD_IRUN_t r{ self().IHOLD_IRUN() };
+  r.irun = CS;
+  r.ihold = CS*hold_multiplier();
+  self().IHOLD_IRUN(r.sr);
+  self().GLOBAL_SCALER(scaler);
 }
 
 template<class T>
 uint16_t TMC2160_n::TMC_RMS<T>::cs2rms(const uint8_t CS) {
     const float rs = Rsense/255.0;
-    uint16_t scaler = static_cast<T*>(this)->GLOBAL_SCALER();
+    uint16_t scaler = self().GLOBAL_SCALER();
     if (!scaler) scaler = 256;
     uint32_t numerator = scaler * (CS+1);
     numerator *= 325;

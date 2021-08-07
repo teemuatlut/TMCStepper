@@ -102,12 +102,13 @@ struct TMC_RMS {
       rms_current(mA);
     }
     uint16_t rms_current() {
-      return cs2rms(static_cast<T*>(this)->irun());
+      return cs2rms(self().irun());
     }
     void hold_multiplier(const float val) { holdMultiplier = val*255; }
     float hold_multiplier() const { return (holdMultiplier+0.5)/255.0; }
   protected:
-    TMC_RMS(float RS) : Rsense(RS*255) {};
+    TMC_RMS(const float RS) : Rsense(RS*255) {};
+    T& self() { return *static_cast<T*>(this); }
 
     const uint8_t Rsense;
     uint8_t holdMultiplier = 127;
@@ -126,12 +127,13 @@ struct TMC_RMS {
       rms_current(mA);
     }
     uint16_t rms_current() {
-      return cs2rms(static_cast<T*>(this)->irun());
+      return cs2rms(self().irun());
     }
     void hold_multiplier(const float val) { holdMultiplier = val*255; }
     float hold_multiplier() const { return (holdMultiplier+0.5)/255.0; }
   protected:
-    TMC_RMS(float RS) : Rsense(RS*255) {};
+    TMC_RMS(const float RS) : Rsense(RS*255) {};
+    T& self() { return *static_cast<T*>(this); }
 
     const uint8_t Rsense;
     uint8_t holdMultiplier = 127;
