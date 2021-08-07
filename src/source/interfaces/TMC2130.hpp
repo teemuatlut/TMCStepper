@@ -99,9 +99,9 @@ namespace TMC2130_n {
     struct GSTAT_i {
         uint8_t GSTAT()     { return static_cast<TYPE*>(this)->read(GSTAT_t::address); }
         void GSTAT(uint8_t) { static_cast<TYPE*>(this)->write(GSTAT_t::address, 0b111); }
-        bool reset()        { GSTAT_t r; r.sr = GSTAT(); return r.reset; }
-        bool drv_err()      { GSTAT_t r; r.sr = GSTAT(); return r.drv_err; }
-        bool uv_cp()        { GSTAT_t r; r.sr = GSTAT(); return r.uv_cp; }
+        bool reset()        { GSTAT_t r{ GSTAT() }; return r.reset; }
+        bool drv_err()      { GSTAT_t r{ GSTAT() }; return r.drv_err; }
+        bool uv_cp()        { GSTAT_t r{ GSTAT() }; return r.uv_cp; }
     };
 
     // 0x04 R: IOIN
@@ -128,13 +128,13 @@ namespace TMC2130_n {
     template<typename TYPE>
     struct IOIN_i {
         uint32_t IOIN()     { return static_cast<TYPE*>(this)->read(IOIN_t::address); }
-        bool step()         { IOIN_t r{0}; r.sr = IOIN(); return r.step; }
-        bool dir()          { IOIN_t r{0}; r.sr = IOIN(); return r.dir; }
-        bool dcen_cfg4()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcen_cfg4; }
-        bool dcin_cfg5()    { IOIN_t r{0}; r.sr = IOIN(); return r.dcin_cfg5; }
-        bool drv_enn_cfg6() { IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn_cfg6; }
-        bool dco()          { IOIN_t r{0}; r.sr = IOIN(); return r.dco; }
-        uint8_t version()   { IOIN_t r{0}; r.sr = IOIN(); return r.version; }
+        bool step()         { IOIN_t r{ IOIN() }; return r.step; }
+        bool dir()          { IOIN_t r{ IOIN() }; return r.dir; }
+        bool dcen_cfg4()    { IOIN_t r{ IOIN() }; return r.dcen_cfg4; }
+        bool dcin_cfg5()    { IOIN_t r{ IOIN() }; return r.dcin_cfg5; }
+        bool drv_enn_cfg6() { IOIN_t r{ IOIN() }; return r.drv_enn_cfg6; }
+        bool dco()          { IOIN_t r{ IOIN() }; return r.dco; }
+        uint8_t version()   { IOIN_t r{ IOIN() }; return r.version; }
     };
 
     // 0x10 W: IHOLD_IRUN
