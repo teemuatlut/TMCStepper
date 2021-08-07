@@ -4,7 +4,7 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
-TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, SSwitch *sw) :
+TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, SSwitch * const sw) :
 	HWSerial(SerialPort),
 	sswitch(sw),
 	slaveAddress(addr)
@@ -17,7 +17,7 @@ TMC_UART::TMC_UART(HardwareSerial * SerialPort, uint8_t addr, SSwitch *sw) :
 		{}
 #endif
 
-uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
+uint8_t TMC_UART::calcCRC(const uint8_t datagram[], const uint8_t len) {
 	uint8_t crc = 0;
 	for (uint8_t i = 0; i < (len-1); i++) {
 		uint8_t currentByte = datagram[i];
@@ -34,12 +34,12 @@ uint8_t TMC_UART::calcCRC(uint8_t datagram[], uint8_t len) {
 	return crc;
 }
 
-void TMC_UART::WaitForInhibitTime() {
+void TMC_UART::WaitForInhibitTime() const {
 	while(getTime() - lastWriteTime < WriteInhibitTime);
 }
 
 TMC_WEAK_FUNCTION
-void TMC_UART::write(uint8_t addr, uint32_t regVal) {
+void TMC_UART::write(const uint8_t addr, const uint32_t regVal) {
 	WaitForInhibitTime();
 
     WriteDatagram datagram;
@@ -98,7 +98,7 @@ TMC_UART::ReadResponse TMC_UART::sendReadRequest(ReadRequest &datagram) {
     return response;
 }
 
-uint32_t TMC_UART::read(uint8_t addr) {
+uint32_t TMC_UART::read(const uint8_t addr) {
     ReadResponse response;
     ReadRequest datagram;
     datagram.driverAddress = slaveAddress;

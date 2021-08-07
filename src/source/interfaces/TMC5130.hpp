@@ -13,8 +13,8 @@ namespace TMC5130_n {
   struct GCONF_i : public TMC2130_n::GCONF_i<TYPE> {
     void diag1_poscomp_pushpull(bool B) __attribute__((alias("TMC2130_n::GCONF_i<TYPE>::diag1_pushpull(bool B)")));
     bool diag1_poscomp_pushpull() __attribute__((alias("TMC2130_n::GCONF_i<TYPE>::diag1_pushpull()")));
-
   };
+
   // 0x01 R+c: GSTAT
   using TMC2130_n::GSTAT_t;
   using TMC2130_n::GSTAT_i;
@@ -71,10 +71,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct OUTPUT_i {
-    bool TMC_OUTPUT() {
+    bool TMC_OUTPUT() const {
       return r.sr;
     }
-    void TMC_OUTPUT(bool input) {
+    void TMC_OUTPUT(const bool input) {
       static_cast<TYPE*>(this)->write(OUTPUT_t::address, input);
     }
     protected:
@@ -90,10 +90,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct X_COMPARE_i {
-    uint32_t X_COMPARE() {
+    uint32_t X_COMPARE() const {
       return r.sr;
     }
-    void X_COMPARE(uint32_t input) {
+    void X_COMPARE(const uint32_t input) {
       static_cast<TYPE*>(this)->write(X_COMPARE_t::address, input);
     }
     protected:
@@ -125,7 +125,7 @@ namespace TMC5130_n {
     uint8_t RAMPMODE() {
       return static_cast<TYPE*>(this)->read(RAMPMODE_t::address);
     }
-    void RAMPMODE(uint8_t input) {
+    void RAMPMODE(const uint8_t input) {
       static_cast<TYPE*>(this)->write(RAMPMODE_t::address, input);
     }
   };
@@ -141,7 +141,7 @@ namespace TMC5130_n {
     int32_t XACTUAL() {
       return (int32_t)static_cast<TYPE*>(this)->read(XACTUAL_t::address);
     }
-    void XACTUAL(int32_t input) {
+    void XACTUAL(const int32_t input) {
       static_cast<TYPE*>(this)->write(XACTUAL_t::address, (uint32_t)input);
     }
   };
@@ -170,10 +170,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct VSTART_i {
-    uint32_t VSTART() {
+    uint32_t VSTART() const {
       return r.sr;
     }
-    void VSTART(uint32_t input) {
+    void VSTART(const uint32_t input) {
       static_cast<TYPE*>(this)->write(VSTART_t::address, input);
     }
     protected:
@@ -189,10 +189,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct A1_i {
-    uint16_t a1() {
+    uint16_t a1() const {
       return r.sr;
     }
-    void a1(uint16_t input) {
+    void a1(const uint16_t input) {
       static_cast<TYPE*>(this)->write(A1_t::address, input);
     }
     protected:
@@ -208,10 +208,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct V1_i {
-    uint32_t v1() {
+    uint32_t v1() const {
       return r.sr;
     }
-    void v1(uint32_t input) {
+    void v1(const uint32_t input) {
       static_cast<TYPE*>(this)->write(V1_t::address, input);
     }
     protected:
@@ -228,10 +228,10 @@ namespace TMC5130_n {
   template<typename TYPE>
   struct AMAX_i {
   
-    uint16_t AMAX() {
+    uint16_t AMAX() const {
       return r.sr;
     }
-    void AMAX(uint16_t input) {
+    void AMAX(const uint16_t input) {
       static_cast<TYPE*>(this)->write(AMAX_t::address, input);
     }
     protected:
@@ -247,10 +247,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct VMAX_i {
-    uint32_t VMAX() {
+    uint32_t VMAX() const {
       return r.sr;
     }
-    void VMAX(uint32_t input) {
+    void VMAX(const uint32_t input) {
       static_cast<TYPE*>(this)->write(VMAX_t::address, input);
     }
     protected:
@@ -266,10 +266,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct DMAX_i {
-    uint16_t DMAX() {
+    uint16_t DMAX() const {
       return r.sr;
     }
-    void DMAX(uint16_t input) {
+    void DMAX(const uint16_t input) {
       static_cast<TYPE*>(this)->write(DMAX_t::address, input);
     }
     protected:
@@ -285,10 +285,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct D1_i {
-    uint16_t d1() {
+    uint16_t d1() const {
       return r.sr;
     }
-    void d1(uint16_t input) {
+    void d1(const uint16_t input) {
       static_cast<TYPE*>(this)->write(D1_t::address, input);
     }
     protected:
@@ -304,10 +304,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct VSTOP_i {
-    uint32_t VSTOP() {
+    uint32_t VSTOP() const {
       return r.sr;
     }
-    void VSTOP(uint32_t input) {
+    void VSTOP(const uint32_t input) {
       if (input == 0 && static_cast<TYPE*>(this)->RAMPMODE() == 0) return;
       r.sr = input;
       static_cast<TYPE*>(this)->write(r.address, r.sr);
@@ -325,10 +325,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct TZEROWAIT_i {
-    uint16_t TZEROWAIT() {
+    uint16_t TZEROWAIT() const {
       return r.sr;
     }
-    void TZEROWAIT(uint16_t input) {
+    void TZEROWAIT(const uint16_t input) {
       static_cast<TYPE*>(this)->write(TZEROWAIT_t::address, input);
     }
     protected:
@@ -344,7 +344,7 @@ namespace TMC5130_n {
     int32_t XTARGET() {
       return static_cast<TYPE*>(this)->read(XTARGET_t::address);
     }
-    void XTARGET(int32_t input) {
+    void XTARGET(const int32_t input) {
       static_cast<TYPE*>(this)->write(XTARGET_t::address, input);
     }
   };
@@ -380,22 +380,22 @@ namespace TMC5130_n {
       uint16_t SW_MODE() {
         return static_cast<TYPE*>(this)->read(SW_MODE_t::address);
       }
-      void SW_MODE(uint16_t input) {
+      void SW_MODE(const uint16_t input) {
         static_cast<TYPE*>(this)->write(SW_MODE_t::address, input);
       }
 
-      void stop_l_enable(bool B)    { SW_MODE_t r{ SW_MODE() }; r.stop_l_enable = B;    SW_MODE(r.sr); }
-      void stop_r_enable(bool B)    { SW_MODE_t r{ SW_MODE() }; r.stop_r_enable = B;    SW_MODE(r.sr); }
-      void pol_stop_l(bool B)       { SW_MODE_t r{ SW_MODE() }; r.pol_stop_l = B;       SW_MODE(r.sr); }
-      void pol_stop_r(bool B)       { SW_MODE_t r{ SW_MODE() }; r.pol_stop_r = B;       SW_MODE(r.sr); }
-      void swap_lr(bool B)          { SW_MODE_t r{ SW_MODE() }; r.swap_lr = B;          SW_MODE(r.sr); }
-      void latch_l_active(bool B)   { SW_MODE_t r{ SW_MODE() }; r.latch_l_active = B;   SW_MODE(r.sr); }
-      void latch_l_inactive(bool B) { SW_MODE_t r{ SW_MODE() }; r.latch_l_inactive = B; SW_MODE(r.sr); }
-      void latch_r_active(bool B)   { SW_MODE_t r{ SW_MODE() }; r.latch_r_active = B;   SW_MODE(r.sr); }
-      void latch_r_inactive(bool B) { SW_MODE_t r{ SW_MODE() }; r.latch_r_inactive = B; SW_MODE(r.sr); }
-      void en_latch_encoder(bool B) { SW_MODE_t r{ SW_MODE() }; r.en_latch_encoder = B; SW_MODE(r.sr); }
-      void sg_stop(bool B)          { SW_MODE_t r{ SW_MODE() }; r.sg_stop = B;          SW_MODE(r.sr); }
-      void en_softstop(bool B)      { SW_MODE_t r{ SW_MODE() }; r.en_softstop = B;      SW_MODE(r.sr); }
+      void stop_l_enable(const bool B)    { SW_MODE_t r{ SW_MODE() }; r.stop_l_enable = B;    SW_MODE(r.sr); }
+      void stop_r_enable(const bool B)    { SW_MODE_t r{ SW_MODE() }; r.stop_r_enable = B;    SW_MODE(r.sr); }
+      void pol_stop_l(const bool B)       { SW_MODE_t r{ SW_MODE() }; r.pol_stop_l = B;       SW_MODE(r.sr); }
+      void pol_stop_r(const bool B)       { SW_MODE_t r{ SW_MODE() }; r.pol_stop_r = B;       SW_MODE(r.sr); }
+      void swap_lr(const bool B)          { SW_MODE_t r{ SW_MODE() }; r.swap_lr = B;          SW_MODE(r.sr); }
+      void latch_l_active(const bool B)   { SW_MODE_t r{ SW_MODE() }; r.latch_l_active = B;   SW_MODE(r.sr); }
+      void latch_l_inactive(const bool B) { SW_MODE_t r{ SW_MODE() }; r.latch_l_inactive = B; SW_MODE(r.sr); }
+      void latch_r_active(const bool B)   { SW_MODE_t r{ SW_MODE() }; r.latch_r_active = B;   SW_MODE(r.sr); }
+      void latch_r_inactive(const bool B) { SW_MODE_t r{ SW_MODE() }; r.latch_r_inactive = B; SW_MODE(r.sr); }
+      void en_latch_encoder(const bool B) { SW_MODE_t r{ SW_MODE() }; r.en_latch_encoder = B; SW_MODE(r.sr); }
+      void sg_stop(const bool B)          { SW_MODE_t r{ SW_MODE() }; r.sg_stop = B;          SW_MODE(r.sr); }
+      void en_softstop(const bool B)      { SW_MODE_t r{ SW_MODE() }; r.en_softstop = B;      SW_MODE(r.sr); }
 
       bool stop_l_enable()          { return SW_MODE_t{ SW_MODE() }.stop_r_enable;    }
       bool stop_r_enable()          { return SW_MODE_t{ SW_MODE() }.stop_r_enable;    }
@@ -442,7 +442,7 @@ namespace TMC5130_n {
       uint16_t RAMP_STAT() {
         return static_cast<TYPE*>(this)->read(RAMP_STAT_t::address);
       }
-      void RAMP_STAT(uint16_t input) {
+      void RAMP_STAT(const uint16_t input) {
         static_cast<TYPE*>(this)->write(RAMP_STAT_t::address, input);
       }
 
@@ -503,21 +503,21 @@ namespace TMC5130_n {
       uint16_t ENCMODE() {
         return static_cast<TYPE*>(this)->read(ENCMODE_t::address);
       }
-      void ENCMODE(uint16_t input) {
+      void ENCMODE(const uint16_t input) {
         static_cast<TYPE*>(this)->write(ENCMODE_t::address, input);
       }
 
-      void pol_a(bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_a = B;            ENCMODE(r.sr); }
-      void pol_b(bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_b = B;            ENCMODE(r.sr); }
-      void pol_n(bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_n = B;            ENCMODE(r.sr); }
-      void ignore_ab(bool B)        { ENCMODE_t r{ ENCMODE() }; r.ignore_ab = B;        ENCMODE(r.sr); }
-      void clr_cont(bool B)         { ENCMODE_t r{ ENCMODE() }; r.clr_cont = B;         ENCMODE(r.sr); }
-      void clr_once(bool B)         { ENCMODE_t r{ ENCMODE() }; r.clr_once = B;         ENCMODE(r.sr); }
-      void pos_edge(bool B)         { ENCMODE_t r{ ENCMODE() }; r.pos_edge = B;         ENCMODE(r.sr); }
-      void neg_edge(bool B)         { ENCMODE_t r{ ENCMODE() }; r.neg_edge = B;         ENCMODE(r.sr); }
-      void clr_enc_x(bool B)        { ENCMODE_t r{ ENCMODE() }; r.clr_enc_x = B;        ENCMODE(r.sr); }
-      void latch_x_act(bool B)      { ENCMODE_t r{ ENCMODE() }; r.latch_x_act = B;      ENCMODE(r.sr); }
-      void enc_sel_decimal(bool B)  { ENCMODE_t r{ ENCMODE() }; r.enc_sel_decimal = B;  ENCMODE(r.sr); }
+      void pol_a(const bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_a = B;            ENCMODE(r.sr); }
+      void pol_b(const bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_b = B;            ENCMODE(r.sr); }
+      void pol_n(const bool B)            { ENCMODE_t r{ ENCMODE() }; r.pol_n = B;            ENCMODE(r.sr); }
+      void ignore_ab(const bool B)        { ENCMODE_t r{ ENCMODE() }; r.ignore_ab = B;        ENCMODE(r.sr); }
+      void clr_cont(const bool B)         { ENCMODE_t r{ ENCMODE() }; r.clr_cont = B;         ENCMODE(r.sr); }
+      void clr_once(const bool B)         { ENCMODE_t r{ ENCMODE() }; r.clr_once = B;         ENCMODE(r.sr); }
+      void pos_edge(const bool B)         { ENCMODE_t r{ ENCMODE() }; r.pos_edge = B;         ENCMODE(r.sr); }
+      void neg_edge(const bool B)         { ENCMODE_t r{ ENCMODE() }; r.neg_edge = B;         ENCMODE(r.sr); }
+      void clr_enc_x(const bool B)        { ENCMODE_t r{ ENCMODE() }; r.clr_enc_x = B;        ENCMODE(r.sr); }
+      void latch_x_act(const bool B)      { ENCMODE_t r{ ENCMODE() }; r.latch_x_act = B;      ENCMODE(r.sr); }
+      void enc_sel_decimal(const bool B)  { ENCMODE_t r{ ENCMODE() }; r.enc_sel_decimal = B;  ENCMODE(r.sr); }
 
       bool pol_a()            { return ENCMODE_t{ ENCMODE() }.pol_a;            }
       bool pol_b()            { return ENCMODE_t{ ENCMODE() }.pol_b;            }
@@ -543,7 +543,7 @@ namespace TMC5130_n {
       int32_t XENC() {
         return static_cast<TYPE*>(this)->read(X_ENC_t::address);
       }
-      void XENC(int32_t input) {
+      void XENC(const int32_t input) {
         static_cast<TYPE*>(this)->write(X_ENC_t::address, input);
       }
     };
@@ -557,10 +557,10 @@ namespace TMC5130_n {
 
     template<typename TYPE>
     struct ENC_CONST_i {
-      uint32_t ENC_CONST() {
+      uint32_t ENC_CONST() const {
         return r.sr;
       }
-      void ENC_CONST(uint32_t input) {
+      void ENC_CONST(const uint32_t input) {
         static_cast<TYPE*>(this)->write(ENC_CONST_t::address, input);
       }
       protected:
@@ -578,7 +578,7 @@ namespace TMC5130_n {
       bool ENC_STATUS() {
         return static_cast<TYPE*>(this)->read(ENC_STATUS_t::address);
       }
-      void ENC_STATUS(bool input) {
+      void ENC_STATUS(const bool input) {
         static_cast<TYPE*>(this)->write(ENC_STATUS_t::address, input);
       }
     };

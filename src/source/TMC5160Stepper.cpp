@@ -3,13 +3,13 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
-TMC5160Stepper::TMC5160Stepper(SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
+TMC5160Stepper::TMC5160Stepper(SPIClass &spi, PinDef pinCS, const float RS, const int8_t link) :
   TMC_SPI(spi, pinCS, link),
   TMC_RMS(RS)
   {
     resetLibCache();
   }
-TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, float RS, int8_t link) :
+TMC5160Stepper::TMC5160Stepper(SW_SPIClass &spi, PinDef pinCS, const float RS, const int8_t link) :
   TMC_SPI(spi, pinCS, link),
   TMC_RMS(RS)
   {

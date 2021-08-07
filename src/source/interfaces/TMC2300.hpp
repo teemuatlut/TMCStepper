@@ -31,15 +31,15 @@ namespace TMC2300_n {
     uint8_t GCONF() {
       return static_cast<TYPE*>(this)->read(GCONF_t::address);
     }
-    void GCONF(uint8_t input) {
+    void GCONF(const uint8_t input) {
       static_cast<TYPE*>(this)->write(GCONF_t::address, input);
     }
 
-    void extcap(bool B)         { GCONF_t r{ GCONF() }; r.extcap = B;         GCONF(r.sr); }
-    void shaft(bool B)          { GCONF_t r{ GCONF() }; r.shaft = B;          GCONF(r.sr); }
-    void diag_index(bool B)     { GCONF_t r{ GCONF() }; r.diag_index = B;     GCONF(r.sr); }
-    void diag_step(bool B)      { GCONF_t r{ GCONF() }; r.diag_step = B;      GCONF(r.sr); }
-    void multistep_filt(bool B) { GCONF_t r{ GCONF() }; r.multistep_filt = B; GCONF(r.sr); }
+    void extcap(const bool B)         { GCONF_t r{ GCONF() }; r.extcap = B;         GCONF(r.sr); }
+    void shaft(const bool B)          { GCONF_t r{ GCONF() }; r.shaft = B;          GCONF(r.sr); }
+    void diag_index(const bool B)     { GCONF_t r{ GCONF() }; r.diag_index = B;     GCONF(r.sr); }
+    void diag_step(const bool B)      { GCONF_t r{ GCONF() }; r.diag_step = B;      GCONF(r.sr); }
+    void multistep_filt(const bool B) { GCONF_t r{ GCONF() }; r.multistep_filt = B; GCONF(r.sr); }
 
     bool extcap()         { return GCONF_t{ GCONF() }.extcap; }
     bool shaft()          { return GCONF_t{ GCONF() }.shaft; }
@@ -68,13 +68,13 @@ namespace TMC2300_n {
     uint8_t GSTAT() {
       return static_cast<TYPE*>(this)->read(GSTAT_t::address);
     }
-    void GSTAT(uint8_t input) {
+    void GSTAT(const uint8_t input) {
       static_cast<TYPE*>(this)->write(GSTAT_t::address, input);
     }
 
-    void reset(bool B)    { GSTAT_t r{ GSTAT() }; r.reset = B;    GSTAT(r.sr); }
-    void drv_err(bool B)  { GSTAT_t r{ GSTAT() }; r.drv_err = B;  GSTAT(r.sr); }
-    void u3v5(bool B)     { GSTAT_t r{ GSTAT() }; r.u3v5 = B;     GSTAT(r.sr); }
+    void reset(const bool B)    { GSTAT_t r{ GSTAT() }; r.reset = B;    GSTAT(r.sr); }
+    void drv_err(const bool B)  { GSTAT_t r{ GSTAT() }; r.drv_err = B;  GSTAT(r.sr); }
+    void u3v5(const bool B)     { GSTAT_t r{ GSTAT() }; r.u3v5 = B;     GSTAT(r.sr); }
 
 
     bool reset()    { return GSTAT_t{ GSTAT() }.reset; }
@@ -188,20 +188,20 @@ namespace TMC2300_n {
 
   template<typename TYPE>
   struct CHOPCONF_i {
-    void CHOPCONF(uint32_t input) {
+    void CHOPCONF(const uint32_t input) {
       static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
     }
     uint32_t CHOPCONF() {
       return static_cast<TYPE*>(this)->read(CHOPCONF_t::address);
     }
 
-    void enable_drv ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.enable_drv = B; CHOPCONF(r.sr); }
-    void tbl        ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
-    void mres       ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
-    void intpol     ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
-    void dedge      ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
-    void diss2g     ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
-    void diss2vs    ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B;    CHOPCONF(r.sr); }
+    void enable_drv ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.enable_drv = B; CHOPCONF(r.sr); }
+    void tbl        ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
+    void mres       ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
+    void intpol     ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
+    void dedge      ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
+    void diss2g     ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
+    void diss2vs    ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B;    CHOPCONF(r.sr); }
 
     bool    enable_drv() { return CHOPCONF_t{ CHOPCONF() }.enable_drv; }
     uint8_t tbl()        { return CHOPCONF_t{ CHOPCONF() }.tbl;        }

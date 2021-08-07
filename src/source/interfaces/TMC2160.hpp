@@ -71,21 +71,21 @@ namespace TMC2160_n {
             static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
         }
 
-        void toff(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;       CHOPCONF(r.sr); }
-        void hstrt(     uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;      CHOPCONF(r.sr); }
-        void hend(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
-        //void fd(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.fd = B;         CHOPCONF(r.sr); }
-        void disfdcc(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.disfdcc = B;    CHOPCONF(r.sr); }
-        void chm(       bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.chm = B;        CHOPCONF(r.sr); }
-        void tbl(       uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
-        void vhighfs(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighfs = B;    CHOPCONF(r.sr); }
-        void vhighchm(  bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighchm = B;   CHOPCONF(r.sr); }
-        void tpfd(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tpfd = B;       CHOPCONF(r.sr); }
-        void mres(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
-        void intpol(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
-        void dedge(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
-        void diss2g(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
-        void diss2vs(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B;    CHOPCONF(r.sr); }
+        void toff(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;       CHOPCONF(r.sr); }
+        void hstrt(     const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;      CHOPCONF(r.sr); }
+        void hend(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
+        //void fd(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.fd = B;         CHOPCONF(r.sr); }
+        void disfdcc(   const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.disfdcc = B;    CHOPCONF(r.sr); }
+        void chm(       const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.chm = B;        CHOPCONF(r.sr); }
+        void tbl(       const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
+        void vhighfs(   const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighfs = B;    CHOPCONF(r.sr); }
+        void vhighchm(  const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighchm = B;   CHOPCONF(r.sr); }
+        void tpfd(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tpfd = B;       CHOPCONF(r.sr); }
+        void mres(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
+        void intpol(    const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
+        void dedge(     const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
+        void diss2g(    const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
+        void diss2vs(   const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B;    CHOPCONF(r.sr); }
 
         uint8_t toff    () { return CHOPCONF_t{ CHOPCONF() }.toff;     }
         uint8_t hstrt   () { return CHOPCONF_t{ CHOPCONF() }.hstrt;    }
@@ -158,10 +158,10 @@ namespace TMC2160_n {
 
     template<typename TYPE>
     struct GLOBAL_SCALER_i {
-        uint8_t GLOBAL_SCALER() {
+        uint8_t GLOBAL_SCALER() const {
             return r.sr;
         }
-        void GLOBAL_SCALER(uint8_t input) {
+        void GLOBAL_SCALER(const uint8_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -225,20 +225,20 @@ namespace TMC2160_n {
 
     template<typename TYPE>
     struct SHORT_CONF_i {
-        uint32_t SHORT_CONF() { return r.sr; }
-        void SHORT_CONF(uint32_t input) {
+        uint32_t SHORT_CONF() const { return r.sr; }
+        void SHORT_CONF(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void s2vs_level(uint8_t B)  { r.s2vs_level;  SHORT_CONF(r.sr); }
-        void s2g_level(uint8_t B)   { r.s2g_level;   SHORT_CONF(r.sr); }
-        void shortfilter(uint8_t B) { r.shortfilter; SHORT_CONF(r.sr); }
-        void shortdelay(bool B)     { r.shortdelay;  SHORT_CONF(r.sr); }
-        uint8_t s2vs_level()        { return r.s2vs_level;  }
-        uint8_t s2g_level()         { return r.s2g_level;   }
-        uint8_t shortfilter()       { return r.shortfilter; }
-        bool shortdelay()           { return r.shortdelay;  }
+        void s2vs_level(const uint8_t B)  { r.s2vs_level;  SHORT_CONF(r.sr); }
+        void s2g_level(const uint8_t B)   { r.s2g_level;   SHORT_CONF(r.sr); }
+        void shortfilter(const uint8_t B) { r.shortfilter; SHORT_CONF(r.sr); }
+        void shortdelay(const bool B)     { r.shortdelay;  SHORT_CONF(r.sr); }
+        uint8_t s2vs_level()  const { return r.s2vs_level;  }
+        uint8_t s2g_level()   const { return r.s2g_level;   }
+        uint8_t shortfilter() const { return r.shortfilter; }
+        bool shortdelay()     const { return r.shortdelay;  }
     protected:
         SHORT_CONF_t r{};
     };
@@ -264,22 +264,22 @@ namespace TMC2160_n {
 
     template<typename TYPE>
     struct DRV_CONF_i {
-        uint32_t DRV_CONF() { return r.sr; }
+        uint32_t DRV_CONF() const { return r.sr; }
         void DRV_CONF(uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void bbmtime(uint8_t B)     { r.bbmtime = B;        DRV_CONF(r.sr); }
-        void bbmclks(uint8_t B)     { r.bbmclks = B;        DRV_CONF(r.sr); }
-        void otselect(uint8_t B)    { r.otselect = B;       DRV_CONF(r.sr); }
-        void drvstrength(uint8_t B) { r.drvstrength = B;    DRV_CONF(r.sr); }
-        void filt_isense(uint8_t B) { r.filt_isense = B;    DRV_CONF(r.sr); }
-        uint8_t bbmtime()           { return r.bbmtime;     }
-        uint8_t bbmclks()           { return r.bbmclks;     }
-        uint8_t otselect()          { return r.otselect;    }
-        uint8_t drvstrength()       { return r.drvstrength; }
-        uint8_t filt_isense()       { return r.filt_isense; }
+        void bbmtime(const uint8_t B)     { r.bbmtime = B;        DRV_CONF(r.sr); }
+        void bbmclks(const uint8_t B)     { r.bbmclks = B;        DRV_CONF(r.sr); }
+        void otselect(const uint8_t B)    { r.otselect = B;       DRV_CONF(r.sr); }
+        void drvstrength(const uint8_t B) { r.drvstrength = B;    DRV_CONF(r.sr); }
+        void filt_isense(const uint8_t B) { r.filt_isense = B;    DRV_CONF(r.sr); }
+        uint8_t bbmtime()     const { return r.bbmtime;     }
+        uint8_t bbmclks()     const { return r.bbmclks;     }
+        uint8_t otselect()    const { return r.otselect;    }
+        uint8_t drvstrength() const { return r.drvstrength; }
+        uint8_t filt_isense() const { return r.filt_isense; }
     protected:
         DRV_CONF_t r{};
     };
@@ -307,31 +307,31 @@ namespace TMC2160_n {
 
     template<typename TYPE>
     struct PWMCONF_i {
-        uint32_t PWMCONF() {
+        uint32_t PWMCONF() const {
             return r.sr;
         }
-        void PWMCONF(uint32_t input) {
+        void PWMCONF(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void pwm_ofs        ( uint8_t B ) { r.pwm_ofs = B;       PWMCONF(r.sr); }
-        void pwm_grad       ( uint8_t B ) { r.pwm_grad = B;      PWMCONF(r.sr); }
-        void pwm_freq       ( uint8_t B ) { r.pwm_freq = B;      PWMCONF(r.sr); }
-        void pwm_autoscale  ( bool    B ) { r.pwm_autoscale = B; PWMCONF(r.sr); }
-        void pwm_autograd   ( bool    B ) { r.pwm_autograd = B;  PWMCONF(r.sr); }
-        void freewheel      ( uint8_t B ) { r.freewheel = B;     PWMCONF(r.sr); }
-        void pwm_reg        ( uint8_t B ) { r.pwm_reg = B;       PWMCONF(r.sr); }
-        void pwm_lim        ( uint8_t B ) { r.pwm_lim = B;       PWMCONF(r.sr); }
+        void pwm_ofs        ( const uint8_t B ) { r.pwm_ofs = B;       PWMCONF(r.sr); }
+        void pwm_grad       ( const uint8_t B ) { r.pwm_grad = B;      PWMCONF(r.sr); }
+        void pwm_freq       ( const uint8_t B ) { r.pwm_freq = B;      PWMCONF(r.sr); }
+        void pwm_autoscale  ( const bool    B ) { r.pwm_autoscale = B; PWMCONF(r.sr); }
+        void pwm_autograd   ( const bool    B ) { r.pwm_autograd = B;  PWMCONF(r.sr); }
+        void freewheel      ( const uint8_t B ) { r.freewheel = B;     PWMCONF(r.sr); }
+        void pwm_reg        ( const uint8_t B ) { r.pwm_reg = B;       PWMCONF(r.sr); }
+        void pwm_lim        ( const uint8_t B ) { r.pwm_lim = B;       PWMCONF(r.sr); }
 
-        uint8_t pwm_ofs()       { return r.pwm_ofs;      }
-        uint8_t pwm_grad()      { return r.pwm_grad;     }
-        uint8_t pwm_freq()      { return r.pwm_freq;     }
-        bool    pwm_autoscale() { return r.pwm_autoscale;}
-        bool    pwm_autograd()  { return r.pwm_autograd; }
-        uint8_t freewheel()     { return r.freewheel;    }
-        uint8_t pwm_reg()       { return r.pwm_reg;      }
-        uint8_t pwm_lim()       { return r.pwm_lim;      }
+        uint8_t pwm_ofs()       const { return r.pwm_ofs;      }
+        uint8_t pwm_grad()      const { return r.pwm_grad;     }
+        uint8_t pwm_freq()      const { return r.pwm_freq;     }
+        bool    pwm_autoscale() const { return r.pwm_autoscale;}
+        bool    pwm_autograd()  const { return r.pwm_autograd; }
+        uint8_t freewheel()     const { return r.freewheel;    }
+        uint8_t pwm_reg()       const { return r.pwm_reg;      }
+        uint8_t pwm_lim()       const { return r.pwm_lim;      }
     protected:
         PWMCONF_t r{};
     };

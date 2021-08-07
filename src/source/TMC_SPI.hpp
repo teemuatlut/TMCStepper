@@ -99,8 +99,8 @@ protected:
 	template<class> friend class TMC2208_n::FACTORY_CONF_i;
 	template<class> friend class TMC2208_n::PWM_AUTO_i; // Used by TMC5160
 
-	TMC_SPI(SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link);
-	TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, int8_t link);
+	TMC_SPI(SPIClass &spi, TMC_HAL::PinDef &cs, const int8_t link);
+	TMC_SPI(SW_SPIClass &spi, TMC_HAL::PinDef &cs, const int8_t link);
 
 	// |         8b        |       32b     |
 	// | Address or Status | Register data |
@@ -130,8 +130,8 @@ protected:
 	void endTransaction();
 	void transfer(const uint8_t count);
 	void transfer(void *buf, const uint8_t count);
-	void write(uint8_t addressByte, uint32_t config);
-	uint32_t read(uint8_t addressByte);
+	void write(const uint8_t addressByte, const uint32_t config);
+	uint32_t read(const uint8_t addressByte);
 
 	uint8_t status_response;
 
@@ -140,8 +140,8 @@ protected:
 
 	static uint32_t spi_speed; // Default 2MHz
 	const TMC_HAL::PinDef pinCS;
-	SPIClass *TMC_HW_SPI = nullptr;
-	SW_SPIClass *TMC_SW_SPI = nullptr;
+	SPIClass * const TMC_HW_SPI = nullptr;
+	SW_SPIClass * const TMC_SW_SPI = nullptr;
 
 	int8_t link_index;
 	static int8_t chain_length;
@@ -163,7 +163,7 @@ class TMC_SPI : public ::TMCStepper_n::TMC_SPI {
 		uint8_t buffer[3];
 	};
 
-	void write(uint8_t addressByte, uint32_t config);
+	void write(const uint8_t addressByte, uint32_t config);
 	uint32_t read(const uint32_t dummy);
 };
 

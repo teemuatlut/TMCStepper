@@ -90,11 +90,10 @@ uint32_t TMC_SPI::read(uint8_t addressByte) {
 }
 
 TMC_WEAK_FUNCTION
-void TMC_SPI::write(uint8_t addressByte, uint32_t config) {
+void TMC_SPI::write(const uint8_t addressByte, const uint32_t config) {
   OutputPin cs(pinCS);
   TransferData data;
-  addressByte |= TMC_WRITE;
-  data.address = addressByte;
+  data.address = addressByte | TMC_WRITE;
   data.data = __builtin_bswap32(config);
 
   beginTransaction();
@@ -179,7 +178,7 @@ uint32_t TMC2660_n::TMC_SPI::read(const uint32_t dummy) {
   return data.data >> 4;
 }
 
-void TMC2660_n::TMC_SPI::write(uint8_t addressByte, uint32_t config) {
+void TMC2660_n::TMC_SPI::write(const uint8_t addressByte, const uint32_t config) {
   TransferData data;
   OutputPin cs(pinCS);
 

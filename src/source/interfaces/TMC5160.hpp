@@ -41,26 +41,26 @@ namespace TMC5160_n {
 
     template<typename TYPE>
     struct GCONF_i {
-        void GCONF(uint32_t input) {
+        void GCONF(const uint32_t input) {
             static_cast<TYPE*>(this)->write(GCONF_t::address, input);
         }
-        void recalibrate(bool B)            { GCONF_t r{ GCONF() }; r.recalibrate = B;            GCONF(r.sr); }
-        void faststandstill(bool B)         { GCONF_t r{ GCONF() }; r.faststandstill = B;         GCONF(r.sr); }
-        void en_pwm_mode(bool B)            { GCONF_t r{ GCONF() }; r.en_pwm_mode = B;            GCONF(r.sr); }
-        void multistep_filt(bool B)         { GCONF_t r{ GCONF() }; r.multistep_filt = B;         GCONF(r.sr); }
-        void shaft(bool B)                  { GCONF_t r{ GCONF() }; r.shaft = B;                  GCONF(r.sr); }
-        void diag0_error(bool B)            { GCONF_t r{ GCONF() }; r.diag0_error = B;            GCONF(r.sr); }
-        void diag0_otpw(bool B)             { GCONF_t r{ GCONF() }; r.diag0_otpw = B;             GCONF(r.sr); }
-        void diag0_stall(bool B)            { GCONF_t r{ GCONF() }; r.diag0_stall = B;            GCONF(r.sr); }
-        void diag1_stall(bool B)            { GCONF_t r{ GCONF() }; r.diag1_stall = B;            GCONF(r.sr); }
-        void diag1_index(bool B)            { GCONF_t r{ GCONF() }; r.diag1_index = B;            GCONF(r.sr); }
-        void diag1_onstate(bool B)          { GCONF_t r{ GCONF() }; r.diag1_onstate = B;          GCONF(r.sr); }
-        void diag1_steps_skipped(bool B)    { GCONF_t r{ GCONF() }; r.diag1_steps_skipped = B;    GCONF(r.sr); }
-        void diag0_int_pushpull(bool B)     { GCONF_t r{ GCONF() }; r.diag0_int_pushpull = B;     GCONF(r.sr); }
-        void diag1_pushpull(bool B)         { GCONF_t r{ GCONF() }; r.diag1_poscomp_pushpull = B; GCONF(r.sr); }
-        void small_hysteresis(bool B)       { GCONF_t r{ GCONF() }; r.small_hysteresis = B;       GCONF(r.sr); }
-        void stop_enable(bool B)            { GCONF_t r{ GCONF() }; r.stop_enable = B;            GCONF(r.sr); }
-        void direct_mode(bool B)            { GCONF_t r{ GCONF() }; r.direct_mode = B;            GCONF(r.sr); }
+        void recalibrate(const bool B)            { GCONF_t r{ GCONF() }; r.recalibrate = B;            GCONF(r.sr); }
+        void faststandstill(const bool B)         { GCONF_t r{ GCONF() }; r.faststandstill = B;         GCONF(r.sr); }
+        void en_pwm_mode(const bool B)            { GCONF_t r{ GCONF() }; r.en_pwm_mode = B;            GCONF(r.sr); }
+        void multistep_filt(const bool B)         { GCONF_t r{ GCONF() }; r.multistep_filt = B;         GCONF(r.sr); }
+        void shaft(const bool B)                  { GCONF_t r{ GCONF() }; r.shaft = B;                  GCONF(r.sr); }
+        void diag0_error(const bool B)            { GCONF_t r{ GCONF() }; r.diag0_error = B;            GCONF(r.sr); }
+        void diag0_otpw(const bool B)             { GCONF_t r{ GCONF() }; r.diag0_otpw = B;             GCONF(r.sr); }
+        void diag0_stall(const bool B)            { GCONF_t r{ GCONF() }; r.diag0_stall = B;            GCONF(r.sr); }
+        void diag1_stall(const bool B)            { GCONF_t r{ GCONF() }; r.diag1_stall = B;            GCONF(r.sr); }
+        void diag1_index(const bool B)            { GCONF_t r{ GCONF() }; r.diag1_index = B;            GCONF(r.sr); }
+        void diag1_onstate(const bool B)          { GCONF_t r{ GCONF() }; r.diag1_onstate = B;          GCONF(r.sr); }
+        void diag1_steps_skipped(const bool B)    { GCONF_t r{ GCONF() }; r.diag1_steps_skipped = B;    GCONF(r.sr); }
+        void diag0_int_pushpull(const bool B)     { GCONF_t r{ GCONF() }; r.diag0_int_pushpull = B;     GCONF(r.sr); }
+        void diag1_pushpull(const bool B)         { GCONF_t r{ GCONF() }; r.diag1_poscomp_pushpull = B; GCONF(r.sr); }
+        void small_hysteresis(const bool B)       { GCONF_t r{ GCONF() }; r.small_hysteresis = B;       GCONF(r.sr); }
+        void stop_enable(const bool B)            { GCONF_t r{ GCONF() }; r.stop_enable = B;            GCONF(r.sr); }
+        void direct_mode(const bool B)            { GCONF_t r{ GCONF() }; r.direct_mode = B;            GCONF(r.sr); }
 
         uint32_t GCONF() {
             return static_cast<TYPE*>(this)->read(GCONF_t::address);
@@ -105,24 +105,25 @@ namespace TMC5160_n {
 
     template<typename TYPE>
     struct SLAVECONF_i {
-        void SLAVECONF(uint16_t input) {
+        void SLAVECONF(const uint16_t input) {
             r.sr = input&0xF00;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
-        uint16_t SLAVECONF() {
+        uint16_t SLAVECONF() const {
             return r.sr;
         }
-        void slaveaddr(uint8_t B) {
+        void slaveaddr(const uint8_t B) {
             r.slaveaddr = B;
             SLAVECONF(r.sr);
         }
-        uint8_t slaveaddr() {
+        uint8_t slaveaddr() const {
             return r.slaveaddr;
         }        
-        void senddelay(uint8_t B) {
-            r.senddelay = B; SLAVECONF(r.sr);
+        void senddelay(const uint8_t B) {
+            r.senddelay = B;
+            SLAVECONF(r.sr);
         }
-        uint8_t senddelay() {
+        uint8_t senddelay() const {
             return r.senddelay;
         }
     protected:
@@ -250,10 +251,10 @@ namespace TMC5160_n {
 
     template<typename TYPE>
     struct ENC_DEVIATION_i {
-        uint32_t ENC_DEVIATION() {
+        uint32_t ENC_DEVIATION() const {
             return r.sr;
         }
-        void ENC_DEVIATION(uint32_t input) {
+        void ENC_DEVIATION(const uint32_t input) {
             static_cast<TYPE*>(this)->write(ENC_DEVIATION_t::address, input);
         }
         protected:

@@ -39,27 +39,27 @@ namespace TMC2130_n {
         uint32_t GCONF() {
             return static_cast<TYPE*>(this)->read(GCONF_t::address);
         }
-        void GCONF(uint32_t input) {
+        void GCONF(const uint32_t input) {
             static_cast<TYPE*>(this)->write(GCONF_t::address, input);
         }
 
-        void I_scale_analog(bool B)         { GCONF_t r{ GCONF() }; r.i_scale_analog = B;         GCONF(r.sr); }
-        void internal_Rsense(bool B)        { GCONF_t r{ GCONF() }; r.internal_rsense = B;        GCONF(r.sr); }
-        void en_pwm_mode(bool B)            { GCONF_t r{ GCONF() }; r.en_pwm_mode = B;            GCONF(r.sr); }
-        void enc_commutation(bool B)        { GCONF_t r{ GCONF() }; r.enc_commutation = B;        GCONF(r.sr); }
-        void shaft(bool B)                  { GCONF_t r{ GCONF() }; r.shaft = B;                  GCONF(r.sr); }
-        void diag0_error(bool B)            { GCONF_t r{ GCONF() }; r.diag0_error = B;            GCONF(r.sr); }
-        void diag0_otpw(bool B)             { GCONF_t r{ GCONF() }; r.diag0_otpw = B;             GCONF(r.sr); }
-        void diag0_stall(bool B)            { GCONF_t r{ GCONF() }; r.diag0_stall = B;            GCONF(r.sr); }
-        void diag1_stall(bool B)            { GCONF_t r{ GCONF() }; r.diag1_stall = B;            GCONF(r.sr); }
-        void diag1_index(bool B)            { GCONF_t r{ GCONF() }; r.diag1_index = B;            GCONF(r.sr); }
-        void diag1_onstate(bool B)          { GCONF_t r{ GCONF() }; r.diag1_onstate = B;          GCONF(r.sr); }
-        void diag1_steps_skipped(bool B)    { GCONF_t r{ GCONF() }; r.diag1_steps_skipped = B;    GCONF(r.sr); }
-        void diag0_int_pushpull(bool B)     { GCONF_t r{ GCONF() }; r.diag0_int_pushpull = B;     GCONF(r.sr); }
-        void diag1_pushpull(bool B)         { GCONF_t r{ GCONF() }; r.diag1_pushpull = B;         GCONF(r.sr); }
-        void small_hysteresis(bool B)       { GCONF_t r{ GCONF() }; r.small_hysteresis = B;       GCONF(r.sr); }
-        void stop_enable(bool B)            { GCONF_t r{ GCONF() }; r.stop_enable = B;            GCONF(r.sr); }
-        void direct_mode(bool B)            { GCONF_t r{ GCONF() }; r.direct_mode = B;            GCONF(r.sr); }
+        void I_scale_analog(const bool B)         { GCONF_t r{ GCONF() }; r.i_scale_analog = B;         GCONF(r.sr); }
+        void internal_Rsense(const bool B)        { GCONF_t r{ GCONF() }; r.internal_rsense = B;        GCONF(r.sr); }
+        void en_pwm_mode(const bool B)            { GCONF_t r{ GCONF() }; r.en_pwm_mode = B;            GCONF(r.sr); }
+        void enc_commutation(const bool B)        { GCONF_t r{ GCONF() }; r.enc_commutation = B;        GCONF(r.sr); }
+        void shaft(const bool B)                  { GCONF_t r{ GCONF() }; r.shaft = B;                  GCONF(r.sr); }
+        void diag0_error(const bool B)            { GCONF_t r{ GCONF() }; r.diag0_error = B;            GCONF(r.sr); }
+        void diag0_otpw(const bool B)             { GCONF_t r{ GCONF() }; r.diag0_otpw = B;             GCONF(r.sr); }
+        void diag0_stall(const bool B)            { GCONF_t r{ GCONF() }; r.diag0_stall = B;            GCONF(r.sr); }
+        void diag1_stall(const bool B)            { GCONF_t r{ GCONF() }; r.diag1_stall = B;            GCONF(r.sr); }
+        void diag1_index(const bool B)            { GCONF_t r{ GCONF() }; r.diag1_index = B;            GCONF(r.sr); }
+        void diag1_onstate(const bool B)          { GCONF_t r{ GCONF() }; r.diag1_onstate = B;          GCONF(r.sr); }
+        void diag1_steps_skipped(const bool B)    { GCONF_t r{ GCONF() }; r.diag1_steps_skipped = B;    GCONF(r.sr); }
+        void diag0_int_pushpull(const bool B)     { GCONF_t r{ GCONF() }; r.diag0_int_pushpull = B;     GCONF(r.sr); }
+        void diag1_pushpull(const bool B)         { GCONF_t r{ GCONF() }; r.diag1_pushpull = B;         GCONF(r.sr); }
+        void small_hysteresis(const bool B)       { GCONF_t r{ GCONF() }; r.small_hysteresis = B;       GCONF(r.sr); }
+        void stop_enable(const bool B)            { GCONF_t r{ GCONF() }; r.stop_enable = B;            GCONF(r.sr); }
+        void direct_mode(const bool B)            { GCONF_t r{ GCONF() }; r.direct_mode = B;            GCONF(r.sr); }
 
         bool I_scale_analog()               { return GCONF_t{ GCONF() }.i_scale_analog;         }
         bool internal_Rsense()              { return GCONF_t{ GCONF() }.internal_rsense;        }
@@ -156,34 +156,34 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct IHOLD_IRUN_i {
-        uint32_t IHOLD_IRUN() {
+        uint32_t IHOLD_IRUN() const {
             return r.sr;
         }
-        void IHOLD_IRUN(uint32_t input) {
+        void IHOLD_IRUN(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void ihold(uint8_t B) {
+        void ihold(const uint8_t B) {
             r.ihold = B;
             IHOLD_IRUN(r.sr);
         }
-        void irun(uint8_t B) {
+        void irun(const uint8_t B) {
             r.irun = B;
             IHOLD_IRUN(r.sr);
         }
-        void iholddelay(uint8_t B) {
+        void iholddelay(const uint8_t B) {
             r.iholddelay = B;
             IHOLD_IRUN(r.sr);
         }
 
-        uint8_t ihold() {
+        uint8_t ihold() const {
             return r.ihold;
         }
-        uint8_t irun() {
+        uint8_t irun() const {
             return r.irun;
         }
-        uint8_t iholddelay() {
+        uint8_t iholddelay() const {
             return r.iholddelay;
         }
 
@@ -199,8 +199,8 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct TPOWERDOWN_i {
-        uint8_t TPOWERDOWN() { return r.sr; }
-        void TPOWERDOWN(uint8_t input) {
+        uint8_t TPOWERDOWN() const { return r.sr; }
+        void TPOWERDOWN(const uint8_t input) {
           r.sr = input;
           static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -229,8 +229,8 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct TPWMTHRS_i {
-        uint8_t TPWMTHRS() { return r.sr; }
-        void TPWMTHRS(uint8_t input) {
+        uint8_t TPWMTHRS() const { return r.sr; }
+        void TPWMTHRS(const uint8_t input) {
           r.sr = input;
           static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -247,8 +247,8 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct TCOOLTHRS_i  {
-        uint32_t TCOOLTHRS() { return r.sr; }
-        void TCOOLTHRS(uint32_t input) {
+        uint32_t TCOOLTHRS() const { return r.sr; }
+        void TCOOLTHRS(const uint32_t input) {
           r.sr = input;
           static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -265,8 +265,8 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct THIGH_i {
-        uint32_t THIGH() { return r.sr; }
-        void THIGH(uint32_t input) {
+        uint32_t THIGH() const { return r.sr; }
+        void THIGH(const uint32_t input) {
           r.sr = input;
           static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -296,11 +296,11 @@ namespace TMC2130_n {
         uint32_t XDIRECT() {
             return static_cast<TYPE*>(this)->read(XDIRECT_t::address);
         }
-        void XDIRECT(uint32_t input) {
+        void XDIRECT(const uint32_t input) {
             static_cast<TYPE*>(this)->write(XDIRECT_t::address, input);
         }
-        void coil_A(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_A = B; XDIRECT(r.sr); }
-        void coil_B(int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_B = B; XDIRECT(r.sr); }
+        void coil_A(const int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_A = B; XDIRECT(r.sr); }
+        void coil_B(const int16_t B)  { XDIRECT_t r{ XDIRECT() }; r.coil_B = B; XDIRECT(r.sr); }
         int16_t coil_A()        { return XDIRECT_t{ XDIRECT() }.coil_A; }
         int16_t coil_B()        { return XDIRECT_t{ XDIRECT() }.coil_B; }
     };
@@ -313,8 +313,8 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct VDCMIN_i {
-        uint32_t VDCMIN() { return r.sr; }
-        void VDCMIN(uint32_t input) {
+        uint32_t VDCMIN() const { return r.sr; }
+        void VDCMIN(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
@@ -328,7 +328,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT0_i {
-        void MSLUT0(uint32_t input) {
+        void MSLUT0(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT0_t::address, input);
         }
     };
@@ -338,7 +338,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT1_i {
-        void MSLUT1(uint32_t input) {
+        void MSLUT1(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT1_t::address, input);
         }
     };
@@ -348,7 +348,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT2_i {
-        void MSLUT2(uint32_t input) {
+        void MSLUT2(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT2_t::address, input);
         }
     };
@@ -358,7 +358,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT3_i {
-        void MSLUT3(uint32_t input) {
+        void MSLUT3(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT3_t::address, input);
         }
     };
@@ -368,7 +368,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT4_i {
-        void MSLUT4(uint32_t input) {
+        void MSLUT4(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT4_t::address, input);
         }
     };
@@ -378,7 +378,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT5_i {
-        void MSLUT5(uint32_t input) {
+        void MSLUT5(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT5_t::address, input);
         }
     };
@@ -388,7 +388,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT6_i {
-        void MSLUT6(uint32_t input) {
+        void MSLUT6(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT6_t::address, input);
         }
     };
@@ -398,7 +398,7 @@ namespace TMC2130_n {
     };
     template<typename TYPE>
     struct MSLUT7_i {
-        void MSLUT7(uint32_t input) {
+        void MSLUT7(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUT7_t::address, input);
         }
     };
@@ -424,10 +424,10 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct MSLUTSEL_i {
-        uint32_t MSLUTSEL() {
+        uint32_t MSLUTSEL() const {
             return r.sr;
         }
-        void MSLUTSEL(uint32_t input) {
+        void MSLUTSEL(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUTSEL_t::address, input);
         }
         protected:
@@ -451,10 +451,10 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct MSLUTSTART_i {
-        uint32_t MSLUTSTART() {
+        uint32_t MSLUTSTART() const {
             return r.sr;
         }
-        void MSLUTSTART(uint32_t input) {
+        void MSLUTSTART(const uint32_t input) {
             static_cast<TYPE*>(this)->write(MSLUTSTART_t::address, input);
         }
         protected:
@@ -540,7 +540,7 @@ namespace TMC2130_n {
         uint32_t CHOPCONF() {
             return static_cast<TYPE*>(this)->read(CHOPCONF_t::address);
         }
-        void CHOPCONF(uint32_t input) {
+        void CHOPCONF(const uint32_t input) {
             static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
         }
 
@@ -548,22 +548,22 @@ namespace TMC2130_n {
          * @brief Enable driver and set off time for spreadcycle
          * @param B Off time value
          */
-        void toff(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;       CHOPCONF(r.sr); }
-        void hstrt(     uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;      CHOPCONF(r.sr); }
-        void hend(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
-        //void fd(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.fd = B;         CHOPCONF(r.sr); }
-        void disfdcc(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.disfdcc = B;    CHOPCONF(r.sr); }
-        void rndtf(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.rndtf = B;      CHOPCONF(r.sr); }
-        void chm(       bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.chm = B;        CHOPCONF(r.sr); }
-        void tbl(       uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
-        void vsense(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vsense = B;     CHOPCONF(r.sr); }
-        void vhighfs(   bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighfs = B;    CHOPCONF(r.sr); }
-        void vhighchm(  bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighchm = B;   CHOPCONF(r.sr); }
-        void sync(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.sync = B;       CHOPCONF(r.sr); }
-        void mres(      uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
-        void intpol(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
-        void dedge(     bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
-        void diss2g(    bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
+        void toff(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;       CHOPCONF(r.sr); }
+        void hstrt(     const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;      CHOPCONF(r.sr); }
+        void hend(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;       CHOPCONF(r.sr); }
+        //void fd(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.fd = B;         CHOPCONF(r.sr); }
+        void disfdcc(   const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.disfdcc = B;    CHOPCONF(r.sr); }
+        void rndtf(     const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.rndtf = B;      CHOPCONF(r.sr); }
+        void chm(       const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.chm = B;        CHOPCONF(r.sr); }
+        void tbl(       const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;        CHOPCONF(r.sr); }
+        void vsense(    const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vsense = B;     CHOPCONF(r.sr); }
+        void vhighfs(   const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighfs = B;    CHOPCONF(r.sr); }
+        void vhighchm(  const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.vhighchm = B;   CHOPCONF(r.sr); }
+        void sync(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.sync = B;       CHOPCONF(r.sr); }
+        void mres(      const uint8_t B ) { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;       CHOPCONF(r.sr); }
+        void intpol(    const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;     CHOPCONF(r.sr); }
+        void dedge(     const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;      CHOPCONF(r.sr); }
+        void diss2g(    const bool    B ) { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;     CHOPCONF(r.sr); }
 
         /**
          * @brief Get off time value
@@ -612,28 +612,28 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct COOLCONF_i {
-        uint32_t COOLCONF() { return r.sr; }
-        void COOLCONF(uint32_t input) {
+        uint32_t COOLCONF() const { return r.sr; }
+        void COOLCONF(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void semin( uint8_t B ) { r.semin = B;  COOLCONF(r.sr); }
-        void seup(  uint8_t B ) { r.seup = B;   COOLCONF(r.sr); }
-        void semax( uint8_t B ) { r.semax = B;  COOLCONF(r.sr); }
-        void sedn(  uint8_t B ) { r.sedn = B;   COOLCONF(r.sr); }
-        void seimin(bool    B ) { r.seimin = B; COOLCONF(r.sr); }
-        void sgt(   int8_t  B ) { r.sgt = B;    COOLCONF(r.sr); }
-        void sfilt( bool    B ) { r.sfilt = B;  COOLCONF(r.sr); }
+        void semin( const uint8_t B ) { r.semin = B;  COOLCONF(r.sr); }
+        void seup(  const uint8_t B ) { r.seup = B;   COOLCONF(r.sr); }
+        void semax( const uint8_t B ) { r.semax = B;  COOLCONF(r.sr); }
+        void sedn(  const uint8_t B ) { r.sedn = B;   COOLCONF(r.sr); }
+        void seimin(const bool    B ) { r.seimin = B; COOLCONF(r.sr); }
+        void sgt(   const int8_t  B ) { r.sgt = B;    COOLCONF(r.sr); }
+        void sfilt( const bool    B ) { r.sfilt = B;  COOLCONF(r.sr); }
 
-        uint8_t semin() { return r.semin;   }
-        uint8_t seup()  { return r.seup;    }
-        uint8_t semax() { return r.semax;   }
-        uint8_t sedn()  { return r.sedn;    }
-        bool    seimin(){ return r.seimin;  }
-        bool    sfilt() { return r.sfilt;   }
+        uint8_t semin()  const { return r.semin;   }
+        uint8_t seup()   const { return r.seup;    }
+        uint8_t semax()  const { return r.semax;   }
+        uint8_t sedn()   const { return r.sedn;    }
+        bool    seimin() const { return r.seimin;  }
+        bool    sfilt()  const { return r.sfilt;   }
 
-        int8_t sgt() {
+        int8_t sgt() const {
             // Two's complement in a 7bit value
             int8_t val = (r.sgt &  0x40) << 1; // Isolate sign bit
             val |= r.sgt & 0x7F;
@@ -661,15 +661,15 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct DCCTRL_i {
-        void DCCTRL(uint32_t input) {
+        void DCCTRL(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
-        void dc_time(uint16_t input) {
+        void dc_time(const uint16_t input) {
             r.dc_time = input;
             DCCTRL(r.sr);
         }
-        void dc_sg(uint8_t input) {
+        void dc_sg(const uint8_t input) {
             r.dc_sg = input;
             DCCTRL(r.sr);
         }
@@ -752,25 +752,25 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct PWMCONF_i {
-        uint32_t PWMCONF() { return r.sr; }
-        void PWMCONF(uint32_t input) {
+        uint32_t PWMCONF() const { return r.sr; }
+        void PWMCONF(const uint32_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void pwm_ampl(      uint8_t B ) { r.pwm_ampl = B;        PWMCONF(r.sr); }
-        void pwm_grad(      uint8_t B ) { r.pwm_grad = B;        PWMCONF(r.sr); }
-        void pwm_freq(      uint8_t B ) { r.pwm_freq = B;        PWMCONF(r.sr); }
-        void pwm_autoscale( bool    B ) { r.pwm_autoscale = B;   PWMCONF(r.sr); }
-        void pwm_symmetric( bool    B ) { r.pwm_symmetric = B;   PWMCONF(r.sr); }
-        void freewheel(     uint8_t B ) { r.freewheel = B;       PWMCONF(r.sr); }
+        void pwm_ampl(      const uint8_t B ) { r.pwm_ampl = B;        PWMCONF(r.sr); }
+        void pwm_grad(      const uint8_t B ) { r.pwm_grad = B;        PWMCONF(r.sr); }
+        void pwm_freq(      const uint8_t B ) { r.pwm_freq = B;        PWMCONF(r.sr); }
+        void pwm_autoscale( const bool    B ) { r.pwm_autoscale = B;   PWMCONF(r.sr); }
+        void pwm_symmetric( const bool    B ) { r.pwm_symmetric = B;   PWMCONF(r.sr); }
+        void freewheel(     const uint8_t B ) { r.freewheel = B;       PWMCONF(r.sr); }
 
-        uint8_t pwm_ampl()      { return r.pwm_ampl;     }
-        uint8_t pwm_grad()      { return r.pwm_grad;     }
-        uint8_t pwm_freq()      { return r.pwm_freq;     }
-        bool    pwm_autoscale() { return r.pwm_autoscale;}
-        bool    pwm_symmetric() { return r.pwm_symmetric;}
-        uint8_t freewheel()     { return r.freewheel;    }
+        uint8_t pwm_ampl()      const { return r.pwm_ampl;     }
+        uint8_t pwm_grad()      const { return r.pwm_grad;     }
+        uint8_t pwm_freq()      const { return r.pwm_freq;     }
+        bool    pwm_autoscale() const { return r.pwm_autoscale;}
+        bool    pwm_symmetric() const { return r.pwm_symmetric;}
+        uint8_t freewheel()     const { return r.freewheel;    }
 
     protected:
         PWMCONF_t r{{0x00050480}};
@@ -800,16 +800,15 @@ namespace TMC2130_n {
 
     template<typename TYPE>
     struct ENCM_CTRL_i {
-
-        uint8_t ENCM_CTRL() { return r.sr; }
+        uint8_t ENCM_CTRL() const { return r.sr; }
         void ENCM_CTRL(uint8_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
-        void inv(bool B)      { r.inv = B;       ENCM_CTRL(r.sr); }
-        void maxspeed(bool B) { r.maxspeed  = B; ENCM_CTRL(r.sr); }
-        bool inv()            { return r.inv; }
-        bool maxspeed()       { return r.maxspeed; }
+        void inv(const bool B)      { r.inv = B;       ENCM_CTRL(r.sr); }
+        void maxspeed(const bool B) { r.maxspeed  = B; ENCM_CTRL(r.sr); }
+        bool inv()            const { return r.inv; }
+        bool maxspeed()       const { return r.maxspeed; }
 
     protected:
         ENCM_CTRL_t r{};

@@ -1,6 +1,6 @@
 #include "../TMCStepper.h"
 
-TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t addr) :
+TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, const float RS, const uint8_t addr) :
 	TMC_UART(&SerialPort, addr),
 	TMC_RMS(RS)
 	{
@@ -8,7 +8,7 @@ TMC2209Stepper::TMC2209Stepper(HardwareSerial &SerialPort, float RS, uint8_t add
 	}
 
 #if SW_CAPABLE_PLATFORM
-	TMC2209Stepper::TMC2209Stepper(SoftwareSerial &SWSerial, float RS, uint8_t addr) :
+	TMC2209Stepper::TMC2209Stepper(SoftwareSerial &SWSerial, const float RS, const uint8_t addr) :
 		TMC_UART(&SWSerial, addr),
 		TMC_RMS(RS)
 		{

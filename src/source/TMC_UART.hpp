@@ -68,20 +68,20 @@ protected:
   template<class> friend class TMC2300_n::PWM_SCALE_i;
   template<class> friend class TMC2300_n::PWM_AUTO_i;
 
-  TMC_UART(HardwareSerial * SerialPort, uint8_t addr = TMC2208_SLAVE_ADDR, SSwitch *sw = nullptr);
+  TMC_UART(HardwareSerial * SerialPort, const uint8_t addr = TMC2208_SLAVE_ADDR, SSwitch * const sw = nullptr);
   #if SW_CAPABLE_PLATFORM
-    TMC_UART(SoftwareSerial *ser, uint8_t addr);
+    TMC_UART(SoftwareSerial *ser, const uint8_t addr);
   #endif
 
   static constexpr uint8_t TMC_READ = 0x00,
                           TMC_WRITE = 0x80;
 
-  HardwareSerial * HWSerial = nullptr;
+  HardwareSerial * const HWSerial = nullptr;
   #if SW_CAPABLE_PLATFORM
-    SoftwareSerial * SWSerial = nullptr;
+    SoftwareSerial * const SWSerial = nullptr;
   #endif
 
-  SSwitch *sswitch = nullptr;
+  SSwitch * const sswitch = nullptr;
 
   static constexpr uint8_t  TMC2208_SYNC = 0x05,
                             TMC2208_SLAVE_ADDR = 0x00;
@@ -120,17 +120,17 @@ protected:
   size_t serial_write(const void *data, int8_t length);
   void postWriteCommunication();
   void postReadCommunication();
-  void write(uint8_t, uint32_t);
-  uint32_t read(uint8_t);
+  void write(const uint8_t, const uint32_t);
+  uint32_t read(const uint8_t);
   const uint8_t slaveAddress;
-  uint8_t calcCRC(uint8_t datagram[], uint8_t len);
+  uint8_t calcCRC(const uint8_t datagram[], const uint8_t len);
 
   ReadResponse sendReadRequest(ReadRequest &datagram);
 
   uint16_t bytesWritten = 0;
   bool CRCerror = false;
 
-  void WaitForInhibitTime();
+  void WaitForInhibitTime() const;
 
   static constexpr uint8_t WriteInhibitTime = 4; // Prevent too fast communication attempts
   uint32_t lastWriteTime = 0;

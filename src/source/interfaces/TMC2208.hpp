@@ -37,15 +37,15 @@ namespace TMC2208_n {
 			static_cast<TYPE*>(this)->write(GCONF_t::address, input);
 		}
 
-		void I_scale_analog(bool B)     { GCONF_t r{ GCONF() }; r.i_scale_analog = B;    GCONF(r.sr); }
-		void internal_Rsense(bool B)    { GCONF_t r{ GCONF() }; r.internal_rsense = B;   GCONF(r.sr); }
-		void en_spreadCycle(bool B)     { GCONF_t r{ GCONF() }; r.en_spreadcycle = B;    GCONF(r.sr); }
-		void shaft(bool B)              { GCONF_t r{ GCONF() }; r.shaft = B;             GCONF(r.sr); }
-		void index_otpw(bool B)         { GCONF_t r{ GCONF() }; r.index_otpw = B;        GCONF(r.sr); }
-		void index_step(bool B)         { GCONF_t r{ GCONF() }; r.index_step = B;        GCONF(r.sr); }
-		void pdn_disable(bool B)        { GCONF_t r{ GCONF() }; r.pdn_disable = B;       GCONF(r.sr); }
-		void mstep_reg_select(bool B)   { GCONF_t r{ GCONF() }; r.mstep_reg_select = B;  GCONF(r.sr); }
-		void multistep_filt(bool B)     { GCONF_t r{ GCONF() }; r.multistep_filt = B;    GCONF(r.sr); }
+		void I_scale_analog(const bool B)     { GCONF_t r{ GCONF() }; r.i_scale_analog = B;    GCONF(r.sr); }
+		void internal_Rsense(const bool B)    { GCONF_t r{ GCONF() }; r.internal_rsense = B;   GCONF(r.sr); }
+		void en_spreadCycle(const bool B)     { GCONF_t r{ GCONF() }; r.en_spreadcycle = B;    GCONF(r.sr); }
+		void shaft(const bool B)              { GCONF_t r{ GCONF() }; r.shaft = B;             GCONF(r.sr); }
+		void index_otpw(const bool B)         { GCONF_t r{ GCONF() }; r.index_otpw = B;        GCONF(r.sr); }
+		void index_step(const bool B)         { GCONF_t r{ GCONF() }; r.index_step = B;        GCONF(r.sr); }
+		void pdn_disable(const bool B)        { GCONF_t r{ GCONF() }; r.pdn_disable = B;       GCONF(r.sr); }
+		void mstep_reg_select(const bool B)   { GCONF_t r{ GCONF() }; r.mstep_reg_select = B;  GCONF(r.sr); }
+		void multistep_filt(const bool B)     { GCONF_t r{ GCONF() }; r.multistep_filt = B;    GCONF(r.sr); }
 
 		bool I_scale_analog()   { return GCONF_t{ GCONF() }.i_scale_analog;  }
 		bool internal_Rsense()  { return GCONF_t{ GCONF() }.internal_rsense; }
@@ -89,17 +89,17 @@ namespace TMC2208_n {
 
 	template<typename TYPE>
 	struct SLAVECONF_i {
-		void SLAVECONF(uint16_t input) {
+		void SLAVECONF(const uint16_t input) {
 			r.sr = input&0xF00;
 			static_cast<TYPE*>(this)->write(r.address, r.sr);
 		}
-		uint16_t SLAVECONF() {
+		uint16_t SLAVECONF() const {
 			return r.sr;
 		}
-		void senddelay(uint8_t B) {
+		void senddelay(const uint8_t B) {
 			r.senddelay = B; SLAVECONF(r.sr);
 		}
-		uint8_t senddelay() {
+		uint8_t senddelay() const {
 			return r.senddelay;
 		}
 	protected:
@@ -111,7 +111,7 @@ namespace TMC2208_n {
 
 	template<typename TYPE>
 	struct OTP_PROG_i {
-		void OTP_PROG(uint16_t input) {
+		void OTP_PROG(const uint16_t input) {
 			static_cast<TYPE*>(this)->write(OTP_PROG_t::address, input);
 		}
 	};
@@ -184,11 +184,11 @@ namespace TMC2208_n {
 		uint16_t FACTORY_CONF() {
 			return static_cast<TYPE*>(this)->read(FACTORY_CONF_t::address);
 		}
-		void FACTORY_CONF(uint16_t input) {
+		void FACTORY_CONF(const uint16_t input) {
 			static_cast<TYPE*>(this)->write(FACTORY_CONF_t::address, input);
 		}
-		void fclktrim(uint8_t B){ FACTORY_CONF_t r{ FACTORY_CONF() }; r.fclktrim = B;   FACTORY_CONF(r.sr); }
-		void ottrim(uint8_t B)  { FACTORY_CONF_t r{ FACTORY_CONF() }; r.ottrim = B;     FACTORY_CONF(r.sr); }
+		void fclktrim(const uint8_t B){ FACTORY_CONF_t r{ FACTORY_CONF() }; r.fclktrim = B;   FACTORY_CONF(r.sr); }
+		void ottrim(const uint8_t B)  { FACTORY_CONF_t r{ FACTORY_CONF() }; r.ottrim = B;     FACTORY_CONF(r.sr); }
 		uint8_t fclktrim()      { return FACTORY_CONF_t{ FACTORY_CONF() }.fclktrim; }
 		uint8_t ottrim()        { return FACTORY_CONF_t{ FACTORY_CONF() }.ottrim; }
 	};
@@ -210,11 +210,11 @@ namespace TMC2208_n {
 
 	template<typename TYPE>
 	struct VACTUAL_i {
-		void VACTUAL(uint32_t input) {
+		void VACTUAL(const uint32_t input) {
 			r.sr = input;
 			static_cast<TYPE*>(this)->write(r.address, input);
 		}
-		uint32_t VACTUAL() {
+		uint32_t VACTUAL() const {
 			return r.sr;
 		}
 	protected:
@@ -252,22 +252,22 @@ namespace TMC2208_n {
 
 	template<typename TYPE>
 	struct CHOPCONF_i {
-		void CHOPCONF(uint32_t input) {
+		void CHOPCONF(const uint32_t input) {
 			static_cast<TYPE*>(this)->write(CHOPCONF_t::address, input);
 		}
 		uint32_t CHOPCONF() {
 			return static_cast<TYPE*>(this)->read(CHOPCONF_t::address);
 		}
-		void toff   ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;    CHOPCONF(r.sr); }
-		void hstrt  ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;   CHOPCONF(r.sr); }
-		void hend   ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;    CHOPCONF(r.sr); }
-		void tbl    ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;     CHOPCONF(r.sr); }
-		void vsense ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.vsense = B;  CHOPCONF(r.sr); }
-		void mres   ( uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;    CHOPCONF(r.sr); }
-		void intpol ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;  CHOPCONF(r.sr); }
-		void dedge  ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;   CHOPCONF(r.sr); }
-		void diss2g ( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;  CHOPCONF(r.sr); }
-		void diss2vs( bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B; CHOPCONF(r.sr); }
+		void toff   ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.toff = B;    CHOPCONF(r.sr); }
+		void hstrt  ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.hstrt = B;   CHOPCONF(r.sr); }
+		void hend   ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.hend = B;    CHOPCONF(r.sr); }
+		void tbl    ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.tbl = B;     CHOPCONF(r.sr); }
+		void vsense ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.vsense = B;  CHOPCONF(r.sr); }
+		void mres   ( const uint8_t  B )  { CHOPCONF_t r{ CHOPCONF() }; r.mres = B;    CHOPCONF(r.sr); }
+		void intpol ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.intpol = B;  CHOPCONF(r.sr); }
+		void dedge  ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.dedge = B;   CHOPCONF(r.sr); }
+		void diss2g ( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2g = B;  CHOPCONF(r.sr); }
+		void diss2vs( const bool     B )  { CHOPCONF_t r{ CHOPCONF() }; r.diss2vs = B; CHOPCONF(r.sr); }
 
 		uint8_t toff()      { return CHOPCONF_t{ CHOPCONF() }.toff;      }
 		uint8_t hstrt()     { return CHOPCONF_t{ CHOPCONF() }.hstrt;     }
@@ -360,18 +360,18 @@ namespace TMC2208_n {
 		uint32_t PWMCONF() {
 			return static_cast<TYPE*>(this)->read(PWMCONF_t::address);
 		}
-		void PWMCONF(uint32_t input) {
+		void PWMCONF(const uint32_t input) {
 			static_cast<TYPE*>(this)->write(PWMCONF_t::address, input);
 		}
 
-		void pwm_ofs        ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_ofs = B;        PWMCONF(r.sr); }
-		void pwm_grad       ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_grad = B;       PWMCONF(r.sr); }
-		void pwm_freq       ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_freq = B;       PWMCONF(r.sr); }
-		void pwm_autoscale  ( bool    B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_autoscale = B;  PWMCONF(r.sr); }
-		void pwm_autograd   ( bool    B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_autograd = B;   PWMCONF(r.sr); }
-		void freewheel      ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.freewheel = B;      PWMCONF(r.sr); }
-		void pwm_reg        ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_reg = B;        PWMCONF(r.sr); }
-		void pwm_lim        ( uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_lim = B;        PWMCONF(r.sr); }
+		void pwm_ofs        ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_ofs = B;        PWMCONF(r.sr); }
+		void pwm_grad       ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_grad = B;       PWMCONF(r.sr); }
+		void pwm_freq       ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_freq = B;       PWMCONF(r.sr); }
+		void pwm_autoscale  ( const bool    B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_autoscale = B;  PWMCONF(r.sr); }
+		void pwm_autograd   ( const bool    B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_autograd = B;   PWMCONF(r.sr); }
+		void freewheel      ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.freewheel = B;      PWMCONF(r.sr); }
+		void pwm_reg        ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_reg = B;        PWMCONF(r.sr); }
+		void pwm_lim        ( const uint8_t B ) { PWMCONF_t r{ PWMCONF() }; r.pwm_lim = B;        PWMCONF(r.sr); }
 
 		uint8_t pwm_ofs()       { return PWMCONF_t{ PWMCONF() }.pwm_ofs;         }
 		uint8_t pwm_grad()      { return PWMCONF_t{ PWMCONF() }.pwm_grad;        }

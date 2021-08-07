@@ -3,14 +3,14 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
-TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, float RS, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(SPIClass &spi, PinDef cs, const float RS, const int8_t link) :
   TMC_SPI(spi, cs, link),
   TMC_RMS(RS)
   {
     resetLibCache();
   }
 
-TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, float RS, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(SW_SPIClass &spi, PinDef cs, const float RS, const int8_t link) :
   TMC_SPI(spi, cs, link),
   TMC_RMS(RS)
   {
@@ -72,7 +72,7 @@ void TMC2130Stepper::push() {
   ENCM_CTRL(ENCM_CTRL_i::r.sr);
 }
 
-void TMC2130Stepper::sg_current_decrease(uint8_t value) {
+void TMC2130Stepper::sg_current_decrease(const uint8_t value) {
   switch(value) {
     case 32: sedn(0b00); break;
     case  8: sedn(0b01); break;

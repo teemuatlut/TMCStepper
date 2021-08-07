@@ -57,11 +57,11 @@ namespace TMC2209_n {
 
     template<typename TYPE>
     struct SGTHRS_i {
-        void SGTHRS(uint8_t input) {
+        void SGTHRS(const uint8_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
-        uint8_t SGTHRS() {
+        uint8_t SGTHRS() const {
             return r.sr;
         }
     protected:
@@ -102,23 +102,23 @@ namespace TMC2209_n {
 
     template<typename TYPE>
     struct COOLCONF_i {
-        uint16_t COOLCONF() { return r.sr; }
-        void COOLCONF(uint16_t input) {
+        uint16_t COOLCONF() const { return r.sr; }
+        void COOLCONF(const uint16_t input) {
             r.sr = input;
             static_cast<TYPE*>(this)->write(r.address, r.sr);
         }
 
-        void semin( uint8_t B ) { r.semin = B;  COOLCONF(r.sr); }
-        void seup(  uint8_t B ) { r.seup = B;   COOLCONF(r.sr); }
-        void semax( uint8_t B ) { r.semax = B;  COOLCONF(r.sr); }
-        void sedn(  uint8_t B ) { r.sedn = B;   COOLCONF(r.sr); }
-        void seimin(bool    B ) { r.seimin = B; COOLCONF(r.sr); }
+        void semin( const uint8_t B ) { r.semin = B;  COOLCONF(r.sr); }
+        void seup(  const uint8_t B ) { r.seup = B;   COOLCONF(r.sr); }
+        void semax( const uint8_t B ) { r.semax = B;  COOLCONF(r.sr); }
+        void sedn(  const uint8_t B ) { r.sedn = B;   COOLCONF(r.sr); }
+        void seimin(const bool    B ) { r.seimin = B; COOLCONF(r.sr); }
 
-        uint8_t semin() { return r.semin;   }
-        uint8_t seup()  { return r.seup;    }
-        uint8_t semax() { return r.semax;   }
-        uint8_t sedn()  { return r.sedn;    }
-        bool    seimin(){ return r.seimin;  }
+        uint8_t semin()  const { return r.semin;   }
+        uint8_t seup()   const { return r.seup;    }
+        uint8_t semax()  const { return r.semax;   }
+        uint8_t sedn()   const { return r.sedn;    }
+        bool    seimin() const { return r.seimin;  }
 
         protected:
             COOLCONF_t r{};

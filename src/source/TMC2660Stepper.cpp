@@ -4,12 +4,12 @@
 using namespace TMCStepper_n;
 using namespace TMC_HAL;
 
-TMC2660Stepper::TMC2660Stepper(SPIClass &spi, PinDef cs, float RS, const int8_t link_index) :
+TMC2660Stepper::TMC2660Stepper(SPIClass &spi, PinDef cs, const float RS, const int8_t link_index) :
   TMC_SPI(spi, cs, link_index),
   Rsense(RS)
   {}
 
-TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, float RS, const int8_t link_index) :
+TMC2660Stepper::TMC2660Stepper(SW_SPIClass &spi, PinDef cs, const float RS, const int8_t link_index) :
   TMC_SPI(spi, cs, link_index),
   Rsense(RS)
   {}
@@ -25,7 +25,7 @@ void TMC2660Stepper::begin() {
   tbl(1); //blank_time(24);
 }
 
-bool TMC2660Stepper::isEnabled() { return toff() > 0; }
+bool TMC2660Stepper::isEnabled() const { return toff() > 0; }
 
 uint8_t TMC2660Stepper::test_connection() {
   uint32_t drv_status = DRVSTATUS();
@@ -52,14 +52,14 @@ uint8_t TMC2660Stepper::test_connection() {
   CS = 24
 */
 
-uint16_t TMC2660Stepper::cs2rms(uint8_t CS) {
+uint16_t TMC2660Stepper::cs2rms(const uint8_t CS) const {
   return (float)(CS+1)/32.0 * (vsense() ? 0.165 : 0.310)/(Rsense+0.02) / 1.41421 * 1000;
 }
 
-uint16_t TMC2660Stepper::rms_current() {
+uint16_t TMC2660Stepper::rms_current() const {
   return cs2rms(cs());
 }
-void TMC2660Stepper::rms_current(uint16_t mA) {
+void TMC2660Stepper::rms_current(const uint16_t mA) {
   uint8_t CS = 32.0*1.41421*mA/1000.0*Rsense/0.310 - 1;
   // If Current Scale is too low, turn on high sensitivity R_sense and calculate again
   if (CS < 16) {
@@ -84,13 +84,13 @@ void TMC2660Stepper::push() {
   DRVCONF(DRVCONF_register.sr);
 }
 
-void TMC2660Stepper::hysteresis_end(int8_t value) { hend(value+3); }
-int8_t TMC2660Stepper::hysteresis_end() { return hend()-3; };
+void TMC2660Stepper::hysteresis_end(const int8_t value) { hend(value+3); }
+int8_t TMC2660Stepper::hysteresis_end() const { return hend()-3; };
 
-void TMC2660Stepper::hysteresis_start(uint8_t value) { hstrt(value-1); }
-uint8_t TMC2660Stepper::hysteresis_start() { return hstrt()+1; }
+void TMC2660Stepper::hysteresis_start(const uint8_t value) { hstrt(value-1); }
+uint8_t TMC2660Stepper::hysteresis_start() const { return hstrt()+1; }
 
-void TMC2660Stepper::microsteps(uint16_t ms) {
+void TMC2660Stepper::microsteps(const uint16_t ms) {
   switch(ms) {
     case 256: mres(0); break;
     case 128: mres(1); break;
@@ -120,7 +120,7 @@ uint16_t TMC2660Stepper::microsteps() {
   return 0;
 }
 
-void TMC2660Stepper::blank_time(uint8_t value) {
+void TMC2660Stepper::blank_time(const uint8_t value) {
   switch (value) {
     case 16: tbl(0b00); break;
     case 24: tbl(0b01); break;
@@ -129,7 +129,7 @@ void TMC2660Stepper::blank_time(uint8_t value) {
   }
 }
 
-uint8_t TMC2660Stepper::blank_time() {
+uint8_t TMC2660Stepper::blank_time() const {
   switch (tbl()) {
     case 0b00: return 16;
     case 0b01: return 24;
@@ -139,63 +139,63 @@ uint8_t TMC2660Stepper::blank_time() {
   return 0;
 }
 
-uint32_t TMC2660Stepper::CHOPCONF() { return CHOPCONF_register.sr; }
-void TMC2660Stepper::CHOPCONF(uint32_t data) {
+uint32_t TMC2660Stepper::CHOPCONF() const { return CHOPCONF_register.sr; }
+void TMC2660Stepper::CHOPCONF(const uint32_t data) {
   CHOPCONF_register.sr = data;
   write(CHOPCONF_register.address, CHOPCONF_register.sr);
 }
 
-void TMC2660Stepper::toff(uint8_t B)  {
+void TMC2660Stepper::toff(const uint8_t B)  {
   CHOPCONF_register.toff = B;
   write(CHOPCONF_register.address, CHOPCONF_register.sr);
 
   if (B>0)
     _savedToff = B;
 }
-void TMC2660Stepper::hstrt(uint8_t B) { CHOPCONF_register.hstrt = B;  CHOPCONF(CHOPCONF_register.sr); }
-void TMC2660Stepper::hend(uint8_t B)  { CHOPCONF_register.hend = B;   CHOPCONF(CHOPCONF_register.sr); }
-void TMC2660Stepper::hdec(uint8_t B)  { CHOPCONF_register.hdec = B;   CHOPCONF(CHOPCONF_register.sr); }
-void TMC2660Stepper::rndtf(bool B)    { CHOPCONF_register.rndtf = B;  CHOPCONF(CHOPCONF_register.sr); }
-void TMC2660Stepper::chm(bool B)      { CHOPCONF_register.chm = B;    CHOPCONF(CHOPCONF_register.sr); }
-void TMC2660Stepper::tbl(uint8_t B)   { CHOPCONF_register.tbl = B;    CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::hstrt(const uint8_t B) { CHOPCONF_register.hstrt = B;  CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::hend(const uint8_t B)  { CHOPCONF_register.hend = B;   CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::hdec(const uint8_t B)  { CHOPCONF_register.hdec = B;   CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::rndtf(const bool B)    { CHOPCONF_register.rndtf = B;  CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::chm(const bool B)      { CHOPCONF_register.chm = B;    CHOPCONF(CHOPCONF_register.sr); }
+void TMC2660Stepper::tbl(const uint8_t B)   { CHOPCONF_register.tbl = B;    CHOPCONF(CHOPCONF_register.sr); }
 
-uint8_t TMC2660Stepper::toff()  { return CHOPCONF_register.toff;  }
-uint8_t TMC2660Stepper::hstrt() { return CHOPCONF_register.hstrt; }
-uint8_t TMC2660Stepper::hend()  { return CHOPCONF_register.hend;  }
-uint8_t TMC2660Stepper::hdec()  { return CHOPCONF_register.hdec;  }
-bool  TMC2660Stepper::rndtf()   { return CHOPCONF_register.rndtf; }
-bool  TMC2660Stepper::chm()     { return CHOPCONF_register.chm;   }
-uint8_t TMC2660Stepper::tbl()   { return CHOPCONF_register.tbl;   }
+uint8_t TMC2660Stepper::toff()  const { return CHOPCONF_register.toff;  }
+uint8_t TMC2660Stepper::hstrt() const { return CHOPCONF_register.hstrt; }
+uint8_t TMC2660Stepper::hend()  const { return CHOPCONF_register.hend;  }
+uint8_t TMC2660Stepper::hdec()  const { return CHOPCONF_register.hdec;  }
+bool  TMC2660Stepper::rndtf()   const { return CHOPCONF_register.rndtf; }
+bool  TMC2660Stepper::chm()     const { return CHOPCONF_register.chm;   }
+uint8_t TMC2660Stepper::tbl()   const { return CHOPCONF_register.tbl;   }
 
-uint32_t TMC2660Stepper::DRVCONF() { return DRVCONF_register.sr; }
-void TMC2660Stepper::DRVCONF(uint32_t data) {
+uint32_t TMC2660Stepper::DRVCONF() const { return DRVCONF_register.sr; }
+void TMC2660Stepper::DRVCONF(const uint32_t data) {
   DRVCONF_register.sr = data;
   write(DRVCONF_register.address, DRVCONF_register.sr);
 }
 
-void TMC2660Stepper::tst(bool B)      { DRVCONF_register.tst = B;     DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::slph(uint8_t B)  { DRVCONF_register.slph = B;    DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::slpl(uint8_t B)  { DRVCONF_register.slpl = B;    DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::diss2g(bool B)   { DRVCONF_register.diss2g = B;  DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::ts2g(uint8_t B)  { DRVCONF_register.ts2g = B;    DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::sdoff(bool B)    { DRVCONF_register.sdoff = B;   DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::vsense(bool B)   { DRVCONF_register.vsense = B;  DRVCONF(DRVCONF_register.sr);}
-void TMC2660Stepper::rdsel(uint8_t B) { DRVCONF_register.rdsel = B;   DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::tst(const bool B)      { DRVCONF_register.tst = B;     DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::slph(const uint8_t B)  { DRVCONF_register.slph = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::slpl(const uint8_t B)  { DRVCONF_register.slpl = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::diss2g(const bool B)   { DRVCONF_register.diss2g = B;  DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::ts2g(const uint8_t B)  { DRVCONF_register.ts2g = B;    DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::sdoff(const bool B)    { DRVCONF_register.sdoff = B;   DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::vsense(const bool B)   { DRVCONF_register.vsense = B;  DRVCONF(DRVCONF_register.sr);}
+void TMC2660Stepper::rdsel(const uint8_t B) { DRVCONF_register.rdsel = B;   DRVCONF(DRVCONF_register.sr);}
 
-bool   TMC2660Stepper::tst()    { return DRVCONF_register.tst;    }
-uint8_t  TMC2660Stepper::slph()   { return DRVCONF_register.slph;   }
-uint8_t  TMC2660Stepper::slpl()   { return DRVCONF_register.slpl;   }
-bool   TMC2660Stepper::diss2g() { return DRVCONF_register.diss2g; }
-uint8_t  TMC2660Stepper::ts2g()   { return DRVCONF_register.ts2g;   }
-bool   TMC2660Stepper::sdoff()  { return DRVCONF_register.sdoff;  }
-bool   TMC2660Stepper::vsense() { return DRVCONF_register.vsense; }
-uint8_t  TMC2660Stepper::rdsel()  { return DRVCONF_register.rdsel;  }
+bool    TMC2660Stepper::tst()    const { return DRVCONF_register.tst;    }
+uint8_t TMC2660Stepper::slph()   const { return DRVCONF_register.slph;   }
+uint8_t TMC2660Stepper::slpl()   const { return DRVCONF_register.slpl;   }
+bool    TMC2660Stepper::diss2g() const { return DRVCONF_register.diss2g; }
+uint8_t TMC2660Stepper::ts2g()   const { return DRVCONF_register.ts2g;   }
+bool    TMC2660Stepper::sdoff()  const { return DRVCONF_register.sdoff;  }
+bool    TMC2660Stepper::vsense() const { return DRVCONF_register.vsense; }
+uint8_t TMC2660Stepper::rdsel()  const { return DRVCONF_register.rdsel;  }
 
-uint32_t TMC2660Stepper::DRVCTRL() {
+uint32_t TMC2660Stepper::DRVCTRL() const {
   if(sdoff() == 1) return DRVCTRL_1_register.sr;
   else return DRVCTRL_0_register.sr;
 }
-void TMC2660Stepper::DRVCTRL(uint32_t data) {
+void TMC2660Stepper::DRVCTRL(const uint32_t data) {
   if(sdoff() == 1) {
     DRVCTRL_1_register.sr = data;
     write(DRVCTRL_1_register.address, DRVCTRL_1_register.sr);
@@ -206,10 +206,10 @@ void TMC2660Stepper::DRVCTRL(uint32_t data) {
 }
 
 // DRVCTRL (SPI)
-void TMC2660Stepper::pha(bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.pha = B;  DRVCTRL(DRVCTRL_1_register.sr); }
-void TMC2660Stepper::ca(uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.ca = B;   DRVCTRL(DRVCTRL_1_register.sr); }
-void TMC2660Stepper::phb(bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.phb = B;  DRVCTRL(DRVCTRL_1_register.sr); }
-void TMC2660Stepper::cb(uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.cb = B;   DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::pha(const bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.pha = B;  DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::ca(const uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.ca = B;   DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::phb(const bool B)    { if(sdoff() == 0) return; DRVCTRL_1_register.phb = B;  DRVCTRL(DRVCTRL_1_register.sr); }
+void TMC2660Stepper::cb(const uint8_t B)  { if(sdoff() == 0) return; DRVCTRL_1_register.cb = B;   DRVCTRL(DRVCTRL_1_register.sr); }
 
 bool TMC2660Stepper::pha()    { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.pha; }
 uint8_t TMC2660Stepper::ca()  { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.ca;  }
@@ -217,9 +217,9 @@ bool TMC2660Stepper::phb()    { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_regi
 uint8_t TMC2660Stepper::cb()  { if(sdoff() == 0) sdoff(1); return DRVCTRL_1_register.cb;  }
 
 // DRVCTRL (STEP/DIR)
-void TMC2660Stepper::intpol(bool B) { if(sdoff()) return; DRVCTRL_0_register.intpol = B; DRVCTRL(DRVCTRL_0_register.sr); }
-void TMC2660Stepper::dedge(bool B)  { if(sdoff()) return; DRVCTRL_0_register.dedge = B;  DRVCTRL(DRVCTRL_0_register.sr); }
-void TMC2660Stepper::mres(uint8_t B){ if(sdoff()) return; DRVCTRL_0_register.mres = B;   DRVCTRL(DRVCTRL_0_register.sr); }
+void TMC2660Stepper::intpol(const bool B)  { if(sdoff()) return; DRVCTRL_0_register.intpol = B; DRVCTRL(DRVCTRL_0_register.sr); }
+void TMC2660Stepper::dedge(const bool B)   { if(sdoff()) return; DRVCTRL_0_register.dedge = B;  DRVCTRL(DRVCTRL_0_register.sr); }
+void TMC2660Stepper::mres(const uint8_t B) { if(sdoff()) return; DRVCTRL_0_register.mres = B;   DRVCTRL(DRVCTRL_0_register.sr); }
 
 bool TMC2660Stepper::intpol() { if(sdoff()) sdoff(0); return DRVCTRL_0_register.intpol; }
 bool TMC2660Stepper::dedge()  { if(sdoff()) sdoff(0); return DRVCTRL_0_register.dedge;  }
@@ -274,34 +274,34 @@ uint16_t TMC2660Stepper::sg_result(){
   return out;
 }
 
-uint32_t TMC2660Stepper::SGCSCONF() { return SGCSCONF_register.sr; }
-void TMC2660Stepper::SGCSCONF(uint32_t data) {
+uint32_t TMC2660Stepper::SGCSCONF() const { return SGCSCONF_register.sr; }
+void TMC2660Stepper::SGCSCONF(const uint32_t data) {
   SGCSCONF_register.sr = data;
   write(SGCSCONF_register.address, SGCSCONF_register.sr);
 }
 
-void TMC2660Stepper::sfilt(bool B)  { SGCSCONF_register.sfilt = B;  SGCSCONF(SGCSCONF_register.sr); }
-void TMC2660Stepper::sgt(uint8_t B) { SGCSCONF_register.sgt = B;    SGCSCONF(SGCSCONF_register.sr); }
-void TMC2660Stepper::cs(uint8_t B)  { SGCSCONF_register.cs = B;     SGCSCONF(SGCSCONF_register.sr); }
+void TMC2660Stepper::sfilt(const bool B)  { SGCSCONF_register.sfilt = B;  SGCSCONF(SGCSCONF_register.sr); }
+void TMC2660Stepper::sgt(const uint8_t B) { SGCSCONF_register.sgt = B;    SGCSCONF(SGCSCONF_register.sr); }
+void TMC2660Stepper::cs(const uint8_t B)  { SGCSCONF_register.cs = B;     SGCSCONF(SGCSCONF_register.sr); }
 
-bool TMC2660Stepper::sfilt() { return SGCSCONF_register.sfilt; }
-uint8_t TMC2660Stepper::sgt(){ return SGCSCONF_register.sgt; }
-uint8_t TMC2660Stepper::cs() { return SGCSCONF_register.cs; }
+bool TMC2660Stepper::sfilt()  const { return SGCSCONF_register.sfilt; }
+uint8_t TMC2660Stepper::sgt() const { return SGCSCONF_register.sgt; }
+uint8_t TMC2660Stepper::cs()  const { return SGCSCONF_register.cs; }
 
-uint32_t TMC2660Stepper::SMARTEN() { return SMARTEN_register.sr; }
-void TMC2660Stepper::SMARTEN(uint32_t data) {
+uint32_t TMC2660Stepper::SMARTEN() const { return SMARTEN_register.sr; }
+void TMC2660Stepper::SMARTEN(const uint32_t data) {
   SMARTEN_register.sr = data;
   write(SMARTEN_register.address, SMARTEN_register.sr);
 }
 
-void TMC2660Stepper::seimin(bool B)   { SMARTEN_register.seimin = B;  SMARTEN(SMARTEN_register.sr); }
-void TMC2660Stepper::sedn(uint8_t B)  { SMARTEN_register.sedn = B;    SMARTEN(SMARTEN_register.sr); }
-void TMC2660Stepper::semax(uint8_t B) { SMARTEN_register.semax = B;   SMARTEN(SMARTEN_register.sr); }
-void TMC2660Stepper::seup(uint8_t B)  { SMARTEN_register.seup = B;    SMARTEN(SMARTEN_register.sr); }
-void TMC2660Stepper::semin(uint8_t B) { SMARTEN_register.semin = B;   SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::seimin(const bool B)   { SMARTEN_register.seimin = B;  SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::sedn(const uint8_t B)  { SMARTEN_register.sedn = B;    SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::semax(const uint8_t B) { SMARTEN_register.semax = B;   SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::seup(const uint8_t B)  { SMARTEN_register.seup = B;    SMARTEN(SMARTEN_register.sr); }
+void TMC2660Stepper::semin(const uint8_t B) { SMARTEN_register.semin = B;   SMARTEN(SMARTEN_register.sr); }
 
-bool TMC2660Stepper::seimin()   { return SMARTEN_register.seimin; }
-uint8_t TMC2660Stepper::sedn()  { return SMARTEN_register.sedn;   }
-uint8_t TMC2660Stepper::semax() { return SMARTEN_register.semax;  }
-uint8_t TMC2660Stepper::seup()  { return SMARTEN_register.seup;   }
-uint8_t TMC2660Stepper::semin() { return SMARTEN_register.semin;  }
+bool TMC2660Stepper::seimin()   const { return SMARTEN_register.seimin; }
+uint8_t TMC2660Stepper::sedn()  const { return SMARTEN_register.sedn;   }
+uint8_t TMC2660Stepper::semax() const { return SMARTEN_register.semax;  }
+uint8_t TMC2660Stepper::seup()  const { return SMARTEN_register.seup;   }
+uint8_t TMC2660Stepper::semin() const { return SMARTEN_register.semin;  }
