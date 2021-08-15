@@ -18,6 +18,13 @@
 		},
 		{
 			"path": "examples\\Simple_mbed"
+		},
+		{
+			"name": "RaspberryPi2040",
+			"path": "examples\\RaspberryPi2040"
+		},
+		{
+			"path": "examples\\RPi2040_Native"
 		}
 	],
 	"settings": {

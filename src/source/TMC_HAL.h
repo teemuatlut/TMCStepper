@@ -337,6 +337,33 @@
         }
     }
 
+#elif defined(PICO_BOARD)
+
+    #include <pico/stdlib.h>
+    #include <hardware/spi.h>
+
+    namespace TMC_HAL {
+        using PinDef = uint;
+
+        struct PinCache {
+            explicit PinCache(const PinDef _pin) :
+                pin(_pin)
+                {}
+
+            const PinDef pin;
+            static constexpr bool LOW = 0;
+            static constexpr bool HIGH = 1;
+        };
+    }
+
+    using SPIClass = spi_inst_t * const;
+    using HardwareSerial = uart_inst_t * const;
+
+    // inline void delay(size_t ms) { /*wait_us(1000*ms);*/ }
+    namespace TMC_HAL {
+        inline void delay_ns(unsigned int ns) { /*wait_ns(ns);*/ }
+    }
+
 #elif defined(UNIT_TEST)
 
     #include "../examples/UnitTests/include/Mocks.h"
@@ -397,6 +424,29 @@ namespace TMC_HAL {
     namespace TMC_HAL {
         // Ensure CS pin timings requirements
         inline void delay_ns(unsigned int ns) {
+            uint_fast16_t cycles = ((F_CPU>>16) * ns) / (1000000000UL>>14) + 1;
+
+            while(--cycles) {
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+                asm("nop");
+            }
+        }
+    }
+
+#elif defined(TARGET_RP2040)
+
+    #include "hardware/clocks.h"
+
+    namespace TMC_HAL {
+        inline void delay_ns(unsigned int ns) {
+            const uint32_t F_CPU = frequency_count_khz(CLOCKS_FC0_SRC_VALUE_CLK_SYS) * 1000;
+
             uint_fast16_t cycles = ((F_CPU>>16) * ns) / (1000000000UL>>14) + 1;
 
             while(--cycles) {

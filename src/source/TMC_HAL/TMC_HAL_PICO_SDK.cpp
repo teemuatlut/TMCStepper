@@ -1,7 +1,8 @@
 
-#if defined(__MBED__) && !defined(TARGET_RASPBERRYPI)
+#if defined(PICO_BOARD) && !defined(ARDUINO)
 
-#include "../TMC_HAL.h"
+#include <hardware/spi.h>
+#include <hardware/timer.h>
 #include "../../TMCStepper.h"
 
 using namespace TMCStepper_n;
@@ -12,12 +13,11 @@ InputPin::InputPin(const PinDef _pin) :
     {}
 
 void InputPin::setMode() const {
-    pin.input();
-    pin.mode(PullUp);
+    gpio_set_dir(pin, false);
 }
 
 bool InputPin::read() const {
-    return pin.read();
+    return gpio_get(pin);
 }
 
 OutputPin::OutputPin(const PinDef _pin) :
@@ -25,52 +25,52 @@ OutputPin::OutputPin(const PinDef _pin) :
     {}
 
 void OutputPin::setMode() const {
-    pin.output();
+    gpio_set_dir(pin, true);
 }
 
 void OutputPin::set() const {
-    pin.write(1);
+    gpio_put(pin, HIGH);
 }
 
 void OutputPin::reset() const {
-    pin.write(0);
+    gpio_put(pin, LOW);
 }
 
 __attribute__((weak))
 void TMC_SPI::initPeripheral() {
-    if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
+    if (TMC_HW_SPI != nullptr)
+        spi_init(*TMC_HW_SPI, spi_speed);
+    else if (TMC_SW_SPI != nullptr)
+        TMC_SW_SPI->init();
 }
 
 __attribute__((weak))
 void TMC_SPI::beginTransaction() {
     if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->frequency(spi_speed);
-        constexpr int bitsPerFrame = 8;
-        constexpr int mode = 3;
-        TMC_HW_SPI->format(bitsPerFrame, mode);
-        TMC_HW_SPI->lock();
+        spi_set_format(*TMC_HW_SPI, 8, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
     }
 }
 
 __attribute__((weak))
 void TMC_SPI::transfer(void *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->write(static_cast<char*>(buf), count, static_cast<char*>(buf), count);
+        spi_write_read_blocking(*TMC_HW_SPI, static_cast<uint8_t*>(buf), static_cast<uint8_t*>(buf), count);
+    }
+    else if(TMC_SW_SPI != nullptr) {
+        TMC_SW_SPI->transfer((uint8_t*)buf, count);
     }
 }
 
 __attribute__((weak))
 void TMC_SPI::endTransaction() {
     if (TMC_HW_SPI != nullptr) {
-        TMC_HW_SPI->unlock();
     }
 }
 
 __attribute__((weak))
 void TMC_UART::begin(uint32_t baudrate) {
 	if (HWSerial != nullptr) {
-		HWSerial->set_baud(baudrate);
-        HWSerial->set_format(8, BufferedSerial::None, 1);
+        uart_init(*HWSerial, baudrate);
 	}
 }
 
@@ -78,25 +78,20 @@ __attribute__((weak))
 int TMC_UART::available() {
     int out = 0;
     if (HWSerial != nullptr) {
-        out = HWSerial->readable();
+        out = uart_is_readable(*HWSerial);
     }
 
     return out;
 }
 
-static Timer serialTimeout;
-
 __attribute__((weak))
 uint32_t TMC_UART::getTime() const {
-    using namespace std::chrono;
-    return duration_cast<milliseconds>(serialTimeout.elapsed_time()).count();
+    return time_us_32();
 }
 
 __attribute__((weak))
 void TMC_UART::preWriteCommunication() {
     if (HWSerial != nullptr) {
-        serialTimeout.start();
-
         if (sswitch != nullptr)
             sswitch->active(slaveAddress);
     }
@@ -105,8 +100,6 @@ void TMC_UART::preWriteCommunication() {
 __attribute__((weak))
 void TMC_UART::preReadCommunication() {
     if (HWSerial != nullptr) {
-        serialTimeout.start();
-
         if (sswitch != nullptr)
             sswitch->active(slaveAddress);
     }
@@ -114,28 +107,27 @@ void TMC_UART::preReadCommunication() {
 
 __attribute__((weak))
 size_t TMC_UART::serial_read(void *data, int8_t length) {
-    if (HWSerial != nullptr) {
-        return HWSerial->read((uint8_t*)data, length);
+    if (HWSerial != nullptr && available() > 0) {
+        uart_read_blocking(*HWSerial, static_cast<uint8_t*>(data), length);
+        return length;
     }
+
     return 0;
 }
 
 __attribute__((weak))
 size_t TMC_UART::serial_write(const void *data, int8_t length) {
     if (HWSerial != nullptr) {
-        return HWSerial->write((const uint8_t*)data, length);
+        uart_write_blocking(*HWSerial, static_cast<const uint8_t*>(data), length);
+        return length;
     }
     return 0;
 }
 
 __attribute__((weak))
-void TMC_UART::postWriteCommunication() {
-    serialTimeout.reset();
-}
+void TMC_UART::postWriteCommunication() {}
 
 __attribute__((weak))
-void TMC_UART::postReadCommunication() {
-    serialTimeout.reset();
-}
+void TMC_UART::postReadCommunication() {}
 
 #endif
