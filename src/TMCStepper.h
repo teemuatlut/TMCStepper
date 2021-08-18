@@ -14,6 +14,16 @@
 	#include <bcm2835.h>
 	#include "source/bcm2835_spi.h"
 	#include "source/bcm2835_stream.h"
+#elif __cplusplus >= 201703L
+	#if __has_include(<Arduino.h>)
+		#include <Arduino.h>
+	#endif
+	#if __has_include(<SPI.h>)
+		#include <SPI.h>
+	#endif
+	#if __has_include(<Stream.h>)
+		#include <Stream.h>
+	#endif
 #endif
 
 #if (__cplusplus == 201703L) && defined(__has_include)
