@@ -170,10 +170,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct VSTART_i {
-    uint32_t VSTART() const {
+    uint32_t vstart() const {
       return r.sr;
     }
-    void VSTART(const uint32_t input) {
+    void vstart(const uint32_t input) {
       static_cast<TYPE*>(this)->write(VSTART_t::address, input);
     }
     protected:
@@ -304,10 +304,10 @@ namespace TMC5130_n {
 
   template<typename TYPE>
   struct VSTOP_i {
-    uint32_t VSTOP() const {
+    uint32_t vstop() const {
       return r.sr;
     }
-    void VSTOP(const uint32_t input) {
+    void vstop(const uint32_t input) {
       if (input == 0 && static_cast<TYPE*>(this)->RAMPMODE() == 0) return;
       r.sr = input;
       static_cast<TYPE*>(this)->write(r.address, r.sr);

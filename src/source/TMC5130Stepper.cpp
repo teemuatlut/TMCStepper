@@ -36,14 +36,14 @@ void TMC5130Stepper::defaults() {
 	THIGH(0);
 	RAMPMODE(0);
 	XACTUAL(0);
-	VSTART(0);
+	vstart(0);
 	a1(0);
 	v1(0);
 	AMAX(0);
 	VMAX(0);
 	DMAX(0);
 	d1(0);
-	VSTOP(0);
+	vstop(0);
 	TZEROWAIT(0);
 	XTARGET(0);
 	VDCMIN(0);
@@ -110,14 +110,14 @@ void TMC5130Stepper::push() {
     ENCM_CTRL(ENCM_CTRL_i::r.sr);
     TMC_OUTPUT(OUTPUT_i::r.sr);
     X_COMPARE(X_COMPARE_i::r.sr);
-    VSTART(VSTART_i::r.sr);
+    vstart(VSTART_i::r.sr);
     a1(A1_i::r.sr);
     v1(V1_i::r.sr);
     AMAX(AMAX_i::r.sr);
     VMAX(VMAX_i::r.sr);
     DMAX(DMAX_i::r.sr);
     d1(D1_i::r.sr);
-    VSTOP(VSTOP_i::r.sr);
+    vstop(VSTOP_i::r.sr);
     TZEROWAIT(TZEROWAIT_i::r.sr);
     ENC_CONST(ENC_CONST_i::r.sr);
 }
