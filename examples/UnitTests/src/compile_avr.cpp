@@ -1,6 +1,4 @@
 
-#if defined(ARDUINO_ARCH_AVR)
-
 #include <Arduino.h>
 #include <TMCStepper.h>
 
@@ -37,5 +35,3 @@ void setup() {
 }
 
 void loop() {}
-
-#endif

@@ -1,6 +1,4 @@
 
-#if defined(__MBED__)
-
 #include <TMCStepper.h>
 
 constexpr float r_sense = 0.11f;
@@ -30,5 +28,3 @@ int main() {
     driver.rms_current(600);
     driver.microsteps(16);
 }
-
-#endif

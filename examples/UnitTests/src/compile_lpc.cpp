@@ -1,6 +1,4 @@
 
-#if defined(TARGET_LPC1768)
-
 #include <Arduino.h>
 #include <TMCStepper.h>
 
@@ -38,5 +36,3 @@ void setup() {
 }
 
 void loop() {}
-
-#endif

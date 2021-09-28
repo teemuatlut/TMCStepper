@@ -1,6 +1,4 @@
 
-#if defined(USE_HAL_DRIVER) && !defined(USE_FULL_LL_DRIVER)
-
 #include <TMCStepper.h>
 
 const auto ENABLE_Pin = GPIO_PIN_0;
@@ -43,5 +41,3 @@ int main() {
     driver.rms_current(600);
     driver.microsteps(16);
 }
-
-#endif

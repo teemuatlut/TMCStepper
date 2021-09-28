@@ -1,6 +1,4 @@
 
-#if defined(ARDUINO) && !(defined(ARDUINO_ARCH_AVR) || defined(ARDUINO_ARCH_SAM) || defined(TARGET_LPC1768))
-
 #include <Arduino.h>
 #include <TMCStepper.h>
 
@@ -33,5 +31,3 @@ void setup() {
 }
 
 void loop() {}
-
-#endif

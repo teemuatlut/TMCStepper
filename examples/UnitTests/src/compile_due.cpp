@@ -1,6 +1,4 @@
 
-#if defined(ARDUINO_ARCH_SAM)
-
 #include <Arduino.h>
 #include <TMCStepper.h>
 
@@ -33,5 +31,3 @@ void setup() {
 }
 
 void loop() {}
-
-#endif

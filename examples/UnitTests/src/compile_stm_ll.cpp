@@ -1,6 +1,4 @@
 
-#if defined(USE_FULL_LL_DRIVER) && !(defined(__MBED__) || defined(ARDUINO))
-
 #include <TMCStepper.h>
 
 const auto ENABLE_Pin = GPIO_PIN_0;
@@ -41,5 +39,3 @@ int main() {
     driver.rms_current(600);
     driver.microsteps(16);
 }
-
-#endif

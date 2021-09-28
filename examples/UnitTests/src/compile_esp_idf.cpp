@@ -1,6 +1,4 @@
 
-#if defined(IDF_VER)
-
 #include <TMCStepper.h>
 
 const gpio_num_t
@@ -40,5 +38,3 @@ void app_main() {
     driver.rms_current(600);
     driver.microsteps(16);
 }
-
-#endif
