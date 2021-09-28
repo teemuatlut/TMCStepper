@@ -1,4 +1,5 @@
 #if defined(bcm2835)
+#include <cstring>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
