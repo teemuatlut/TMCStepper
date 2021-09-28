@@ -1,5 +1,5 @@
 
-#if defined(bcm2835)
+#if defined(__linux__)
 
 #include <termios.h>
 #include <sys/ioctl.h>
@@ -8,19 +8,24 @@
 
 #include "../../TMCStepper.h"
 
-using namespace TMC_HAL
+using namespace std;
+using namespace TMCStepper_n;
+using namespace TMC_HAL;
+
+namespace TMC_HAL {
+    void abort(std::string_view str, const int ret);
+}
 
 InputPin::InputPin(const PinDef _pin) :
     PinCache(_pin)
     {}
 
 void InputPin::setMode() const {
-	bcm2835_gpio_fsel(pin, BCM2835_GPIO_PUD_UP);
-	bcm2835_gpio_set_pud(pin, BCM2835_GPIO_PUD_UP)
+	pin.request({"TMCStepper", ::gpiod::line_request::DIRECTION_INPUT}, 0);
 }
 
 bool InputPin::read() const {
-    return bcm2835_gpio_lev(pin);
+	return pin.get_value();
 }
 
 OutputPin::OutputPin(const PinDef _pin) :
@@ -28,15 +33,22 @@ OutputPin::OutputPin(const PinDef _pin) :
     {}
 
 void OutputPin::setMode() const {
-	bcm2835_gpio_fsel(pin, BCM2835_GPIO_FSEL_OUTP);
+	pin.request({"TMCStepper", ::gpiod::line_request::DIRECTION_OUTPUT}, 0);
 }
 
 void OutputPin::set() const {
-	bcm2835_gpio_write(pin, 1);
+	pin.set_value(1);
 }
 
 void OutputPin::reset() const {
-	bcm2835_gpio_write(pin, 0);
+	pin.set_value(0);
+}
+
+TMC_HAL::HW_port::HW_port(std::string_view port) {
+	fd = open(port.begin(), O_RDWR);
+
+	if (fd < 0)
+		TMC_HAL::abort(string("Failed to open device: ").append(port), fd);
 }
 
 __attribute__((weak))
@@ -44,21 +56,56 @@ void TMC_SPI::initPeripheral() {
 	if (TMC_SW_SPI != nullptr) TMC_SW_SPI->init();
 }
 
-void SPIClass::beginTransaction()
-{
+void TMC_SPI::beginTransaction() {
 	if(TMC_HW_SPI != nullptr) {
-		bcm2835_spi_begin();
-		bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
-		bcm2835_spi_setDataMode(BCM2835_SPI_MODE3);
-		bcm2835_spi_set_speed_hz(spi_speed);
-		bcm2835_spi_chipSelect(BCM2835_SPI_CS_NONE);
+		const int fd = TMC_HW_SPI->fd;
+        int ret = -1;
+
+        uint32_t mode = SPI_MODE_3 | SPI_NO_CS;
+        uint32_t bits = 8;
+
+        ret = ioctl(fd, SPI_IOC_WR_MODE32, &mode);
+        if (ret < 0) abort("Can't set spi mode ", ret);
+
+        ret = ioctl(fd, SPI_IOC_RD_MODE32, &mode);
+        if (ret < 0) abort("Can't get spi mode", ret);
+
+        ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
+        if (ret < 0) abort("can't set bits per word", ret);
+
+        ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+        if (ret < 0) abort("can't get bits per word", ret);
+
+        ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &spi_speed);
+        if (ret < 0) abort("can't set max speed hz", ret);
+
+        ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &spi_speed);
+        if (ret < 0) abort("can't get max speed hz", ret);
+
+		if (ret != 0) exit(1);
 	}
 }
 
 __attribute__((weak))
 void TMC_SPI::transfer(void *buf, const uint8_t count) {
     if(TMC_HW_SPI != nullptr) {
-		bcm2835_spi_transfern((char*)buf, count);
+
+        spi_ioc_transfer tr = {
+            .tx_buf = (unsigned long)buf,
+            .rx_buf = (unsigned long)buf,
+            .len = 5,
+            .speed_hz = spi_speed,
+            .delay_usecs = 1,
+            .bits_per_word = 8,
+            .cs_change = 0,
+            .tx_nbits = 0,
+            .rx_nbits = 0,
+            .word_delay_usecs = 0
+        };
+
+        const int ret = ioctl(TMC_HW_SPI->fd, SPI_IOC_MESSAGE(1), &tr);
+        if (ret < 1) abort("can't send spi message", ret);
+
     }
     else if(TMC_SW_SPI != nullptr) {
         TMC_SW_SPI->transfer((uint8_t*)buf, count);
@@ -66,16 +113,11 @@ void TMC_SPI::transfer(void *buf, const uint8_t count) {
 }
 
 __attribute__((weak))
-void TMC_SPI::endTransaction() {
-    if (TMC_HW_SPI != nullptr) {
-        bcm2835_spi_end();
-    }
-}
+void TMC_SPI::endTransaction() {}
 
 __attribute__((weak))
-size_t TMC_UART::getTime() const
-{
-	struct timeval now;
+size_t TMC_UART::getTime() const {
+	timeval now;
 	gettimeofday(&now, NULL);
 	return (uint32_t) ( now.tv_usec / 1000 );
 }
@@ -83,6 +125,8 @@ size_t TMC_UART::getTime() const
 __attribute__((weak))
 void TMC_UART::begin(uint32_t baud)
 {
+	if (HWSerial == nullptr) return;
+
 	speed_t myBaud;
 	switch(baud)
 	{
@@ -103,6 +147,7 @@ void TMC_UART::begin(uint32_t baud)
 			return;
 	}
 
+	const int fd = HWSerial->fd;
 	const int flags = O_RDWR | O_NOCTTY | O_NDELAY;
 
 	fd = open(port, flags);
@@ -113,8 +158,10 @@ void TMC_UART::begin(uint32_t baud)
 	fcntl(fd, F_SETFL, O_RDWR);
 
 	termios options{};
+	int ret = -1;
 
-	tcgetattr(fd, &options);
+	ret = tcgetattr(fd, &options);
+	if (ret < 0) abort("Failed to get UART attributes ", ret);
 
 	cfmakeraw( &options );
 	cfsetispeed( &options, myBaud );
@@ -146,17 +193,19 @@ void TMC_UART::begin(uint32_t baud)
     // if retries are implemented in caller then it feels like something is blocking for N retries x VTIME.
 	options.c_cc[VTIME] = 10;       // VTIME defined as tenths of a second so 10 is actually 1 seconds
 
-	tcflush(fd, TCIOFLUSH); // flush both tx and rx
-	tcsetattr(fd, TCSANOW, &options);
+	ret = tcflush(fd, TCIOFLUSH); // flush both tx and rx
+	if (ret < 0) abort("Failed to flush UART ", ret);
+
+	ret = tcsetattr(fd, TCSANOW, &options);
+	if (ret < 0) abort("Failed to set UART attributes ", ret);
 
 	// Maybe add 10ms delay (belt and braces) to let UART setup correctly
 	usleep(1000 * 10);
 }
 
-int HardwareSerial::available()
-{
+int TMC_UART::available() {
 	int result;
-	if (ioctl(fd, FIONREAD, &result) == -1)
+	if (ioctl(HWSerial->fd, FIONREAD, &result) == -1)
 		return -1;
 	return result;
 }
@@ -170,15 +219,17 @@ void TMC_UART::preReadCommunication() {}
 __attribute__((weak))
 size_t TMC_UART::serial_write(const void *data, int8_t length) {
     if (HWSerial != nullptr) {
-        HWSerial->write(fd, (const uint8_t*)data, length);
+        return ::write(HWSerial->fd, (const uint8_t*)data, length);
     }
+    return 0;
 }
 
 __attribute__((weak))
 size_t TMC_UART::serial_read(void *data, int8_t length) {
-    if (HWSerial != nullptr && HWSerial->available() > 0) {
-        HWSerial->readBytes(fd, (uint8_t*)data, length);
+    if (HWSerial != nullptr && available() > 0) {
+        return ::read(HWSerial->fd, (uint8_t*)data, length);
     }
+    return 0;
 }
 
 __attribute__((weak))
@@ -187,7 +238,10 @@ void TMC_UART::postWriteCommunication() {}
 __attribute__((weak))
 void TMC_UART::postReadCommunication() {}
 
-HardwareSerial Serial("/dev/serial0");
-HardwareSerial Serial1("/dev/serial1");
+void TMC_HAL::abort(std::string_view str, const int ret) {
+    cerr << "abort: " << str << " (" << ret << ')' << endl;
+    cerr << "errno=" << errno << endl;
+    cerr << strerror(errno) << endl;
+}
 
 #endif

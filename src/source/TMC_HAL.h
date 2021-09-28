@@ -244,56 +244,56 @@
 
         void delay(uint32_t ms);
 
-#elif defined(bcm2835)
+#elif defined(__linux__) // Tested with RaspberryPi 3B
 
-    #include <bcm2835.h>
     #include <stdio.h>
-    #include <stdint.h>
     #include <stdlib.h>
+    #include <stdint.h>
+    #include <iostream>
     #include <string.h>
     #include <unistd.h>
     #include <fcntl.h>
     #include <errno.h>
     #include <sys/time.h>
-
-    #define MSBFIRST BCM2835_SPI_BIT_ORDER_MSBFIRST
-    #define SPI_MODE0 BCM2835_SPI_MODE0
-    #define SPI_MODE1 BCM2835_SPI_MODE1
-    #define SPI_MODE2 BCM2835_SPI_MODE2
-    #define SPI_MODE3 BCM2835_SPI_MODE3
+    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <gpiod.hpp>
+    #include <cstdlib>
+    #include <getopt.h>
+    #include <linux/ioctl.h>
+    #include <linux/types.h>
+    #include <linux/spi/spidev.h>
+    #include <sys/time.h>
 
     namespace TMC_HAL {
-        using PinDef = uint8_t;
+        using PinDef = ::gpiod::line;
 
         struct PinCache {
             explicit PinCache(const PinDef _pin) :
                 pin(_pin)
                 {}
-
-            bool operator ==(const PinCache &p2) {
-                return p2.pin == pin;
-            }
-
             const PinDef pin;
+            static constexpr bool LOW = 0;
+            static constexpr bool HIGH = 1;
         };
+
+        struct HW_port {
+            HW_port(std::string_view port);
+            ~HW_port() { ::close(fd); }
+            int fd = -1;
+        };
+
+        // Ensure CS pin timings requirements
+        inline void delay_ns(unsigned int ns) {
+            const uint_fast16_t us = ns / 1000 + 1; // No API for ns sleep
+            usleep(us);
+        }
     }
 
-    uint32_t millis();
-
-    class HardwareSerial
-    {
-    public:
-        HardwareSerial(const char* p) : port(p) {}
-        void begin(unsigned long, int);
-        void end() { ::close(port); }
-        int available(void);
-
-        int fd;                    /* Filedeskriptor */
-        const char* port;
-    };
-
-    extern HardwareSerial Serial;
-    extern HardwareSerial Serial1;
+    using SPIClass = TMC_HAL::HW_port;
+    using HardwareSerial = TMC_HAL::HW_port;
 
 #elif defined(IDF_VER)
 
