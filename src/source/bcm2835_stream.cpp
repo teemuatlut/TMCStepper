@@ -55,15 +55,8 @@ void Stream::begin(unsigned long baud, int flags)
 		case  460800:	myBaud =  B460800; break;
 		case  500000:	myBaud =  B500000; break;
 		case  576000:	myBaud =  B576000; break;
-		case  921600:	myBaud =  B921600; break;
-		case 1000000:	myBaud = B1000000; break;
-		case 1152000:	myBaud = B1152000; break;
-		case 1500000:	myBaud = B1500000; break;
-		case 2000000:	myBaud = B2000000; break;
-		case 2500000:	myBaud = B2500000; break;
-		case 3000000:	myBaud = B3000000; break;
-		case 3500000:	myBaud = B3500000; break;
-		case 4000000:	myBaud = B4000000; break;
+
+		// The TMC2209 maxed out around 750kbaud so other enums after 576kbaud is not needed.
 
 		default:
 			printf("[ERROR] UART invalid baud: %ld for port: %s\n", baud, port);
@@ -71,8 +64,7 @@ void Stream::begin(unsigned long baud, int flags)
 	}
 
 
-	struct termios options;
-	memset( &options, 0, sizeof(options) );
+	struct termios options {};	// Zeroed memory
 
 	tcgetattr(fd, &options);
 
