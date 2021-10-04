@@ -51,9 +51,7 @@ void Stream::begin(unsigned long baud, int flags)
 			return;
 	}
 
-	// https://stackoverflow.com/questions/61531928/why-doesnt-initializing-a-c-struct-to-0-set-all-of-its-members-to-0
-	struct termios options;
-	memset( &options, 0, sizeof(options) );
+	termios options{};
 
 	tcgetattr(fd, &options);
 
