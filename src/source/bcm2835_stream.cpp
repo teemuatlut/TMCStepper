@@ -34,18 +34,6 @@ void Stream::begin(unsigned long baud, int flags)
 	speed_t myBaud;
 	switch ( baud )
 	{
-		case      50:	myBaud =      B50; break;
-		case      75:	myBaud =      B75; break;
-		case     110:	myBaud =     B110; break;
-		case     134:	myBaud =     B134; break;
-		case     150:	myBaud =     B150; break;
-		case     200:	myBaud =     B200; break;
-		case     300:	myBaud =     B300; break;
-		case     600:	myBaud =     B600; break;
-		case    1200:	myBaud =    B1200; break;
-		case    1800:	myBaud =    B1800; break;
-		case    2400:	myBaud =    B2400; break;
-		case    4800:	myBaud =    B4800; break;
 		case    9600:	myBaud =    B9600; break;
 		case   19200:	myBaud =   B19200; break;
 		case   38400:	myBaud =   B38400; break;
