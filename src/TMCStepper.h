@@ -1016,6 +1016,8 @@ class TMC2208Stepper : public TMCStepper {
 		void preReadCommunication();
 		int16_t serial_read();
 		uint8_t serial_write(const uint8_t data);
+		void serial_read_flush();
+		void serial_write_flush();
 		void postWriteCommunication();
 		void postReadCommunication();
 		void write(uint8_t, uint32_t);

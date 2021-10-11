@@ -16,10 +16,21 @@ uint32_t millis();
 class Stream
 {
 public:
+	enum FlushOptions
+	{
+		// TCIOFLUSH: flushes both data received but not read, and data written but not transmitted.
+		Both
+		// TCIFLUSH: flushes data received but not read.
+		, Receiver
+		// TCOFLUSH: flushes data written but not transmitted.
+		, Transmitter
+	};
+
 	Stream(const char* port);
 	void begin(unsigned long baud) { begin(baud, O_RDWR | O_NOCTTY | O_NDELAY); }
 	void begin(unsigned long, int);
 	void end();
+	void flush( FlushOptions option );
 	int available(void);
 	uint8_t write(const uint8_t data);
 	uint8_t read();

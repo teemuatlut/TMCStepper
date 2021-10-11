@@ -173,6 +173,33 @@ uint8_t TMC2208Stepper::serial_write(const uint8_t data) {
 }
 
 __attribute__((weak))
+void TMC2208Stepper::serial_read_flush()
+{
+	#if SW_CAPABLE_PLATFORM
+		if (SWSerial != nullptr) {
+			#pragma GCC warning "using a software method to flush buffer; is there a better way to do this?"
+			while (available() > 0) serial_read(); // Flush
+		} else
+	#endif
+		if (HWSerial != nullptr) {
+			HWSerial->flush( Stream::FlushOptions::Receiver );
+		}
+}
+
+__attribute__((weak))
+void TMC2208Stepper::serial_write_flush()
+{
+	#if SW_CAPABLE_PLATFORM
+		if (SWSerial != nullptr) {
+			#pragma GCC warning "no implementation; do you need one?"
+		} else
+	#endif
+		if (HWSerial != nullptr) {
+			HWSerial->flush( Stream::FlushOptions::Transmitter );
+		}
+}
+
+__attribute__((weak))
 void TMC2208Stepper::postWriteCommunication() {}
 
 __attribute__((weak))
@@ -191,6 +218,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 
 	datagram[len] = calcCRC(datagram, len);
 
+	serial_write_flush();
 	preWriteCommunication();
 
 	for(uint8_t i=0; i<=len; i++) {
@@ -202,7 +230,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 }
 
 uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, uint16_t timeout) {
-	while (available() > 0) serial_read(); // Flush
+	if (available() > 0) serial_read_flush();	// Flush
 
 	#if defined(ARDUINO_ARCH_AVR)
 		if (RXTX_pin > 0) {
@@ -211,6 +239,7 @@ uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, ui
 		}
 	#endif
 
+	serial_write_flush();
 	for(int i=0; i<=len; i++) serial_write(datagram[i]);
 
 	#if defined(ARDUINO_ARCH_AVR)
@@ -273,7 +302,7 @@ uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, ui
 		}
 	#endif
 
-	while (available() > 0) serial_read(); // Flush
+	if (available() > 0) serial_read_flush(); // Flush
 
 	return out;
 }
