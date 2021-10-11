@@ -81,7 +81,9 @@ void Stream::begin(unsigned long baud, int flags)
 	// See: http://unixwiz.net/techtips/termios-vmin-vtime.html
 	options.c_cc[VMIN]  = 0;
 	// Cannot set VTIME to 0 as it creates more problems such as cannot read the driver properly.
-	options.c_cc[VTIME] = 100;       // VTIME defined as tenths of a second so 100 is actually 10 seconds
+    // Also, you do not want to set to 100 because it is a blocking read and timeout in VTIME and can take up to 10 seconds and
+    // if retries are implemented in caller then it feels like something is blocking for N retries x VTIME.
+    options.c_cc[ VTIME ] = 10;      // VTIME defined as tenths of a second so 100 is actually 10 seconds; and 10 deciseconds is 1 second.
 
 	tcflush(fd, TCIOFLUSH); // flush both tx and rx
 	tcsetattr(fd, TCSANOW, &options);
