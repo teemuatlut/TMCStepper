@@ -38,3 +38,6 @@ void app_main() {
     driver.rms_current(600);
     driver.microsteps(16);
 }
+
+void TMCStepper_n::TMC_SPI::initPeripheral() {}
+void TMC_HAL::TMC_UART::begin(uint32_t baudrate) {}

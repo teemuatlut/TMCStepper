@@ -19,9 +19,10 @@ constexpr uint8_t DRIVER_ADDRESS = 0b00; // TMC2209 Driver address according to 
 constexpr float R_SENSE = 0.11; // Current shunt resistor
 
 spi_device_handle_t SPI{};
+spi_host_device_t SpiPort = SPI2_HOST;
 uart_port_t SerialPort = 1;
 
-// TMC2130Stepper driver(SPI, CS_PIN, R_SENSE);
+TMC2130Stepper driver(SPI, CS_PIN, R_SENSE);
 // TMC2208Stepper driver(SerialPort, R_SENSE);
 
 void begin_spi();
@@ -35,9 +36,6 @@ void app_main() {
         dirPin{DIR_PIN};
 
     enablePin.reset();
-
-    begin_spi();
-    begin_serial();
 
     driver.begin();
     driver.rms_current(600);
@@ -54,25 +52,25 @@ void app_main() {
     }
 }
 
-void begin_spi() {
+void TMCStepper_n::TMC_SPI::initPeripheral() {
     spi_bus_config_t cfg{};
     cfg.mosi_io_num = GPIO_NUM_NC;
     cfg.miso_io_num = GPIO_NUM_NC;
     cfg.sclk_io_num = GPIO_NUM_NC;
 
-    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &cfg, 0));
+    ESP_ERROR_CHECK(spi_bus_initialize(SpiPort, &cfg, 0));
 
     spi_device_interface_config_t dev_cfg{};
     dev_cfg.mode = 3;
-    dev_cfg.clock_speed_hz = 4000000;
+    dev_cfg.clock_speed_hz = spi_speed;
     dev_cfg.spics_io_num = GPIO_NUM_NC;
 
-    ESP_ERROR_CHECK(spi_bus_add_device(SPI2_HOST, &dev_cfg, &SPI));
+    ESP_ERROR_CHECK(spi_bus_add_device(SpiPort, &dev_cfg, &SPI));
 }
 
-void begin_serial() {
+void TMC_HAL::TMC_UART::begin(uint32_t baudrate) {
     uart_config_t uart_config = {
-        .baud_rate = 19200,
+        .baud_rate = static_cast<int>(baudrate),
         .data_bits = UART_DATA_8_BITS,
         .parity    = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
