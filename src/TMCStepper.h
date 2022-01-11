@@ -14,7 +14,7 @@
 	#include <bcm2835.h>
 	#include "source/bcm2835_spi.h"
 	#include "source/bcm2835_stream.h"
-#elif __cplusplus >= 201703L
+#elif defined(__has_include)
 	#if __has_include(<Arduino.h>)
 		#include <Arduino.h>
 	#endif
@@ -26,13 +26,17 @@
 	#endif
 #endif
 
-#if (__cplusplus == 201703L) && defined(__has_include)
+#ifdef TMCSTEPPER_SW_SERIAL
+	#define SW_CAPABLE_PLATFORM TMCSTEPPER_SW_SERIAL
+#elif defined(__has_include)
 	#define SW_CAPABLE_PLATFORM __has_include(<SoftwareSerial.h>)
 #elif defined(__AVR__) || defined(TARGET_LPC1768) || defined(ARDUINO_ARCH_STM32)
 	#define SW_CAPABLE_PLATFORM true
 #else
 	#define SW_CAPABLE_PLATFORM false
 #endif
+
+#define HAS_HALF_DUPLEX_MODE (SW_CAPABLE_PLATFORM && defined(ARDUINO_ARCH_AVR))
 
 #if SW_CAPABLE_PLATFORM
 	#include <SoftwareSerial.h>
@@ -1006,7 +1010,9 @@ class TMC2208Stepper : public TMCStepper {
 		Stream * HWSerial = nullptr;
 		#if SW_CAPABLE_PLATFORM
 			SoftwareSerial * SWSerial = nullptr;
-			const uint16_t RXTX_pin = 0; // Half duplex
+			#if HAS_HALF_DUPLEX_MODE
+				const uint16_t RXTX_pin = 0; // Set to RX/TX pin when in half-duplex mode, otherwise 0
+			#endif
 		#endif
 
 		SSwitch *sswitch = nullptr;
