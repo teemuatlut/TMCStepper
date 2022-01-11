@@ -24,7 +24,9 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 	// addr needed for TMC2209
 	TMC2208Stepper::TMC2208Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, float RS, uint8_t addr) :
 		TMCStepper(RS),
-		RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
+		#if HAS_HALF_DUPLEX_MODE
+			RXTX_pin(SW_RX_pin == SW_TX_pin ? SW_RX_pin : 0),
+		#endif
 		slave_address(addr)
 		{
 			SoftwareSerial *SWSerialObj = new SoftwareSerial(SW_RX_pin, SW_TX_pin);
@@ -38,7 +40,7 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 			SWSerial->begin(baudrate);
 			SWSerial->end();
 		}
-		#if defined(ARDUINO_ARCH_AVR)
+		#if HAS_HALF_DUPLEX_MODE
 			if (RXTX_pin > 0) {
 				digitalWrite(RXTX_pin, HIGH);
 				pinMode(RXTX_pin, OUTPUT);
@@ -204,7 +206,7 @@ void TMC2208Stepper::write(uint8_t addr, uint32_t regVal) {
 uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, uint16_t timeout) {
 	while (available() > 0) serial_read(); // Flush
 
-	#if defined(ARDUINO_ARCH_AVR)
+	#if HAS_HALF_DUPLEX_MODE
 		if (RXTX_pin > 0) {
 			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, OUTPUT);
@@ -213,7 +215,7 @@ uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, ui
 
 	for(int i=0; i<=len; i++) serial_write(datagram[i]);
 
-	#if defined(ARDUINO_ARCH_AVR)
+	#if HAS_HALF_DUPLEX_MODE
 		if (RXTX_pin > 0) {
 			pinMode(RXTX_pin, INPUT_PULLUP);
 		}
@@ -266,7 +268,7 @@ uint64_t TMC2208Stepper::_sendDatagram(uint8_t datagram[], const uint8_t len, ui
 		i++;
 	}
 
-	#if defined(ARDUINO_ARCH_AVR)
+	#if HAS_HALF_DUPLEX_MODE
 		if (RXTX_pin > 0) {
 			digitalWrite(RXTX_pin, HIGH);
 			pinMode(RXTX_pin, OUTPUT);
