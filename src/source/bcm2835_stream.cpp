@@ -1,4 +1,5 @@
 #if defined(bcm2835)
+
 #include <cstring>
 #include <termios.h>
 #include <sys/ioctl.h>
@@ -21,7 +22,7 @@ Stream::Stream(const char* port)
 
 void Stream::begin(unsigned long baud, int flags)
 {
-	struct termios options;
+	termios options{};
 
 	fd = open(port, flags);
 	if (fd == -1) {
@@ -30,6 +31,7 @@ void Stream::begin(unsigned long baud, int flags)
 	}
 	fcntl(fd, F_SETFL, O_RDWR);
 
+	#if 1
 
 	speed_t myBaud;
 	switch ( baud )
@@ -50,8 +52,6 @@ void Stream::begin(unsigned long baud, int flags)
 			printf("[ERROR] UART invalid baud: %ld for port: %s\n", baud, port);
 			return;
 	}
-
-	termios options{};
 
 	tcgetattr(fd, &options);
 
@@ -86,6 +86,23 @@ void Stream::begin(unsigned long baud, int flags)
     options.c_cc[ VTIME ] = 10;      // VTIME defined as tenths of a second so 100 is actually 10 seconds; and 10 deciseconds is 1 second.
 
 	tcflush(fd, TCIOFLUSH); // flush both tx and rx
+
+	#else
+
+	// Use 8 data bit, no parity and 1 stop bit
+	tcgetattr(fd, &options);
+	options.c_cflag = CS8 | CLOCAL | CREAD | CBAUDEX;
+	options.c_cflag &= ~CBAUD;	// use the extended baud
+	options.c_cflag &= ~PARENB;	// no parity
+	options.c_cflag &= ~CSTOPB;	// 1 stop bit
+	options.c_iflag = IGNPAR;
+	options.c_oflag = baud;
+	options.c_lflag = baud;
+
+	tcflush(fd, TCIFLUSH);
+
+	#endif
+
 	tcsetattr(fd, TCSANOW, &options);
 
 	// Maybe add 10ms delay (belt and braces) to let UART setup correctly
