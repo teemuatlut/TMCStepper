@@ -76,9 +76,9 @@ void TMC2130Stepper::switchCSpin(bool state) {
 __attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
   if (TMC_SW_SPI == nullptr) {
-    SPI.setMISO(_pinMISO);
-    SPI.setMOSI(_pinMOSI);
-    SPI.setSCLK(_pinSCK);
+    SPI_INIT_PIN( SPI, MISO, _pinMISO );
+    SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
+    SPI_INIT_PIN( SPI, SCLK, _pinSCK );
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }

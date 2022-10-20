@@ -53,9 +53,9 @@ uint32_t TMC2660Stepper::read() {
     response <<= 8;
     response |= TMC_SW_SPI->transfer(dummy & 0xFF);
   } else {
-    SPI.setMISO(_pinMISO);
-    SPI.setMOSI(_pinMOSI);
-    SPI.setSCLK(_pinSCK);
+    SPI_INIT_PIN( SPI, MISO, _pinMISO );
+    SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
+    SPI_INIT_PIN( SPI, SCLK, _pinSCK );
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
@@ -79,9 +79,9 @@ void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
     TMC_SW_SPI->transfer((data >>  8) & 0xFF);
     TMC_SW_SPI->transfer(data & 0xFF);
   } else {
-    SPI.setMISO(_pinMISO);
-    SPI.setMOSI(_pinMOSI);
-    SPI.setSCLK(_pinSCK);
+    SPI_INIT_PIN( SPI, MISO, _pinMISO );
+    SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
+    SPI_INIT_PIN( SPI, SCLK, _pinSCK );
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
