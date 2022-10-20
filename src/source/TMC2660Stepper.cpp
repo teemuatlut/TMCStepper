@@ -1,25 +1,40 @@
 #include "TMCStepper.h"
 #include "SW_SPI.h"
 
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS) :
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI) :
   _pinCS(pinCS),
-  Rsense(RS)
-  {}
-
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
-  _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
   Rsense(default_RS)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
   }
 
-TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK) :
+TMC2660Stepper::TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI) :
   _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
   Rsense(RS)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
   }
 
 void TMC2660Stepper::switchCSpin(bool state) {
@@ -38,6 +53,10 @@ uint32_t TMC2660Stepper::read() {
     response <<= 8;
     response |= TMC_SW_SPI->transfer(dummy & 0xFF);
   } else {
+    SPI.setMISO(_pinMISO);
+    SPI.setMOSI(_pinMOSI);
+    SPI.setSCLK(_pinSCK);
+    SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
     response |= SPI.transfer((dummy >> 16) & 0xFF);
@@ -46,6 +65,7 @@ uint32_t TMC2660Stepper::read() {
     response <<= 8;
     response |= SPI.transfer(dummy & 0xFF);
     SPI.endTransaction();
+    SPI.end();
   }
   switchCSpin(HIGH);
   return response >> 4;
@@ -59,12 +79,17 @@ void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
     TMC_SW_SPI->transfer((data >>  8) & 0xFF);
     TMC_SW_SPI->transfer(data & 0xFF);
   } else {
+    SPI.setMISO(_pinMISO);
+    SPI.setMOSI(_pinMOSI);
+    SPI.setSCLK(_pinSCK);
+    SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
     switchCSpin(LOW);
     SPI.transfer((data >> 16) & 0xFF);
     SPI.transfer((data >>  8) & 0xFF);
     SPI.transfer(data & 0xFF);
     SPI.endTransaction();
+    SPI.end();
   }
   switchCSpin(HIGH);
 }

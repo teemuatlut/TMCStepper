@@ -4,37 +4,46 @@
 int8_t TMC2130Stepper::chain_length = 0;
 uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
-  TMCStepper(RS),
-  _pinCS(pinCS),
-  link_index(link)
-  {
-    defaults();
-
-    if (link > chain_length)
-      chain_length = link;
-  }
-
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
   TMCStepper(default_RS),
   _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
   link_index(link)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
     defaults();
 
     if (link > chain_length)
       chain_length = link;
   }
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
   TMCStepper(RS),
   _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
   link_index(link)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
     defaults();
 
     if (link > chain_length)
@@ -67,6 +76,10 @@ void TMC2130Stepper::switchCSpin(bool state) {
 __attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
   if (TMC_SW_SPI == nullptr) {
+    SPI.setMISO(_pinMISO);
+    SPI.setMOSI(_pinMOSI);
+    SPI.setSCLK(_pinSCK);
+    SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
 }
@@ -74,6 +87,7 @@ __attribute__((weak))
 void TMC2130Stepper::endTransaction() {
   if (TMC_SW_SPI == nullptr) {
     SPI.endTransaction();
+    SPI.end();
   }
 }
 
