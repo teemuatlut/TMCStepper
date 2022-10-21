@@ -4,12 +4,29 @@
 int8_t TMC2130Stepper::chain_length = 0;
 uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link_index) :
+  TMCStepper(RS),
+  _pinCS(pinCS),
+  _pinMISO(0),
+  _pinMOSI(0),
+  _pinSCK(0),
+  _has_pins(false),
+  link_index(link_index)
+  {
+    TMC_SW_SPI = nullptr;
+    defaults();
+
+    if (link_index > chain_length)
+      chain_length = link_index;
+  }
+
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
   TMCStepper(default_RS),
   _pinCS(pinCS),
   _pinMISO(pinMISO),
   _pinMOSI(pinMOSI),
   _pinSCK(pinSCK),
+  _has_pins(true),
   link_index(link)
   {
     if (softSPI)
@@ -33,6 +50,7 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint1
   _pinMISO(pinMISO),
   _pinMOSI(pinMOSI),
   _pinSCK(pinSCK),
+  _has_pins(true),
   link_index(link)
   {
     if (softSPI)
@@ -76,9 +94,12 @@ void TMC2130Stepper::switchCSpin(bool state) {
 __attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
   if (TMC_SW_SPI == nullptr) {
-    SPI_INIT_PIN( SPI, MISO, _pinMISO );
-    SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
-    SPI_INIT_PIN( SPI, SCLK, _pinSCK );
+    if (_has_pins)
+    {
+      SPI_INIT_PIN( SPI, MISO, _pinMISO );
+      SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
+      SPI_INIT_PIN( SPI, SCLK, _pinSCK );
+    }
     SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
