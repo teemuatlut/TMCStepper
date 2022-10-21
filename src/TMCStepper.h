@@ -65,6 +65,9 @@
 
 // Since we don't have C++20 we need to do some ugly hacks to ensure compat.
 // https://stackoverflow.com/questions/63253287/using-sfinae-to-detect-method-with-gcc
+#include <utility>
+#include <type_traits>
+
 #define __DEF_HAS_METH( methName ) \
 	template<typename T> \
 	struct ___has_##methName \
