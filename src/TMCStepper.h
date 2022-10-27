@@ -63,52 +63,7 @@
 
 #define TMCSTEPPER_VERSION 0x000703 // v0.7.3
 
-// Since we don't have C++20 we need to do some ugly hacks to ensure compat.
-// https://stackoverflow.com/questions/63253287/using-sfinae-to-detect-method-with-gcc
-#include <utility>
-#include <type_traits>
-
-#define __DEF_HAS_METH( methName ) \
-	template<typename T> \
-	struct ___has_##methName \
-	{ \
-    template<typename C> \
-    static constexpr auto test(...) -> std::false_type; \
-		template<typename C> \
-		static constexpr auto test(int) \
-		-> decltype(static_cast<void>(std::declval<C>().methName(0)), std::true_type()); \
-    using result_type       = decltype(test<T>(0)); \
-    static const bool value = result_type::value; \
-	}
-#define __HAS_METH( className, methName ) \
-	( ___has_##methName <className>::value )
-
-__DEF_HAS_METH( setMISO );
-__DEF_HAS_METH( setMOSI );
-__DEF_HAS_METH( setSCLK );
-
-#define SPI_SET_PIN_HELPER( pinDescName ) \
-	template <bool hasPin> \
-	struct _spiInitHelper_##pinDescName \
-	{}; \
-	template <> \
-	struct _spiInitHelper_##pinDescName <true> \
-	{ \
-		template <typename SPIClassT> \
-		static void spiSet##pinDescName( SPIClassT& spi, uint16_t pin )	{ spi.set##pinDescName( pin ); } \
-	}; \
-	template <> \
-	struct _spiInitHelper_##pinDescName <false> \
-	{ \
-		template <typename SPIClassT> \
-		static void spiSet##pinDescName( SPIClassT& spi, uint16_t pin )	{} \
-	}
-
-SPI_SET_PIN_HELPER( MISO );
-SPI_SET_PIN_HELPER( MOSI );
-SPI_SET_PIN_HELPER( SCLK );
-
-#define SPI_INIT_PIN( spi, pinDescName, val ) _spiInitHelper_##pinDescName <__HAS_METH(SPIClass, set##pinDescName)> ::spiSet##pinDescName( spi, val )
+#include "TMCStepper_fixing.h"
 
 class TMCStepper {
 	public:
