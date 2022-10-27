@@ -21,12 +21,16 @@ struct add_rvalue_reference : decltype(detail::try_add_rvalue_reference<T>(0)) {
 
 // END https://en.cppreference.com/w/cpp/types/add_reference
     
-// BEGIN https://en.cppreference.com/w/cpp/utility/declval
-template<typename T> constexpr bool always_false = false;
+// BEGIN https://en.cppreference.com/w/cpp/utility/declval (inspired)
+template<typename T>
+struct always_false
+{
+	enum { value = false };
+};
  
 template<typename T>
-typename add_rvalue_reference<T>::type declval() noexcept {
-    static_assert(always_false<T>, "declval not allowed in an evaluated context");
+typename add_rvalue_reference<T>::type declval() {
+    static_assert(always_false<T>::value, "declval not allowed in an evaluated context");
 }
 
 // END https://en.cppreference.com/w/cpp/utility/declval
@@ -34,9 +38,11 @@ typename add_rvalue_reference<T>::type declval() noexcept {
 struct true_type {
     enum { value = true };
 };
-struct false_type {};
+struct false_type {
     enum { value = false };
 };
+
+} // namespace TMC_FIXING
 
 // Since we don't have C++20 we need to do some ugly hacks to ensure compat.
 // https://stackoverflow.com/questions/63253287/using-sfinae-to-detect-method-with-gcc
