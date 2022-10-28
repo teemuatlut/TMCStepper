@@ -88,3 +88,16 @@ SPI_SET_PIN_HELPER( MOSI );
 SPI_SET_PIN_HELPER( SCLK );
 
 #define SPI_INIT_PIN( spi, pinDescName, val ) _spiInitHelper_##pinDescName <__HAS_METH(SPIClass, set##pinDescName)> ::spiSet##pinDescName( spi, val )
+
+// Speciality of the ESP32 platform.
+#ifdef ESP_PLATFORM
+// https://github.com/espressif/arduino-esp32/blob/master/libraries/SPI/src/SPI.cpp SPIClass::begin method.
+#define SPI_BEGIN( spi, sck, miso, mosi ) ( spi.begin( sck, miso, mosi ) )
+#else
+// Other platforms.
+#define SPI_BEGIN( spi, sck, miso, mosi ) \
+	{ SPI_INIT_PIN( spi, MISO, miso ); \
+      SPI_INIT_PIN( SPI, MOSI, mosi ); \
+      SPI_INIT_PIN( SPI, SCLK, sck ); \
+	  spi.begin(); }
+#endif

@@ -96,11 +96,10 @@ void TMC2130Stepper::beginTransaction() {
   if (TMC_SW_SPI == nullptr) {
     if (_has_pins)
     {
-      SPI_INIT_PIN( SPI, MISO, _pinMISO );
-      SPI_INIT_PIN( SPI, MOSI, _pinMOSI );
-      SPI_INIT_PIN( SPI, SCLK, _pinSCK );
+      SPI_BEGIN( SPI, _pinSCK, _pinMISO, _pinMOSI );
     }
-    SPI.begin();
+    else
+      SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
 }
