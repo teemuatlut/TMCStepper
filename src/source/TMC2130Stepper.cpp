@@ -11,9 +11,10 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link_index) :
   _pinMOSI(0),
   _pinSCK(0),
   _has_pins(false),
+  TMC_SW_SPI(nullptr),
+  _spiMan(nullptr),
   link_index(link_index)
   {
-    TMC_SW_SPI = nullptr;
     defaults();
 
     if (link_index > chain_length)
@@ -27,6 +28,7 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMIS
   _pinMOSI(pinMOSI),
   _pinSCK(pinSCK),
   _has_pins(true),
+  _spiMan(nullptr),
   link_index(link)
   {
     if (softSPI)
@@ -51,6 +53,7 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint1
   _pinMOSI(pinMOSI),
   _pinSCK(pinSCK),
   _has_pins(true),
+  _spiMan(nullptr),
   link_index(link)
   {
     if (softSPI)
@@ -62,6 +65,23 @@ TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint1
     {
       TMC_SW_SPI = nullptr;
     }
+    defaults();
+
+    if (link > chain_length)
+      chain_length = link;
+  }
+
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, TMCSPIInterface *spiMan, int8_t link) :
+  TMCStepper(RS),
+  _pinCS(pinCS),
+  _pinMISO(0),
+  _pinMOSI(0),
+  _pinSCK(0),
+  _has_pins(false),
+  TMC_SW_SPI(nullptr),
+  _spiMan(spiMan),
+  link_index(link)
+  {
     defaults();
 
     if (link > chain_length)
@@ -93,7 +113,10 @@ void TMC2130Stepper::switchCSpin(bool state) {
 
 __attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
-  if (TMC_SW_SPI == nullptr) {
+  if (_spiMan) {
+    _spiMan->begin(spi_speed, TMCSPI_BITORDER_MSB, TMCSPI_CLKMODE_3);
+  }
+  else if (TMC_SW_SPI == nullptr) {
     if (_has_pins)
     {
       SPI_BEGIN( SPI, _pinSCK, _pinMISO, _pinMOSI );
@@ -105,7 +128,10 @@ void TMC2130Stepper::beginTransaction() {
 }
 __attribute__((weak))
 void TMC2130Stepper::endTransaction() {
-  if (TMC_SW_SPI == nullptr) {
+  if (_spiMan) {
+    _spiMan->end();
+  }
+  else if (TMC_SW_SPI == nullptr) {
     SPI.endTransaction();
     SPI.end();
   }
@@ -114,7 +140,10 @@ void TMC2130Stepper::endTransaction() {
 __attribute__((weak))
 uint8_t TMC2130Stepper::transfer(const uint8_t data) {
   uint8_t out = 0;
-  if (TMC_SW_SPI != nullptr) {
+  if (_spiMan) {
+    out = _spiMan->transfer(data);
+  }
+  else if (TMC_SW_SPI != nullptr) {
     out = TMC_SW_SPI->transfer(data);
   }
   else {
@@ -124,8 +153,13 @@ uint8_t TMC2130Stepper::transfer(const uint8_t data) {
 }
 
 void TMC2130Stepper::transferEmptyBytes(const uint8_t n) {
-  for (uint8_t i = 0; i < n; i++) {
-    transfer(0x00);
+  if (_spiMan) {
+    _spiMan->sendRepeat(0, n);
+  }
+  else {
+    for (uint8_t i = 0; i < n; i++) {
+      transfer(0x00);
+    }
   }
 }
 
