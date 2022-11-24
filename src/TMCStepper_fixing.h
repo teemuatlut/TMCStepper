@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef TMC_NO_GENERIC_SPI
+
 namespace _TMC_FIXING
 {
 
@@ -101,3 +103,5 @@ SPI_SET_PIN_HELPER( SCLK );
       SPI_INIT_PIN( SPI, SCLK, sck ); \
 	  spi.begin(); }
 #endif
+
+#endif //TMC_NO_GENERIC_SPI
