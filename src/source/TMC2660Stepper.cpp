@@ -92,7 +92,9 @@ uint32_t TMC2660Stepper::read() {
     response |= TMC_SW_SPI->transfer((dummy >>  8) & 0xFF);
     response <<= 8;
     response |= TMC_SW_SPI->transfer(dummy & 0xFF);
-  } else {
+  }
+#ifndef TMC_NO_GENERIC_SPI
+  else {
     if (_has_pins)
     {
       SPI_BEGIN( SPI, _pinSCK, _pinMISO, _pinMOSI );
@@ -109,6 +111,7 @@ uint32_t TMC2660Stepper::read() {
     SPI.endTransaction();
     SPI.end();
   }
+#endif
   switchCSpin(HIGH);
   return response >> 4;
 }
@@ -128,7 +131,9 @@ void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
     TMC_SW_SPI->transfer((data >> 16) & 0xFF);
     TMC_SW_SPI->transfer((data >>  8) & 0xFF);
     TMC_SW_SPI->transfer(data & 0xFF);
-  } else {
+  }
+#ifndef TMC_NO_GENERIC_SPI
+  else {
     if (_has_pins)
     {
       SPI_BEGIN( SPI, _pinSCK, _pinMISO, _pinMOSI );
@@ -143,6 +148,7 @@ void TMC2660Stepper::write(uint8_t addressByte, uint32_t config) {
     SPI.endTransaction();
     SPI.end();
   }
+#endif
   switchCSpin(HIGH);
 }
 

@@ -8,7 +8,9 @@
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>
-	#include <SPI.h>
+	#ifndef TMC_NO_GENERIC_SPI
+		#include <SPI.h>
+	#endif
 	#include <Stream.h>
 #elif defined(bcm2835)
 	#include <bcm2835.h>
@@ -18,8 +20,12 @@
 	#if __has_include(<Arduino.h>)
 		#include <Arduino.h>
 	#endif
-	#if __has_include(<SPI.h>)
-		#include <SPI.h>
+	#ifndef TMC_NO_GENERIC_SPI
+		#if __has_include(<SPI.h>)
+			#include <SPI.h>
+		#else
+			#define TMC_NO_GENERIC_SPI
+		#endif
 	#endif
 	#if __has_include(<Stream.h>)
 		#include <Stream.h>
@@ -153,11 +159,17 @@ class TMCStepper {
 
 #include "TMCStepper_SPI.h"
 
+#ifndef TMC_NO_GENERIC_SPI
+#define _TMC_SOFTSPI_DEFAULT false
+#else
+#define _TMC_SOFTSPI_DEFAULT true
+#endif
+
 class TMC2130Stepper : public TMCStepper {
 	public:
 		TMC2130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
-		TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
-		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
+		TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
+		TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
 		TMC2130Stepper(uint16_t pinCS, float RS, TMCSPIInterface *spiMan, int8_t link_index = -1);
 		void begin();
 		void defaults();
@@ -373,13 +385,13 @@ class TMC2130Stepper : public TMCStepper {
 		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
 
 		static uint32_t spi_speed; // Default 2MHz
-		TMCSPIInterface* _spiMan;
 		const uint16_t _pinCS;
 		const uint16_t _pinMISO;
 		const uint16_t _pinMOSI;
 		const uint16_t _pinSCK;
 		const bool _has_pins;
 		SW_SPIClass * TMC_SW_SPI = nullptr;
+		TMCSPIInterface* _spiMan;
 		static constexpr float default_RS = 0.11;
 
 		int8_t link_index;
@@ -389,8 +401,8 @@ class TMC2130Stepper : public TMCStepper {
 class TMC2160Stepper : public TMC2130Stepper {
 	public:
 		TMC2160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
-		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
-		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
+		TMC2160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
+		TMC2160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
 		void begin();
 		void defaults();
 		void push();
@@ -488,8 +500,8 @@ class TMC2160Stepper : public TMC2130Stepper {
 class TMC5130Stepper : public TMC2160Stepper {
 	public:
 		TMC5130Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
-		TMC5130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
-		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
+		TMC5130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
+		TMC5130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
 
 		void begin();
 		void defaults();
@@ -732,8 +744,8 @@ class TMC5130Stepper : public TMC2160Stepper {
 class TMC5160Stepper : public TMC5130Stepper {
 	public:
 		TMC5160Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1);
-		TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
-		TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false);
+		TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
+		TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT);
 
 		void rms_current(uint16_t mA) { TMC2160Stepper::rms_current(mA); }
 		void rms_current(uint16_t mA, float mult) { TMC2160Stepper::rms_current(mA, mult); }
@@ -827,9 +839,9 @@ class TMC5161Stepper : public TMC5160Stepper {
 	public:
 		TMC5161Stepper(uint16_t pinCS, float RS = default_RS, int8_t link_index = -1) :
 			TMC5160Stepper(pinCS, RS, link_index) {}
-		TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false) :
+		TMC5161Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT) :
 			TMC5160Stepper(pinCS, pinMOSI, pinMISO, pinSCK, link_index, softSPI) {}
-		TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = false) :
+		TMC5161Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1, bool softSPI = _TMC_SOFTSPI_DEFAULT) :
 			TMC5160Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link_index, softSPI) {}
 };
 
@@ -1115,8 +1127,8 @@ class TMC2224Stepper : public TMC2208Stepper {
 class TMC2660Stepper {
 	public:
 		TMC2660Stepper(uint16_t pinCS, float RS = default_RS);
-		TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI = false);
-		TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI = false);
+		TMC2660Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI = _TMC_SOFTSPI_DEFAULT);
+		TMC2660Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, bool softSPI = _TMC_SOFTSPI_DEFAULT);
 		TMC2660Stepper(uint16_t pinCS, float RS, TMCSPIInterface *spiMan);
 		void write(uint8_t addressByte, uint32_t config);
 		uint32_t read();

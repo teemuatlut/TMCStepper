@@ -116,6 +116,7 @@ void TMC2130Stepper::beginTransaction() {
   if (_spiMan) {
     _spiMan->begin(spi_speed, TMCSPI_BITORDER_MSB, TMCSPI_CLKMODE_3);
   }
+#ifndef TMC_NO_GENERIC_SPI
   else if (TMC_SW_SPI == nullptr) {
     if (_has_pins)
     {
@@ -125,16 +126,19 @@ void TMC2130Stepper::beginTransaction() {
       SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
+#endif
 }
 __attribute__((weak))
 void TMC2130Stepper::endTransaction() {
   if (_spiMan) {
     _spiMan->end();
   }
+#ifndef TMC_NO_GENERIC_SPI
   else if (TMC_SW_SPI == nullptr) {
     SPI.endTransaction();
     SPI.end();
   }
+#endif
 }
 
 __attribute__((weak))
@@ -146,9 +150,11 @@ uint8_t TMC2130Stepper::transfer(const uint8_t data) {
   else if (TMC_SW_SPI != nullptr) {
     out = TMC_SW_SPI->transfer(data);
   }
+#ifndef TMC_NO_GENERIC_SPI
   else {
     out = SPI.transfer(data);
   }
+#endif
   return out;
 }
 
