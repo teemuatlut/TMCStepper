@@ -1,13 +1,14 @@
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, int8_t link) : TMC5130Stepper(pinCS, RS, link)
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, int8_t link_index) :
+  TMC5130Stepper(pinCS, RS, link_index)
   { defaults(); }
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
-  TMC5130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link)
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
+  TMC5130Stepper(pinCS, RS, pinMOSI, pinMISO, pinSCK, link, softSPI)
   { defaults(); }
-TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
-  TMC5130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK, link)
+TMC5160Stepper::TMC5160Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
+  TMC5130Stepper(pinCS, default_RS, pinMOSI, pinMISO, pinSCK, link, softSPI)
   { defaults(); }
 
 void TMC5160Stepper::defaults() {

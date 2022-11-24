@@ -4,37 +4,84 @@
 int8_t TMC2130Stepper::chain_length = 0;
 uint32_t TMC2130Stepper::spi_speed = 16000000/8;
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link_index) :
   TMCStepper(RS),
   _pinCS(pinCS),
-  link_index(link)
+  _pinMISO(0),
+  _pinMOSI(0),
+  _pinSCK(0),
+  _has_pins(false),
+  TMC_SW_SPI(nullptr),
+  _spiMan(nullptr),
+  link_index(link_index)
   {
     defaults();
 
-    if (link > chain_length)
-      chain_length = link;
+    if (link_index > chain_length)
+      chain_length = link_index;
   }
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
   TMCStepper(default_RS),
   _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
+  _has_pins(true),
+  _spiMan(nullptr),
   link_index(link)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
     defaults();
 
     if (link > chain_length)
       chain_length = link;
   }
 
-TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link) :
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link, bool softSPI) :
   TMCStepper(RS),
   _pinCS(pinCS),
+  _pinMISO(pinMISO),
+  _pinMOSI(pinMOSI),
+  _pinSCK(pinSCK),
+  _has_pins(true),
+  _spiMan(nullptr),
   link_index(link)
   {
-    SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
-    TMC_SW_SPI = SW_SPI_Obj;
+    if (softSPI)
+    {
+      SW_SPIClass *SW_SPI_Obj = new SW_SPIClass(pinMOSI, pinMISO, pinSCK);
+      TMC_SW_SPI = SW_SPI_Obj;
+    }
+    else
+    {
+      TMC_SW_SPI = nullptr;
+    }
+    defaults();
+
+    if (link > chain_length)
+      chain_length = link;
+  }
+
+TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, TMCSPIInterface *spiMan, int8_t link) :
+  TMCStepper(RS),
+  _pinCS(pinCS),
+  _pinMISO(0),
+  _pinMOSI(0),
+  _pinSCK(0),
+  _has_pins(false),
+  TMC_SW_SPI(nullptr),
+  _spiMan(spiMan),
+  link_index(link)
+  {
     defaults();
 
     if (link > chain_length)
@@ -66,32 +113,59 @@ void TMC2130Stepper::switchCSpin(bool state) {
 
 __attribute__((weak))
 void TMC2130Stepper::beginTransaction() {
-  if (TMC_SW_SPI == nullptr) {
+  if (_spiMan) {
+    _spiMan->begin(spi_speed, TMCSPI_BITORDER_MSB, TMCSPI_CLKMODE_3);
+  }
+#ifndef TMC_NO_GENERIC_SPI
+  else if (TMC_SW_SPI == nullptr) {
+    if (_has_pins)
+    {
+      SPI_BEGIN( SPI, _pinSCK, _pinMISO, _pinMOSI );
+    }
+    else
+      SPI.begin();
     SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE3));
   }
+#endif
 }
 __attribute__((weak))
 void TMC2130Stepper::endTransaction() {
-  if (TMC_SW_SPI == nullptr) {
-    SPI.endTransaction();
+  if (_spiMan) {
+    _spiMan->end();
   }
+#ifndef TMC_NO_GENERIC_SPI
+  else if (TMC_SW_SPI == nullptr) {
+    SPI.endTransaction();
+    SPI.end();
+  }
+#endif
 }
 
 __attribute__((weak))
 uint8_t TMC2130Stepper::transfer(const uint8_t data) {
   uint8_t out = 0;
-  if (TMC_SW_SPI != nullptr) {
+  if (_spiMan) {
+    out = _spiMan->transfer(data);
+  }
+  else if (TMC_SW_SPI != nullptr) {
     out = TMC_SW_SPI->transfer(data);
   }
+#ifndef TMC_NO_GENERIC_SPI
   else {
     out = SPI.transfer(data);
   }
+#endif
   return out;
 }
 
 void TMC2130Stepper::transferEmptyBytes(const uint8_t n) {
-  for (uint8_t i = 0; i < n; i++) {
-    transfer(0x00);
+  if (_spiMan) {
+    _spiMan->sendRepeat(0, n);
+  }
+  else {
+    for (uint8_t i = 0; i < n; i++) {
+      transfer(0x00);
+    }
   }
 }
 
