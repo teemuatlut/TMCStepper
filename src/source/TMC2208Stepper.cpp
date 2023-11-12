@@ -19,6 +19,14 @@ TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, uint
 		sswitch = SMulObj;
 	}
 
+TMC2208Stepper::TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, void (*cb)(uint32_t, uint32_t), uint32_t cb_vala, uint32_t cb_valb) :
+	TMC2208Stepper(SerialPort, RS, addr)
+	{
+		cb_func = cb;
+		cb_val0 = cb_vala;
+		cb_val1 = cb_valb;
+	}
+
 #if SW_CAPABLE_PLATFORM
 	// Protected
 	// addr needed for TMC2209
@@ -126,6 +134,8 @@ void TMC2208Stepper::preWriteCommunication() {
 	if (HWSerial != nullptr) {
 		if (sswitch != nullptr)
 			sswitch->active();
+		if (cb_func != nullptr)
+			(*cb_func)(cb_val0, cb_val1);
 	}
 }
 
@@ -139,6 +149,8 @@ void TMC2208Stepper::preReadCommunication() {
 		if (HWSerial != nullptr) {
 			if (sswitch != nullptr)
 				sswitch->active();
+			if (cb_func != nullptr)
+				(*cb_func)(cb_val0, cb_val1);
 		}
 }
 

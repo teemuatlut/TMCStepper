@@ -840,6 +840,7 @@ class TMC2208Stepper : public TMCStepper {
 		#else
 			TMC2208Stepper(uint16_t, uint16_t, float) = delete; // Your platform does not currently support Software Serial
 		#endif
+		TMC2208Stepper(Stream * SerialPort, float RS, uint8_t addr, void (*cb)(uint32_t, uint32_t), uint32_t cb_vala, uint32_t cb_valb);
 		void defaults();
 		void push();
 		void begin();
@@ -1010,6 +1011,8 @@ class TMC2208Stepper : public TMCStepper {
 		#endif
 
 		SSwitch *sswitch = nullptr;
+		void (*cb_func)(uint32_t, uint32_t) = nullptr;  // callback function
+		uint32_t cb_val0, cb_val1;  // callback values
 
 		int available();
 		void preWriteCommunication();
@@ -1042,6 +1045,8 @@ class TMC2209Stepper : public TMC2208Stepper {
 		#else
 			TMC2209Stepper(uint16_t, uint16_t, float, uint8_t) = delete; // Your platform does not currently support Software Serial
 		#endif
+		TMC2209Stepper(Stream * SerialPort, float RS, uint8_t addr, void (*cb)(uint32_t, uint32_t), uint32_t cb_vala, uint32_t cb_valb) :
+			TMC2208Stepper(SerialPort, RS, addr, cb, cb_vala, cb_valb) {}
 		void push();
 
 		// R: IOIN
