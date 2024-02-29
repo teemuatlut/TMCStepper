@@ -1105,30 +1105,15 @@ class TMC2224Stepper : public TMC2208Stepper {
 
 class TMC2240Stepper  {
 	public:
-		TMC2240Stepper(Stream * SerialPort):TMC2240Stepper(SerialPort, TMC2240_SLAVE_ADDR){};
-	    TMC2240Stepper(Stream * SerialPort, uint8_t addr, uint16_t mul_pin1, uint16_t mul_pin2);
+		TMC2240Stepper(uint16_t pinCS, int8_t link_index = -1);
+		TMC2240Stepper(uint16_t pinCS, uint16_t pinMOSI, uint16_t pinMISO, uint16_t pinSCK, int8_t link_index = -1);
 
-		#if SW_CAPABLE_PLATFORM
-		TMC2240Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin) : TMC2240Stepper(SW_RX_pin, SW_TX_pin,TMC2240_SLAVE_ADDR){};
-
-			// __attribute__((deprecated("Boolean argument has been deprecated and does nothing")))
-			// TMC2240Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin,  uint8_t) :
-			// 	TMC2240Stepper(SW_RX_pin, SW_TX_pin,  TMC2240_SLAVE_ADDR)
-			// 	{};
-		#else
-			TMC2240Stepper(uint16_t, uint16_t, float) = delete; // Your platform does not currently support Software Serial
-		#endif
-
-		void defaults();
-		void push();
 		void begin();
-		#if SW_CAPABLE_PLATFORM
-			void beginSerial(uint32_t baudrate) __attribute__((weak));
-		#else
-			void beginSerial(uint32_t) = delete; // Your platform does not currently support Software Serial
-		#endif
-
+		void defaults();
+		void setSPISpeed(uint32_t speed);
+		void switchCSpin(bool state);
 		bool isEnabled();
+		void push();
 
 		// RW: GCONF
 		void GCONF(uint32_t input);
@@ -1202,13 +1187,16 @@ class TMC2240Stepper  {
 		uint8_t silicon_rv();
 		uint8_t version();
 
-
 		// W: DRV_CONF
 		void DRV_CONF(uint32_t input);
 		void current_range(uint8_t);
 		void slope_control(uint8_t);
 		uint32_t DRV_CONF();
 
+		void GLOBAL_SCALER(uint8_t input);
+		uint32_t GLOBAL_SCALER();
+		void 	global_scaler(uint8_t B);
+		uint8_t global_scaler();
 
 		// W: IHOLD_IRUN
 		void IHOLD_IRUN(uint32_t input);
@@ -1222,7 +1210,13 @@ class TMC2240Stepper  {
 		uint8_t iholddelay();
 		uint8_t irundelay();
 
+		// W: TCOOLTHRS
+		uint32_t TCOOLTHRS();
+		void TCOOLTHRS(	uint32_t input);
 
+		// W: THIGH
+		uint32_t THIGH();
+		void THIGH(	uint32_t input);
 
 		// RW: CHOPCONF
 		void CHOPCONF(uint32_t input);
@@ -1266,14 +1260,14 @@ class TMC2240Stepper  {
 		void semax(uint8_t B);
 		void sedn(uint8_t B);
 		void seimin(bool B);
-		void sgt(uint16_t B);
+		void sgt(int8_t  B);
 		void sfilt(bool B);
 		uint8_t semin();
 		uint8_t seup();
 		uint8_t semax();
 		uint8_t sedn();
 		bool seimin();
-		uint16_t sgt();
+		int8_t sgt();
 		bool sfilt();
 
 		// RW: PWMCONF
@@ -1348,10 +1342,7 @@ class TMC2240Stepper  {
 		uint8_t TPOWERDOWN();
 		void TPOWERDOWN(uint8_t input);
 
-		static constexpr uint8_t TMC_READ = 0x00,
-
-		TMC_WRITE = 0x80;
-				static constexpr uint8_t TMC2240_SLAVE_ADDR = 0x00;
+		uint8_t status_response;
 	protected:
 		INIT2240_REGISTER(GCONF)			{{.sr=0}};
 		INIT2240_REGISTER(DRV_CONF)			{{.sr=0}};
@@ -1368,31 +1359,18 @@ class TMC2240Stepper  {
 		float 		calc_IFS_current_RMS(int8_t range, uint32_t Rref);
 		uint32_t	set_globalscaler(float current, float IFS_current_RMS);
 
-		TMC2240Stepper(Stream * SerialPort, uint8_t addr);
-		#if SW_CAPABLE_PLATFORM
-			TMC2240Stepper(uint16_t SW_RX_pin, uint16_t SW_TX_pin, uint8_t addr);
-		#endif
+		void beginTransaction();
+		void endTransaction();
+		uint8_t transfer(const uint8_t data);
+		void transferEmptyBytes(const uint8_t n);
+		void write(uint8_t addressByte, uint32_t config);
+		uint32_t read(uint8_t addressByte);
 
-		Stream * HWSerial = nullptr;
-		#if SW_CAPABLE_PLATFORM
-			SoftwareSerial * SWSerial = nullptr;
-			const uint16_t RXTX_pin = 0; // Half duplex
-		#endif
-
+		static constexpr uint8_t TMC_READ = 0x00,
+									TMC_WRITE = 0x80;
 
 		SSwitch *sswitch = nullptr;
 
-		int available();
-		void preWriteCommunication();
-		void preReadCommunication();
-		int16_t serial_read();
-		uint8_t serial_write(const uint8_t data);
-		void postWriteCommunication();
-		void postReadCommunication();
-		void write(uint8_t, uint32_t);
-		uint32_t read(uint8_t);
-		const uint8_t slave_address;
-		uint8_t calcCRC(uint8_t datagram[], uint8_t len);
 		static constexpr uint8_t TMC2240_SYNC = 0x05;
 		static constexpr uint8_t replyDelay = 2;
 		static constexpr uint8_t abort_window = 5;
@@ -1400,6 +1378,14 @@ class TMC2240Stepper  {
 
 		uint64_t _sendDatagram(uint8_t [], const uint8_t, uint16_t);
 		float holdMultiplier = 0.5;
+
+		static uint32_t spi_speed; // Default 2MHz
+		const uint16_t _pinCS;
+		SW_SPIClass * TMC_SW_SPI = nullptr;
+		static constexpr float default_RS = 0.11;
+
+		int8_t link_index;
+		static int8_t chain_length;
 };
 
 class TMC2660Stepper {
