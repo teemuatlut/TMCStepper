@@ -5,7 +5,7 @@ SSwitch::SSwitch( const uint16_t pin1, const uint16_t pin2, const uint8_t addres
   p2(pin2),
   addr(address)
 	{
-		pinMode(pin1, OUTPUT);		
+		pinMode(pin1, OUTPUT);
     pinMode(pin2, OUTPUT);
 	}
 

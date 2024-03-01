@@ -11,6 +11,13 @@ void TMC2160Stepper::DRV_CONF(uint32_t input) {
 	write(DRV_CONF_register.address, DRV_CONF_register.sr);
 }
 
+// W: DRV_CONF
+uint32_t TMC2240Stepper::DRV_CONF() { return DRV_CONF_register.sr; }
+void TMC2240Stepper::DRV_CONF(uint32_t input) {
+	DRV_CONF_register.sr = input;
+	write(DRV_CONF_register.address, DRV_CONF_register.sr);
+}
+
 void TMC2160Stepper::bbmtime(uint8_t B)		{ SET_REG(bbmtime); 	}
 void TMC2160Stepper::bbmclks(uint8_t B)		{ SET_REG(bbmclks); 	}
 void TMC2160Stepper::otselect(uint8_t B)	{ SET_REG(otselect); 	}
