@@ -16,9 +16,6 @@
  */
 #include <TMCStepper.h>
 #include "esp32-hal-timer.h"
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <ArduinoOTA.h>
 
 #define MAX_SPEED        10 // In timer value
 #define MIN_SPEED      1000
