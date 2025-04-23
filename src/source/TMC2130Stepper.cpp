@@ -2,7 +2,9 @@
 #include "TMC_MACROS.h"
 
 int8_t TMC2130Stepper::chain_length = 0;
-uint32_t TMC2130Stepper::spi_speed = 16000000/8;
+uint32_t DEFAULT_F_CLK = 16000000;
+uint32_t TMC2130Stepper::spi_speed = DEFAULT_F_CLK/8;
+
 
 TMC2130Stepper::TMC2130Stepper(uint16_t pinCS, float RS, int8_t link) :
   TMCStepper(RS),
@@ -114,6 +116,13 @@ uint32_t TMC2130Stepper::read(uint8_t addressByte) {
   }
 
   switchCSpin(HIGH);
+
+  #ifdef TEENSYDUINO
+  delayNanoseconds(2 * 1000000000 / DEFAULT_F_CLK + 10);
+  #else
+  delayMicroseconds(1);
+  #endif
+
   switchCSpin(LOW);
 
   // Shift data from target link into the last one...

@@ -24,21 +24,29 @@ void SW_SPIClass::init() {
 uint8_t SW_SPIClass::transfer(uint8_t ulVal) {
   uint8_t value = 0;
   writeSCK_L;
+  delayMicroseconds(1);
 
   for (uint8_t i=7 ; i>=1 ; i--) {
     // Write bit
     !!(ulVal & (1 << i)) ? writeMOSI_H : writeMOSI_L;
+    delayMicroseconds(1);
     // Start clock pulse
     writeSCK_H;
+    delayMicroseconds(1);
     // Read bit
     value |= ( readMISO ? 1 : 0) << i;
+    delayMicroseconds(1);
     // Stop clock pulse
     writeSCK_L;
+    delayMicroseconds(1);
   }
 
   !!(ulVal & (1 << 0)) ? writeMOSI_H : writeMOSI_L;
+  delayMicroseconds(1);
   writeSCK_H;
+  delayMicroseconds(1);
   value |= ( readMISO ? 1 : 0) << 0;
+  delayMicroseconds(1);
 
   return value;
 }
