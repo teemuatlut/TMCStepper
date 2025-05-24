@@ -1,3 +1,13 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2660_bitfields.h
+ *
+ * TMC2660 hardware register bit fields:
+ * DRVCTRL_1, DRVCTRL_0
+ * SMARTEN
+ * CHOPCONF, SGCSCONF, DRVCONF
+ * READ_RDSEL00, READ_RDSEL01, READ_RDSEL10
+ */
 #pragma once
 #pragma pack(push, 1)
 

@@ -1,3 +1,7 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * SW_SPI.cpp - Software SPI for Arduino or Raspberry Pi
+ */
 #include "SW_SPI.h"
 
 SW_SPIClass::SW_SPIClass(uint16_t mosi, uint16_t miso, uint16_t sck) :

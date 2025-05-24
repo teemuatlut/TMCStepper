@@ -1,4 +1,7 @@
-#if defined(bcm2835)
+/**
+ * BCM2835 SPI for Arduino on Raspberry Pi
+ */
+#ifdef bcm2835
 
 #include "bcm2835_spi.h"
 
@@ -30,4 +33,4 @@ SPISettings::SPISettings(uint32_t s, bcm2835SPIBitOrder o, bcm2835SPIMode m)
 	mode = m;
 }
 
-#endif
+#endif // bcm2835

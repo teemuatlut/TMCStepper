@@ -1,3 +1,17 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC5130_bitfields.h
+ *
+ * Inherits from TMC5130 < TMC2160 < TMC2130.
+ *
+ * TMC5160 hardware registers:
+ * SHORT_CONF
+ * DRV_CONF
+ * GLOBAL_SCALER
+ * OFFSET_READ
+ * ENC_DEVIATION
+ * PWM_AUTO
+ */
 #pragma once
 #pragma pack(push, 1)
 

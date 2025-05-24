@@ -1,3 +1,13 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2160_bitfields.h
+ *
+ * TMC2160 (TMC5130, TMC5160, TMC5161) hardware register bit fields.
+ *
+ * Overriding TMC2130:
+ * IOIN
+ * PWMCONF, PWM_SCALE
+ */
 #pragma once
 #pragma pack(push, 1)
 

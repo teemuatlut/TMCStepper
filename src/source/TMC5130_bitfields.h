@@ -1,3 +1,26 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC5130_bitfields.h
+ *
+ * Inherits from TMC2160 < TMC2130.
+ *
+ * Overriding TMC2130, TMC2160:
+ * IOIN
+ *
+ * TMC5130 (TMC5160, TMC5161) hardware registers:
+ * SLAVECONF
+ * OUTPUT
+ * X_COMPARE
+ * RAMPMODE, RAMP_STAT
+ * XACTUAL
+ * VSTART, VSTOP
+ * A1, V1, D1
+ * AMAX, VMAX, DMAX
+ * TZEROWAIT
+ * SW_MODE
+ * ENCMODE, ENC_CONST
+ * MSLUT0 .. MSLUT7, MSLUTSEL, MSLUTSTART
+ */
 #pragma once
 #pragma pack(push, 1)
 

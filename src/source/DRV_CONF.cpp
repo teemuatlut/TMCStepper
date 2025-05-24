@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * DRV_CONF.cpp - DRV_CONF Configuration
+ * TMC2160 (TMC5130, TMC5160, TMC5161)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
@@ -7,6 +12,13 @@
 // W: DRV_CONF
 uint32_t TMC2160Stepper::DRV_CONF() { return DRV_CONF_register.sr; }
 void TMC2160Stepper::DRV_CONF(uint32_t input) {
+	DRV_CONF_register.sr = input;
+	write(DRV_CONF_register.address, DRV_CONF_register.sr);
+}
+
+// W: DRV_CONF
+uint32_t TMC2240Stepper::DRV_CONF() { return DRV_CONF_register.sr; }
+void TMC2240Stepper::DRV_CONF(uint32_t input) {
 	DRV_CONF_register.sr = input;
 	write(DRV_CONF_register.address, DRV_CONF_register.sr);
 }

@@ -1,3 +1,14 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2209_bitfields.h
+ *
+ * TMC2209 (TMC2224) hardware register bit fields.
+ *
+ * Overriding TMC2208 < TMC2130:
+ * IOIN
+ * SGTHRS, SG_RESULT
+ * COOLCONF
+ */
 #pragma once
 #pragma pack(push, 1)
 

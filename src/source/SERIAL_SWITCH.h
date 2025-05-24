@@ -1,3 +1,7 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * SERIAL_SWITCH.h - Serial Switch for Arduino / Raspberry Pi
+ */
 #pragma once
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include <Arduino.h>

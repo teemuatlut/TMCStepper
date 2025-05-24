@@ -1,3 +1,7 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC_MACROS.h
+ */
 #pragma once
 
 #define DEBUG_PRINT(CFG, VAL) Serial.print(CFG); Serial.print('('); Serial.print(VAL, HEX); Serial.println(')')

@@ -1,9 +1,17 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * ENCMODE.cpp - Driver Status
+ * TMC2130 (TMC2160, TMC5130, TMC5160, TMC5161), TMC5160 (TMC5161), TMC2208 (TMC2209, TMC2224)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) GCONF_register.SETTING = B; write(GCONF_register.address, GCONF_register.sr)
 
-// GCONF
+//
+// TMC2130 (TMC2160, TMC5130, TMC5160, TMC5161)
+//
+
 uint32_t TMC2130Stepper::GCONF() {
 	return read(GCONF_register.address);
 }
@@ -48,6 +56,10 @@ bool TMC2130Stepper::small_hysteresis() 			{ GCONF_t r{0}; r.sr = GCONF(); retur
 bool TMC2130Stepper::stop_enable() 					{ GCONF_t r{0}; r.sr = GCONF(); return r.stop_enable;			}
 bool TMC2130Stepper::direct_mode() 					{ GCONF_t r{0}; r.sr = GCONF(); return r.direct_mode;			}
 
+//
+// TMC5160 (TMC5161)
+//
+
 /*
 bit 18 not implemented:
 test_mode 0:
@@ -57,12 +69,16 @@ Enable analog test output on pin DCO. IHOLD[1..0] selects the function of DCO:
 Not for user, set to 0 for normal operation!
 */
 
-void TMC5160Stepper::recalibrate(bool B)			{ SET_REG(recalibrate); 			}
-void TMC5160Stepper::faststandstill(bool B)			{ SET_REG(faststandstill); 			}
-void TMC5160Stepper::multistep_filt(bool B)			{ SET_REG(multistep_filt); 			}
-bool TMC5160Stepper::recalibrate()					{ GCONF_t r{0}; r.sr = GCONF(); return r.recalibrate;	}
+void TMC5160Stepper::recalibrate(bool B)			{ SET_REG(recalibrate); 	}
+void TMC5160Stepper::faststandstill(bool B)			{ SET_REG(faststandstill); 	}
+void TMC5160Stepper::multistep_filt(bool B)			{ SET_REG(multistep_filt); 	}
+bool TMC5160Stepper::recalibrate()					{ GCONF_t r{0}; r.sr = GCONF(); return r.recalibrate;		}
 bool TMC5160Stepper::faststandstill()				{ GCONF_t r{0}; r.sr = GCONF(); return r.faststandstill;	}
 bool TMC5160Stepper::multistep_filt()				{ GCONF_t r{0}; r.sr = GCONF(); return r.multistep_filt;	}
+
+//
+// TMC2208 (TMC2209, TMC2224)
+//
 
 uint32_t TMC2208Stepper::GCONF() {
 	return read(GCONF_register.address);
@@ -91,3 +107,45 @@ bool TMC2208Stepper::index_step()		{ TMC2208_n::GCONF_t r{0}; r.sr = GCONF(); re
 bool TMC2208Stepper::pdn_disable()		{ TMC2208_n::GCONF_t r{0}; r.sr = GCONF(); return r.pdn_disable;		}
 bool TMC2208Stepper::mstep_reg_select()	{ TMC2208_n::GCONF_t r{0}; r.sr = GCONF(); return r.mstep_reg_select;	}
 bool TMC2208Stepper::multistep_filt()	{ TMC2208_n::GCONF_t r{0}; r.sr = GCONF(); return r.multistep_filt;		}
+
+//
+// TMC2240
+//
+
+uint32_t TMC2240Stepper::GCONF() { return read(GCONF_register.address); }
+void TMC2240Stepper::GCONF(uint32_t input) {
+	GCONF_register.sr = input;
+	write(GCONF_register.address, GCONF_register.sr);
+}
+
+void TMC2240Stepper::fast_standstill(bool B)	{ SET_REG(fast_standstill);	}
+void TMC2240Stepper::en_pwm_mode(bool B)		{ SET_REG(en_pwm_mode);	    }
+void TMC2240Stepper::multistep_filt(bool B)		{ SET_REG(multistep_filt);	}
+void TMC2240Stepper::shaft(bool B) 				{ SET_REG(shaft);			}
+void TMC2240Stepper::diag0_error(bool B)		{ SET_REG(diag0_error);		}
+void TMC2240Stepper::diag0_otpw(bool B)			{ SET_REG(diag0_otpw);		}
+void TMC2240Stepper::diag0_stall(bool B)		{ SET_REG(diag0_stall);		}
+void TMC2240Stepper::diag1_stall(bool B)		{ SET_REG(diag1_stall);  	}
+void TMC2240Stepper::diag1_index(bool B)		{ SET_REG(diag1_index);		}
+void TMC2240Stepper::diag1_onstate(bool B)		{ SET_REG(diag1_onstate);	}
+void TMC2240Stepper::diag0_pushpull(bool B)		{ SET_REG(diag0_pushpull);	}
+void TMC2240Stepper::diag1_pushpull(bool B)		{ SET_REG(diag1_pushpull);  }
+void TMC2240Stepper::small_hysteresis(bool B)	{ SET_REG(small_hysteresis);}
+void TMC2240Stepper::stop_enable(bool B)		{ SET_REG(stop_enable);		}
+void TMC2240Stepper::direct_mode(bool B)		{ SET_REG(direct_mode); 	}
+
+bool TMC2240Stepper::fast_standstill()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.fast_standstill;	}
+bool TMC2240Stepper::en_pwm_mode()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.en_pwm_mode;		}
+bool TMC2240Stepper::multistep_filt()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.multistep_filt;		}
+bool TMC2240Stepper::shaft()				{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.shaft;				}
+bool TMC2240Stepper::diag0_error()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag0_error;		}
+bool TMC2240Stepper::diag0_otpw()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag0_otpw;			}
+bool TMC2240Stepper::diag0_stall()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag0_stall;		}
+bool TMC2240Stepper::diag1_stall()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag1_stall;		}
+bool TMC2240Stepper::diag1_index()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag1_index;		}
+bool TMC2240Stepper::diag1_onstate()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag1_onstate;		}
+bool TMC2240Stepper::diag0_pushpull()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag0_pushpull;		}
+bool TMC2240Stepper::diag1_pushpull()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.diag1_pushpull;		}
+bool TMC2240Stepper::small_hysteresis()		{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.small_hysteresis;	}
+bool TMC2240Stepper::stop_enable()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.stop_enable;		}
+bool TMC2240Stepper::direct_mode()			{ TMC2240_n::GCONF_t r{0}; r.sr = GCONF(); return r.direct_mode;		}

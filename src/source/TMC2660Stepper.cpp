@@ -1,3 +1,7 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2660Stepper.cpp
+ */
 #include "TMCStepper.h"
 #include "SW_SPI.h"
 

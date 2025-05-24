@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * SHORT_CONF.cpp - Short Configuration
+ * TMC2160 (TMC5130, TMC5160, TMC5161)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 

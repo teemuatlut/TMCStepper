@@ -1,10 +1,18 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * COOLCONF.cpp - COOLCONF CoolStep Configuration
+ * TMC2130 (TMC2160, TMC5130, TMC5160, TMC5161), TMC2209
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) COOLCONF_register.SETTING = B; write(COOLCONF_register.address, COOLCONF_register.sr);
 #define GET_REG(SETTING) return COOLCONF_register.SETTING;
 
-// COOLCONF
+//
+// TMC2130 (TMC2160, TMC5130, TMC5160, TMC5161)
+//
+
 uint32_t TMC2130Stepper::COOLCONF() { return COOLCONF_register.sr; }
 void TMC2130Stepper::COOLCONF(uint32_t input) {
 	COOLCONF_register.sr = input;
@@ -32,6 +40,10 @@ int8_t TMC2130Stepper::sgt() {
 	val |= COOLCONF_register.sgt & 0x7F;
 	return val;
 }
+
+//
+// TMC2209
+//
 
 uint16_t TMC2209Stepper::COOLCONF() { return COOLCONF_register.sr; }
 void TMC2209Stepper::COOLCONF(uint16_t input) {

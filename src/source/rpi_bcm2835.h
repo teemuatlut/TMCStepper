@@ -1,3 +1,6 @@
+/**
+ * BCM2835 for Arduino on Raspberry Pi
+ */
 #pragma once
 #include <bcm2835.h>
 #include <stdio.h>

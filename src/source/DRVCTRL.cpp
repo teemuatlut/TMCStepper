@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * DRVCTRL.cpp - Driver Control
+ * TMC2660
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 

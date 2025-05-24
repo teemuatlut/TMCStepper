@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * SMARTEN.cpp - Smart Enable
+ * TMC2660
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 

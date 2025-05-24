@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2208Stepper.cpp
+ * Implementing methods for TMC2208 (TMC2209, TMC2224)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 #include "SERIAL_SWITCH.h"
@@ -63,8 +68,8 @@ void TMC2208Stepper::defaults() {
 	GCONF_register.multistep_filt = 1; // OTP
 	IHOLD_IRUN_register.iholddelay = 1; // OTP
 	TPOWERDOWN_register.sr = 20;
-	CHOPCONF_register.sr = 0x10000053;
-	PWMCONF_register.sr = 0xC10D0024;
+	CHOPCONF_register.sr = 0x10000053; // 1/16 x 256 single-edge
+	PWMCONF_register.sr = 0xC10D0024; // autoscale=1, freq=01, grad & amp, freewheel=00
   //MSLUT0_register.sr = ???;
   //MSLUT1_register.sr = ???;
   //MSLUT2_register.sr = ???;
@@ -319,16 +324,6 @@ uint8_t TMC2208Stepper::IFCNT() {
 	return read(IFCNT_t::address);
 }
 
-void TMC2208Stepper::SLAVECONF(uint16_t input) {
-	SLAVECONF_register.sr = input&0xF00;
-	write(SLAVECONF_register.address, SLAVECONF_register.sr);
-}
-uint16_t TMC2208Stepper::SLAVECONF() {
-	return SLAVECONF_register.sr;
-}
-void TMC2208Stepper::senddelay(uint8_t B) 	{ SLAVECONF_register.senddelay = B; write(SLAVECONF_register.address, SLAVECONF_register.sr); }
-uint8_t TMC2208Stepper::senddelay() 		{ return SLAVECONF_register.senddelay; }
-
 void TMC2208Stepper::OTP_PROG(uint16_t input) {
 	write(OTP_PROG_t::address, input);
 }
@@ -336,32 +331,6 @@ void TMC2208Stepper::OTP_PROG(uint16_t input) {
 uint32_t TMC2208Stepper::OTP_READ() {
 	return read(OTP_READ_t::address);
 }
-
-uint32_t TMC2208Stepper::IOIN() {
-	return read(TMC2208_n::IOIN_t::address);
-}
-bool TMC2208Stepper::enn()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.enn;		}
-bool TMC2208Stepper::ms1()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms1;		}
-bool TMC2208Stepper::ms2()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms2;		}
-bool TMC2208Stepper::diag()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.diag;		}
-bool TMC2208Stepper::pdn_uart()		{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.pdn_uart;	}
-bool TMC2208Stepper::step()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.step;		}
-bool TMC2208Stepper::sel_a()		{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.sel_a;	}
-bool TMC2208Stepper::dir()			{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
-uint8_t TMC2208Stepper::version() 	{ TMC2208_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
-
-uint32_t TMC2224Stepper::IOIN() {
-	return read(TMC2224_n::IOIN_t::address);
-}
-bool TMC2224Stepper::enn()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.enn;		}
-bool TMC2224Stepper::ms1()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms1;		}
-bool TMC2224Stepper::ms2()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.ms2;		}
-bool TMC2224Stepper::pdn_uart()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.pdn_uart;	}
-bool TMC2224Stepper::spread()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.spread;	}
-bool TMC2224Stepper::step()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.step;		}
-bool TMC2224Stepper::sel_a()		{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.sel_a;	}
-bool TMC2224Stepper::dir()			{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.dir;		}
-uint8_t TMC2224Stepper::version() 	{ TMC2224_n::IOIN_t r{0}; r.sr = IOIN(); return r.version;	}
 
 uint16_t TMC2208Stepper::FACTORY_CONF() {
 	return read(FACTORY_CONF_register.address);

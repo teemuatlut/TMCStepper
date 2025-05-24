@@ -1,3 +1,18 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC2130_bitfields.h
+ *
+ * TMC2130 hardware register bit fields:
+ * GCONF, GSTAT
+ * IHOLD_IRUN
+ * IOIN
+ * TPOWERDOWN, TPWMTHRS, TCOOLTHRS, THIGH
+ * XDIRECT
+ * VDCMIN
+ * CHOPCONF, COOLCONF, PWMCONF
+ * DCCTRL, ENCM_CTRL
+ * DRV_STATUS
+ */
 #pragma once
 #pragma pack(push, 1)
 

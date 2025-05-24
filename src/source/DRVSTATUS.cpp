@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * DRVSTATUS.cpp - Driver Status
+ * TMC2660
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 

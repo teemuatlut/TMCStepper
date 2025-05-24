@@ -1,3 +1,8 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC5130Stepper.cpp
+ * Implementing methods for TMC5130 (TMC5160, TMC5161)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
@@ -72,27 +77,6 @@ void TMC5130Stepper::push() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // R: IFCNT
 uint8_t TMC5130Stepper::IFCNT() { return read(IFCNT_t::address); }
-///////////////////////////////////////////////////////////////////////////////////////
-// W: SLAVECONF
-uint16_t TMC5130Stepper::SLAVECONF() { return SLAVECONF_register.sr; }
-void TMC5130Stepper::SLAVECONF(uint16_t input) {
-  SLAVECONF_register.sr = input;
-  write(SLAVECONF_register.address, SLAVECONF_register.sr);
-}
-///////////////////////////////////////////////////////////////////////////////////////
-// R: IOIN
-uint32_t  TMC5130Stepper::IOIN() {
-  return read(TMC5130_n::IOIN_t::address);
-}
-bool    TMC5130Stepper::refl_step()      { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.refl_step; }
-bool    TMC5130Stepper::refr_dir()       { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.refr_dir; }
-bool    TMC5130Stepper::encb_dcen_cfg4() { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.encb_dcen_cfg4; }
-bool    TMC5130Stepper::enca_dcin_cfg5() { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.enca_dcin_cfg5; }
-bool    TMC5130Stepper::drv_enn_cfg6()   { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.drv_enn_cfg6; }
-bool    TMC5130Stepper::enc_n_dco()      { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.enc_n_dco; }
-bool    TMC5130Stepper::sd_mode()        { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.sd_mode; }
-bool    TMC5130Stepper::swcomp_in()      { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.swcomp_in; }
-uint8_t   TMC5130Stepper::version()      { TMC5130_n::IOIN_t r{0}; r.sr = IOIN(); return r.version; }
 ///////////////////////////////////////////////////////////////////////////////////////
 // W: OUTPUT
 bool TMC5130Stepper::TMC_OUTPUT() { return OUTPUT_register.sr; }

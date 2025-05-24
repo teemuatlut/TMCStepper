@@ -1,3 +1,7 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * SW_SPI.h - Software SPI for Arduino or Raspberry Pi
+ */
 #pragma once
 
 #if defined(ARDUINO) && ARDUINO >= 100

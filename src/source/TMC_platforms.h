@@ -1,4 +1,10 @@
-#if defined(ARDUINO_ARCH_AVR) // 125kHz
+/**
+ * TMCStepper library by @teemuatlut
+ * TMC_platforms.h
+ *
+ * Define SPI accessors for AVR, DUE (700kHz), LPC1768, STM32, DUE (116kHz)
+ */
+#ifdef ARDUINO_ARCH_AVR // 125kHz
   typedef volatile uint8_t* fastio_reg;
   typedef uint8_t fastio_bm;
   #define getPort(P) digitalPinToPort(P)

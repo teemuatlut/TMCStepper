@@ -1,5 +1,7 @@
+/**
+ * BCM2835 Serial Stream for Arduino on Raspberry Pi
+ */
 #pragma once
-#if defined(bcm2835)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,4 +32,3 @@ private:
 
 extern Stream Serial;
 extern Stream Serial1;
-#endif

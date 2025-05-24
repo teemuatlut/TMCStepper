@@ -1,3 +1,23 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * TMCStepper.cpp - TMCStepper Class
+ * Implementing methods for most TMCStepper
+ * Inherited by TMC2130, TMC2160, TMC5130, TMC5160, TMC5161, TMC2208, TMC2209, TMC2224
+ *
+ * cs2rms
+ * rms_current
+ * test_connection
+ * hysteresis_end, hysteresis_start
+ * microsteps
+ * blank_time
+ * GSTAT
+ * reset
+ * drv_err
+ * uv_cp
+ * TPOWERDOWN, TSTEP, TPWMTHRS
+ * MSCNT, MSCURACT
+ * cur_a, cur_b
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 

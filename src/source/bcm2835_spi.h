@@ -1,6 +1,7 @@
+/**
+ * BCM2835 SPI for Arduino on Raspberry Pi
+ */
 #pragma once
-
-#if defined(bcm2835)
 
 #include <stdio.h>
 #include <stdint.h>
@@ -33,4 +34,3 @@ struct SPISettings
 };
 
 extern SPIClass SPI;
-#endif

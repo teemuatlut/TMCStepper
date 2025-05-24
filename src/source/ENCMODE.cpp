@@ -1,10 +1,18 @@
+/**
+ * TMCStepper library by @teemuatlut
+ * ENCMODE.cpp - Driver Status
+ * TMC5130 (TMC5160, TMC5161)
+ */
 #include "TMCStepper.h"
 #include "TMC_MACROS.h"
 
 #define SET_REG(SETTING) ENCMODE_register.SETTING = B; write(ENCMODE_register.address, ENCMODE_register.sr);
 #define GET_REG(SETTING) ENCMODE_t r{0}; r.sr = ENCMODE(); return r.SETTING;
 
-// ENCMODE
+//
+// TMC5130 (TMC5160, TMC5161)
+//
+
 uint32_t TMC5130Stepper::ENCMODE() {
 	return read(ENCMODE_register.address);
 }
