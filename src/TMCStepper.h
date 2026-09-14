@@ -157,6 +157,8 @@ class TMC2130Stepper : public TMCStepper {
 		void begin();
 		void defaults();
 		void setSPISpeed(uint32_t speed);
+		static void setSWSPIDelay(uint16_t delay_us);
+		void updateSWSPIDelay(uint16_t delay_us);
 		void switchCSpin(bool state);
 		bool isEnabled();
 		void push();
@@ -367,7 +369,8 @@ class TMC2130Stepper : public TMCStepper {
 		struct LOST_STEPS_t { constexpr static uint8_t address = 0x73; };
 		struct DRV_STATUS_t { constexpr static uint8_t address = 0X6F; };
 
-		static uint32_t spi_speed; // Default 2MHz
+		static uint32_t spi_speed;   // Default 2MHz
+		static uint16_t sw_spi_delay_us; // SW SPI bit delay in µs (default 1 = ~200kHz)
 		const uint16_t _pinCS;
 		SW_SPIClass * TMC_SW_SPI = nullptr;
 		static constexpr float default_RS = 0.11;

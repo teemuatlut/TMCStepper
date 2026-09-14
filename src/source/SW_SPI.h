@@ -16,16 +16,18 @@
 
 class SW_SPIClass {
 	public:
-		SW_SPIClass(uint16_t sw_mosi_pin, uint16_t sw_miso_pin, uint16_t sw_sck_pin);
+		SW_SPIClass(uint16_t sw_mosi_pin, uint16_t sw_miso_pin, uint16_t sw_sck_pin, uint16_t delay_us = 1);
 		void init();
 		void begin() {};
 		uint8_t transfer(uint8_t ulVal);
 		uint16_t transfer16(uint16_t data);
 		void endTransaction() {};
+		void setDelay(uint16_t d) { delay_us = d; }
 	private:
 		const uint16_t	mosi_pin,
 						miso_pin,
 						sck_pin;
+		uint16_t		delay_us;
 
 		#if defined(ARDUINO_ARCH_AVR)
 			fastio_bm mosi_bm,
